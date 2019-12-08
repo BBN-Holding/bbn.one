@@ -1,3 +1,3 @@
-# bigbotnetwork.de
+# bigbotnetwork.com
 
 BBN Landing page
