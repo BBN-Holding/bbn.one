@@ -1,3 +1,3 @@
 # bigbotnetwork.com
 
-BBN Landing page
+The new BBN landing page.
