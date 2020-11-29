@@ -564,14 +564,14 @@ section {
 }
 
 /*--------------------------------------------------------------
-# Cliens
+# Clients
 --------------------------------------------------------------*/
-.cliens {
+.clients {
   padding: 12px 0;
   text-align: center;
 }
 
-.cliens img {
+.clients img {
   max-width: 45%;
   transition: all 0.4s ease-in-out;
   display: inline-block;
@@ -580,14 +580,14 @@ section {
   filter: grayscale(100);
 }
 
-.cliens img:hover {
+.clients img:hover {
   -webkit-filter: none;
   filter: none;
   transform: scale(1.1);
 }
 
 @media (max-width: 768px) {
-  .cliens img {
+  .clients img {
     max-width: 40%;
   }
 }
