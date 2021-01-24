@@ -16,6 +16,10 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Jost", sans-serif;
 }
 
+.inactiveLink {
+   pointer-events: none;
+}
+
 /*--------------------------------------------------------------
 # Preloader
 --------------------------------------------------------------*/
@@ -1753,5 +1757,14 @@ section {
 .trigger_popup {
     cursor: pointer;
     display: inline-block;
+}
+
+.popText {
+    height: 1000px;
+    border:1px solid #ccc;
+    font:16px/26px Georgia, Garamond, Serif;
+    overflow: auto;
+    word-wrap: break-word;
+    position: sticky;
 }
 /* Popup box BEGIN */
