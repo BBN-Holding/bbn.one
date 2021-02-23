@@ -189,18 +189,5 @@
   $(window).on('load', function() {
     aos_init();
   });
-  
-  // Imprint Pop-Up
-  $(window).ready(function () {
-    $(".trigger_popup").click(function(){
-        $('.hover_bkgr').show();
-    });
-    $('.hover_bkgr').click(function(){
-        $('.hover_bkgr').hide();
-    });
-    $('.popupCloseButton').click(function(){
-        $('.hover_bkgr').hide();
-    });
-  });
 
 })(jQuery);
