@@ -12,6 +12,7 @@ const createPage = (pagePath, chunks = [], template = "./pages/templates/index.h
         template: template,
         filename: pagePath + '.html',
         publicPath: '/',
+        favicon: './assets/img/favicon.ico',
         minify: {
             minifyCSS: true,
             minifyJS: true,
