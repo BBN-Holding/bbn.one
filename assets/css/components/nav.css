@@ -1,0 +1,30 @@
+nav {
+    color: white;
+    display: grid;
+    grid-template-columns: auto repeat(7, max-content);
+    align-items: center;
+    height: 4.5rem;
+    gap: 2rem;
+    font-weight: 500;
+    background: rgb(40 58 90 / 90%);
+    position: sticky;
+}
+nav::before, nav::after {
+    content: '';
+    position: absolute;
+    right: 100%;
+    width: 100%;
+    height: 4.5rem;
+    background: rgb(40 58 90 / 90%);
+}
+nav::after {
+    right: unset;
+    left: 100%;
+}
+nav img {
+    height: 1.3rem;
+}
+nav a {
+    color: white;
+    text-decoration: none;
+}
