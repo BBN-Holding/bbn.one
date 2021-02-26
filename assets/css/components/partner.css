@@ -1,0 +1,13 @@
+.partner-List {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    align-items: center;
+    gap: 9rem;
+    margin: 2.3rem 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .partner-List img:nth-child(2) {
+        filter: invert();
+    }
+}
