@@ -7,7 +7,10 @@ nav {
     gap: 2rem;
     font-weight: 500;
     background: rgb(40 58 90 / 90%);
-    position: sticky;
+    position: fixed;
+    left: 50%;
+    width: 69rem;
+    transform: translate(-50%);
 }
 nav::before, nav::after {
     content: '';
