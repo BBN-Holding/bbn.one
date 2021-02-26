@@ -4,9 +4,9 @@ nav {
     grid-template-columns: auto repeat(7, max-content);
     align-items: center;
     height: 4.5rem;
-    gap: 2rem;
+    gap: 1.7rem;
     font-weight: 500;
-    background: rgb(40 58 90 / 90%);
+    background: #37517e;
     position: fixed;
     left: 50%;
     width: 69rem;
@@ -18,7 +18,7 @@ nav::before, nav::after {
     right: 100%;
     width: 100%;
     height: 4.5rem;
-    background: rgb(40 58 90 / 90%);
+    background: #37517e;
 }
 nav::after {
     right: unset;
@@ -30,4 +30,15 @@ nav img {
 nav a {
     color: white;
     text-decoration: none;
+}
+nav a.button {
+    border: 2px solid #47b2e4;
+    border-radius: 100px;
+    padding: 6px 25px 7px;
+    transition: .3s;
+    line-height: 1.5;
+    font-size: 14px;
+}
+nav a.button:hover {
+    background-color: #47b2e4;
 }
