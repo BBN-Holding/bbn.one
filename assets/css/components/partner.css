@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     align-items: center;
-    margin: 2.3rem 0;
+    margin: 2.3rem 0 0;
 }
 .partner-List * {
     height: 64px;
