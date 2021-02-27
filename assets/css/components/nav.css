@@ -9,7 +9,8 @@ nav {
     background: #37517e;
     position: fixed;
     left: 50%;
-    width: 69rem;
+    max-width: 69rem;
+    width: 100%;
     transform: translate(-50%);
     z-index: 1;
 }
