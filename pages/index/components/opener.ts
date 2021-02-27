@@ -6,6 +6,7 @@ export function renderOpener()
 {
     const shell = document.createElement("div")
     shell.classList.add('opener')
+    shell.id = "home";
     const leftSide = document.createElement('div')
     const mainTitle = span("We represent your interests")
     const subTitle = span("We support you in financing, distributing and marketing your music or video game all over the world.")

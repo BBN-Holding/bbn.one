@@ -13,6 +13,7 @@ const github = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" f
 export function renderTeam(web: WebGen)
 {
     const data = document.createElement('article')
+    data.id = "team";
     const renderPerson = (profileImage: string, name: string, type: string, links?: [ icon: string, url: string ][]): HeadlessCard =>
     {
         const shell = document.createElement('div')

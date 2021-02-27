@@ -4,6 +4,7 @@ import '../../../assets/css/components/partner.css';
 export function renderServices(web: WebGen)
 {
     const data = document.createElement('article')
+    data.id = "services";
     web.elements.custom(data)
         .title({
             type: "small",

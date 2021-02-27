@@ -18,10 +18,10 @@ export function renderNav()
     const list = [
         link("Home", "#home"),
         link("Services", "#services"),
-        link("Team", "#services"),
+        link("Team", "#team"),
         link("FAQ", "#faq"),
         link("News", "https://blog.bbn.one"),
-        link("Contact", "#contact")
+        link("Contact", "mailto:support@bbn.one")
     ]
     const learnMore = document.createElement('a');
     learnMore.innerText = "Learn More";

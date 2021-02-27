@@ -7,6 +7,7 @@ import { renderPartner } from "./components/partner";
 import { renderServices } from "./components/services";
 import { renderTeam } from "./components/team";
 import { renderFAQ } from "./components/faq";
+import { renderFooter } from "./components/footer";
 const web = new WebGen({ autoLoadFonts: false });
 
 web.elements.body({ maxWidth: "69rem" })
@@ -16,3 +17,4 @@ web.elements.body({ maxWidth: "69rem" })
     .custom(renderServices(web))
     .custom(renderTeam(web))
     .custom(renderFAQ(web))
+    .custom(renderFooter())
