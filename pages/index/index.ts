@@ -4,9 +4,11 @@ import { renderNav } from "./components/nav";
 import '../../assets/css/main.css';
 import { renderOpener } from "./components/opener";
 import { renderPartner } from "./components/partner";
+import { renderServices } from "./components/services";
 const web = new WebGen({ autoLoadFonts: false });
 
 web.elements.body({ maxWidth: "69rem" })
     .custom(renderNav())
     .custom(renderOpener())
     .custom(renderPartner())
+    .custom(renderServices(web))
