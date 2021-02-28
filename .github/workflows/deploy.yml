@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Update b.bbn.one
+    name: Update bbn.one
     runs-on: ubuntu-latest
 
     strategy:
@@ -25,10 +25,10 @@ jobs:
       - name: Preparing Project
         run: npm i
 
-      - name: Building b.bbn.one
+      - name: Building bbn.one
         run: npm run build
 
-      - name: Publish to b.bbn.one
+      - name: Publish to bbn.one
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
           server: ${{ secrets.FTP_SERVER }}
