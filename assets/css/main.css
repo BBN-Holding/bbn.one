@@ -54,6 +54,21 @@ h4 {
     margin: 0;
 }
 
+a.action {
+    color: #37517e;
+    padding: .5rem;
+    line-height: 0;
+    margin-right: 0.3rem;
+    border-radius: 100rem;
+    display: inline-block;
+    background-color: var(--background-color);
+    transition: background-color 150ms ease, color 150ms ease;
+}
+a.action:hover {
+    background-color: #37517e;
+    color: var(--background-color);
+}
+
 @media (prefers-color-scheme: light) {
     body {
         background-color: #f3f5fa !important;

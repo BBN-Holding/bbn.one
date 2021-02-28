@@ -36,17 +36,3 @@
     border-radius: 100%;
     width: 100%;
 }
-.team a {
-    color: #37517e;
-    padding: .5rem;
-    line-height: 0;
-    margin-right: 0.3rem;
-    border-radius: 100rem;
-    display: inline-block;
-    background-color: var(--background-color);
-    transition: background-color 150ms ease, color 150ms ease;
-}
-.team a:hover {
-    background-color: #37517e;
-    color: var(--background-color);
-}

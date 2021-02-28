@@ -37,6 +37,10 @@
     display: inline-block;
     padding-right: 0.5rem;
 }
+.footer div:nth-child(3) span:nth-child(2) {
+    display: block;
+    margin-bottom: 0.5rem;
+}
 .footer div:nth-child(2) a {
     display: block;
     color: var(--on-card-text);

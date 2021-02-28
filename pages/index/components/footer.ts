@@ -1,6 +1,7 @@
 import { span } from "@lucsoft/webgen";
 import '../../../assets/css/components/footer.css';
 import bbnLogo from '../../../assets/img/bbn_logo.svg';
+import { github, linkedIn, renderAction, twitter } from "./actions";
 
 export function renderFooter()
 {
@@ -37,7 +38,14 @@ export function renderFooter()
 
     const colThree = document.createElement('div')
 
-    colThree.append(span("Our Social Networks"), span("Stay connected!"))
+    colThree.append(
+        span("Our Social Networks"),
+        span("Stay connected!"),
+        ...renderAction([
+            [ twitter, 'https://twitter.com/BigBotNetwork' ],
+            [ github, 'https://github.com/BigBotNetwork/' ],
+            [ linkedIn, 'https://www.linkedin.com/company/bbn0/' ]
+        ]))
     data.append(colOne, colTwo, colThree)
     return data;
 }
