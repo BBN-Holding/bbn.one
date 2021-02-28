@@ -5,6 +5,7 @@
     margin-top: 5rem;
     padding: 3rem 0;
     position: relative;
+    color: var(--on-card-text);
 }
 .footer::before, .footer::after {
     content: '';
@@ -21,6 +22,12 @@
 .footer div:nth-child(1) img{
     display: block;
     margin-bottom: 2rem;
+}
+
+@media (prefers-color-scheme: light) {
+    .footer div:nth-child(1) img{
+        filter: invert(1);
+    }
 }
 
 .footer div:nth-child(2) span:nth-child(1), .footer div:nth-child(3) span:nth-child(1){

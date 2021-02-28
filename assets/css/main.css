@@ -1,5 +1,6 @@
 :root {
     --font: 'open sans';
+    --main-color: #37517e;
 }
 body {
     font-family: 'open sans';
@@ -16,7 +17,7 @@ cardlist {
 }
 
 h2 {
-    color: #37517e;
+    color: var(--main-color);
     margin-bottom: 20px;
     padding: 120px 0 20px;
     position: relative;
@@ -55,7 +56,7 @@ h4 {
 }
 
 a.action {
-    color: #37517e;
+    color: var(--main-color);
     padding: .5rem;
     line-height: 0;
     margin-right: 0.3rem;
@@ -65,12 +66,18 @@ a.action {
     transition: background-color 150ms ease, color 150ms ease;
 }
 a.action:hover {
-    background-color: #37517e;
+    background-color: var(--main-color);
     color: var(--background-color);
 }
 
 @media (prefers-color-scheme: light) {
     body {
         background-color: #f3f5fa !important;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --main-color: #4973bd;
     }
 }

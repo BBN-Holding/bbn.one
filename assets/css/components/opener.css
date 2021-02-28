@@ -3,7 +3,7 @@
     display: inline-grid;
     margin-top: 4.5rem;
     grid-template-columns: 1fr 1fr;
-    background: #37517e;
+    background: var(--main-color);
     position: relative;
     align-items: center;
     gap: 2rem;
@@ -14,7 +14,7 @@
     right: 100%;
     width: 100%;
     height: 33.7rem;
-    background: #37517e;
+    background: var(--main-color);
 }
 .opener::after {
     right: unset;
