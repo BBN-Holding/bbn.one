@@ -4,8 +4,8 @@ import team1 from '../../../assets/img/team/team-1.webp';
 import team2 from '../../../assets/img/team/team-2.webp';
 import team3 from '../../../assets/img/team/team-3.webp';
 import team4 from '../../../assets/img/team/team-4.webp';
-import team5 from '../../../assets/img/team/team-5.png';
-import team6 from '../../../assets/img/team/team-6.png';
+import team5 from '../../../assets/img/team/team-5.webp';
+import team6 from '../../../assets/img/team/team-6.webp';
 
 import { github, instagram, link, linkedIn, renderAction, twitter } from "./actions";
 export function renderTeam(web: WebGen)
