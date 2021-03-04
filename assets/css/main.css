@@ -81,3 +81,9 @@ a.action:hover {
         --main-color: #4973bd;
     }
 }
+card.modern .title {
+    font-size: 1.5rem;
+}
+card.modern .description {
+    font-size: 1rem
+}
