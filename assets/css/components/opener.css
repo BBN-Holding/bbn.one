@@ -43,6 +43,8 @@
 .opener a {
     background: #47b2e4;
     display: inline-block;
+    color: white;
+    text-decoration: none;
     font-weight: 500;
     font-size: 16px;
     border-radius: 100px;

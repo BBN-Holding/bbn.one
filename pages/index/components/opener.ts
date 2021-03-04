@@ -12,6 +12,7 @@ export function renderOpener()
     const subTitle = span("We support you in financing, distributing and marketing your music or video game all over the world.")
     const button = document.createElement('a')
     button.innerText = "Get started"
+    button.href = "#services"
     leftSide.append(mainTitle, subTitle, button)
     const rightSide = document.createElement('div')
     const image = document.createElement('img')
