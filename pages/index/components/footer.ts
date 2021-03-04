@@ -33,9 +33,9 @@ export function renderFooter()
         link("FAQ", "#faq"),
         link("News", "https://blog.bbn.one"),
         link("Contact", "#contact"),
-        link("Privacy policy", "/policies/privacy.html"),
-        link("Terms of Services", "/policies/terms.html"),
-        link("Imprint", "/policies/imprint.html")
+        link("Privacy policy", "/p/privacy.html"),
+        link("Terms of Services", "/p/terms.html"),
+        link("Imprint", "/p/imprint.html")
     ]
     colTwo.append(span("Useful Links"), ...list)
 

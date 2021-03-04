@@ -72,6 +72,9 @@ module.exports = (_, mode) =>
                 chunkFilename: '[id].css'
             }),
             createPage('index', [ 'main' ]),
+            createPage('/p/terms', [], "./pages/templates/terms.html"),
+            createPage('/p/privacy', [], "./pages/templates/privacy.html"),
+            createPage('/p/imprint', [], "./pages/templates/imprint.html"),
         ],
         optimization: isProduction ? {
             minimize: true,
