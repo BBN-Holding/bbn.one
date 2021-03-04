@@ -1,30 +1,20 @@
 nav {
     color: white;
-    display: grid;
-    grid-template-columns: auto repeat(7, max-content);
-    align-items: center;
-    height: 4.5rem;
-    gap: 1.7rem;
     font-weight: 500;
     background: #37517e;
     position: fixed;
-    left: 50%;
-    max-width: 69rem;
-    width: 100%;
-    transform: translate(-50%);
+    left: 0;
+    right: 0;
     z-index: 1;
 }
-nav::before, nav::after {
-    content: '';
-    position: absolute;
-    right: 100%;
-    width: 100%;
+nav div {
+    gap: 1.7rem;
+    display: grid;
+    grid-template-columns: auto repeat(7, max-content);
     height: 4.5rem;
-    background: #37517e;
-}
-nav::after {
-    right: unset;
-    left: 100%;
+    width: 69rem;
+    margin: 0 auto;
+    align-items: center;
 }
 nav img {
     height: 1.3rem;
@@ -37,7 +27,7 @@ nav a.button {
     border: 2px solid #47b2e4;
     border-radius: 100px;
     padding: 6px 25px 7px;
-    transition: .3s;
+    transition: background-color .3s;
     line-height: 1.5;
     font-size: 14px;
 }

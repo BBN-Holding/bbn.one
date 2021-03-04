@@ -27,7 +27,8 @@ export function renderNav()
     learnMore.innerText = "Learn More";
     learnMore.classList.add("button")
     learnMore.href = "#services";
-
-    nav.append(logo, ...list, learnMore)
+    const shell = document.createElement('div')
+    shell.append(logo, ...list, learnMore)
+    nav.append(shell)
     return nav;
 }
