@@ -5,8 +5,10 @@ import heroImage from '../../../assets/img/hero-img.png';
 export function renderOpener()
 {
     const shell = document.createElement("div")
-    shell.classList.add('opener')
+    shell.classList.add('opener-background')
     shell.id = "home";
+    const opener = document.createElement("div")
+    opener.classList.add("opener")
     const leftSide = document.createElement('div')
     const mainTitle = span("We represent your interests")
     const subTitle = span("We support you in financing, distributing and marketing your music or video game all over the world.")
@@ -18,7 +20,7 @@ export function renderOpener()
     const image = document.createElement('img')
     image.src = heroImage;
     rightSide.append(image)
-    shell.append(leftSide, rightSide)
-
+    opener.append(leftSide, rightSide)
+    shell.append(opener)
     return shell;
 }
