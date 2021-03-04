@@ -7,7 +7,7 @@ import team4 from '../../../assets/img/team/team-4.webp';
 import team5 from '../../../assets/img/team/team-5.webp';
 import team6 from '../../../assets/img/team/team-6.webp';
 
-import { github, instagram, link, linkedIn, renderAction, twitter } from "./actions";
+import { email, github, instagram, link, linkedIn, renderAction, twitter } from "./actions";
 export function renderTeam(web: WebGen)
 {
     const data = document.createElement('article')
@@ -40,24 +40,33 @@ export function renderTeam(web: WebGen)
                 [ linkedIn, 'https://www.linkedin.com/in/gregor-bigalke-54152b197' ],
                 [ twitter, 'https://twitter.com/gregtcltk' ],
                 [ instagram, 'https://www.instagram.com/skidder6775/' ],
-                [ github, 'https://github.com/gregtcltk' ]
+                [ github, 'https://github.com/gregtcltk' ],
+                [ email, 'mailto:gregor.bigalke@bbn.one' ]
             ]),
             renderPerson(team5, "Lucas Jrichardson", "Chief Design Officer", [
                 [ linkedIn, "https://www.linkedin.com/in/lucsoft/" ],
                 [ twitter, "https://twitter.com/lucsoft_" ],
                 [ instagram, 'https://www.instagram.com/lucsoft_/' ],
                 [ github, 'https://github.com/lucsoft' ],
-                [ link, 'https://lucsoft.de' ]
+                [ link, 'https://lucsoft.de' ],
+                [ email, 'mailto:lucas.jrichardson@bbn.one' ]
             ]),
             renderPerson(team3, "Maximilian Arzberger", "Chief Operating Officer", [
                 [ linkedIn, 'https://linkedin.com/in/maximilian-arzberger-5877a51b9' ],
                 [ twitter, 'https://twitter.com/Hax6775' ],
                 [ instagram, 'https://www.instagram.com/hax6775/' ],
-                [ github, 'https://github.com/Schlauer-Hax' ]
+                [ github, 'https://github.com/Schlauer-Hax' ],
+                [ email, 'mailto:maximilian.arzberger@bbn.one' ]
             ]),
-            renderPerson(team2, "Sarah Jhonson", "Product Manager"),
-            renderPerson(team4, "Jana Holter", "Accountant"),
-            renderPerson(team6, "Josiah Jenkgins", "Head of Legal Department")
+            renderPerson(team2, "Sarah Jhonson", "Product Manager", [
+                [ email, 'mailto:sarah.jhonson@bbn.one' ]
+            ]),
+            renderPerson(team4, "Jana Holter", "Accountant", [
+                [ email, 'mailto:jana.holter@bbn.one' ]
+            ]),
+            renderPerson(team6, "Josiah Jenkgins", "Head of Legal Department", [
+                [ email, 'mailto:josiah.jenkgins@bbn.one' ]
+            ])
         )
     return data;
 }
