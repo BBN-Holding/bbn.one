@@ -10,7 +10,7 @@ import { renderFAQ } from "./components/faq";
 import { renderFooter } from "./components/footer";
 const web = new WebGen({ autoLoadFonts: false });
 
-web.elements.body({ maxWidth: "69rem" })
+web.elements.body()
     .custom(renderNav())
     .custom(renderOpener())
     .custom(renderPartner())

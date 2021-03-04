@@ -5,7 +5,7 @@ export function renderServices(web: WebGen)
 {
     const data = document.createElement('article')
     data.id = "services";
-    web.elements.custom(data)
+    web.elements.custom(data, { maxWidth: "69rem" })
         .title({
             type: "small",
             title: "SERVICES",

@@ -29,7 +29,7 @@ export function renderTeam(web: WebGen)
         };
     }
 
-    web.elements.custom(data)
+    web.elements.custom(data, { maxWidth: "69rem" })
         .title({
             type: "small",
             title: "TEAM",
