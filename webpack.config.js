@@ -28,7 +28,8 @@ module.exports = (_, mode) =>
 
     return {
         entry: {
-            main: "./pages/index/index.ts"
+            main: "./pages/index/index.ts",
+            polyfill: "./pages/OldPagesPolyfill.ts"
         },
         mode: isProduction ? "production" : "development",
         output: {
@@ -72,9 +73,9 @@ module.exports = (_, mode) =>
                 chunkFilename: '[id].css'
             }),
             createPage('index', [ 'main' ]),
-            createPage('./p/terms', [], "./pages/templates/terms.html"),
-            createPage('./p/privacy', [], "./pages/templates/privacy.html"),
-            createPage('./p/imprint', [], "./pages/templates/imprint.html"),
+            createPage('./p/terms', [ 'polyfill' ], "./pages/templates/terms.html"),
+            createPage('./p/privacy', [ 'polyfill' ], "./pages/templates/privacy.html"),
+            createPage('./p/imprint', [ 'polyfill' ], "./pages/templates/imprint.html"),
         ],
         optimization: isProduction ? {
             minimize: true,

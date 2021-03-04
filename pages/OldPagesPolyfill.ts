@@ -1,0 +1,1 @@
+import { WebGen } from "@lucsoft/webgen"; new WebGen()
