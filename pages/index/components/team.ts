@@ -5,6 +5,7 @@ import team2 from '../../../assets/img/team/team-2.webp';
 import team3 from '../../../assets/img/team/team-3.webp';
 import team4 from '../../../assets/img/team/team-4.webp';
 import team5 from '../../../assets/img/team/team-5.png';
+import team6 from '../../../assets/img/team/team-6.png';
 
 import { github, instagram, link, linkedIn, renderAction, twitter } from "./actions";
 export function renderTeam(web: WebGen)
@@ -55,7 +56,8 @@ export function renderTeam(web: WebGen)
                 [ github, 'https://github.com/Schlauer-Hax' ]
             ]),
             renderPerson(team2, "Sarah Jhonson", "Product Manager"),
-            renderPerson(team4, "Jana Holter", "Accountant")
+            renderPerson(team4, "Jana Holter", "Accountant"),
+            renderPerson(team6, "Josiah Jenkgins", "Head of Legal Department")
         )
     return data;
 }
