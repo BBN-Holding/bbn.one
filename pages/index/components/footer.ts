@@ -5,6 +5,8 @@ import { github, linkedIn, renderAction, twitter } from "./actions";
 
 export function renderFooter()
 {
+    const shell = document.createElement("div")
+    shell.classList.add("footer-background")
     const data = document.createElement('article')
     data.classList.add('footer')
 
@@ -50,5 +52,6 @@ export function renderFooter()
             [ linkedIn, 'https://www.linkedin.com/company/bbn0/' ]
         ]))
     data.append(colOne, colTwo, colThree)
-    return data;
+    shell.append(data)
+    return shell;
 }
