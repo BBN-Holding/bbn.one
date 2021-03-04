@@ -12,7 +12,8 @@ nav div {
     display: grid;
     grid-template-columns: auto repeat(7, max-content);
     height: 4.5rem;
-    width: 69rem;
+    max-width: 69rem;
+    width: calc(100% - 4rem);
     margin: 0 auto;
     align-items: center;
 }
