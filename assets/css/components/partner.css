@@ -1,8 +1,10 @@
 .partner-List {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     align-items: center;
-    margin: 2.3rem 0 0;
+    max-width: 69rem;
+    margin: 2.3rem auto 0;
 }
 .partner-List * {
     height: 64px;
