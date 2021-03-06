@@ -43,7 +43,7 @@ export function renderTeam(web: WebGen)
                 [ github, 'https://github.com/gregtcltk' ],
                 [ email, 'mailto:gregor.bigalke@bbn.one' ]
             ]),
-            renderPerson(team5, "Lucas Jrichardson", "Chief Design Officer", [
+            renderPerson(team5, "Lucas Jank", "Chief Design Officer", [
                 [ linkedIn, "https://www.linkedin.com/in/lucsoft/" ],
                 [ twitter, "https://twitter.com/lucsoft_" ],
                 [ instagram, 'https://www.instagram.com/lucsoft_/' ],
