@@ -85,6 +85,7 @@ nav a.button:hover {
 
 @media(max-width:360px) {
     nav {
-        display: none;
+        position: absolute;
+        overflow: hidden;
     }
 }

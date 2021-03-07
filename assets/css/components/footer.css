@@ -52,7 +52,7 @@
 
 @media(max-width:650px) {
     .footer {
-        margin: 4rem auto 0;
+        margin: 3rem auto 0;
         padding: 2rem 0;
         gap: 1rem;
         font-size: .8rem;

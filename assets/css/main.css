@@ -55,6 +55,18 @@ h4 {
     margin: 0;
 }
 
+@media(max-width:360px) {
+    h2 {
+        margin-bottom: .5rem;
+        padding: 3rem 0 .8rem;
+        font-size: 24px;
+    }
+    h4 {
+        font-size: .9rem;
+
+    }
+}
+
 a.action {
     color: var(--main-color);
     padding: .5rem;

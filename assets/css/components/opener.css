@@ -80,3 +80,17 @@
         display: block;
     }
 }
+
+@media(max-width:300px) {
+    .opener {
+        overflow: hidden;
+    }
+    .opener div span:nth-child(1) {
+        font-size: 30px;
+        line-height: 1.1;
+    }
+    .opener div span:nth-child(2) {
+        font-size: 15px;
+        margin-bottom: 1rem;
+    }
+}
