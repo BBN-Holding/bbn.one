@@ -36,3 +36,49 @@ nav a.button {
 nav a.button:hover {
     background-color: #47b2e4;
 }
+
+@media(max-width:780px) {
+    nav img {
+        height: 1.1rem;
+    }
+    nav div {
+        height: 3.5rem;
+        gap: 1.2rem;
+        font-size: .8rem;
+    }
+    nav a.button {
+        border: 1px solid #47b2e4;
+        padding: 5px 12px 6px;
+        line-height: 1.2;
+        font-size: 11px;
+    }
+}
+
+@media(max-width:780px) {
+    nav img {
+        height: 1.1rem;
+    }
+    nav div {
+        height: 3.5rem;
+        gap: 1.2rem;
+        font-size: .8rem;
+    }
+    nav a.button {
+        border: 1px solid #47b2e4;
+        padding: 5px 12px 6px;
+        line-height: 1.2;
+        font-size: 11px;
+    }
+}
+@media(max-width:530px) {
+    nav div {
+        gap: 1rem;
+        font-size: .8rem;
+        grid-template-columns: auto repeat(5, max-content);
+    }
+    nav a.button, nav a:nth-child(2) {
+        display: none;
+        visibility: hidden;
+        margin-right: -1rem;
+    }
+}

@@ -45,3 +45,9 @@
     margin: 10px 0 0;
     padding: 10.5px 28px 11px;
 }
+
+@media(max-width:780px) {
+    .opener-background {
+        margin-top: 3.5rem;
+    }
+}
