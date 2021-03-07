@@ -82,3 +82,9 @@ nav a.button:hover {
         margin-right: -1rem;
     }
 }
+
+@media(max-width:360px) {
+    nav {
+        display: none;
+    }
+}
