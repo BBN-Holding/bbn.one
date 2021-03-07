@@ -1,5 +1,6 @@
 .footer-background {
     background: var(--background-card);
+    padding: 0 1rem;
 }
 .footer {
     max-width: 69rem;

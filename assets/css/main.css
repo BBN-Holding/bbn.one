@@ -99,3 +99,7 @@ card.modern .title {
 card.modern span.description {
     font-size: 1rem;
 }
+
+cardlist {
+    padding: 0 1rem;
+}

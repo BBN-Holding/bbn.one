@@ -5,6 +5,7 @@
     align-items: center;
     max-width: 69rem;
     margin: 2.3rem auto 0;
+    padding: 0 1rem;
 }
 .partner-List * {
     height: 64px;
