@@ -7,7 +7,7 @@
     max-width: 69rem;
     width: 100%;
     margin: 0 auto;
-    height: 33.7rem;
+    padding: 3rem 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
@@ -45,9 +45,38 @@
     margin: 10px 0 0;
     padding: 10.5px 28px 11px;
 }
+@media(max-width:950px) {
+    .opener div span:nth-child(1) {
+        font-size: 40px;
+        line-height: 1.2;
+    }
+    .opener div span:nth-child(2) {
+        font-size: 19px;
+        margin-bottom: 2rem;
+    }
+    .opener a {
+        font-size: 13px;
+        margin: 0;
+        padding: 8px 23px;
+    }
+}
 
 @media(max-width:780px) {
     .opener-background {
         margin-top: 3.5rem;
+    }
+}
+
+@media(max-width:580px) {
+    .opener {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column-reverse;
+    }
+
+    .opener img {
+        width: 70%;
+        margin: 0 auto;
+        display: block;
     }
 }
