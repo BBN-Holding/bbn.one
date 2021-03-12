@@ -17,7 +17,10 @@ export function renderFooter()
 
     const bold = document.createElement('b')
     bold.innerText = "Email: "
-    colOne.append(logo, bold, span("support@bbn.one"))
+    const label = span("Cluster wie ein Laster");
+    label.style.display = "block";
+    label.style.marginTop = ".5rem";
+    colOne.append(logo, bold, span("support@bbn.one"), label)
 
     const colTwo = document.createElement('div')
 
