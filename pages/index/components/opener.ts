@@ -14,6 +14,7 @@ export function renderOpener()
     button.href = "#services"
     leftSide.append(mainTitle, subTitle, button)
     const image = createElement('img') as HTMLImageElement
+    image.loading = "lazy"
     const rightSide = custom('div', image)
     image.src = heroImage;
     opener.append(leftSide, rightSide)
