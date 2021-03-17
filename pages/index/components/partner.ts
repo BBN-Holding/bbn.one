@@ -6,14 +6,14 @@ import client5 from '../../../assets/img/clients/client-5.svg';
 import client6 from '../../../assets/img/clients/client-6.svg';
 
 import '../../../assets/css/components/partner.css';
+import { createElement, span } from "@lucsoft/webgen";
 
 export function renderPartner()
 {
-    const ul = document.createElement('span');
-    ul.classList.add('partner-List');
+    const ul = span(undefined, 'partner-List');
     const imageRender = (name: string) =>
     {
-        const image = document.createElement('img');
+        const image = createElement('img') as HTMLImageElement;
         image.src = name;
         return image;
     }

@@ -1,50 +1,40 @@
-import { span } from "@lucsoft/webgen";
+import { createElement, custom, span } from "@lucsoft/webgen";
 import '../../../assets/css/components/footer.css';
 import bbnLogo from '../../../assets/img/bbn_logo.svg';
 import { github, linkedIn, renderAction, twitter } from "./actions";
+import { link } from "./common";
 
 export function renderFooter()
 {
-    const shell = document.createElement("div")
-    shell.classList.add("footer-background")
-    const data = document.createElement('article')
-    data.classList.add('footer')
+    const data = custom('article', undefined, "footer")
+    const shell = custom("div", data, "footer-background")
 
-    const colOne = document.createElement('div')
+    const colOne = createElement('div')
 
-    const logo = document.createElement('img');
+    const logo = createElement('img') as HTMLImageElement;
     logo.src = bbnLogo;
 
-    const bold = document.createElement('b')
-    bold.innerText = "Email: "
     const label = span("Cluster wie ein Laster");
     label.style.display = "block";
     label.style.marginTop = ".5rem";
-    colOne.append(logo, bold, span("support@bbn.one"), label)
+    colOne.append(logo, custom('b', "Email: "), span("support@bbn.one"), label)
 
-    const colTwo = document.createElement('div')
+    const colTwo = createElement('div')
 
-    const link = (name: string, id: string) =>
-    {
-        const link = document.createElement('a');
-        link.innerText = name;
-        link.href = id;
-        return link;
-    }
     const list = [
-        link("Home", "#home"),
-        link("Services", "#services"),
-        link("Team", "#services"),
-        link("FAQ", "#faq"),
-        link("News", "https://blog.bbn.one"),
-        link("Contact", "#contact"),
-        link("Privacy Policy", "/p/privacy.html"),
-        link("Terms of Use", "/p/terms.html"),
-        link("Imprint", "/p/imprint.html")
+        [ "Home", "#home" ],
+        [ "Services", "#services" ],
+        [ "Team", "#services" ],
+        [ "FAQ", "#faq" ],
+        [ "News", "https://blog.bbn.one" ],
+        [ "Contact", "#contact" ],
+        [ "Privacy Policy", "/p/privacy.html" ],
+        [ "Terms of Use", "/p/terms.html" ],
+        [ "Imprint", "/p/imprint.html" ]
     ]
-    colTwo.append(span("Useful Links"), ...list)
+    colTwo.append(span("Useful Links"), ...list.map(entry => link(entry[ 0 ], entry[ 1 ])))
 
-    const colThree = document.createElement('div')
+    const colThree = createElement('div')
 
     colThree.append(
         span("Our Social Networks"),

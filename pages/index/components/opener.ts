@@ -1,26 +1,21 @@
-import { span } from "@lucsoft/webgen";
+import { createElement, custom, span } from "@lucsoft/webgen";
 import '../../../assets/css/components/opener.css';
 import heroImage from '../../../assets/img/hero-img.png';
 
 export function renderOpener()
 {
-    const shell = document.createElement("div")
-    shell.classList.add('opener-background')
+    const opener = custom("div", undefined, "opener")
+    const shell = custom("div", opener, 'opener-background')
     shell.id = "home";
-    const opener = document.createElement("div")
-    opener.classList.add("opener")
-    const leftSide = document.createElement('div')
+    const leftSide = createElement('div')
     const mainTitle = span("We represent your interests")
     const subTitle = span("We support you in financing, distributing and marketing your music or video game all over the world.")
-    const button = document.createElement('a')
-    button.innerText = "Get started"
+    const button = custom('a', "Get started") as HTMLAnchorElement
     button.href = "#services"
     leftSide.append(mainTitle, subTitle, button)
-    const rightSide = document.createElement('div')
-    const image = document.createElement('img')
+    const image = createElement('img') as HTMLImageElement
+    const rightSide = custom('div', image)
     image.src = heroImage;
-    rightSide.append(image)
     opener.append(leftSide, rightSide)
-    shell.append(opener)
     return shell;
 }

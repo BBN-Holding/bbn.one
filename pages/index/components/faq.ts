@@ -1,9 +1,9 @@
-import { modernCard, WebGen } from "@lucsoft/webgen";
+import { createElement, modernCard, WebGen } from "@lucsoft/webgen";
 import '../../../assets/css/components/team.css';
 
 export function renderFAQ(web: WebGen)
 {
-    const data = document.createElement('article')
+    const data = createElement('article')
     data.id = "faq"
     web.elements.custom(data, { maxWidth: "50rem" })
         .title({

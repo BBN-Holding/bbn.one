@@ -1,34 +1,28 @@
 import bbnLogo from '../../../assets/img/bbn_logo.svg';
 import '../../../assets/css/components/nav.css';
+import { link } from "./common";
+import { createElement, custom } from "@lucsoft/webgen";
 
 export function renderNav()
 {
-    const nav = document.createElement('nav');
+    const nav = createElement('nav');
 
-    const logo = document.createElement('img');
+    const logo = createElement('img') as HTMLImageElement;
     logo.src = bbnLogo;
 
-    const link = (name: string, id: string) =>
-    {
-        const link = document.createElement('a');
-        link.innerText = name;
-        link.href = id;
-        return link;
-    }
     const list = [
-        link("Home", "#home"),
-        link("Services", "#services"),
-        link("Team", "#team"),
-        link("FAQ", "#faq"),
-        link("News", "https://blog.bbn.one"),
-        link("Contact", "mailto:support@bbn.one")
+        [ "Home", "#home" ],
+        [ "Services", "#services" ],
+        [ "Team", "#team" ],
+        [ "FAQ", "#faq" ],
+        [ "News", "https://blog.bbn.one" ],
+        [ "Contact", "mailto:support@bbn.one" ]
     ]
-    const learnMore = document.createElement('a');
-    learnMore.innerText = "Learn More";
-    learnMore.classList.add("button")
+
+    const learnMore = custom('a', "Learn More", "button") as HTMLAnchorElement;
     learnMore.href = "#services";
-    const shell = document.createElement('div')
-    shell.append(logo, ...list, learnMore)
+    const shell = createElement('div')
+    shell.append(logo, ...list.map((entry) => link(entry[ 0 ], entry[ 1 ])), learnMore)
     nav.append(shell)
     return nav;
 }
