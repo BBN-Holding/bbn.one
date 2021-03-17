@@ -4,6 +4,7 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require("terser-webpack-plugin");
 const path = require('path');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const CopyPlugin = require("copy-webpack-plugin");
 
 const createPage = (pagePath, chunks = [], template = "./pages/templates/index.html") =>
     new HtmlWebpackPlugin({
@@ -71,6 +72,9 @@ module.exports = (_, mode) =>
             new MiniCssExtractPlugin({
                 filename: '[name].css',
                 chunkFilename: '[id].css'
+            }),
+            new CopyPlugin({
+                patterns: [ 'static' ]
             }),
             createPage('index', [ 'index' ]),
             createPage('./p/terms', [ 'polyfill' ], "./pages/templates/terms.html"),
