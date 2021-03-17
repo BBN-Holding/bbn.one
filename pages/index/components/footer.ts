@@ -38,7 +38,7 @@ export function renderFooter()
         link("FAQ", "#faq"),
         link("News", "https://blog.bbn.one"),
         link("Contact", "#contact"),
-        link("Privacy policy", "/p/privacy.html"),
+        link("Privacy Policy", "/p/privacy.html"),
         link("Terms of Use", "/p/terms.html"),
         link("Imprint", "/p/imprint.html")
     ]
