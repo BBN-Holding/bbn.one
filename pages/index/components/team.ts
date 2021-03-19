@@ -64,6 +64,8 @@ export function renderTeam(web: WebGen)
                 [ email, 'mailto:jana.holter@bbn.one' ]
             ]),
             renderPerson(team6, "Josiah Jenkgins", "Head of Legal Department", [
+                [ linkedIn, 'https://linkedin.com/in/josiah-jenkgins-115790209/' ],
+                [ twitter, 'https://twitter.com/realJosiah3' ],
                 [ email, 'mailto:josiah.jenkgins@bbn.one' ]
             ])
         )
