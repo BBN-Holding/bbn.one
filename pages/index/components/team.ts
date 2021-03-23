@@ -1,4 +1,4 @@
-import { CardTypes, createElement, custom, HeadlessCard, span, WebGen } from "@lucsoft/webgen";
+import { CardTypes, createElement, custom, HeadlessCard, img, span, WebGen } from "@lucsoft/webgen";
 import '../../../assets/css/components/team.css';
 import team1 from '../../../assets/img/team/team-1.webp';
 import team2 from '../../../assets/img/team/team-2.webp';
@@ -8,20 +8,16 @@ import team5 from '../../../assets/img/team/team-5.webp';
 import team6 from '../../../assets/img/team/team-6.webp';
 
 import { email, github, instagram, link, linkedIn, renderAction, twitter } from "./actions";
-export function renderTeam(web: WebGen)
-{
+export function renderTeam(web: WebGen) {
     const data = createElement('article')
     data.id = "team";
-    const renderPerson = (profileImage: string, name: string, type: string, links: [ icon: string, url: string ][] = []): HeadlessCard =>
-    {
+    const renderPerson = (profileImage: string, name: string, type: string, links: [ icon: string, url: string ][] = []): HeadlessCard => {
         const shell = custom('div', undefined, 'team')
 
-        const image = createElement('img') as HTMLImageElement
-        image.src = profileImage;
         const rightSide = createElement('div')
         rightSide.append(span(name), span(type), ...renderAction(links))
 
-        shell.append(image, rightSide)
+        shell.append(img(profileImage), rightSide)
         return {
             type: CardTypes.Headless,
             html: shell

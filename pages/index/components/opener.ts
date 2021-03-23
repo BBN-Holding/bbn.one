@@ -1,9 +1,8 @@
-import { createElement, custom, span } from "@lucsoft/webgen";
+import { createElement, custom, img, span } from "@lucsoft/webgen";
 import '../../../assets/css/components/opener.css';
 import heroImage from '../../../assets/img/hero-img.png';
 
-export function renderOpener()
-{
+export function renderOpener() {
     const opener = custom("div", undefined, "opener")
     const shell = custom("div", opener, 'opener-background')
     shell.id = "home";
@@ -13,10 +12,9 @@ export function renderOpener()
     const button = custom('a', "Get started") as HTMLAnchorElement
     button.href = "#services"
     leftSide.append(mainTitle, subTitle, button)
-    const image = createElement('img') as HTMLImageElement
+    const image = img(heroImage)
     image.loading = "lazy"
     const rightSide = custom('div', image)
-    image.src = heroImage;
     opener.append(leftSide, rightSide)
     return shell;
 }
