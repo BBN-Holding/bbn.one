@@ -1,4 +1,5 @@
-import { CardTypes, createElement, custom, HeadlessCard, img, span, WebGen } from "@lucsoft/webgen";
+import { Card, CommonCard, createElement, custom, img, span, Title } from "@lucsoft/webgen";
+import { RenderingX } from "@lucsoft/webgen/bin/lib/RenderingX";
 import '../../../assets/css/components/team.css';
 import team1 from '../../../assets/img/team/team-1.webp';
 import team2 from '../../../assets/img/team/team-2.webp';
@@ -8,29 +9,30 @@ import team5 from '../../../assets/img/team/team-5.webp';
 import team6 from '../../../assets/img/team/team-6.webp';
 
 import { email, github, instagram, link, linkedIn, renderAction, twitter } from "./actions";
-export function renderTeam(web: WebGen) {
+export function renderTeam(rendering: RenderingX) {
     const data = createElement('article')
     data.id = "team";
-    const renderPerson = (profileImage: string, name: string, type: string, links: [ icon: string, url: string ][] = []): HeadlessCard => {
-        const shell = custom('div', undefined, 'team')
+    const renderPerson = (profileImage: string, name: string, type: string, links: [ icon: string, url: string ][] = []): CommonCard => ({
+        getSize: () => ({}),
+        draw: (card) => {
+            const shell = custom('div', undefined, 'team')
 
-        const rightSide = createElement('div')
-        rightSide.append(span(name), span(type), ...renderAction(links))
+            const rightSide = createElement('div')
+            rightSide.append(span(name), span(type), ...renderAction(links))
 
-        shell.append(img(profileImage), rightSide)
-        return {
-            type: CardTypes.Headless,
-            html: shell
-        };
-    }
+            shell.append(img(profileImage), rightSide)
+            card.append(shell)
+            return card;
+        }
+    })
 
-    web.elements.custom(data, { maxWidth: "69rem" })
-        .title({
+    rendering.toCustom({ maxWidth: "69rem", shell: data }, {}, () => [
+        Title({
             type: "small",
             title: "TEAM",
             subtitle: " "
-        })
-        .cards({ minColumnWidth: 23 },
+        }),
+        Card({ minColumnWidth: 23 },
             renderPerson(team1, "Gregor Bigalke", "Chief Executive Officer", [
                 [ linkedIn, 'https://www.linkedin.com/in/gregor-bigalke-54152b197' ],
                 [ twitter, 'https://twitter.com/gregtcltk' ],
@@ -65,5 +67,7 @@ export function renderTeam(web: WebGen) {
                 [ email, 'mailto:josiah.jenkgins@bbn.one' ]
             ])
         )
+    ])
+
     return data;
 }
