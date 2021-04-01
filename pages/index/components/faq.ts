@@ -14,7 +14,7 @@ export function renderFAQ(render: RenderingX) {
         Card({},
             modernCard({
                 title: "How much of the income goes to me?",
-                description: "You get 95% of the income from your products every month on the 21st. We keep the remaining 5% to compensate for operating costs etc."
+                description: "You get around 95% (its a non fixed cut, in some cases you can get up to 100%) of the income from your products every month on the 21st. We keep the remaining 5% to compensate for operating costs etc."
             })
         )
     ])

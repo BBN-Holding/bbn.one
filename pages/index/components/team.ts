@@ -46,7 +46,7 @@ export function renderTeam(rendering: RenderingX) {
                 [ instagram, 'https://www.instagram.com/lucsoft_/' ],
                 [ github, 'https://github.com/lucsoft' ],
                 [ link, 'https://lucsoft.de' ],
-                [ email, 'mailto:lucas.jrichardson@bbn.one' ]
+                [ email, 'mailto:lucas.jank@bbn.one' ]
             ]),
             renderPerson(team3, "Maximilian Arzberger", "Chief Operating Officer", [
                 [ linkedIn, 'https://linkedin.com/in/maximilian-arzberger-5877a51b9' ],

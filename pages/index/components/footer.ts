@@ -34,7 +34,7 @@ export function renderFooter() {
         span("Our Social Networks"),
         span("Stay connected!"),
         ...renderAction([
-            [ twitter, 'https://twitter.com/BigBotNetwork' ],
+            [ twitter, 'https://twitter.com/BBN_Holding' ],
             [ github, 'https://github.com/BigBotNetwork/' ],
             [ linkedIn, 'https://www.linkedin.com/company/bbn0/' ]
         ]))

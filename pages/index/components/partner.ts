@@ -6,7 +6,7 @@ import client5 from '../../../assets/img/clients/client-5.svg';
 import client6 from '../../../assets/img/clients/client-6.svg';
 
 import '../../../assets/css/components/partner.css';
-import { createElement, img, span } from "@lucsoft/webgen";
+import { img, span } from "@lucsoft/webgen";
 
 export function renderPartner() {
     const ul = span(undefined, 'partner-List');
