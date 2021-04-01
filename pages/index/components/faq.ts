@@ -9,7 +9,7 @@ export function renderFAQ(render: RenderingX) {
         Title({
             type: "small",
             title: "FREQUENTLY ASKED QUESTIONS",
-            subtitle: "Get advice and answers from the BBN crew"
+            subtitle: "Get advice and answers from BBN Holding"
         }),
         Card({},
             modernCard({
