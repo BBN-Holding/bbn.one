@@ -42,7 +42,7 @@ export function renderTeam(rendering: RenderingX) {
             ]),
             renderPerson(team5, "Lucas Jank", "Chief Design Officer", [
                 [ linkedIn, "https://www.linkedin.com/in/lucsoft/" ],
-                [ twitter, "https://twitter.com/lucsoft_" ],
+                [ twitter, "https://twitter.com/lucsoft" ],
                 [ instagram, 'https://www.instagram.com/lucsoft_/' ],
                 [ github, 'https://github.com/lucsoft' ],
                 [ link, 'https://lucsoft.de' ],
