@@ -58,7 +58,7 @@ export function renderTeam(rendering: RenderingX) {
             renderPerson(team2, "Sarah Jhonson", "Product Manager", [
                 [ email, 'mailto:sarah.jhonson@bbn.one' ]
             ]),
-            renderPerson(team4, "Jana Holter", "Accountant", [
+            renderPerson(team4, "Jana Holter", "Partner Manager", [
                 [ email, 'mailto:jana.holter@bbn.one' ]
             ]),
             renderPerson(team6, "Josiah Jenkgins", "Head of Legal Department", [
