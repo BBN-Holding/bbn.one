@@ -35,7 +35,7 @@ export function renderFooter() {
         span("Stay connected!"),
         ...renderAction([
             [ twitter, 'https://twitter.com/BBN_Holding' ],
-            [ github, 'https://github.com/BigBotNetwork/' ],
+            [ github, 'https://github.com/bbn-holding/' ],
             [ linkedIn, 'https://www.linkedin.com/company/bbn0/' ]
         ]))
     data.append(colOne, colTwo, colThree)
