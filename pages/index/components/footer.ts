@@ -1,6 +1,6 @@
 import { createElement, custom, img, span } from "@lucsoft/webgen";
 import '../../../assets/css/components/footer.css';
-import bbnLogo from '../../../assets/img/bbn_logo.svg';
+import bbnLogo from '../../../assets/img/bbnSmall.svg';
 import { github, linkedIn, renderAction, twitter } from "./actions";
 import { link } from "./common";
 

@@ -14,6 +14,7 @@
 .footer div:nth-child(1) img {
     display: block;
     margin-bottom: 2rem;
+    width: 8rem;
 }
 
 @media (prefers-color-scheme: light) {

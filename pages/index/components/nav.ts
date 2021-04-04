@@ -1,4 +1,4 @@
-import bbnLogo from '../../../assets/img/bbn_logo.svg';
+import bbnLogo from '../../../assets/img/bbnBig.svg';
 import '../../../assets/css/components/nav.css';
 import { link } from "./common";
 import { createElement, custom, img } from "@lucsoft/webgen";
