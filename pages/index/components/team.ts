@@ -1,5 +1,4 @@
-import { Card, CommonCard, createElement, custom, img, span, Title } from "@lucsoft/webgen";
-import { RenderingX } from "@lucsoft/webgen/bin/lib/RenderingX";
+import { Card, CommonCard, createElement, custom, img, span, Title, View } from "@lucsoft/webgen";
 import '../../../assets/css/components/team.css';
 import team1 from '../../../assets/img/team/team-1.webp';
 import team2 from '../../../assets/img/team/team-2.webp';
@@ -9,7 +8,7 @@ import team5 from '../../../assets/img/team/team-5.webp';
 import team6 from '../../../assets/img/team/team-6.webp';
 
 import { email, github, instagram, link, linkedIn, renderAction, twitter } from "./actions";
-export function renderTeam(rendering: RenderingX) {
+export function renderTeam() {
     const data = createElement('article')
     data.id = "team";
     const renderPerson = (profileImage: string, name: string, type: string, links: [ icon: string, url: string ][] = []): CommonCard => ({
@@ -25,14 +24,13 @@ export function renderTeam(rendering: RenderingX) {
             return card;
         }
     })
-
-    rendering.toCustom({ maxWidth: "69rem", shell: data }, {}, () => [
-        Title({
+    View(({ draw }) => {
+        draw(Title({
             type: "small",
             title: "TEAM",
             subtitle: " "
-        }),
-        Card({ minColumnWidth: 23 },
+        }))
+        draw(Card({ minColumnWidth: 23 },
             renderPerson(team1, "Gregor Bigalke", "Chief Executive Officer", [
                 [ linkedIn, 'https://www.linkedin.com/in/gregor-bigalke-54152b197' ],
                 [ twitter, 'https://twitter.com/gregtcltk' ],
@@ -66,8 +64,10 @@ export function renderTeam(rendering: RenderingX) {
                 [ twitter, 'https://twitter.com/realJosiah3' ],
                 [ email, 'mailto:josiah.jenkgins@bbn.one' ]
             ])
-        )
-    ])
+        ))
+    })
+        .setMaxWidth("69rem")
+        .appendOn(data)
 
     return data;
 }
