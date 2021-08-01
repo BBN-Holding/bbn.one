@@ -6,6 +6,8 @@ import team3 from '../../../assets/img/team/team-3.webp';
 import team4 from '../../../assets/img/team/team-4.webp';
 import team5 from '../../../assets/img/team/team-5.webp';
 import team6 from '../../../assets/img/team/team-6.webp';
+import team7 from '../../../assets/img/team/team-7.webp';
+import team8 from '../../../assets/img/team/team-8.webp';
 
 import { email, github, instagram, link, linkedIn, renderAction, twitter } from "./actions";
 export function renderTeam() {
@@ -33,8 +35,8 @@ export function renderTeam() {
         draw(Card({ minColumnWidth: 23 },
             renderPerson(team1, "Gregor Bigalke", "Chief Executive Officer", [
                 [ linkedIn, 'https://www.linkedin.com/in/gregor-bigalke-54152b197' ],
-                [ twitter, 'https://twitter.com/gregtcltk' ],
-                [ instagram, 'https://www.instagram.com/skidder6775/' ],
+                [ twitter, 'https://twitter.com/greg_bbn' ],
+                [ instagram, 'https://www.instagram.com/greg_bbn/' ],
                 [ github, 'https://github.com/gregtcltk' ],
                 [ email, 'mailto:gregor.bigalke@bbn.one' ]
             ]),
@@ -54,15 +56,22 @@ export function renderTeam() {
                 [ email, 'mailto:maximilian.arzberger@bbn.one' ]
             ]),
             renderPerson(team2, "Sarah Jhonson", "Product Manager", [
+                [ twitter, 'https://twitter.com/_sarah_jhonson' ],
                 [ email, 'mailto:sarah.jhonson@bbn.one' ]
             ]),
-            renderPerson(team4, "Jana Holter", "Partner Manager", [
+            renderPerson(team4, "Jana Holter", "Lead Artist Communication and Support", [
                 [ email, 'mailto:jana.holter@bbn.one' ]
             ]),
             renderPerson(team6, "Josiah Jenkgins", "Head of Legal Department", [
                 [ linkedIn, 'https://linkedin.com/in/josiah-jenkgins-115790209/' ],
                 [ twitter, 'https://twitter.com/realJosiah3' ],
                 [ email, 'mailto:josiah.jenkgins@bbn.one' ]
+            ]),
+            renderPerson(team7, "Norman Welsh", "Senior Legal Counsel", [
+                [ email, 'mailto:norman.welsh@bbn.one' ]
+            ]),
+            renderPerson(team8, "Dirk Dornte", "Artist Communication and Support", [
+                [ email, 'mailto:dirk.dornte@bbn.one' ]
             ])
         ))
     })
