@@ -63,7 +63,9 @@ module.exports = (_, mode) => {
             ]
         },
         devServer: {
-            contentBase: "./dist",
+            static: {
+                directory: "./dist"
+            },
             port: 90,
             host: '0.0.0.0'
         },
