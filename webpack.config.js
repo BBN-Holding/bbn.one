@@ -29,6 +29,7 @@ module.exports = (_, mode) => {
     return {
         entry: {
             index: "./pages/index/index.ts",
+            leadership: "./pages/leadership/index.ts",
             polyfill: "./pages/OldPagesPolyfill.ts"
         },
         mode: isProduction ? "production" : "development",
@@ -79,6 +80,7 @@ module.exports = (_, mode) => {
                 patterns: [ 'static' ]
             }),
             createPage('index', [ 'index' ]),
+            createPage('./p/leadership', [ 'leadership' ], "./pages/templates/leadership.html"),
             createPage('./p/terms', [ 'polyfill' ], "./pages/templates/terms.html"),
             createPage('./p/privacy', [ 'polyfill' ], "./pages/templates/privacy.html"),
             createPage('./p/imprint', [ 'polyfill' ], "./pages/templates/imprint.html"),

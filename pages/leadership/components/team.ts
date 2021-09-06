@@ -1,17 +1,25 @@
 import { Card, CommonCard, createElement, custom, img, span, Title, View, Button, Grid, Color, ButtonStyle, Horizontal } from "@lucsoft/webgen";
 import '../../../assets/css/components/team.css';
+import none from '../../../assets/img/team/none.webp'
 import team1 from '../../../assets/img/team/team-1.webp';
+import team2 from '../../../assets/img/team/team-2.webp';
 import team3 from '../../../assets/img/team/team-3.webp';
+import team4 from '../../../assets/img/team/team-4.webp';
 import team5 from '../../../assets/img/team/team-5.webp';
 import team6 from '../../../assets/img/team/team-6.webp';
 import team7 from '../../../assets/img/team/team-7.webp';
+import team8 from '../../../assets/img/team/team-8.webp';
+import team9 from '../../../assets/img/team/team-9.webp';
+import team10 from '../../../assets/img/team/team-10.webp';
 import team11 from '../../../assets/img/team/team-11.webp';
+import team12 from '../../../assets/img/team/team-12.webp';
+import team13 from '../../../assets/img/team/team-13.webp';
 
-import { email, github, instagram, link, linkedIn, renderAction, twitter } from "./actions";
+import { email, github, instagram, link, linkedIn, renderAction, twitter } from "../../index/components/actions";
 export function renderTeam() {
     const data = createElement('article')
     data.id = "team";
-    const renderPerson = (profileImage: string, name: string, type: string, links: [ icon: string, url: string ][] = []): CommonCard => ({
+    const renderPerson = (profileImage: string | undefined, name: string, type: string, links: [ icon: string, url: string ][] = []): CommonCard => ({
         getSize: () => ({}),
         draw: (card) => {
             const shell = custom('div', undefined, 'team')
@@ -19,7 +27,7 @@ export function renderTeam() {
             const rightSide = createElement('div')
             rightSide.append(span(name), span(type), ...renderAction(links))
 
-            shell.append(img(profileImage), rightSide)
+            shell.append(img(profileImage ?? none), rightSide)
             card.append(shell)
             return card;
         }
@@ -27,7 +35,7 @@ export function renderTeam() {
     View(({ use: draw }) => {
         draw(Title({
             type: "small",
-            title: "TEAM",
+            title: "Leadership",
             subtitle: " "
         }))
         draw(Grid({ minColumnWidth: 23 },
@@ -64,13 +72,30 @@ export function renderTeam() {
                 [ linkedIn, 'https://linkedin.com/in/josiah-jenkgins-115790209/' ],
                 [ twitter, 'https://twitter.com/realJosiah3' ],
                 [ email, 'mailto:josiah.jenkgins@bbn.one' ]
+            ]),
+            renderPerson(team4, "Jana Holter", "Senior Vice President\nCommunication & Support", [
+                [ email, 'mailto:jana.holter@bbn.one' ]
+            ]),
+            renderPerson(team2, "Sarah Jhonson", "Senior Vice President\nRetail", [
+                [ twitter, 'https://twitter.com/_sarah_jhonson' ],
+                [ email, 'mailto:sarah.jhonson@bbn.one' ]
+            ]),
+            renderPerson(team9, "Henry Whiye", "Senior Vice President\nBusiness & Legal Affairs", [
+                [ email, 'mailto:henry.whiye@bbn.one' ]
+            ]),
+            renderPerson(team8, "Dirk Dornte", "Head of Technology & Operations", [
+                [ email, 'mailto:dirk.dornte@bbn.one' ]
+            ]),
+            renderPerson(team10, "Tamara Coco", "Head of Sales and Marketing", [
+                [ email, 'mailto:tamara.coco@bbn.one' ]
+            ]),
+            renderPerson(team12, "Mathew Kroas", "General Counsel", [
+                [ email, 'mailto:mathew.kroas@bbn.one' ]
+            ]),
+            renderPerson(team13, "Terran Obar", "Head of Business Development", [
+                [ email, 'mailto:terran.obar@bbn.one' ]
             ])
         ))
-        draw(Horizontal({ align: "center", margin: "33px" }, Button({
-            color: Color.Colored,
-            text: "View More",
-            href: "/p/leadership.html"
-        })))
     })
         .setMaxWidth("69rem")
         .appendOn(data)

@@ -16,12 +16,9 @@ export function renderFooter() {
     const colTwo = createElement('div')
 
     const list = [
-        [ "Home", "#home" ],
-        [ "Services", "#services" ],
-        [ "Team", "#services" ],
-        [ "FAQ", "#faq" ],
+        [ "Home", "/" ],
         [ "News", "https://blog.bbn.one" ],
-        [ "Contact", "#contact" ],
+        [ "Contact", "mailto:support@bbn.one" ],
         [ "Privacy Policy", "/p/privacy.html" ],
         [ "Terms of Use", "/p/terms.html" ],
         [ "Imprint", "/p/imprint.html" ]

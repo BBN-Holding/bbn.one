@@ -1,16 +1,16 @@
 import bbnLogo from '../../../assets/img/bbnBig.svg';
 import '../../../assets/css/components/nav.css';
-import { link } from "./common";
+import { link } from "../../index/components/common";
 import { createElement, custom, img } from "@lucsoft/webgen";
 
 export function renderNav() {
     const nav = createElement('nav');
 
     const list = [
-        [ "Home", "#home" ],
-        [ "Services", "#services" ],
-        [ "Team", "#team" ],
-        [ "FAQ", "#faq" ],
+        [ "Home", "https://bbn.one/#home" ],
+        [ "Services", "https://bbn.one/#services" ],
+        [ "Team", "https://bbn.one/#team" ],
+        [ "FAQ", "https://bbn.one/#faq" ],
         [ "News", "https://blog.bbn.one" ]
     ]
 

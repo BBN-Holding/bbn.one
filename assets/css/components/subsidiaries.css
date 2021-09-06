@@ -1,4 +1,4 @@
-.partner-List {
+.subsidiary-List {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -8,18 +8,18 @@
     padding: 0 1rem;
     gap: 1rem;
 }
-.partner-List * {
+.subsidiary-List * {
     height: 64px;
 }
 
 @media (prefers-color-scheme: dark) {
-    .partner-List img:nth-child(2) {
+    .subsidiary-List img:nth-child(2) {
         filter: invert();
     }
 }
 
 @media(max-width:600px) {
-    .partner-List * {
+    .subsidiary-List * {
         height: 3rem;
     }
 }

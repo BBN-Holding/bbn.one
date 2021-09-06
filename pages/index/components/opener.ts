@@ -8,7 +8,7 @@ export function renderOpener() {
     shell.id = "home";
     const leftSide = createElement('div')
     const mainTitle = span("We represent your interests")
-    const subTitle = span("We support you in financing, distributing and marketing your music or video game all over the world.")
+    const subTitle = span("We offer a wide range of services. From issuing prepaid credit cards to distributing music all over the world.")
     const button = custom('a', "Get started") as HTMLAnchorElement
     button.href = "#services"
     leftSide.append(mainTitle, subTitle, button)

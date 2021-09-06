@@ -11,7 +11,7 @@
     "author": "lucsoft <mail@lucsoft.de>, BBN <support@bbn.one>",
     "license": "ISC",
     "dependencies": {
-        "@lucsoft/webgen": "1.18.6",
+        "@lucsoft/webgen": "^1.19.6",
         "@webpack-cli/serve": "^1.5.1",
         "css-loader": "^6.1.0",
         "css-minimizer-webpack-plugin": "^3.0.2",
