@@ -19,6 +19,7 @@ export function renderFooter() {
         [ "Home", "/" ],
         [ "News", "https://blog.bbn.one" ],
         [ "Contact", "mailto:support@bbn.one" ],
+        [ "Service Status", "https://status.bbn.one" ],
         [ "Privacy Policy", "/p/privacy.html" ],
         [ "Terms of Use", "/p/terms.html" ],
         [ "Imprint", "/p/imprint.html" ]
