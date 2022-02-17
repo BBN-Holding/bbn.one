@@ -1,4 +1,4 @@
-import { createElement, custom, img, span } from "@lucsoft/webgen";
+import { createElement, custom, img, PlainText } from "../../../deps.ts";
 import '../../../assets/css/components/opener.css';
 import heroImage from '../../../assets/img/hero-img.png';
 
@@ -7,8 +7,8 @@ export function renderOpener() {
     const shell = custom("div", opener, 'opener-background')
     shell.id = "home";
     const leftSide = createElement('div')
-    const mainTitle = span("We represent your interests")
-    const subTitle = span("We offer a wide range of services. From issuing prepaid credit cards to distributing music all over the world.")
+    const mainTitle = PlainText("We represent your interests").draw()
+    const subTitle = PlainText("We offer a wide range of services. From issuing prepaid credit cards to distributing music all over the world.").draw()
     const button = custom('a', "Get started") as HTMLAnchorElement
     button.href = "#services"
     leftSide.append(mainTitle, subTitle, button)

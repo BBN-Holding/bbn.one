@@ -1,16 +1,16 @@
-import bbnLogo from '../../../assets/img/bbnBig.svg';
-import '../../../assets/css/components/nav.css';
-import { link } from "./common";
-import { createElement, custom, img } from "@lucsoft/webgen";
+import bbnLogo from '../../assets/img/bbnBig.svg';
+import '../../assets/css/components/nav.css';
+import { link } from "../index/components/common.ts";
+import { createElement, Custom, custom, img } from "../../deps.ts";
 
 export function renderNav() {
     const nav = createElement('nav');
 
     const list = [
-        [ "Home", "#home" ],
-        [ "Services", "#services" ],
-        [ "Team", "#team" ],
-        [ "FAQ", "#faq" ],
+        [ "Home", "/" ],
+        [ "Services", "/#services" ],
+        [ "Team", "/#team" ],
+        [ "FAQ", "/#faq" ],
         [ "News", "https://blog.bbn.one" ]
     ]
 
@@ -19,5 +19,5 @@ export function renderNav() {
     const shell = createElement('div')
     shell.append(img(bbnLogo), ...list.map((entry) => link(entry[ 0 ], entry[ 1 ])), contactUs)
     nav.append(shell)
-    return nav;
+    return Custom(nav);
 }

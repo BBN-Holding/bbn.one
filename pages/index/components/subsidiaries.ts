@@ -5,10 +5,10 @@ import subsidiary4 from '../../../assets/img/subsidiaries/subsidiary-4.svg';
 import subsidiary5 from '../../../assets/img/subsidiaries/subsidiary-5.svg';
 
 import '../../../assets/css/components/subsidiaries.css';
-import { img, span } from "@lucsoft/webgen";
+import { img, PlainText } from "../../../deps.ts";
 
 export function renderSubsidiaries() {
-    const ul = span(undefined, 'subsidiary-List');
+    const ul = PlainText('').addClass('subsidiary-List').draw();
 
     ul.append(...[
         subsidiary1,

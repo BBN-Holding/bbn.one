@@ -1,6 +1,5 @@
-import { Card, CommonCard, createElement, custom, img, span, Title, View, Button, Grid, Color, ButtonStyle, Horizontal } from "@lucsoft/webgen";
+import { createElement, PlainText, View, Grid } from "../../../deps.ts";
 import '../../../assets/css/components/team.css';
-import none from '../../../assets/img/team/none.webp'
 import team1 from '../../../assets/img/team/team-1.webp';
 import team2 from '../../../assets/img/team/team-2.webp';
 import team3 from '../../../assets/img/team/team-3.webp';
@@ -15,30 +14,14 @@ import team11 from '../../../assets/img/team/team-11.webp';
 import team12 from '../../../assets/img/team/team-12.webp';
 import team13 from '../../../assets/img/team/team-13.webp';
 
-import { email, github, instagram, link, linkedIn, renderAction, twitter } from "../../index/components/actions";
+import { email, github, instagram, link, linkedIn, twitter } from "../../index/components/actions.ts";
+import { renderPerson } from "../../components/profileCard.ts";
 export function renderTeam() {
     const data = createElement('article')
     data.id = "team";
-    const renderPerson = (profileImage: string | undefined, name: string, type: string, links: [ icon: string, url: string ][] = []): CommonCard => ({
-        getSize: () => ({}),
-        draw: (card) => {
-            const shell = custom('div', undefined, 'team')
-
-            const rightSide = createElement('div')
-            rightSide.append(span(name), span(type), ...renderAction(links))
-
-            shell.append(img(profileImage ?? none), rightSide)
-            card.append(shell)
-            return card;
-        }
-    })
     View(({ use: draw }) => {
-        draw(Title({
-            type: "small",
-            title: "Leadership",
-            subtitle: " "
-        }))
-        draw(Grid({ minColumnWidth: 23 },
+        draw(PlainText("Leadership", "h2"))
+        draw(Grid(
             renderPerson(team7, "Norman Welsh", "Chief Executive Officer", [
                 [ email, 'mailto:norman.welsh@bbn.one' ]
             ]),
@@ -95,7 +78,7 @@ export function renderTeam() {
             renderPerson(team13, "Terran Obar", "Head of Business Development", [
                 [ email, 'mailto:terran.obar@bbn.one' ]
             ])
-        ))
+        ).setGap("var(--gap)"))
     })
         .setMaxWidth("69rem")
         .appendOn(data)

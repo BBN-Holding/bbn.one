@@ -1,4 +1,4 @@
-import { Card, CommonCard, createElement, custom, img, span, Title, View, Button, Grid, Color, ButtonStyle, Horizontal } from "@lucsoft/webgen";
+import { createElement, PlainText, View, Button, Grid, Color, Horizontal, Spacer } from "../../../deps.ts";
 import '../../../assets/css/components/team.css';
 import team1 from '../../../assets/img/team/team-1.webp';
 import team3 from '../../../assets/img/team/team-3.webp';
@@ -6,31 +6,15 @@ import team5 from '../../../assets/img/team/team-5.webp';
 import team6 from '../../../assets/img/team/team-6.webp';
 import team7 from '../../../assets/img/team/team-7.webp';
 import team11 from '../../../assets/img/team/team-11.webp';
+import { email, github, instagram, link, linkedIn, twitter } from "./actions.ts";
+import { renderPerson } from "../../components/profileCard.ts";
 
-import { email, github, instagram, link, linkedIn, renderAction, twitter } from "./actions";
 export function renderTeam() {
     const data = createElement('article')
     data.id = "team";
-    const renderPerson = (profileImage: string, name: string, type: string, links: [ icon: string, url: string ][] = []): CommonCard => ({
-        getSize: () => ({}),
-        draw: (card) => {
-            const shell = custom('div', undefined, 'team')
-
-            const rightSide = createElement('div')
-            rightSide.append(span(name), span(type), ...renderAction(links))
-
-            shell.append(img(profileImage), rightSide)
-            card.append(shell)
-            return card;
-        }
-    })
     View(({ use: draw }) => {
-        draw(Title({
-            type: "small",
-            title: "TEAM",
-            subtitle: " "
-        }))
-        draw(Grid({ minColumnWidth: 23 },
+        draw(PlainText("TEAM", "h2"))
+        draw(Grid(
             renderPerson(team7, "Norman Welsh", "Chief Executive Officer", [
                 [ email, 'mailto:norman.welsh@bbn.one' ]
             ]),
@@ -66,11 +50,13 @@ export function renderTeam() {
                 [ email, 'mailto:josiah.jenkgins@bbn.one' ]
             ])
         ))
-        draw(Horizontal({ align: "center", margin: "33px" }, Button({
-            color: Color.Colored,
-            text: "View More",
-            href: "/p/leadership.html"
-        })))
+        draw(Horizontal(
+            Spacer(),
+            Button("View More")
+                .setColor(Color.Colored)
+                .asLinkButton("/p/leadership.html"),
+            Spacer()
+        ).setMargin("33px"))
     })
         .setMaxWidth("69rem")
         .appendOn(data)
