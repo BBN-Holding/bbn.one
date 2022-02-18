@@ -1,6 +1,5 @@
-import { Custom, Horizontal, img, Spacer, Vertical, View, WebGen } from "../../deps.ts";
+import { Card, Custom, Grid, Horizontal, img, modernCard, PlainText, Spacer, Vertical, View, WebGen } from "../../deps.ts";
 import { renderOpener } from "./components/opener.ts";
-import { renderServices } from "./components/services.ts";
 import { renderTeam } from "../../components/team.ts";
 import { renderFAQ } from "./components/faq.ts";
 WebGen({ autoLoadFonts: false });
@@ -9,6 +8,7 @@ import { renderNav } from "../../components/nav.ts";
 import { renderFooter } from "../../components/footer.ts";
 import { asset } from "../../assets/img/subsidiaries/index.ts";
 import '../../assets/css/components/subsidiaries.css';
+import services from "../../data/services.json" assert { type: "json" };
 
 View(() => Vertical(
     renderNav(),
@@ -24,7 +24,19 @@ View(() => Vertical(
         Spacer(),
         Custom(img(asset.bbnCard))
     ).addClass('subsidiary-list'),
-    Custom(renderServices()),
+    PlainText("SERVICES", "h2"),
+    PlainText("We offer our partners and customers a wide range of services.", "h4"),
+    Grid(...services.map(x => Card(modernCard({
+        icon: {
+            svg: x.svgIcon
+        },
+        title: x.title,
+        align: x.align as "down" | "right" | "left",
+        description: PlainText(x.description)
+    }))))
+        .addClass("services")
+        .setEvenColumns(1, "repeat(auto-fit,minmax(6rem,1fr))")
+        .setGap("var(--gap)"),
     renderTeam(5),
     Custom(renderFAQ()),
     renderFooter()
