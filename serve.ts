@@ -33,7 +33,7 @@ export const config: BuildOptions = {
     bundle: true,
     entryPoints: {
         "index": "./pages/index/index.ts",
-        "p/leadership": "./pages/leadership/index.ts",
+        "p/leadership": "./pages/leadership.ts",
         "polyfill": "./pages/OldPagesPolyfill.ts",
     },
     outdir: "dist/",
