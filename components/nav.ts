@@ -1,7 +1,7 @@
-import bbnLogo from '../../assets/img/bbnBig.svg';
-import '../../assets/css/components/nav.css';
-import { link } from "../index/components/common.ts";
-import { createElement, Custom, custom, img } from "../../deps.ts";
+import bbnLogo from '../assets/img/bbnBig.svg';
+import '../assets/css/components/nav.css';
+import { link } from "./actions.ts";
+import { createElement, Custom, custom, img } from "../deps.ts";
 
 export function renderNav() {
     const nav = createElement('nav');

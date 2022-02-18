@@ -1,0 +1,123 @@
+[
+    {
+        "iconId": "team7",
+        "name": "Norman Welsh",
+        "title": "Chief Executive Officer",
+        "links": {
+            "email": "mailto:norman.welsh@bbn.one"
+        }
+    },
+    {
+        "iconId": "team11",
+        "name": "Derek Blumes",
+        "title": "President",
+        "links": {
+            "email": "mailto:derek.blumes@bbn.one"
+        }
+    },
+    {
+        "iconId": "team3",
+        "name": "Maximilian Arzberger",
+        "title": "Chief Operating Officer\nand Vice Chairman",
+        "links": {
+            "linkedIn": "https://linkedin.com/in/maximilian-arzberger-5877a51b9",
+            "twitter": "https://twitter.com/Hax6775",
+            "instagram": "https://www.instagram.com/hax6775/",
+            "github": "https://github.com/Schlauer-Hax",
+            "link": "https://haxis.me",
+            "email": "mailto:maximilian.arzberger@bbn.one"
+        }
+    },
+    {
+        "iconId": "team1",
+        "name": "Gregor Bigalke",
+        "title": "Chairman of the Board",
+        "links": {
+            "linkedIn": "https://www.linkedin.com/in/gregor-bigalke-54152b197",
+            "twitter": "https://twitter.com/greg_bbn",
+            "instagram": "https://www.instagram.com/greg_bbn/",
+            "github": "https://github.com/gregtcltk",
+            "email": "mailto:gregor.bigalke@bbn.one"
+        }
+    },
+    {
+        "iconId": "team5",
+        "name": "Lucas Jank",
+        "title": "Chief Design Officer",
+        "links": {
+            "linkedIn": "https://www.linkedin.com/in/lucsoft/",
+            "twitter": "https://twitter.com/lucsoft",
+            "instagram": "https://www.instagram.com/lucsoft_/",
+            "github": "https://github.com/lucsoft",
+            "link": "https://lucsoft.de",
+            "email": "mailto:lucas.jank@bbn.one"
+        }
+    },
+    {
+        "iconId": "team6",
+        "name": "Josiah Jenkgins",
+        "title": "Chief Financial Officer",
+        "links": {
+            "linkedIn": "https://linkedin.com/in/josiah-jenkgins-115790209/",
+            "twitter": "https://twitter.com/realJosiah3",
+            "email": "mailto:josiah.jenkgins@bbn.one"
+        }
+    },
+    {
+        "iconId": "team4",
+        "name": "Jana Holter",
+        "title": "Senior Vice President\nCommunication & Support",
+        "links": {
+            "email": "mailto:jana.holter@bbn.one"
+        }
+    },
+    {
+        "iconId": "team2",
+        "name": "Sarah Jhonson",
+        "title": "Senior Vice President\nRetail",
+        "links": {
+            "twitter": "https://twitter.com/_sarah_jhonson",
+            "email": "mailto:sarah.jhonson@bbn.one"
+        }
+    },
+    {
+        "iconId": "team9",
+        "name": "Henry Whiye",
+        "title": "Senior Vice President\nBusiness & Legal Affairs",
+        "links": {
+            "email": "mailto:henry.whiye@bbn.one"
+        }
+    },
+    {
+        "iconId": "team8",
+        "name": "Dirk Dornte",
+        "title": "Head of Technology & Operations",
+        "links": {
+            "email": "mailto:dirk.dornte@bbn.one"
+        }
+    },
+    {
+        "iconId": "team10",
+        "name": "Tamara Coco",
+        "title": "Head of Sales and Marketing",
+        "links": {
+            "email": "mailto:tamara.coco@bbn.one"
+        }
+    },
+    {
+        "iconId": "team12",
+        "name": "Mathew Kroas",
+        "title": "General Counsel",
+        "links": {
+            "email": "mailto:mathew.kroas@bbn.one"
+        }
+    },
+    {
+        "iconId": "team13",
+        "name": "Terran Obar",
+        "title": "Head of Business Development",
+        "links": {
+            "email": "mailto:terran.obar@bbn.one"
+        }
+    }
+]

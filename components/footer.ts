@@ -1,8 +1,8 @@
-import { createElement, Custom, custom, img, PlainText } from "../../deps.ts";
-import '../../assets/css/components/footer.css';
-import bbnLogo from '../../assets/img/bbnSmall.svg';
-import { github, linkedIn, renderAction, twitter } from "../index/components/actions.ts";
-import { link } from "../index/components/common.ts";
+import { createElement, Custom, custom, img, PlainText } from "../deps.ts";
+import '../assets/css/components/footer.css';
+import bbnLogo from '../assets/img/bbnSmall.svg';
+import { renderAction, actions } from "./actions.ts";
+import { link } from "./actions.ts";
 
 export function renderFooter() {
     const data = custom('article', undefined, "footer")
@@ -32,9 +32,9 @@ export function renderFooter() {
         PlainText("Our Social Networks").draw(),
         PlainText("Stay connected!").draw(),
         ...renderAction([
-            [ twitter, 'https://twitter.com/BBN_Holding' ],
-            [ github, 'https://github.com/bbn-holding/' ],
-            [ linkedIn, 'https://www.linkedin.com/company/bbn0/' ]
+            [ actions.twitter, 'https://twitter.com/BBN_Holding' ],
+            [ actions.github, 'https://github.com/bbn-holding/' ],
+            [ actions.linkedIn, 'https://www.linkedin.com/company/bbn0/' ]
         ]))
     data.append(colOne, colTwo, colThree)
     shell.append(data)
