@@ -1,19 +1,14 @@
-.subsidiary-List {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
+.subsidiary-list {
     max-width: 69rem;
     margin: 2.3rem auto 0;
-    padding: 0 1rem;
-    gap: 1rem;
 }
-.subsidiary-List * {
+
+.subsidiary-list * {
     height: 64px;
 }
 
 @media(max-width:600px) {
-    .subsidiary-List * {
+    .subsidiary-list * {
         height: 3rem;
     }
 }
