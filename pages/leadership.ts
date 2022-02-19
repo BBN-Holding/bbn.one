@@ -7,7 +7,7 @@ import '../assets/css/main.css';
 
 View(() => Vertical(
     renderNav(),
-    renderTeam(100),
+    renderTeam(),
     renderFooter()
 ))
     .appendOn(document.body)

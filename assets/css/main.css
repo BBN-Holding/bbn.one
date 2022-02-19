@@ -109,7 +109,7 @@ cardlist {
     padding: 0 1rem;
 }
 
-.services {
+.services, .scoped-size {
     margin: 0 auto;
-    max-width: 68rem;
+    max-width: 69rem;
 }

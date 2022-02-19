@@ -1,14 +1,14 @@
 import { Card, Custom, Grid, Horizontal, img, modernCard, PlainText, Spacer, Vertical, View, WebGen } from "../../deps.ts";
 import { renderOpener } from "./components/opener.ts";
 import { renderTeam } from "../../components/team.ts";
-import { renderFAQ } from "./components/faq.ts";
-WebGen({ autoLoadFonts: false });
 import '../../assets/css/main.css';
 import { renderNav } from "../../components/nav.ts";
 import { renderFooter } from "../../components/footer.ts";
 import { asset } from "../../assets/img/subsidiaries/index.ts";
 import '../../assets/css/components/subsidiaries.css';
 import services from "../../data/services.json" assert { type: "json" };
+
+WebGen({ autoLoadFonts: false });
 
 View(() => Vertical(
     renderNav(),
@@ -37,8 +37,22 @@ View(() => Vertical(
         .addClass("services")
         .setEvenColumns(1, "repeat(auto-fit,minmax(6rem,1fr))")
         .setGap("var(--gap)"),
-    renderTeam(5),
-    Custom(renderFAQ()),
+    renderTeam(6),
+    PlainText("FREQUENTLY ASKED QUESTIONS", "h2"),
+    PlainText("Get advice and answers from BBN Holding", "h4"),
+    Grid(
+        Spacer(),
+        [
+            { width: 5 },
+            Card(modernCard({
+                title: "How much of the income goes to me?",
+                description: PlainText("BBN Music gives you 100% of the income from your products every month on the 21st. BBN Music is the only company in the whole industry that does not take a revenue cut.")
+            })),
+        ],
+        Spacer()
+    )
+        .setEvenColumns(7)
+        .addClass("scoped-size"),
     renderFooter()
 ))
     .appendOn(document.body)
