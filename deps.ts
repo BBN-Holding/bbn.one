@@ -1,1 +1,1 @@
-export * from "https://deno.land/x/webgen@v2.0.0-beta.2/mod.ts";
+export * from "https://deno.land/x/webgen@2.0.0-beta.6/mod.ts";

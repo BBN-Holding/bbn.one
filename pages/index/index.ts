@@ -25,7 +25,8 @@ View(() => Vertical(
         Custom(img(asset.bbnCard))
     ).addClass('subsidiary-list'),
     PlainText("SERVICES", "h2"),
-    PlainText("We offer our partners and customers a wide range of services.", "h4"),
+    PlainText("We offer our partners and customers a wide range of services.", "h4")
+        .setPadding("0 0 2.7rem"),
     Grid(...services.map(x => Card(modernCard({
         icon: {
             svg: x.svgIcon
@@ -39,7 +40,8 @@ View(() => Vertical(
         .setGap("var(--gap)"),
     renderTeam(6),
     PlainText("FREQUENTLY ASKED QUESTIONS", "h2"),
-    PlainText("Get advice and answers from BBN Holding", "h4"),
+    PlainText("Get advice and answers from BBN Holding", "h4")
+        .setPadding("0 0 2.7rem"),
     Grid(
         Spacer(),
         [
@@ -51,6 +53,7 @@ View(() => Vertical(
         ],
         Spacer()
     )
+        .setPadding("0 0 5rem")
         .setEvenColumns(7)
         .addClass("scoped-size"),
     renderFooter()
