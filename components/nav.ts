@@ -8,7 +8,7 @@ export function renderNav() {
     const nav = createElement('nav');
 
     const list = [
-        [ "Home", "/" ],
+        [ "Home", "/#" ],
         [ "Services", "/#services" ],
         [ "Team", "/#team" ],
         [ "FAQ", "/#faq" ],

@@ -24,7 +24,8 @@ View(() => Vertical(
         Spacer(),
         Custom(img(asset.bbnCard))
     ).addClass('subsidiary-list'),
-    PlainText("SERVICES", "h2"),
+    PlainText("SERVICES", "h2")
+        .setId("services"),
     PlainText("We offer our partners and customers a wide range of services.", "h4")
         .setPadding("0 0 2.7rem"),
     Grid(...services.map(x => Card(modernCard({
@@ -38,8 +39,10 @@ View(() => Vertical(
         .addClass("services")
         .setEvenColumns(1, "repeat(auto-fit,minmax(6rem,1fr))")
         .setGap("var(--gap)"),
-    renderTeam(6),
-    PlainText("FREQUENTLY ASKED QUESTIONS", "h2"),
+    renderTeam(6)
+        .setId("team"),
+    PlainText("FREQUENTLY ASKED QUESTIONS", "h2")
+        .setId("faq"),
     PlainText("Get advice and answers from BBN Holding", "h4")
         .setPadding("0 0 2.7rem"),
     Grid(
