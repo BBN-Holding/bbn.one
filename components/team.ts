@@ -21,4 +21,4 @@ export const renderTeam = (sizelimt?: number) =>
             : null
     ))
         .setMaxWidth("69rem")
-        .asCommponent()
+        .asComponent()
