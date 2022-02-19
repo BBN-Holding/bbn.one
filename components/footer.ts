@@ -4,6 +4,7 @@ import bbnLogo from '../assets/img/bbnSmall.svg';
 import { renderAction, actions } from "./actions.ts";
 import { link } from "./actions.ts";
 
+// TODO: Refactor this to stack based layout
 export function renderFooter() {
     const data = custom('article', undefined, "footer")
     const shell = custom("div", data, "footer-background")

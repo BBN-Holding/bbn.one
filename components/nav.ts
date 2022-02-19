@@ -3,6 +3,7 @@ import '../assets/css/components/nav.css';
 import { link } from "./actions.ts";
 import { createElement, Custom, custom, img } from "../deps.ts";
 
+// TODO: Refactor this to stack based layout
 export function renderNav() {
     const nav = createElement('nav');
 

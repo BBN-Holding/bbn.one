@@ -2,6 +2,7 @@ import { createElement, custom, img, PlainText } from "../../../deps.ts";
 import '../../../assets/css/components/opener.css';
 import heroImage from '../../../assets/img/hero-img.png';
 
+// TODO: refactor this to Stack based layout
 export function renderOpener() {
     const opener = custom("div", undefined, "opener")
     const shell = custom("div", opener, 'opener-background')

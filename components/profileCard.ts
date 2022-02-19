@@ -2,6 +2,7 @@ import { Card, createElement, custom, img, headless, Custom, PlainText } from ".
 import none from '../assets/img/team/none.webp';
 import { renderAction } from "./actions.ts";
 
+// TODO: Refactor this to stack based layout
 export function renderPerson(profileImage: string | undefined, name: string, type: string, links: [ icon: string, url: string ][] = []) {
     const shell = custom('div', undefined, 'team');
 
