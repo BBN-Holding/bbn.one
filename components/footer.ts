@@ -39,5 +39,5 @@ export function renderFooter() {
         ]))
     data.append(colOne, colTwo, colThree)
     shell.append(data)
-    return Custom(shell);
+    return Custom(shell).setMargin("5rem 0 0");
 }

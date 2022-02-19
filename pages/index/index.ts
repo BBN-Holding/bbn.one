@@ -53,7 +53,6 @@ View(() => Vertical(
         ],
         Spacer()
     )
-        .setPadding("0 0 5rem")
         .setEvenColumns(7)
         .addClass("scoped-size"),
     renderFooter()
