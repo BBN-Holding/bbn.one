@@ -71,8 +71,8 @@ h4 {
 
 a.action {
     color: var(--main-color);
-    padding: .5rem;
-    line-height: 0;
+    padding: .5rem 0.65rem;
+    line-height: 1;
     margin-right: 0.3rem;
     border-radius: 100rem;
     display: inline-block;
