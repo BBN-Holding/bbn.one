@@ -1,32 +1,20 @@
-name: Node.js CI
+name: Deplox to Prod
 
 on:
   push:
-    branches: [ new-website ]
+    branches: [ main ]
 
 jobs:
   build:
     name: Update bbn.one
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [15.x]
-
     steps:
       - name: Pull Project
         uses: actions/checkout@v2
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Preparing Project
-        run: npm i
-
       - name: Building bbn.one
-        run: npm run build
+        run: deno run --no-check -A serve.ts production
 
       - name: Publish to bbn.one
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
