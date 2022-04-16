@@ -22,10 +22,11 @@ jobs:
         run: deno run --no-check -A serve.ts production
 
       - name: Publish to bbn.one
-        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        uses: garygrossgarten/github-action-scp@v0.7.3
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: ./httpdocs/
+          local: ./dist
+          remote: /root/bbn.one
+          host: ${{ secrets.WEB_HOST }}
+          port: ${{ secrets.WEB_PORT }}
+          username: ${{ secrets.WEB_USERNAME }}
+          password: ${{ secrets.WEB_PASSWORD }}
