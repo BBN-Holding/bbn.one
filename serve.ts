@@ -1,6 +1,7 @@
-import { serve } from "https://deno.land/x/esbuild_serve@0.0.5/mod.ts";
+import { serve } from "https://deno.land/x/esbuild_serve@0.0.6/mod.ts";
 
 serve({
+    port: 6969,
     extraLoaders: {
         ".webp": "file"
     },
