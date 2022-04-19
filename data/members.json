@@ -1,24 +1,8 @@
 [
     {
-        "iconId": "team7",
-        "name": "Norman Welsh",
-        "title": "Chief Executive Officer",
-        "links": {
-            "email": "mailto:norman.welsh@bbn.one"
-        }
-    },
-    {
-        "iconId": "team11",
-        "name": "Derek Blumes",
-        "title": "President",
-        "links": {
-            "email": "mailto:derek.blumes@bbn.one"
-        }
-    },
-    {
         "iconId": "team3",
         "name": "Maximilian Arzberger",
-        "title": "Chief Operating Officer\nand Vice Chairman",
+        "title": "Chief Executive Officer",
         "links": {
             "linkedIn": "https://linkedin.com/in/maximilian-arzberger-5877a51b9",
             "twitter": "https://twitter.com/Hax6775",
@@ -38,6 +22,22 @@
             "instagram": "https://www.instagram.com/greg_bbn/",
             "github": "https://github.com/gregtcltk",
             "email": "mailto:gregor.bigalke@bbn.one"
+        }
+    },
+    {
+        "iconId": "team7",
+        "name": "Norman Welsh",
+        "title": "Chief Operating Officer",
+        "links": {
+            "email": "mailto:norman.welsh@bbn.one"
+        }
+    },
+    {
+        "iconId": "team11",
+        "name": "Derek Blumes",
+        "title": "President",
+        "links": {
+            "email": "mailto:derek.blumes@bbn.one"
         }
     },
     {
