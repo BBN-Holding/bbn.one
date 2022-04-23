@@ -10,6 +10,8 @@ serve({
         "p/privacy": "./pages/OldPagesPolyfill.ts",
         "p/terms": "./pages/OldPagesPolyfill.ts",
         "p/imprint": "./pages/OldPagesPolyfill.ts",
-        "p/leadership": "./pages/leadership.ts"
+        "p/leadership": "./pages/leadership.ts",
+        "sitemap": "./pages/static/sitemap.xml",
+        "robots": "./pages/static/robots.txt",
     }
 })
