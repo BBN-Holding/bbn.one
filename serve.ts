@@ -11,7 +11,7 @@ serve({
         "p/terms": "./pages/OldPagesPolyfill.ts",
         "p/imprint": "./pages/OldPagesPolyfill.ts",
         "p/leadership": "./pages/leadership.ts",
-        "sitemap": "./pages/static/sitemap.xml",
-        "robots": "./pages/static/robots.txt",
+        "sitemap": "./static/sitemap.xml",
+        "robots": "./static/robots.txt",
     }
 })
