@@ -5,13 +5,15 @@ serve({
     extraLoaders: {
         ".webp": "file"
     },
+    assets: {
+        "sitemap.xml": "./static/sitemap.xml",
+        "robots.txt": "./static/robots.txt",
+    },
     pages: {
         "index": "./pages/index/index.ts",
         "p/privacy": "./pages/OldPagesPolyfill.ts",
         "p/terms": "./pages/OldPagesPolyfill.ts",
         "p/imprint": "./pages/OldPagesPolyfill.ts",
         "p/leadership": "./pages/leadership.ts",
-        "sitemap": "./static/sitemap.xml",
-        "robots": "./static/robots.txt",
     }
 })
