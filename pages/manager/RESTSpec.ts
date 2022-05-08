@@ -4,7 +4,7 @@ type ArtistType = "PRIMARY";
 
 type Release = {
     id: string,
-    type: "PUBLISHED" | "UNPUBLISHED" | "UNSUBMITTED",
+    type: "PUBLISHED" | "PRIVATE" | "UNDER_REVIEW" | "UNSUBMITTED",
     title?: string,
     upc?: string,
     release?: string,
@@ -23,13 +23,13 @@ export const API = {
         google: {
             post: async ({ email, password }: { email: string, password: string }) => {
                 await delay(1000);
-                return { refreshToken: "refresh" };
+                return { refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlciI6MTAsIm5hbWUiOiJsdWNzb2Z0IiwibWFpbCI6Im1haWxAbHVjc29mdC5kZSIsInBpY3R1cmUiOiJodHRwczovL2x1Y3NvZnQuZGUvaW1nLzNEX2RhcmtfbHVjc29mdC5wbmciLCJpYXQiOjE1MTYyMzkwMjJ9.blMgwFi72mQZ4lxEAXeVfpK_pK6yJyZFyfAtn58xB-4" };
             }
         },
         email: {
             post: async ({ email, password }: { email: string, password: string }) => {
                 await delay(1000);
-                return { refreshToken: "refresh" };
+                return { refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlciI6MTAsIm5hbWUiOiJsdWNzb2Z0IiwibWFpbCI6Im1haWxAbHVjc29mdC5kZSIsInBpY3R1cmUiOiJodHRwczovL2x1Y3NvZnQuZGUvaW1nLzNEX2RhcmtfbHVjc29mdC5wbmciLCJpYXQiOjE1MTYyMzkwMjJ9.blMgwFi72mQZ4lxEAXeVfpK_pK6yJyZFyfAtn58xB-4" };
             }
         }
     },
