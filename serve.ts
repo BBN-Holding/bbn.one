@@ -15,5 +15,6 @@ serve({
         "p/terms": "./pages/OldPagesPolyfill.ts",
         "p/imprint": "./pages/OldPagesPolyfill.ts",
         "p/leadership": "./pages/leadership.ts",
+        "signin": "./pages/manager/signin.ts"
     }
 })

@@ -1,6 +1,8 @@
 :root {
     --font: 'open sans';
     --main-color: #37517e;
+    --bbn-primary: #37517e;
+    --bbn-secondary: hsla(31, 100%, 66%, 1);
 }
 
 body {
@@ -112,4 +114,11 @@ cardlist {
 .services, .scoped-size {
     margin: 0 auto;
     max-width: 69rem;
+}
+
+.link {
+    cursor: pointer;
+    margin: 0.1rem 0 0 0.2rem;
+    padding: 0 .2rem;
+    height: 20px;
 }
