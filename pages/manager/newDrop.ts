@@ -74,6 +74,15 @@ View<{ wizardPageId: number, wizardData: Record<string, FormData> }>(({ state, u
                     Button("I don't have one")
                         .setJustify("center")
                         .setStyle(ButtonStyle.Secondary)
+                        .onClick(() => {
+                            update({
+                                wizardPageId: (state.wizardPageId ?? 0) + 1,
+                                wizardData: {
+                                    ...state.wizardData,
+                                    [ state.wizardPageId ?? 0 ]: formData
+                                }
+                            })
+                        })
                 ).setGap(gapSize),
                 Spacer()
             ),
