@@ -238,7 +238,7 @@ View<{ wizardPageId: number, wizardData: Record<string, FormData> }>(({ state, u
 
 function WizardButtonSpaceBetween(update: (data: Partial<{ wizardPageId: number; wizardData: Record<string, FormData>; }>) => void, state: Partial<{ wizardPageId: number; wizardData: Record<string, FormData>; }>, formData: FormData): Component {
     return Horizontal(
-        (state.wizardPageId ?? null) == 0
+        (state.wizardPageId ?? 0) == 0
             ? Button("Cancel")
                 .setWidth(buttonSize)
                 .setJustify("center")
