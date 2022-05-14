@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/x/esbuild_serve@0.0.6/mod.ts";
+import { serve } from "../esbuild_serve/mod.ts";
 
 serve({
     port: 6969,
@@ -15,6 +15,8 @@ serve({
         "p/terms": "./pages/OldPagesPolyfill.ts",
         "p/imprint": "./pages/OldPagesPolyfill.ts",
         "p/leadership": "./pages/leadership.ts",
-        "signin": "./pages/manager/signin.ts"
+        "signin": "./pages/manager/signin.ts",
+        "music": "./pages/manager/music.ts",
+        "music/new-drop": "./pages/manager/newDrop.ts"
     }
 })
