@@ -5,7 +5,7 @@ import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 
-import { Checkbox, View, WebGen, Horizontal, PlainText, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, Component, DropDownInput } from "../../deps.ts";
+import { Checkbox, View, WebGen, Horizontal, PlainText, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, Component, DropDownInput, Wizard, Page, Box } from "../../deps.ts";
 import { ColumEntry, TableData } from "./types.ts";
 import { Center, CenterAndRight, DropAreaInput, getYearList, Table, UploadTable } from "./helper.ts";
 
@@ -16,51 +16,55 @@ WebGen({
 
 const gapSize = "15px";
 const inputWidth = "436px";
-const buttonSize = "10rem";
 function linkFormData(formData: FormData, key: string) {
     return {
         liveOn: (value: string) => formData.set(key, value),
         value: formData.get(key)?.toString(),
     }
 }
+
+const TableDef = (formData: FormData) => <ColumEntry<TableData>[]>[
+    [ "Name", "auto", ({ Name }) => PlainText(Name).setFont(1, 500) ],
+    [ "Artists", "max-content", () => Spacer() ],
+    [ "Year", "max-content", ({ Id }) =>
+        DropDownInput("Year", getYearList())
+            .syncFormData(formData, `song-${Id}-year`)
+            .setStyle(ButtonStyle.Inline)
+    ],
+    [ "Country", "max-content", ({ Id }) =>
+        DropDownInput("Country", language)
+            .syncFormData(formData, `song-${Id}-country`)
+            .setStyle(ButtonStyle.Inline)
+    ],
+    [ "Primary Genre", "max-content", ({ Id }) =>
+        DropDownInput("Primary Genre", primary)
+            .syncFormData(formData, `song-${Id}-primaryGenre`)
+            .setStyle(ButtonStyle.Inline)
+    ],
+    [ "Secondary Genre", "max-content", () =>
+        DropDownInput("Secondary Genre", primary)
+            .setStyle(ButtonStyle.Inline)
+            .setColor(Color.Disabled)
+    ],
+    [ "Explicit", "max-content", ({ Explicit }) =>
+        Checkbox(Explicit)
+    ],
+];
+
 // TODO: Live-Sync
-// TODO: Wizard auslagern
 // TODO: "Upload" zu FormDaten Supporten
 // TODO: Input zu neuen FormComponents umlagern
-View<{ wizardPageId: number, wizardData: Record<string, FormData> }>(({ state, update }) => {
-    const formData: FormData = state.wizardData?.[ state.wizardPageId ?? 0 ] ?? new FormData();
-    const TableDef = <ColumEntry<TableData>[]>[
-        [ "Name", "auto", ({ Name }) => PlainText(Name).setFont(1, 500) ],
-        [ "Artists", "max-content", () => Spacer() ],
-        [ "Year", "max-content", ({ Id }) =>
-            DropDownInput("Year", getYearList())
-                .syncFormData(formData, `song-${Id}-year`)
-                .setStyle(ButtonStyle.Inline)
-        ],
-        [ "Country", "max-content", ({ Id }) =>
-            DropDownInput("Country", language)
-                .syncFormData(formData, `song-${Id}-country`)
-                .setStyle(ButtonStyle.Inline)
-        ],
-        [ "Primary Genre", "max-content", ({ Id }) =>
-            DropDownInput("Primary Genre", primary)
-                .syncFormData(formData, `song-${Id}-primaryGenre`)
-                .setStyle(ButtonStyle.Inline)
-        ],
-        [ "Secondary Genre", "max-content", () =>
-            DropDownInput("Secondary Genre", primary)
-                .setStyle(ButtonStyle.Inline)
-                .setColor(Color.Disabled)
-        ],
-        [ "Explicit", "max-content", ({ Explicit }) =>
-            Checkbox(Explicit)
-        ],
-    ];
+View(() => Vertical(
+    DynaNavigation("Music"),
+    Spacer(),
+    Wizard({
+        cancelAction: "/music",
+        buttonArrangement: "space-between",
+        submitAction: () => {
 
-    if ((state.wizardPageId ?? 0) === 0)
-        return Vertical(
-            DynaNavigation("Music"),
-            Spacer(),
+        }
+    }, ({ Next }) => [
+        Page((formData) => [
             PlainText("Lets make your Drop hit!"),
             Spacer(),
             Horizontal(
@@ -74,25 +78,12 @@ View<{ wizardPageId: number, wizardData: Record<string, FormData> }>(({ state, u
                     Button("I don't have one")
                         .setJustify("center")
                         .setStyle(ButtonStyle.Secondary)
-                        .onClick(() => {
-                            update({
-                                wizardPageId: (state.wizardPageId ?? 0) + 1,
-                                wizardData: {
-                                    ...state.wizardData,
-                                    [ state.wizardPageId ?? 0 ]: formData
-                                }
-                            })
-                        })
+                        .onClick(Next)
                 ).setGap(gapSize),
                 Spacer()
             ),
-            Spacer(),
-            Spacer(),
-            WizardButtonSpaceBetween(update, state, formData)
-        )
-    else if (state.wizardPageId === 1)
-        return Vertical(
-            DynaNavigation("Music"),
+        ]),
+        Page((formData) => [
             Spacer(),
             Center(
                 Vertical(
@@ -131,12 +122,8 @@ View<{ wizardPageId: number, wizardData: Record<string, FormData> }>(({ state, u
                         .setEvenColumns(2)
                 ).setGap(gapSize)
             ),
-            Spacer(),
-            WizardButtonSpaceBetween(update, state, formData)
-        )
-    else if (state.wizardPageId === 2)
-        return Vertical(
-            DynaNavigation("Music"),
+        ]),
+        Page((formData) => [
             Spacer(),
             Center(
                 Vertical(
@@ -154,12 +141,8 @@ View<{ wizardPageId: number, wizardData: Record<string, FormData> }>(({ state, u
                 )
                     .setGap(gapSize)
             ),
-            Spacer(),
-            WizardButtonSpaceBetween(update, state, formData)
-        )
-    else if (state.wizardPageId === 3)
-        return Vertical(
-            DynaNavigation("Music"),
+        ]),
+        Page((_formData) => [
             Spacer(),
             Center(
                 Vertical(
@@ -171,12 +154,8 @@ View<{ wizardPageId: number, wizardData: Record<string, FormData> }>(({ state, u
                 )
                     .setGap(gapSize)
             ),
-            Spacer(),
-            WizardButtonSpaceBetween(update, state, formData)
-        )
-    if (state.wizardPageId === 4)
-        return Vertical(
-            DynaNavigation("Music"),
+        ]),
+        Page((formData) => [
             Spacer(),
             Horizontal(
                 Spacer(),
@@ -186,20 +165,16 @@ View<{ wizardPageId: number, wizardData: Record<string, FormData> }>(({ state, u
                         Button("Manual Upload")
                     ),
                     formData.has("songs") ?
-                        Table<TableData>(TableDef, [])
+                        Table<TableData>(TableDef(formData), [])
                             .addClass("inverted-class")
-                        : UploadTable(TableDef)
+                        : UploadTable(TableDef(formData))
                             .addClass("inverted-class")
 
                 ).setGap(gapSize),
                 Spacer()
             ),
-            Spacer(),
-            WizardButtonSpaceBetween(update, state, formData)
-        )
-    else if (state.wizardPageId === 5)
-        return Vertical(
-            DynaNavigation("Music"),
+        ]),
+        Page((_formData) => [
             Spacer(),
             Horizontal(
                 Spacer(),
@@ -213,55 +188,8 @@ View<{ wizardPageId: number, wizardData: Record<string, FormData> }>(({ state, u
                 }),
                 Spacer()
             ),
-            Spacer(),
-            Horizontal(
-                Spacer(),
-                Vertical(
-                    Button("Submit")
-                        .onClick(() => update({ wizardPageId: (state.wizardPageId ?? 0) + 1 }))
-                        .setJustify("center")
-                        .setWidth(buttonSize),
-                    Button("Back")
-                        .onClick(() => update({ wizardPageId: (state.wizardPageId ?? 0) - 1 }))
-                        .setStyle(ButtonStyle.Secondary)
-                        .setJustify("center")
-                        .setWidth(buttonSize)
-                ).setGap("16px"),
-                Spacer()
-            ),
-            Spacer()
-        )
-})
+        ])
+    ])
+))
     .addClass("fullscreen")
     .appendOn(document.body)
-
-
-function WizardButtonSpaceBetween(update: (data: Partial<{ wizardPageId: number; wizardData: Record<string, FormData>; }>) => void, state: Partial<{ wizardPageId: number; wizardData: Record<string, FormData>; }>, formData: FormData): Component {
-    return Horizontal(
-        (state.wizardPageId ?? 0) == 0
-            ? Button("Cancel")
-                .setWidth(buttonSize)
-                .setJustify("center")
-                .setStyle(ButtonStyle.Secondary)
-                .asLinkButton("/music")
-            : Button("Back")
-                .setWidth(buttonSize)
-                .setJustify("center")
-                .setStyle(ButtonStyle.Secondary)
-                .onClick(() => update({ wizardPageId: (state.wizardPageId ?? 0) - 1 })),
-        Spacer(),
-        Button("Next")
-            .setWidth(buttonSize)
-            .setJustify("center")
-            .onClick(() => {
-                update({
-                    wizardPageId: (state.wizardPageId ?? 0) + 1,
-                    wizardData: {
-                        ...state.wizardData,
-                        [ state.wizardPageId ?? 0 ]: formData
-                    }
-                })
-            })
-    )
-        .setPadding("60px 0");
-}

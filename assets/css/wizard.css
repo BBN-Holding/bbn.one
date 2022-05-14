@@ -1,10 +1,17 @@
-.fullscreen > div {
+.fullscreen .wwizard {
     min-height: 100vh;
     height: 100vh;
     max-width: 69rem;
-    margin: 0 auto;
+    margin: 0 auto 0;
+    box-sizing: border-box;
+    padding-top: 5rem;
 }
-
+.fullscreen .wwizard .footer {
+    padding: 60px 0;
+}
+.fullscreen .wwizard .footer .wbutton {
+    width: 10rem;
+}
 body {
     background: linear-gradient(139.46deg, #F19D2D 6.59%, #DB5721 101.73%) !important;
 }
