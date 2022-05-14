@@ -29,10 +29,6 @@ nav .wbutton {
     font-size: 1rem;
     padding: 0 0.7rem;
 }
-nav a {
-    color: white;
-    text-decoration: none;
-}
 nav .wbutton.normal.contact {
     border: 2px solid #47b2e4;
     background: transparent;
@@ -48,6 +44,9 @@ nav .wbutton.contact:is(:hover, :focus) {
     background: #47b2e4;
 }
 
+/*
+TODO: Fix mobile issue
+*/
 @media(max-width:780px) {
     nav img {
         height: 1.1rem;
