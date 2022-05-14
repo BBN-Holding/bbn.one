@@ -1,24 +1,35 @@
 import bbnLogo from '../assets/img/bbnBig.svg';
+import bbnMusicLogo from '../assets/img/bbnMusicBig.svg';
+
 import '../assets/css/components/nav.css';
-import { link } from "./actions.ts";
-import { createElement, Custom, custom, img } from "../deps.ts";
+import { Button, ButtonStyle, Color, Component, createElement, Custom, Horizontal, img, Spacer } from "../deps.ts";
 
-// TODO: Refactor this to stack based layout
-export function renderNav() {
-    const nav = createElement('nav');
-
-    const list = [
-        [ "Home", "/#" ],
-        [ "Services", "/#services" ],
-        [ "Team", "/#team" ],
-        [ "FAQ", "/#faq" ],
-        [ "News", "https://blog.bbn.one" ]
-    ]
-
-    const contactUs = custom('a', "Contact Us", "button") as HTMLAnchorElement;
-    contactUs.href = "mailto:support@bbn.one";
-    const shell = createElement('div')
-    shell.append(img(bbnLogo), ...list.map((entry) => link(entry[ 0 ], entry[ 1 ])), contactUs)
-    nav.append(shell)
+const Nav = (component: Component) => {
+    const nav = createElement("nav");
+    nav.append(component.draw());
     return Custom(nav);
+}
+
+export function DynaNavigation(type: "Home" | "Music") {
+    return Nav(
+        Horizontal(
+            Custom(img(type == "Home" ? bbnLogo : bbnMusicLogo)),
+            Spacer(),
+            [
+                [ "Home", "/#" ],
+                [ "Services", "/#services" ],
+                [ "Team", "/#team" ],
+                [ "FAQ", "/#faq" ],
+                [ "News", "https://blog.bbn.one" ]
+            ].map(([ text, link ]) =>
+                Button(text)
+                    .asLinkButton(link)
+                    .setStyle(ButtonStyle.Inline)
+            ),
+            type == "Home" ?
+                Button("Contact Us")
+                    .setColor(Color.Colored)
+                    .addClass("contact") : null
+        ).setGap("0.4rem")
+    ).addClass(type.toLowerCase())
 }

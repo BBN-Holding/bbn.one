@@ -3,13 +3,13 @@ import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import '../../assets/css/components/subsidiaries.css';
 import heroImage from '../../assets/img/hero-img.png';
-import { renderNav } from "../../components/nav.ts";
+import { DynaNavigation } from "../../components/nav.ts";
 
 WebGen({
 })
 
 View(() => Vertical(
-    renderNav(),
+    DynaNavigation("Home"),
     Horizontal(
         Vertical(
             PlainText("Welcome back!")

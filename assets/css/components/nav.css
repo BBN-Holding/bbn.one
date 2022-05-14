@@ -1,18 +1,19 @@
 nav {
     color: white;
     font-weight: 500;
-    background: #37517e;
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
     z-index: 1;
     padding: 0 1rem;
+    user-select: none;
+    background: #37517e;
 }
-nav div {
-    gap: 1.7rem;
-    display: grid;
-    grid-template-columns: auto repeat(7, max-content);
+nav.music {
+    background: linear-gradient(139.46deg, #F19D2D 6.59%, #DB5721 101.73%);
+}
+nav > div {
     height: 4.5rem;
     max-width: 69rem;
     width: 100%;
@@ -23,20 +24,28 @@ nav img {
     height: 1.7rem;
     margin-top: .3rem;
 }
+nav .wbutton {
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0 0.7rem;
+}
 nav a {
     color: white;
     text-decoration: none;
 }
-nav a.button {
+nav .wbutton.normal.contact {
     border: 2px solid #47b2e4;
+    background: transparent;
+    color: white;
     border-radius: 100px;
-    padding: 6px 25px 7px;
-    transition: background-color .3s;
-    line-height: 1.5;
     font-size: 14px;
+    padding: 6px 25px 7px;
+    transition: box-shadow 0.3s, background-color 0.3s;
+    height: unset;
+    line-height: 1.5;
 }
-nav a.button:hover {
-    background-color: #47b2e4;
+nav .wbutton.contact:is(:hover, :focus) {
+    background: #47b2e4;
 }
 
 @media(max-width:780px) {
