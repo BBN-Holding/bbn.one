@@ -44,10 +44,30 @@ export function Table<Data>(_columns: ColumEntry<Data>[], data: Data[]) {
     )).addClass("wtable")
 }
 
-export function DropAreaInput(text: string) {
+export function DropAreaInput(text: string, replacement?: Component, onData?: (blob: Blob, url: string) => void) {
     const shell = createElement("div");
+    shell.ondragleave = (ev) => {
+        ev.preventDefault();
+        shell.classList.remove("hover");
+    }
+    shell.ondragover = (ev) => {
+        ev.preventDefault();
+        shell.classList.add("hover");
+    };
+    shell.ondrop = async (ev) => {
+        ev.preventDefault();
+        console.log(ev);
+        const file = ev.dataTransfer?.files[ 0 ];
+        if (!file) return;
+        const blob = new Blob([ await file.arrayBuffer() ], { type: file.type });
+        onData?.(blob, URL.createObjectURL(blob));
+
+    }
     shell.classList.add("drop-area");
-    shell.append(PlainText(text).draw())
+    if (replacement)
+        shell.append(replacement.draw())
+    else
+        shell.append(PlainText(text).draw())
     return Custom(shell);
 }
 

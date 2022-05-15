@@ -5,7 +5,7 @@ import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 
-import { View, WebGen, Horizontal, PlainText, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page } from "../../deps.ts";
+import { View, WebGen, Horizontal, PlainText, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component } from "../../deps.ts";
 import { TableData } from "./types.ts";
 import { Center, CenterAndRight, DropAreaInput, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
@@ -23,7 +23,17 @@ function syncFromData(formData: FormData, key: string) {
         value: formData.get(key)?.toString(),
     }
 }
-
+function uploadDialog(onData: (blob: Blob, url: string) => void, accept: string | "image/*" = "image/*") {
+    const upload = createElement("input")
+    upload.type = "file";
+    upload.accept = accept;
+    upload.click();
+    upload.onchange = async () => {
+        const file = upload.files![ 0 ];
+        const blob = new Blob([ await file.arrayBuffer() ], { type: file.type });
+        onData(blob, URL.createObjectURL(blob));
+    };
+}
 
 // TODO: Live-Sync
 // TODO: "Upload" zu FormDaten Supporten
@@ -116,17 +126,28 @@ View(() => Vertical(
                     .setGap(gapSize)
             ),
         ]),
-        Page((_formData) => [
+        Page((formData) => [
             Spacer(),
             Center(
-                Vertical(
-                    CenterAndRight(
-                        PlainText("Upload your Cover"),
-                        Button("Manual Upload")
-                    ),
-                    DropAreaInput("Drag & Drop your File here")
-                )
-                    .setGap(gapSize)
+                View(({ update }) =>
+                    Vertical(
+                        CenterAndRight(
+                            PlainText("Upload your Cover"),
+                            Button("Manual Upload")
+                                .onClick(() => uploadDialog((blob, url) => {
+                                    formData.set("cover-image-url", url)
+                                    formData.set("cover-image", blob)
+                                    update({});
+                                }))
+                        ),
+                        DropAreaInput("Drag & Drop your File here", ImageFrom(formData, "cover-image-url"), (blob, url) => {
+                            formData.set("cover-image-url", url)
+                            formData.set("cover-image", blob)
+                            update({});
+                        })
+                    )
+                        .setGap(gapSize)
+                ).asComponent()
             ),
         ]),
         Page((formData) => [
@@ -135,7 +156,7 @@ View(() => Vertical(
                 Spacer(),
                 Vertical(
                     CenterAndRight(
-                        PlainText("Upload your Cover"),
+                        PlainText("Manage your Music"),
                         Button("Manual Upload")
                     ),
                     formData.has("songs") ?
@@ -167,3 +188,7 @@ View(() => Vertical(
 ))
     .addClass("fullscreen")
     .appendOn(document.body)
+
+function ImageFrom(formData: FormData, key: string): Component | undefined {
+    return formData.has(key) ? Custom(img(formData.get(key)! as string)) : undefined;
+}
