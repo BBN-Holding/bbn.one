@@ -5,9 +5,10 @@ import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 
-import { Checkbox, View, WebGen, Horizontal, PlainText, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, Component, DropDownInput, Wizard, Page, Box } from "../../deps.ts";
-import { ColumEntry, TableData } from "./types.ts";
-import { Center, CenterAndRight, DropAreaInput, getYearList, Table, UploadTable } from "./helper.ts";
+import { View, WebGen, Horizontal, PlainText, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page } from "../../deps.ts";
+import { TableData } from "./types.ts";
+import { Center, CenterAndRight, DropAreaInput, Table, UploadTable } from "./helper.ts";
+import { TableDef } from "./music/table.ts";
 
 WebGen({
     theme: SupportedThemes.dark,
@@ -16,40 +17,13 @@ WebGen({
 
 const gapSize = "15px";
 const inputWidth = "436px";
-function linkFormData(formData: FormData, key: string) {
+function syncFromData(formData: FormData, key: string) {
     return {
         liveOn: (value: string) => formData.set(key, value),
         value: formData.get(key)?.toString(),
     }
 }
 
-const TableDef = (formData: FormData) => <ColumEntry<TableData>[]>[
-    [ "Name", "auto", ({ Name }) => PlainText(Name).setFont(1, 500) ],
-    [ "Artists", "max-content", () => Spacer() ],
-    [ "Year", "max-content", ({ Id }) =>
-        DropDownInput("Year", getYearList())
-            .syncFormData(formData, `song-${Id}-year`)
-            .setStyle(ButtonStyle.Inline)
-    ],
-    [ "Country", "max-content", ({ Id }) =>
-        DropDownInput("Country", language)
-            .syncFormData(formData, `song-${Id}-country`)
-            .setStyle(ButtonStyle.Inline)
-    ],
-    [ "Primary Genre", "max-content", ({ Id }) =>
-        DropDownInput("Primary Genre", primary)
-            .syncFormData(formData, `song-${Id}-primaryGenre`)
-            .setStyle(ButtonStyle.Inline)
-    ],
-    [ "Secondary Genre", "max-content", () =>
-        DropDownInput("Secondary Genre", primary)
-            .setStyle(ButtonStyle.Inline)
-            .setColor(Color.Disabled)
-    ],
-    [ "Explicit", "max-content", ({ Explicit }) =>
-        Checkbox(Explicit)
-    ],
-];
 
 // TODO: Live-Sync
 // TODO: "Upload" zu FormDaten Supporten
@@ -72,7 +46,7 @@ View(() => Vertical(
                 Vertical(
                     Center(PlainText("First we need an UPC/EAN number:")),
                     Input({
-                        ...linkFormData(formData, "upc"),
+                        ...syncFromData(formData, "upc"),
                         placeholder: "UPC/EAN"
                     }).setWidth(inputWidth),
                     Button("I don't have one")
@@ -89,12 +63,12 @@ View(() => Vertical(
                 Vertical(
                     Center(PlainText("Enter your Album details.")),
                     Input({
-                        ...linkFormData(formData, "name"),
+                        ...syncFromData(formData, "name"),
                         placeholder: "Name"
                     }).setWidth(inputWidth),
                     Grid(
                         Input({
-                            ...linkFormData(formData, "releaseDate"),
+                            ...syncFromData(formData, "releaseDate"),
                             placeholder: "Release Date",
                             type: "text"
                         }),
@@ -107,7 +81,7 @@ View(() => Vertical(
                         .setWidth(inputWidth),
                     Input({
                         placeholder: "Artistlist",
-                        ...linkFormData(formData, "artistList"),
+                        ...syncFromData(formData, "artistList"),
                     }),
                     Center(PlainText("Set your target Audience")),
                     Grid(
@@ -130,12 +104,12 @@ View(() => Vertical(
                     Center(PlainText("Display the Copyright")),
                     Input({
                         placeholder: "Composition Copyright",
-                        ...linkFormData(formData, "compositionCopyright")
+                        ...syncFromData(formData, "compositionCopyright")
                     })
                         .setWidth(inputWidth),
                     Input({
                         placeholder: "Sound Recording Copyright",
-                        ...linkFormData(formData, "soundRecordingCopyright")
+                        ...syncFromData(formData, "soundRecordingCopyright")
                     })
                         .setWidth(inputWidth),
                 )
