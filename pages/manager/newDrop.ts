@@ -7,7 +7,7 @@ import language from "../../data/language.json" assert { type: "json"};
 
 import { View, WebGen, Horizontal, PlainText, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component } from "../../deps.ts";
 import { TableData } from "./types.ts";
-import { Center, CenterAndRight, DropAreaInput, Table, UploadTable } from "./helper.ts";
+import { allowedAudioFormats, allowedImageFormats, Center, CenterAndRight, DropAreaInput, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
 
 WebGen({
@@ -23,18 +23,21 @@ function syncFromData(formData: FormData, key: string) {
         value: formData.get(key)?.toString(),
     }
 }
-function uploadDialog(onData: (blob: Blob, url: string) => void, accept: string | "image/*" = "image/*") {
+function uploadFilesDialog(onData: (files: { blob: Blob, file: File, url: string }[]) => void, accept: string) {
     const upload = createElement("input")
     upload.type = "file";
     upload.accept = accept;
     upload.click();
     upload.onchange = async () => {
-        const file = upload.files![ 0 ];
-        const blob = new Blob([ await file.arrayBuffer() ], { type: file.type });
-        onData(blob, URL.createObjectURL(blob));
+        const list = await Promise.all(Array.from(upload.files ?? []).map(async file => {
+            const blob = new Blob([ await file.arrayBuffer() ], { type: file.type });
+            return { blob, file, url: URL.createObjectURL(blob) };
+        }))
+        onData(list);
     };
 }
 
+// TODO: Upload logic should be reusabled
 // TODO: Live-Sync
 // TODO: "Upload" zu FormDaten Supporten
 // TODO: Input zu neuen FormComponents umlagern
@@ -134,15 +137,15 @@ View(() => Vertical(
                         CenterAndRight(
                             PlainText("Upload your Cover"),
                             Button("Manual Upload")
-                                .onClick(() => uploadDialog((blob, url) => {
-                                    formData.set("cover-image-url", url)
-                                    formData.set("cover-image", blob)
+                                .onClick(() => uploadFilesDialog(([ { blob, url } ]) => {
+                                    formData.set("cover.image.url", url)
+                                    formData.set("cover.image", blob)
                                     update({});
-                                }))
+                                }, allowedImageFormats.join(",")))
                         ),
-                        DropAreaInput("Drag & Drop your File here", ImageFrom(formData, "cover-image-url"), (blob, url) => {
-                            formData.set("cover-image-url", url)
-                            formData.set("cover-image", blob)
+                        DropAreaInput("Drag & Drop your File here", ImageFrom(formData, "cover.image.url"), (blob, url) => {
+                            formData.set("cover.image.url", url)
+                            formData.set("cover.image", blob)
                             update({});
                         })
                     )
@@ -154,18 +157,28 @@ View(() => Vertical(
             Spacer(),
             Horizontal(
                 Spacer(),
-                Vertical(
-                    CenterAndRight(
-                        PlainText("Manage your Music"),
-                        Button("Manual Upload")
-                    ),
-                    formData.has("songs") ?
-                        Table<TableData>(TableDef(formData), [])
-                            .addClass("inverted-class")
-                        : UploadTable(TableDef(formData))
-                            .addClass("inverted-class")
+                View(({ update }) =>
+                    Vertical(
+                        CenterAndRight(
+                            PlainText("Manage your Music"),
+                            Button("Manual Upload")
+                                .onClick(() => uploadFilesDialog((list) => addSongs(list, formData, update), allowedAudioFormats.join(",")))
+                        ),
+                        formData.has("songs") ?
+                            Table<TableData>(TableDef(formData), formData.getAll("songs").map(x => {
+                                return <TableData>{
+                                    Id: x,
+                                    Name: formData.get(`song.${x}.name`)?.toString(),
+                                    Year: formData.get(`song.${x}.year`)?.toString(),
+                                    Explicit: formData.get(`song.${x}.explicit`) == "true",
+                                };
+                            }))
+                                .addClass("inverted-class")
+                            : UploadTable(TableDef(formData), (list) => addSongs(list, formData, update))
+                                .addClass("inverted-class")
 
-                ).setGap(gapSize),
+                    ).setGap(gapSize),
+                ).asComponent(),
                 Spacer()
             ),
         ]),
@@ -188,6 +201,22 @@ View(() => Vertical(
 ))
     .addClass("fullscreen")
     .appendOn(document.body)
+
+function addSongs(list: { blob: Blob; file: File; }[], formData: FormData, update: (data: Partial<unknown>) => void) {
+    list.map(x => ({ ...x, id: crypto.randomUUID() })).forEach(({ blob, file, id }) => {
+        formData.append("songs", id);
+        const cleanedUpName = file.name
+            .replaceAll("_", " ")
+            .replaceAll("-", " ")
+            .replace(/\.[^/.]+$/, "");
+
+        formData.set(`song.${id}.blob`, blob);
+        formData.set(`song.${id}.name`, cleanedUpName); // Our AI prediceted name
+        formData.set(`song.${id}.year`, new Date().getFullYear().toString());
+        // TODO Add Defaults for Country, Primary Genre => Access global FormData and merge it to one and then pull it
+    });
+    update({});
+}
 
 function ImageFrom(formData: FormData, key: string): Component | undefined {
     return formData.has(key) ? Custom(img(formData.get(key)! as string)) : undefined;

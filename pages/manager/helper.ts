@@ -3,6 +3,9 @@
 import { Card, Component, createElement, Custom, Grid, headless, Horizontal, Icon, PlainText, Spacer, Vertical } from "../../deps.ts";
 import { ColumEntry } from "./types.ts";
 
+export const allowedAudioFormats = [ "audio/flac", "audio/wav" ];
+export const allowedImageFormats = [ "image/png", "image/jpeg" ];
+
 export function Center(text: Component) {
     return Horizontal(
         Spacer(),
@@ -56,12 +59,11 @@ export function DropAreaInput(text: string, replacement?: Component, onData?: (b
     };
     shell.ondrop = async (ev) => {
         ev.preventDefault();
-        console.log(ev);
         const file = ev.dataTransfer?.files[ 0 ];
         if (!file) return;
+        if (!allowedImageFormats.includes(file.type)) return alert("Only png and jpeg is supported");
         const blob = new Blob([ await file.arrayBuffer() ], { type: file.type });
         onData?.(blob, URL.createObjectURL(blob));
-
     }
     shell.classList.add("drop-area");
     if (replacement)
@@ -79,8 +81,23 @@ export function getYearList(): string[] {
         .map((x) => x.toString());
 }
 
-export function UploadTable<Data>(_columns: ColumEntry<Data>[]) {
+export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: { file: File, blob: Blob }[]) => void) {
     const table = Table(_columns, []).draw();
+    table.ondragleave = (ev) => {
+        ev.preventDefault();
+        table.classList.remove("hover");
+    }
+    table.ondragover = (ev) => {
+        ev.preventDefault();
+        table.classList.add("hover");
+    };
+    table.ondrop = async (ev) => {
+        ev.preventDefault();
+        upload(await Promise.all(Array.from(ev.dataTransfer?.files ?? []).filter(x => allowedAudioFormats.includes(x.type)).map(async x => {
+            const blob = new Blob([ await x.arrayBuffer() ], { type: x.type });
+            return { file: x, blob };
+        })));
+    }
     table.append(Vertical(
         PlainText("Nothing here yet").addClass("droptitle"),
         PlainText("Drag & Drop your Files here").addClass("dropsubtitle")

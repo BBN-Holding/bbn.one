@@ -41,13 +41,12 @@ nav.music {
     background: rgb(255 255 255 / 15%);
 }
 .inverted-class {
-    width: 100vw;
+    width: calc(100vw - 32px);
     max-width: 50rem;
     max-height: 25rem;
     height: 100vh;
     box-sizing: border-box;
     padding: calc(var(--gap) / 2);
-
     --color-critical-hue: 360deg;
     --color-critical-saturation: 86%;
     --color-critical-lightness: 65%;
