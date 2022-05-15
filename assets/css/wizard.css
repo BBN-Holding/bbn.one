@@ -2,6 +2,7 @@
     min-height: 100vh;
     height: 100vh;
     max-width: 69rem;
+    width: calc(100vw - 32px);
     margin: 0 auto 0;
     box-sizing: border-box;
     padding-top: 5rem;
