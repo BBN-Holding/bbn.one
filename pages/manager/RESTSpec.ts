@@ -2,13 +2,13 @@
 import { delay } from "https://deno.land/std@0.138.0/async/mod.ts";
 type ArtistType = "PRIMARY";
 
-type Release = {
+type Drop = {
     id: string,
     type: "PUBLISHED" | "PRIVATE" | "UNDER_REVIEW" | "UNSUBMITTED",
     title?: string,
     upc?: string,
     release?: string,
-    picture?: string,
+    artwork?: string,
     artists?: [ name: string, img: string, type: ArtistType ][],
     songs?: {
         Id: string;
@@ -47,7 +47,7 @@ export const API = {
         list: {
             get: async () => {
                 await delay(1000);
-                return <Release[]>[
+                return <Drop[]>[
                     {
                         id: "id",
                         type: "PUBLISHED",
@@ -76,7 +76,7 @@ export const API = {
                     return true;
                 },
             },
-            put: async (id: string, data: Release) => {
+            put: async (id: string, data: Drop) => {
                 await delay(1000);
                 return true;
             },
