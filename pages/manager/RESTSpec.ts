@@ -9,7 +9,17 @@ type Release = {
     upc?: string,
     release?: string,
     picture?: string,
-    artists?: [ name: string, img: string, type: ArtistType ][]
+    artists?: [ name: string, img: string, type: ArtistType ][],
+    songs?: {
+        Id: string;
+        "Primary Genre"?: string;
+        "Secondary Genre"?: string;
+        Artists?: string;
+        Country?: string;
+        Explicit?: boolean;
+        Name?: string;
+        Year?: number;
+    }[]
 };
 
 export const API = {
