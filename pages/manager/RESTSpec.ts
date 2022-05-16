@@ -43,54 +43,52 @@ export const API = {
             }
         }
     },
-    bbn: {
-        music: {
-            list: {
-                get: async () => {
-                    await delay(1000);
-                    return <Release[]>[
-                        {
-                            id: "id",
-                            type: "PUBLISHED",
-                            artists: [
-                                [ "joe", "biden", "PRIMARY" ]
-                            ],
-                        }
-                    ];
-                }
-            },
-            post: async () => {
-                // creates a new drop
+    music: {
+        list: {
+            get: async () => {
                 await delay(1000);
-                return "id";
-            },
-            [ "{id}" ]: {
-                publish: {
-                    post: async (id: string) => {
-                        await delay(1000);
-                        return true;
-                    },
-                },
-                unpublish: {
-                    post: async (id: string) => {
-                        await delay(1000);
-                        return true;
-                    },
-                },
-                put: async (id: string, data: Release) => {
-                    await delay(1000);
-                    return true;
-                },
-                get: async (id: string) => {
-                    await delay(1000);
-                    return {
+                return <Release[]>[
+                    {
                         id: "id",
                         type: "PUBLISHED",
                         artists: [
                             [ "joe", "biden", "PRIMARY" ]
                         ],
-                    };
-                }
+                    }
+                ];
+            }
+        },
+        post: async () => {
+            // creates a new drop
+            await delay(1000);
+            return "id";
+        },
+        [ "{id}" ]: {
+            publish: {
+                post: async (id: string) => {
+                    await delay(1000);
+                    return true;
+                },
+            },
+            unpublish: {
+                post: async (id: string) => {
+                    await delay(1000);
+                    return true;
+                },
+            },
+            put: async (id: string, data: Release) => {
+                await delay(1000);
+                return true;
+            },
+            get: async (id: string) => {
+                await delay(1000);
+                return {
+                    id: "id",
+                    type: "PUBLISHED",
+                    artists: [
+                        [ "joe", "biden", "PRIMARY" ]
+                    ],
+                };
             }
         }
     }
