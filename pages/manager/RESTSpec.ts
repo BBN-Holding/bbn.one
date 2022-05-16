@@ -59,6 +59,11 @@ export const API = {
                     ];
                 }
             },
+            post: async () => {
+                // creates a new drop
+                await delay(1000);
+                return "id";
+            },
             [ "{id}" ]: {
                 publish: {
                     post: async (id: string) => {
@@ -73,10 +78,6 @@ export const API = {
                     },
                 },
                 put: async (id: string, data: Release) => {
-                    await delay(1000);
-                    return true;
-                },
-                post: async (id: string, data: Release) => {
                     await delay(1000);
                     return true;
                 },
