@@ -63,24 +63,12 @@ export const API = {
             await delay(1000);
             return "id";
         },
-        [ "{id}" ]: {
-            publish: {
-                post: async (id: string) => {
-                    await delay(1000);
-                    return true;
-                },
-            },
-            unpublish: {
-                post: async (id: string) => {
-                    await delay(1000);
-                    return true;
-                },
-            },
-            put: async (id: string, data: Drop) => {
+        [ "{id}" ]: (id: string) => ({
+            put: async (data: FormData) => {
                 await delay(1000);
                 return true;
             },
-            get: async (id: string) => {
+            get: async () => {
                 await delay(1000);
                 return {
                     id: "id",
@@ -89,7 +77,12 @@ export const API = {
                         [ "joe", "biden", "PRIMARY" ]
                     ],
                 };
+            },
+            artwork: {
+                get: () => {
+                    return new Blob();
+                }
             }
-        }
+        })
     }
 };
