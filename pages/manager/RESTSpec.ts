@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-unused-vars
-import { delay } from "https://deno.land/std@0.138.0/async/mod.ts";
+import { delay } from "https://deno.land/std@0.139.0/async/mod.ts";
 type ArtistType = "PRIMARY";
 
 type Drop = {
