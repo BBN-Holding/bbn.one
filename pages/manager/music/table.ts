@@ -29,7 +29,8 @@ export const TableDef = (formData: FormData) => <ColumEntry<TableData>[]>[
             .setStyle(ButtonStyle.Inline)
             .setColor(Color.Disabled)
     ],
-    [ "Explicit", "max-content", ({ Explicit }) =>
-        Checkbox(Explicit)
+    [ "Explicit", "max-content", ({ Id }) =>
+        Checkbox(formData.get(`song.${Id}.explicit`) == "true")
+            .onClick((_, value) => formData.set(`song.${Id}.explicit`, value ? "true" : "false"))
     ],
 ];
