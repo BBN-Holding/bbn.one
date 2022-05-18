@@ -31,6 +31,6 @@ export const TableDef = (formData: FormData) => <ColumEntry<TableData>[]>[
     ],
     [ "Explicit", "max-content", ({ Id }) =>
         Checkbox(formData.get(`song.${Id}.explicit`) == "true")
-            .onClick((_, value) => formData.set(`song.${Id}.explicit`, value ? "true" : "false"))
+            .onClick((_, value) => formData.set(`song.${Id}.explicit`, !value ? "true" : "false"))
     ],
 ];
