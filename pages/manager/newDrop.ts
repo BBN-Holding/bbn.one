@@ -5,9 +5,9 @@ import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 
-import { View, WebGen, Horizontal, PlainText, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component } from "../../deps.ts";
+import { View, WebGen, Horizontal, PlainText, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV } from "../../deps.ts";
 import { TableData } from "./types.ts";
-import { allowedAudioFormats, allowedImageFormats, Center, CenterAndRight, DropAreaInput, Table, UploadTable } from "./helper.ts";
+import { allowedAudioFormats, allowedImageFormats, Center, CenterAndRight, syncFromData, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
 
 WebGen({
@@ -17,12 +17,6 @@ WebGen({
 
 const gapSize = "15px";
 const inputWidth = "436px";
-function syncFromData(formData: FormData, key: string) {
-    return {
-        liveOn: (value: string) => formData.set(key, value),
-        value: formData.get(key)?.toString(),
-    }
-}
 function uploadFilesDialog(onData: (files: { blob: Blob, file: File, url: string }[]) => void, accept: string) {
     const upload = createElement("input")
     upload.type = "file";
@@ -143,11 +137,15 @@ View(() => Vertical(
                                     update({});
                                 }, allowedImageFormats.join(",")))
                         ),
-                        DropAreaInput("Drag & Drop your File here", ImageFrom(formData, "cover.image.url"), (blob, url) => {
+                        DropAreaInput(CenterV(
+                            formData.has("cover.image.url")
+                                ? ImageFrom(formData, "cover.image.url")!
+                                : PlainText("Drag & Drop your File here")
+                        ), allowedImageFormats, ([ { blob, url } ]) => {
                             formData.set("cover.image.url", url)
                             formData.set("cover.image", blob)
                             update({});
-                        })
+                        }).addClass("drop-area")
                     )
                         .setGap(gapSize)
                 ).asComponent()

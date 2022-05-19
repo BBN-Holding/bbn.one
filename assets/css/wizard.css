@@ -7,12 +7,15 @@
     box-sizing: border-box;
     padding-top: 5rem;
 }
+
 .fullscreen .wwizard .footer {
     padding: 60px 0;
 }
+
 .fullscreen .wwizard .footer .wbutton {
     width: 10rem;
 }
+
 body {
     background: linear-gradient(139.46deg, #F19D2D 6.59%, #DB5721 101.73%) !important;
 }
@@ -33,13 +36,19 @@ nav.music {
     justify-content: center;
 }
 
+.drop-area .vertical-stack {
+    height: 100%;
+}
+
 .drop-area img {
     height: 70%;
     border-radius: 15px;
 }
+
 .drop-area.hover {
     background: rgb(255 255 255 / 15%);
 }
+
 .inverted-class {
     width: calc(100vw - 32px);
     max-width: 50rem;
@@ -73,18 +82,21 @@ nav.music {
     --text-red: #f81919;
     --color-grayscaled-inline-font: black;
 }
+
 .inverted-class .wggrid {
     height: 100%;
     width: 100%;
     align-items: center;
     align-content: start;
 }
+
 .inverted-class .title {
     font-size: 0.65rem;
     font-weight: 500;
     padding-top: 5px;
     cursor: default;
 }
+
 .inverted-class .wbutton {
     font-size: .7rem;
     height: 27px;
@@ -92,9 +104,11 @@ nav.music {
     padding: 0 0.7rem;
     letter-spacing: 0;
 }
+
 .inverted-class .wbutton:focus {
     z-index: 2;
 }
+
 :is(.inverted-class .wbutton, .wbutton.custom) ul {
     top: 1.7rem;
     bottom: unset;
@@ -109,9 +123,11 @@ nav.music {
 .inverted-class .wbutton .icon-suffix .webgen-icon {
     font-size: 1rem;
 }
+
 .wtable {
     position: relative;
 }
+
 .wtable .drop-area-label {
     position: absolute;
     top: 50%;

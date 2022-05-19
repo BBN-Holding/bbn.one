@@ -47,30 +47,11 @@ export function Table<Data>(_columns: ColumEntry<Data>[], data: Data[]) {
     )).addClass("wtable")
 }
 
-export function DropAreaInput(text: string, replacement?: Component, onData?: (blob: Blob, url: string) => void) {
-    const shell = createElement("div");
-    shell.ondragleave = (ev) => {
-        ev.preventDefault();
-        shell.classList.remove("hover");
+export function syncFromData(formData: FormData, key: string) {
+    return {
+        liveOn: (value: string) => formData.set(key, value),
+        value: formData.get(key)?.toString(),
     }
-    shell.ondragover = (ev) => {
-        ev.preventDefault();
-        shell.classList.add("hover");
-    };
-    shell.ondrop = async (ev) => {
-        ev.preventDefault();
-        const file = ev.dataTransfer?.files[ 0 ];
-        if (!file) return;
-        if (!allowedImageFormats.includes(file.type)) return alert("Only png and jpeg is supported");
-        const blob = new Blob([ await file.arrayBuffer() ], { type: file.type });
-        onData?.(blob, URL.createObjectURL(blob));
-    }
-    shell.classList.add("drop-area");
-    if (replacement)
-        shell.append(replacement.draw())
-    else
-        shell.append(PlainText(text).draw())
-    return Custom(shell);
 }
 
 // BBN Stuff
