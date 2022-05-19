@@ -10,6 +10,10 @@ import { API } from "./RESTSpec.ts";
 WebGen({
 })
 
+
+if (localStorage[ "access-token" ])
+    location.href = "/music"; // TODO do this better
+
 const para = new URLSearchParams(location.search)
 if (para.has("id")) {
     const dialog = Dialog<{ token: string, firstTime: boolean }>(({ update, state, use }) => {
@@ -58,10 +62,15 @@ View(() => Vertical(
                 Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password") }),
                 Button("Login")
                     .onPromiseClick(async () => {
-                        await API.auth.email.post({
+                        const data = await API.auth.email.post({
                             email: formData.get("email")?.toString() ?? "",
                             password: formData.get("password")?.toString() ?? ""
                         })
+
+                        if (data.JWT) {
+                            localStorage[ "access-token" ] = data.JWT;
+                            location.href = "/music";
+                        }
                     })
                     .setJustify("center"),
                 Horizontal(
