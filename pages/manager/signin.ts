@@ -1,18 +1,15 @@
-import { Button, ButtonComponent, ButtonStyle, Color, Custom, Dialog, Horizontal, img, Input, Page, PlainText, Spacer, Vertical, View, WebGen } from "../../deps.ts";
+import { Button, ButtonStyle, Color, Center, Custom, Dialog, Horizontal, img, Input, Page, PlainText, Spacer, Vertical, View, WebGen } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import '../../assets/css/components/subsidiaries.css';
 import heroImage from '../../assets/img/hero-img.png';
 import { DynaNavigation } from "../../components/nav.ts";
-import { Center, syncFromData } from "./helper.ts";
+import { Redirect, syncFromData } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
 
 WebGen({
 })
-
-
-if (localStorage[ "access-token" ])
-    location.href = "/music"; // TODO do this better
+Redirect();
 
 const para = new URLSearchParams(location.search)
 if (para.has("id")) {
@@ -69,7 +66,7 @@ View(() => Vertical(
 
                         if (data.JWT) {
                             localStorage[ "access-token" ] = data.JWT;
-                            location.href = "/music";
+                            Redirect();
                         }
                     })
                     .setJustify("center"),

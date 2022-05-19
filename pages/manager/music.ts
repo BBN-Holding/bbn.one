@@ -1,12 +1,15 @@
-import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen } from "../../deps.ts";
+import { Button, ButtonStyle, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/components/subsidiaries.css';
 import { DynaNavigation } from "../../components/nav.ts";
+import { Redirect } from "./helper.ts";
+import { API, Drop } from "./RESTSpec.ts";
 
 WebGen({
 })
+Redirect();
 
-View(() => Vertical(
+const view = View<{ list: Drop[] }>(({ state }) => Vertical(
     DynaNavigation("Music"),
     Horizontal(
         Vertical(
@@ -27,12 +30,18 @@ View(() => Vertical(
         Vertical(
             Spacer(),
             Button("Submit new Drop")
-                .asLinkButton("/music/new-drop"),
+                .onPromiseClick(async () => {
+                    const id = await API.music(API.getToken()).post();
+                    // Currently not supported:
+                    // location.href = `/music/new-drop/${id}`;
+                    location.href = `/music/new-drop?id=${id}`;
+                }),
             Spacer()
         )
     )
         .setPadding("5rem 0 0 0")
         .addClass("subsidiary-list"),
+    state.list ? PlainText("") : Center(PlainText("Wow such empty")).setPadding("5rem"),
     Vertical(
         Horizontal(
             PlainText("Latest Drop"),
@@ -70,4 +79,7 @@ View(() => Vertical(
         .setWidth("100%")
         .addClass("subsidiary-list")
 ))
-    .appendOn(document.body)
+    .appendOn(document.body);
+
+API.music(API.getToken()).list.get()
+    .then(x => view.viewOptions().update({ list: x }))

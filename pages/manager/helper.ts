@@ -1,17 +1,16 @@
 // This code Will be proted to webgen
 
-import { Card, Component, createElement, Custom, Grid, headless, Horizontal, Icon, PlainText, Spacer, Vertical } from "../../deps.ts";
+import { Card, Component, Custom, Grid, headless, Horizontal, Icon, PlainText, Spacer, Vertical } from "../../deps.ts";
 import { ColumEntry } from "./types.ts";
 
 export const allowedAudioFormats = [ "audio/flac", "audio/wav" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
-export function Center(text: Component) {
-    return Horizontal(
-        Spacer(),
-        text,
-        Spacer()
-    )
+export function Redirect() {
+    if (localStorage[ "access-token" ] && location.href.includes("/signin"))
+        location.href = "/music"; // TODO do this better
+    else if (!localStorage[ "access-token" ] && !location.href.includes("/signin"))
+        location.href = "/signin";
 }
 
 export function CenterAndRight(center: Component, right: Component): Component {

@@ -1,8 +1,9 @@
 // deno-lint-ignore-file no-unused-vars
 import { delay } from "https://deno.land/std@0.140.0/async/mod.ts";
-type ArtistType = "PRIMARY";
+import { assert } from "https://deno.land/std@0.140.0/testing/asserts.ts";
+export type ArtistType = "PRIMARY";
 
-type Drop = {
+export type Drop = {
     id: string,
     type: "PUBLISHED" | "PRIVATE" | "UNDER_REVIEW" | "UNSUBMITTED",
     title?: string,
@@ -23,10 +24,12 @@ type Drop = {
 };
 
 export const API = {
+    getToken: () => localStorage[ "access-token" ],
+    BASE_URL: "http://localhost:8443/api/",
     user: (token: string) => ({
         setMe: {
             post: async (para: Partial<{ name: string, password: string }>) => {
-                const data = await fetch("http://localhost:8443/api/user/set-me", {
+                const data = await fetch(`${API.BASE_URL}user/set-me`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -54,7 +57,7 @@ export const API = {
         },
         fromEmail: {
             get: async (id: string) => {
-                const data = await fetch("http://localhost:8443/api/auth/from-email/" + id, {
+                const data = await fetch(API.BASE_URL + "auth/from-email/" + id, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
@@ -66,7 +69,7 @@ export const API = {
         },
         forgotPassword: {
             post: async ({ email, redirect }: { email: string, redirect: string }) => {
-                const data = await fetch("http://localhost:8443/api/auth/forgot-password", {
+                const data = await fetch(`${API.BASE_URL}auth/forgot-password`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -82,7 +85,7 @@ export const API = {
         },
         email: {
             post: async ({ email, password }: { email: string, password: string }) => {
-                const data = await fetch("http://localhost:8443/api/auth/email", {
+                const data = await fetch(`${API.BASE_URL}auth/email`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -97,25 +100,28 @@ export const API = {
             }
         }
     },
-    music: {
+    music: (token: string) => ({
         list: {
             get: async () => {
-                await delay(1000);
-                return <Drop[]>[
-                    {
-                        id: "id",
-                        type: "PUBLISHED",
-                        artists: [
-                            [ "joe", "biden", "PRIMARY" ]
-                        ],
+                const data = await fetch(`${API.BASE_URL}music/list`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": token
                     }
-                ];
+                }).then(x => x.json())
+                return data.drops as Drop[];
             }
         },
         post: async () => {
-            // creates a new drop
-            await delay(1000);
-            return "id";
+            const data = await fetch(`${API.BASE_URL}music/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": token
+                }
+            }).then(x => x.json())
+            assert(typeof data.id == "string")
+            return data.id as string;
         },
         [ "{id}" ]: (id: string) => ({
             put: async (data: FormData) => {
@@ -138,5 +144,5 @@ export const API = {
                 }
             }
         })
-    }
+    })
 };

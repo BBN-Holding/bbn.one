@@ -5,15 +5,21 @@ import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 
-import { View, WebGen, Horizontal, PlainText, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV } from "../../deps.ts";
+import { View, WebGen, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV } from "../../deps.ts";
 import { TableData } from "./types.ts";
-import { allowedAudioFormats, allowedImageFormats, Center, CenterAndRight, syncFromData, Table, UploadTable } from "./helper.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, Redirect, syncFromData, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
 
 WebGen({
     theme: SupportedThemes.dark,
     icon: new MaterialIcons()
 })
+Redirect()
+
+if (!new URLSearchParams(location.search).has("id")) {
+    alert("ID is missing")
+    location.href = "/music";
+}
 
 const gapSize = "15px";
 const inputWidth = "436px";
