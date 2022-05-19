@@ -5,7 +5,7 @@ import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 
-import { View, WebGen, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV, extendedFromEntries } from "../../deps.ts";
+import { View, WebGen, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV } from "../../deps.ts";
 import { TableData } from "./types.ts";
 import { allowedAudioFormats, allowedImageFormats, CenterAndRight, Redirect, syncFromData, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
@@ -38,9 +38,7 @@ function uploadFilesDialog(onData: (files: { blob: Blob, file: File, url: string
     };
 }
 
-// TODO: Upload logic should be reusabled
-// TODO: Live-Sync
-// TODO: "Upload" zu FormDaten Supporten
+// TODO: Wizard Restore
 // TODO: Input zu neuen FormComponents umlagern
 View(() => Vertical(
     DynaNavigation("Music"),
