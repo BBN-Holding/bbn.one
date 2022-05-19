@@ -5,10 +5,11 @@ import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 
-import { View, WebGen, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV } from "../../deps.ts";
+import { View, WebGen, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV, extendedFromEntries } from "../../deps.ts";
 import { TableData } from "./types.ts";
 import { allowedAudioFormats, allowedImageFormats, CenterAndRight, Redirect, syncFromData, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
+import { API } from "./RESTSpec.ts";
 
 WebGen({
     theme: SupportedThemes.dark,
@@ -47,6 +48,17 @@ View(() => Vertical(
     Wizard({
         cancelAction: "/music",
         buttonArrangement: "space-between",
+        nextAction: async (pages) => {
+            const single = new FormData();
+            const list = pages.map(x => Array.from(x.data.entries())).flat();
+            for (const [ key, value ] of list) {
+                single.append(key, value);
+            }
+            await API
+                .music(API.getToken())
+            [ '{id}' ](new URLSearchParams(location.search).get("id")!)
+                .put(single);
+        },
         submitAction: () => {
 
         }

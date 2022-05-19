@@ -125,8 +125,13 @@ export const API = {
         },
         [ "{id}" ]: (id: string) => ({
             put: async (data: FormData) => {
-                await delay(1000);
-                return true;
+                assert((await fetch(`${API.BASE_URL}music/${id}`, {
+                    method: "PUT",
+                    body: data,
+                    headers: {
+                        "Authorization": token
+                    }
+                })).ok);
             },
             get: async () => {
                 await delay(1000);
