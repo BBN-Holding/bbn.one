@@ -2,12 +2,12 @@ import { Component } from "../../deps.ts";
 
 export type TableData = {
     Id: string;
-    "Primary Genre"?: string;
-    "Secondary Genre"?: string;
+    Title?: string;
+    PrimaryGenre?: string;
+    SecondaryGenre?: string;
     Artists?: string;
     Country?: string;
     Explicit?: boolean;
-    Name?: string;
     Year?: number;
 };
 

@@ -1,26 +1,30 @@
 // deno-lint-ignore-file no-unused-vars
 import { delay } from "https://deno.land/std@0.140.0/async/mod.ts";
 import { assert } from "https://deno.land/std@0.140.0/testing/asserts.ts";
-export type ArtistType = "PRIMARY";
+export type ArtistTypes = "PRIMARY";
 
 export type Drop = {
-    id: string,
-    type: "PUBLISHED" | "PRIVATE" | "UNDER_REVIEW" | "UNSUBMITTED",
-    title?: string,
-    upc?: string,
-    release?: string,
-    artwork?: string,
-    artists?: [ name: string, img: string, type: ArtistType ][],
+    id: string;
+    type: 'PUBLISHED' | 'PRIVATE' | 'UNDER_REVIEW' | 'UNSUBMITTED';
+    title?: string;
+    upc?: string;
+    artists?: [ name: string, img: string, type: ArtistTypes ][];
+    language?: string;
+    primaryGenre?: string;
+    release?: string;
+    artwork?: string;
+    cLine?: string;
+    pLine?: string;
     songs?: {
         Id: string;
-        "Primary Genre"?: string;
-        "Secondary Genre"?: string;
+        Title?: string;
+        PrimaryGenre?: string;
+        SecondaryGenre?: string;
         Artists?: string;
         Country?: string;
         Explicit?: boolean;
-        Name?: string;
         Year?: number;
-    }[]
+    }[];
 };
 
 export const API = {
@@ -57,7 +61,7 @@ export const API = {
         },
         fromEmail: {
             get: async (id: string) => {
-                const data = await fetch(API.BASE_URL + "auth/from-email/" + id, {
+                const data = await fetch(`${API.BASE_URL}auth/from-email/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
