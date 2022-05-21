@@ -41,7 +41,9 @@ const view = View<{ list: Drop[] }>(({ state }) => Vertical(
     )
         .setPadding("5rem 0 0 0")
         .addClass("subsidiary-list"),
-    state.list ? PlainText("") : Center(PlainText("Wow such empty")).setPadding("5rem"),
+    state.list && state.list.length != 0
+        ? PlainText(JSON.stringify(state.list))
+        : Center(PlainText("Wow such empty")).setPadding("5rem"),
     Vertical(
         Horizontal(
             PlainText("Latest Drop"),
