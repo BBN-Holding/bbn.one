@@ -1,5 +1,4 @@
 .sass-cache
 *.css.map
 .DS_Store
-stats.json
 dist

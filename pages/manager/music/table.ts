@@ -7,7 +7,7 @@ import language from "../../../data/language.json" assert { type: "json"};
 
 
 export const TableDef = (formData: FormData) => <ColumEntry<TableData>[]>[
-    [ "Name", "auto", ({ Name }) => PlainText(Name ?? "-").setFont(1, 500) ],
+    [ "Title", "auto", ({ Title }) => PlainText(Title ?? "-").setFont(1, 500) ],
     [ "Artists", "max-content", () => Spacer() ],
     [ "Year", "max-content", ({ Id }) =>
         DropDownInput("Year", getYearList())

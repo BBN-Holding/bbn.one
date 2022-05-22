@@ -105,12 +105,12 @@ const wizard = (restore?: Drop) => Wizard({
             Vertical(
                 Center(PlainText("Enter your Album details.")),
                 Input({
-                    ...syncFromData(formData, "name"),
-                    placeholder: "Name"
+                    ...syncFromData(formData, "title"),
+                    placeholder: "Title"
                 }).setWidth(inputWidth),
                 Grid(
                     Input({
-                        ...syncFromData(formData, "releaseDate"),
+                        ...syncFromData(formData, "release"),
                         placeholder: "Release Date",
                         type: "text"
                     }),
@@ -167,18 +167,18 @@ const wizard = (restore?: Drop) => Wizard({
                         PlainText("Upload your Cover"),
                         Button("Manual Upload")
                             .onClick(() => uploadFilesDialog(([ { blob, url } ]) => {
-                                formData.set("cover.image.url", url)
-                                formData.set("cover.image", blob)
+                                formData.set("artwork.url", url)
+                                formData.set("artwork", blob)
                                 update({});
                             }, allowedImageFormats.join(",")))
                     ),
                     DropAreaInput(CenterV(
-                        formData.has("cover.image.url")
-                            ? ImageFrom(formData, "cover.image.url")!
+                        formData.has("artwork.url")
+                            ? ImageFrom(formData, "artwork.url")!
                             : PlainText("Drag & Drop your File here")
                     ), allowedImageFormats, ([ { blob, url } ]) => {
-                        formData.set("cover.image.url", url)
-                        formData.set("cover.image", blob)
+                        formData.set("artwork.url", url)
+                        formData.set("artwork", blob)
                         update({});
                     }).addClass("drop-area")
                 )
@@ -234,13 +234,13 @@ const wizard = (restore?: Drop) => Wizard({
 function addSongs(list: { blob: Blob; file: File; }[], formData: FormData, update: (data: Partial<unknown>) => void) {
     list.map(x => ({ ...x, id: crypto.randomUUID() })).forEach(({ blob, file, id }) => {
         formData.append("songs", id);
-        const cleanedUpName = file.name
+        const cleanedUpTitle = file.name
             .replaceAll("_", " ")
             .replaceAll("-", " ")
             .replace(/\.[^/.]+$/, "");
 
         formData.set(`song.${id}.blob`, blob);
-        formData.set(`song.${id}.name`, cleanedUpName); // Our AI prediceted name
+        formData.set(`song.${id}.title`, cleanedUpTitle); // Our AI prediceted name
         formData.set(`song.${id}.year`, new Date().getFullYear().toString());
         // TODO Add Defaults for Country, Primary Genre => Access global FormData and merge it to one and then pull it
     });
