@@ -134,14 +134,12 @@ export const API = {
                 })).ok);
             },
             get: async () => {
-                await delay(1000);
-                return {
-                    id: "id",
-                    type: "PUBLISHED",
-                    artists: [
-                        [ "joe", "biden", "PRIMARY" ]
-                    ],
-                };
+                return (await fetch(`${API.BASE_URL}music/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": token
+                    }
+                }).then(x => x.json())).drop;
             },
             artwork: {
                 get: () => {

@@ -5,19 +5,19 @@ import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 
-import { View, WebGen, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV } from "../../deps.ts";
+import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV } from "../../deps.ts";
 import { TableData } from "./types.ts";
 import { allowedAudioFormats, allowedImageFormats, CenterAndRight, Redirect, syncFromData, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
-import { API } from "./RESTSpec.ts";
+import { API, Drop } from "./RESTSpec.ts";
 
 WebGen({
     theme: SupportedThemes.dark,
     icon: new MaterialIcons()
 })
 Redirect()
-
-if (!new URLSearchParams(location.search).has("id")) {
+const params = new URLSearchParams(location.search);
+if (!params.has("id")) {
     alert("ID is missing")
     location.href = "/music";
 }
@@ -40,182 +40,197 @@ function uploadFilesDialog(onData: (files: { blob: Blob, file: File, url: string
 
 // TODO: Wizard Restore
 // TODO: Input zu neuen FormComponents umlagern
-View(() => Vertical(
+View<{ restoreData: Drop }>(({ state, update }) => Vertical(
     DynaNavigation("Music"),
     Spacer(),
-    Wizard({
-        cancelAction: "/music",
-        buttonArrangement: "space-between",
-        nextAction: async (pages) => {
-            const single = new FormData();
-            const list = pages.map(x => Array.from(x.data.entries())).flat();
-            for (const [ key, value ] of list) {
-                single.append(key, value);
-            }
-            await API
-                .music(API.getToken())
-            [ '{id}' ](new URLSearchParams(location.search).get("id")!)
-                .put(single);
-        },
-        submitAction: () => {
-
-        }
-    }, ({ Next }) => [
-        Page((formData) => [
-            PlainText("Lets make your Drop hit!"),
-            Spacer(),
-            Horizontal(
-                Spacer(),
-                Vertical(
-                    Center(PlainText("First we need an UPC/EAN number:")),
-                    Input({
-                        ...syncFromData(formData, "upc"),
-                        placeholder: "UPC/EAN"
-                    }).setWidth(inputWidth),
-                    Button("I don't have one")
-                        .setJustify("center")
-                        .setStyle(ButtonStyle.Secondary)
-                        .onClick(Next)
-                ).setGap(gapSize),
+    state.restoreData == null
+        ? (() => {
+            API.music(API.getToken())[ '{id}' ](params.get("id")!).get().then(restoreData => {
+                update({ restoreData })
+            }).catch(() => {
+                setTimeout(() => location.reload(), 1000);
+            })
+            return CenterV(
+                Center(
+                    Custom(loadingWheel() as Element as HTMLElement)
+                ).addClass("loading"),
                 Spacer()
-            ),
-        ]),
-        Page((formData) => [
-            Spacer(),
-            Center(
-                Vertical(
-                    Center(PlainText("Enter your Album details.")),
-                    Input({
-                        ...syncFromData(formData, "name"),
-                        placeholder: "Name"
-                    }).setWidth(inputWidth),
-                    Grid(
-                        Input({
-                            ...syncFromData(formData, "releaseDate"),
-                            placeholder: "Release Date",
-                            type: "text"
-                        }),
-                        DropDownInput("Language", language)
-                            .syncFormData(formData, "language")
-                            .addClass("custom")
-                    )
-                        .setEvenColumns(2)
-                        .setGap(gapSize)
-                        .setWidth(inputWidth),
-                    Input({
-                        placeholder: "Artistlist",
-                        ...syncFromData(formData, "artistList"),
-                    }),
-                    Center(PlainText("Set your target Audience")),
-                    Grid(
-                        DropDownInput("Primary Genre", primary)
-                            .syncFormData(formData, "primaryGenre")
-                            .addClass("custom"),
-                        DropDownInput("Secondary Genre", primary)
-                            .setStyle(ButtonStyle.Secondary)
-                            .setColor(Color.Disabled),
-                    )
-                        .setGap(gapSize)
-                        .setEvenColumns(2)
-                ).setGap(gapSize)
-            ),
-        ]),
-        Page((formData) => [
-            Spacer(),
-            Center(
-                Vertical(
-                    Center(PlainText("Display the Copyright")),
-                    Input({
-                        placeholder: "Composition Copyright",
-                        ...syncFromData(formData, "compositionCopyright")
-                    })
-                        .setWidth(inputWidth),
-                    Input({
-                        placeholder: "Sound Recording Copyright",
-                        ...syncFromData(formData, "soundRecordingCopyright")
-                    })
-                        .setWidth(inputWidth),
-                )
-                    .setGap(gapSize)
-            ),
-        ]),
-        Page((formData) => [
-            Spacer(),
-            Center(
-                View(({ update }) =>
-                    Vertical(
-                        CenterAndRight(
-                            PlainText("Upload your Cover"),
-                            Button("Manual Upload")
-                                .onClick(() => uploadFilesDialog(([ { blob, url } ]) => {
-                                    formData.set("cover.image.url", url)
-                                    formData.set("cover.image", blob)
-                                    update({});
-                                }, allowedImageFormats.join(",")))
-                        ),
-                        DropAreaInput(CenterV(
-                            formData.has("cover.image.url")
-                                ? ImageFrom(formData, "cover.image.url")!
-                                : PlainText("Drag & Drop your File here")
-                        ), allowedImageFormats, ([ { blob, url } ]) => {
-                            formData.set("cover.image.url", url)
-                            formData.set("cover.image", blob)
-                            update({});
-                        }).addClass("drop-area")
-                    )
-                        .setGap(gapSize)
-                ).asComponent()
-            ),
-        ]),
-        Page((formData) => [
-            Spacer(),
-            Horizontal(
-                Spacer(),
-                View(({ update }) =>
-                    Vertical(
-                        CenterAndRight(
-                            PlainText("Manage your Music"),
-                            Button("Manual Upload")
-                                .onClick(() => uploadFilesDialog((list) => addSongs(list, formData, update), allowedAudioFormats.join(",")))
-                        ),
-                        formData.has("songs") ?
-                            Table<TableData>(TableDef(formData), formData.getAll("songs").map(x => {
-                                return <TableData>{
-                                    Id: x,
-                                    Name: formData.get(`song.${x}.name`)?.toString(),
-                                    Year: formData.get(`song.${x}.year`)?.toString(),
-                                    Explicit: formData.get(`song.${x}.explicit`) == "true",
-                                };
-                            }))
-                                .addClass("inverted-class")
-                            : UploadTable(TableDef(formData), (list) => addSongs(list, formData, update))
-                                .addClass("inverted-class")
-
-                    ).setGap(gapSize),
-                ).asComponent(),
-                Spacer()
-            ),
-        ]),
-        Page((_formData) => [
-            Spacer(),
-            Horizontal(
-                Spacer(),
-                PlainText("Thank! Thats everything we need."),
-                Spacer(),
-            ),
-            Horizontal(
-                Spacer(),
-                Input({
-                    placeholder: "Comments for Submit"
-                }),
-                Spacer()
-            ),
-        ])
-    ])
+            ).addClass("wwizard");
+        })()
+        : wizard(state.restoreData)
 ))
     .addClass("fullscreen")
-    .appendOn(document.body)
+    .appendOn(document.body);
 
+const wizard = (restore?: Drop) => Wizard({
+    cancelAction: "/music",
+    buttonArrangement: "space-between",
+    nextAction: async (pages) => {
+        const single = new FormData();
+        const list = pages.map(x => Array.from(x.data.entries())).flat();
+        for (const [ key, value ] of list) {
+            single.append(key, value);
+        }
+        await API
+            .music(API.getToken())
+        [ '{id}' ](new URLSearchParams(location.search).get("id")!)
+            .put(single);
+    },
+    submitAction: () => {
+
+    }
+}, ({ Next }) => [
+    Page((formData) => [
+        PlainText("Lets make your Drop hit!"),
+        Spacer(),
+        Horizontal(
+            Spacer(),
+            Vertical(
+                Center(PlainText("First we need an UPC/EAN number:")),
+                Input({
+                    ...syncFromData(formData, "upc"),
+                    placeholder: "UPC/EAN"
+                }).setWidth(inputWidth),
+                Button("I don't have one")
+                    .setJustify("center")
+                    .setStyle(ButtonStyle.Secondary)
+                    .onClick(Next)
+            ).setGap(gapSize),
+            Spacer()
+        ),
+    ]).setDefaultValues({ upc: restore?.upc }),
+    Page((formData) => [
+        Spacer(),
+        Center(
+            Vertical(
+                Center(PlainText("Enter your Album details.")),
+                Input({
+                    ...syncFromData(formData, "name"),
+                    placeholder: "Name"
+                }).setWidth(inputWidth),
+                Grid(
+                    Input({
+                        ...syncFromData(formData, "releaseDate"),
+                        placeholder: "Release Date",
+                        type: "text"
+                    }),
+                    DropDownInput("Language", language)
+                        .syncFormData(formData, "language")
+                        .addClass("custom")
+                )
+                    .setEvenColumns(2)
+                    .setGap(gapSize)
+                    .setWidth(inputWidth),
+                Input({
+                    placeholder: "Artistlist",
+                    ...syncFromData(formData, "artistList"),
+                }),
+                Center(PlainText("Set your target Audience")),
+                Grid(
+                    DropDownInput("Primary Genre", primary)
+                        .syncFormData(formData, "primaryGenre")
+                        .addClass("custom"),
+                    DropDownInput("Secondary Genre", primary)
+                        .setStyle(ButtonStyle.Secondary)
+                        .setColor(Color.Disabled),
+                )
+                    .setGap(gapSize)
+                    .setEvenColumns(2)
+            ).setGap(gapSize)
+        ),
+    ]),
+    Page((formData) => [
+        Spacer(),
+        Center(
+            Vertical(
+                Center(PlainText("Display the Copyright")),
+                Input({
+                    placeholder: "Composition Copyright",
+                    ...syncFromData(formData, "compositionCopyright")
+                })
+                    .setWidth(inputWidth),
+                Input({
+                    placeholder: "Sound Recording Copyright",
+                    ...syncFromData(formData, "soundRecordingCopyright")
+                })
+                    .setWidth(inputWidth),
+            )
+                .setGap(gapSize)
+        ),
+    ]),
+    Page((formData) => [
+        Spacer(),
+        Center(
+            View(({ update }) =>
+                Vertical(
+                    CenterAndRight(
+                        PlainText("Upload your Cover"),
+                        Button("Manual Upload")
+                            .onClick(() => uploadFilesDialog(([ { blob, url } ]) => {
+                                formData.set("cover.image.url", url)
+                                formData.set("cover.image", blob)
+                                update({});
+                            }, allowedImageFormats.join(",")))
+                    ),
+                    DropAreaInput(CenterV(
+                        formData.has("cover.image.url")
+                            ? ImageFrom(formData, "cover.image.url")!
+                            : PlainText("Drag & Drop your File here")
+                    ), allowedImageFormats, ([ { blob, url } ]) => {
+                        formData.set("cover.image.url", url)
+                        formData.set("cover.image", blob)
+                        update({});
+                    }).addClass("drop-area")
+                )
+                    .setGap(gapSize)
+            ).asComponent()
+        ),
+    ]),
+    Page((formData) => [
+        Spacer(),
+        Horizontal(
+            Spacer(),
+            View(({ update }) =>
+                Vertical(
+                    CenterAndRight(
+                        PlainText("Manage your Music"),
+                        Button("Manual Upload")
+                            .onClick(() => uploadFilesDialog((list) => addSongs(list, formData, update), allowedAudioFormats.join(",")))
+                    ),
+                    formData.has("songs") ?
+                        Table<TableData>(TableDef(formData), formData.getAll("songs").map(x => {
+                            return <TableData>{
+                                Id: x,
+                                Name: formData.get(`song.${x}.name`)?.toString(),
+                                Year: formData.get(`song.${x}.year`)?.toString(),
+                                Explicit: formData.get(`song.${x}.explicit`) == "true",
+                            };
+                        }))
+                            .addClass("inverted-class")
+                        : UploadTable(TableDef(formData), (list) => addSongs(list, formData, update))
+                            .addClass("inverted-class")
+
+                ).setGap(gapSize),
+            ).asComponent(),
+            Spacer()
+        ),
+    ]),
+    Page((_formData) => [
+        Spacer(),
+        Horizontal(
+            Spacer(),
+            PlainText("Thank! Thats everything we need."),
+            Spacer(),
+        ),
+        Horizontal(
+            Spacer(),
+            Input({
+                placeholder: "Comments for Submit"
+            }),
+            Spacer()
+        ),
+    ])
+])
 function addSongs(list: { blob: Blob; file: File; }[], formData: FormData, update: (data: Partial<unknown>) => void) {
     list.map(x => ({ ...x, id: crypto.randomUUID() })).forEach(({ blob, file, id }) => {
         formData.append("songs", id);
