@@ -111,7 +111,8 @@ cardlist {
     padding: 0 1rem;
 }
 
-.services, .scoped-size {
+.services,
+.scoped-size {
     margin: 0 auto;
     max-width: 69rem;
 }
@@ -121,4 +122,11 @@ cardlist {
     margin: 0.1rem 0 0 0.2rem;
     padding: 0 .2rem;
     height: 20px;
+}
+
+.tag {
+    --background-color-h: 31 !important;
+    --background-color-s: 100% !important;
+    --background-color-l: 66% !important;
+    border-radius: 100rem;
 }

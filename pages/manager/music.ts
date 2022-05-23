@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen } from "../../deps.ts";
+import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/components/subsidiaries.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -9,22 +9,35 @@ WebGen({
 })
 Redirect();
 
-const view = View<{ list: Drop[] }>(({ state }) => Vertical(
+const view = View<{ list: Drop[], type: Drop[ "type" ] }>(({ state, update }) => Vertical(
     DynaNavigation("Music"),
     Horizontal(
         Vertical(
             Horizontal(
-                PlainText("Hi Gregor! 👋"),
+                PlainText("Hi Gregor! 👋")
+                    .setFont(2.260625, 700),
                 Spacer()
-            ),
+            ).setMargin("0 0 18px"),
             Horizontal(
                 Button("Published")
-                    .setColor(Color.Colored),
+                    .setColor(Color.Colored)
+                    .addClass("tag")
+                    .setStyle(state.type == "PUBLISHED" ? ButtonStyle.Normal : ButtonStyle.Secondary)
+                    .onClick(() => update({ type: "PUBLISHED" })),
                 Button("Unpublished")
                     .setColor(Color.Colored)
-                    .setStyle(ButtonStyle.Secondary),
+                    .setStyle(state.type == "PRIVATE" ? ButtonStyle.Normal : ButtonStyle.Secondary)
+                    .onClick(() => update({ type: "PRIVATE" }))
+                    .addClass("tag"),
+                state.list?.find(x => x.type == "UNSUBMITTED") ?
+                    Button(`Drafts (${state.list.filter(x => x.type == "UNSUBMITTED").length})`)
+                        .setColor(Color.Colored)
+                        .onClick(() => update({ type: "UNSUBMITTED" }))
+                        .setStyle(state.type == "UNSUBMITTED" ? ButtonStyle.Normal : ButtonStyle.Secondary)
+                        .addClass("tag")
+                    : null,
                 Spacer()
-            )
+            ).setGap("10px")
         ),
         Spacer(),
         Vertical(
@@ -41,46 +54,35 @@ const view = View<{ list: Drop[] }>(({ state }) => Vertical(
     )
         .setPadding("5rem 0 0 0")
         .addClass("subsidiary-list"),
-    state.list && state.list.length != 0
-        ? PlainText(JSON.stringify(state.list))
-        : Center(PlainText("Wow such empty")).setPadding("5rem"),
-    Vertical(
-        Horizontal(
-            PlainText("Latest Drop"),
-            Spacer()
-        ),
-        Horizontal(
-            Vertical(
-                Spacer(),
-                PlainText("FUCKSLEEP FOREVER"),
-                PlainText("6 May 2022"),
-                PlainText("UPC 19213124535"),
-                Spacer()
-            ),
-            Spacer()
-        )
-    )
-        .setWidth("100%")
-        .addClass("subsidiary-list"),
-    Vertical(
-        Horizontal(
-            PlainText("History"),
-            Spacer()
-        ),
-        Horizontal(
-            Vertical(
-                Spacer(),
-                PlainText("FUCKSLEEP FOREVER"),
-                PlainText("6 May 2022"),
-                PlainText("UPC 19213124535"),
-                Spacer()
-            ),
-            Spacer()
-        )
-    )
-        .setWidth("100%")
-        .addClass("subsidiary-list")
+    Box((() => {
+        if (!state.list)
+            return Custom(loadingWheel() as Element as HTMLElement)
+        if (state.list.length != 0)
+            return Vertical(
+                state.list
+                    .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
+                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
+                    .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
+                    .map(x => Horizontal(
+                        // Horizontal(
+                        //     PlainText("Latest Drop"),
+                        //     Spacer()
+                        // ),
+                        Vertical(
+                            Spacer(),
+                            PlainText(x.title ?? "(no name)"),
+                            PlainText(x.release ?? "(no release date)"),
+                            PlainText(x.upc ? `UPC ${x.upc}` : "(no upc number)"),
+                            Spacer()
+                        ),
+                        Spacer()
+                    ))
+            ).setWidth("100%")
+                .addClass("subsidiary-list");
+        return Center(PlainText("Wow such empty")).setPadding("5rem");
+    })()).addClass("loading"),
 ))
+    .change(({ update }) => update({ type: "PUBLISHED" }))
     .appendOn(document.body);
 
 API.music(API.getToken()).list.get()
