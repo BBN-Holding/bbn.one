@@ -88,9 +88,9 @@ export const API = {
                 return data;
             }
         },
-        email: {
+        register: {
             post: async ({ email, password }: { email: string, password: string }) => {
-                const data = await fetch(`${API.BASE_URL}auth/email`, {
+                const data = await fetch(`${API.BASE_URL}auth/register`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -100,8 +100,28 @@ export const API = {
                         password
                     })
                 }).then(x => x.json())
-                console.log(data);
                 return data;
+            }
+        },
+        email: {
+            post: async ({ email, password }: { email: string, password: string }) => {
+                try {
+
+                    const data = await fetch(`${API.BASE_URL}auth/email`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            email,
+                            password
+                        })
+                    }).then(x => x.json())
+                    console.log(data);
+                    return data;
+                } catch (error) {
+                    return null;
+                }
             }
         }
     },

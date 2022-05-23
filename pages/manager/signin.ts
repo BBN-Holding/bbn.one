@@ -7,7 +7,6 @@ import googleLog from '../../assets/img/googleLogo.svg';
 import { DynaNavigation } from "../../components/nav.ts";
 import { Redirect, syncFromData } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
-
 WebGen({
 })
 Redirect();
@@ -45,7 +44,7 @@ if (para.has("id")) {
         .open()
 }
 
-View(() => Vertical(
+View<{ error?: string, signup?: boolean }>(({ state, update }) => Vertical(
     DynaNavigation("Home"),
     Horizontal(
         Vertical(
@@ -61,23 +60,27 @@ View(() => Vertical(
             Page((formData) => [
                 Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
                 Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password") }),
-                Button("Login")
+                Button(state.signup ? "Register" : "Login")
                     .onPromiseClick(async () => {
-                        const data = await API.auth.email.post({
+                        const request = state.signup ? API.auth.register.post : API.auth.email.post;
+                        const data = await request({
                             email: formData.get("email")?.toString() ?? "",
                             password: formData.get("password")?.toString() ?? ""
                         })
-
+                        if (data == null)
+                            update({ error: state.signup ? "Email is not unique" : "Wrong Email or Password" })
                         if (data.JWT) {
                             localStorage[ "access-token" ] = data.JWT;
                             Redirect();
                         }
                     })
                     .setJustify("center"),
+                Horizontal(state.error ? PlainText("Error: " + state.error).addClass("error-message") : null, Spacer()),
                 Horizontal(
-                    PlainText("New here?"),
-                    Button("Create a Account")
+                    PlainText(state.signup ? "Known here?" : "New here?"),
+                    Button(state.signup ? "Sign in" : "Create a Account")
                         .setStyle(ButtonStyle.Inline)
+                        .onClick(() => update({ signup: !state.signup }))
                         .setColor(Color.Colored)
                         .addClass("link"),
                     Spacer()
