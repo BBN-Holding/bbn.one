@@ -3,6 +3,7 @@ import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import '../../assets/css/components/subsidiaries.css';
 import heroImage from '../../assets/img/hero-img.png';
+import googleLog from '../../assets/img/googleLogo.svg';
 import { DynaNavigation } from "../../components/nav.ts";
 import { Redirect, syncFromData } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
@@ -49,11 +50,14 @@ View(() => Vertical(
     Horizontal(
         Vertical(
             PlainText("Welcome back!")
-                .setMargin("5rem 0 1.5rem")
+                .setMargin("5rem 0 .8rem")
                 .addClass("line-header")
                 .setWidth("21rem")
                 .setFont(5.375, 800),
-            Button("Sign in with Google").setMargin("0 0 1.8rem"),
+            Button("Sign in with Google")
+                .setMargin("0 0 .8rem")
+                .setJustify("center")
+                .addPrefix(Custom(img(googleLog)).addClass("prefix-logo")),
             Page((formData) => [
                 Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
                 Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password") }),
@@ -78,7 +82,7 @@ View(() => Vertical(
                         .addClass("link"),
                     Spacer()
                 )
-                    .setMargin("2rem 0 0"),
+                    .setMargin("1rem 0 0"),
                 Horizontal(
                     PlainText("Forgot your Password?"),
                     Button("Reset it here")
