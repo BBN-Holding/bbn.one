@@ -138,7 +138,13 @@ const wizard = (restore?: Drop) => Wizard({
                     .setEvenColumns(2)
             ).setGap(gapSize)
         ),
-    ]),
+    ]).setDefaultValues({
+        title: restore?.title,
+        release: restore?.release,
+        language: restore?.language,
+        artistList: JSON.stringify(restore?.artists),
+        primaryGenre: restore?.primaryGenre,
+    }),
     Page((formData) => [
         Spacer(),
         Center(
@@ -157,7 +163,10 @@ const wizard = (restore?: Drop) => Wizard({
             )
                 .setGap(gapSize)
         ),
-    ]),
+    ]).setDefaultValues({
+        compositionCopyright: restore?.compositionCopyright,
+        soundRecordingCopyright: restore?.soundRecordingCopyright
+    }),
     Page((formData) => [
         Spacer(),
         Center(
@@ -185,7 +194,9 @@ const wizard = (restore?: Drop) => Wizard({
                     .setGap(gapSize)
             ).asComponent()
         ),
-    ]),
+    ]).setDefaultValues({
+        // artwork: TODO(Backend): Implement fetchting files
+    }),
     Page((formData) => [
         Spacer(),
         Horizontal(
@@ -214,8 +225,10 @@ const wizard = (restore?: Drop) => Wizard({
             ).asComponent(),
             Spacer()
         ),
-    ]),
-    Page((_formData) => [
+    ]).setDefaultValues({
+        songs: JSON.stringify(restore?.songs)
+    }),
+    Page((formData) => [
         Spacer(),
         Horizontal(
             Spacer(),
@@ -225,11 +238,14 @@ const wizard = (restore?: Drop) => Wizard({
         Horizontal(
             Spacer(),
             Input({
-                placeholder: "Comments for Submit"
+                placeholder: "Comments for Submit",
+                ...syncFromData(formData, "comments")
             }),
             Spacer()
         ),
-    ])
+    ]).setDefaultValues({
+        comments: restore?.comments
+    })
 ])
 function addSongs(list: { blob: Blob; file: File; }[], formData: FormData, update: (data: Partial<unknown>) => void) {
     list.map(x => ({ ...x, id: crypto.randomUUID() })).forEach(({ blob, file, id }) => {
