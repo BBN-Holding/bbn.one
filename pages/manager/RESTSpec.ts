@@ -73,19 +73,16 @@ export const API = {
             }
         },
         forgotPassword: {
-            post: async ({ email, redirect }: { email: string, redirect: string }) => {
-                const data = await fetch(`${API.BASE_URL}auth/forgot-password`, {
+            post: async ({ email }: { email: string }) => {
+                await fetch(`${API.BASE_URL}auth/forgot-password`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        email,
-                        redirect
+                        email
                     })
-                }).then(x => x.json())
-                console.log(data);
-                return data;
+                })
             }
         },
         register: {

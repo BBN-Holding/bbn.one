@@ -14,7 +14,7 @@ Redirect();
 const para = new URLSearchParams(location.search)
 const { id, type } = { id: para.get("id"), type: para.get("type") };
 
-View<{ error?: string, signup?: boolean, resetToken: string, loading: boolean }>(({ state, update }) => Vertical(
+View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, password: string }>(({ state, update }) => Vertical(
     DynaNavigation("Home"),
     Horizontal(
         Vertical(
@@ -34,6 +34,7 @@ View<{ error?: string, signup?: boolean, resetToken: string, loading: boolean }>
                                 await API.user(state.resetToken!).setMe.post({
                                     password: formData.get("password")?.toString()
                                 });
+                                update({ resetToken: undefined, password: formData.get("password")?.toString() })
                             }),
                         PlainText(state.resetToken?.startsWith("!") ? "Error: Link is invalid" : "").addClass("error-message")
                     ]).disableAutoSpacerAtBottom().getComponents();
@@ -44,7 +45,7 @@ View<{ error?: string, signup?: boolean, resetToken: string, loading: boolean }>
                         .addPrefix(Custom(img(googleLog)).addClass("prefix-logo")),
                     ...state.signup ? [ Input({ placeholder: "Name", type: "text", ...syncFromData(formData, "name") }) ] : [],
                     Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
-                    Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password") }),
+                    Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password"), value: state.password }),
                     Button(state.signup ? "Register" : "Login")
                         .onPromiseClick(handleSignUpInButton(formData, state, update))
                         .setJustify("center"),
@@ -66,8 +67,7 @@ View<{ error?: string, signup?: boolean, resetToken: string, loading: boolean }>
                             .setColor(Color.Colored)
                             .onPromiseClick(async () => {
                                 await API.auth.forgotPassword.post({
-                                    email: formData.get("email")?.toString() ?? "",
-                                    redirect: location.href
+                                    email: formData.get("email")?.toString() ?? ""
                                 });
                             })
                             .addClass("link"),
@@ -84,10 +84,9 @@ View<{ error?: string, signup?: boolean, resetToken: string, loading: boolean }>
         if (type == "forgot-password" && id) {
             update({ loading: true })
             API.auth.fromEmail.get(id).then(x => {
-                if (x.message)
-                    update({ resetToken: "!" + x.message, loading: false })
-                else
-                    update({ resetToken: x.JWT, loading: false })
+                update({ resetToken: x.JWT, loading: false })
+            }).catch(() => {
+                update({ resetToken: "!", loading: false })
             })
         }
     })
