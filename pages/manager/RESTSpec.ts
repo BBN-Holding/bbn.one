@@ -89,18 +89,23 @@ export const API = {
             }
         },
         register: {
-            post: async ({ email, password }: { email: string, password: string }) => {
-                const data = await fetch(`${API.BASE_URL}auth/register`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password
-                    })
-                }).then(x => x.json())
-                return data;
+            post: async ({ email, password, name }: { email: string, password: string, name: string }) => {
+                try {
+                    const data = await fetch(`${API.BASE_URL}auth/register`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            email,
+                            password,
+                            name
+                        })
+                    }).then(x => x.json())
+                    return data;
+                } catch (error) {
+                    return null;
+                }
             }
         },
         email: {
