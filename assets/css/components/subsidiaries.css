@@ -1,14 +1,15 @@
 .subsidiary-list {
     max-width: 69rem;
+    width: calc(100% - 2rem);
     margin: 2.3rem auto 0;
 }
 
-.subsidiary-list > * {
+.subsidiary-list>* {
     height: 64px;
 }
 
 @media(max-width:600px) {
-    .subsidiary-list > * {
+    .subsidiary-list>* {
         height: 3rem;
     }
 }
