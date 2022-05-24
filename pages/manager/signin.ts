@@ -99,7 +99,7 @@ function handleSignUpInButton(formData: FormData, state: Partial<{ error?: strin
             password: formData.get("password")?.toString() ?? "",
             name: formData.get("name")?.toString() ?? ""
         };
-        let data: { JWT: string } | null = null;
+        let data: { refreshToken: string } | null = null;
         if (state.signup)
             data = await API.auth.register.post({
                 name,
@@ -118,7 +118,8 @@ function handleSignUpInButton(formData: FormData, state: Partial<{ error?: strin
             else
                 update({ error: "Wrong Email or Password" });
         else {
-            localStorage[ "access-token" ] = data.JWT;
+            localStorage[ "refresh-token" ] = data.refreshToken;
+            localStorage[ "access-token" ] = data.refreshToken; // TODO: Fix this shit
             Redirect();
         }
     };

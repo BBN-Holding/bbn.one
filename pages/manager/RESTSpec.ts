@@ -48,7 +48,7 @@ export const API = {
         }
     }),
     auth: {
-        refresh: {
+        refreshAccessToken: {
             post: async ({ refreshToken }: { refreshToken: string }) => {
                 await delay(1000);
                 return { accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlciI6MTAsIm5hbWUiOiJsdWNzb2Z0IiwibWFpbCI6Im1haWxAbHVjc29mdC5kZSIsInBpY3R1cmUiOiJodHRwczovL2x1Y3NvZnQuZGUvaW1nLzNEX2RhcmtfbHVjc29mdC5wbmciLCJpYXQiOjE1MTYyMzkwMjJ9.blMgwFi72mQZ4lxEAXeVfpK_pK6yJyZFyfAtn58xB-4" };
@@ -86,7 +86,7 @@ export const API = {
             }
         },
         register: {
-            post: async ({ email, password, name }: { email: string, password: string, name: string }) => {
+            post: async ({ email, password, name }: { email: string, password: string, name: string }): Promise<{ refreshToken: string } | null> => {
                 try {
                     const data = await fetch(`${API.BASE_URL}auth/register`, {
                         method: "POST",
@@ -106,7 +106,7 @@ export const API = {
             }
         },
         email: {
-            post: async ({ email, password }: { email: string, password: string }) => {
+            post: async ({ email, password }: { email: string, password: string }): Promise<{ refreshToken: string } | null> => {
                 try {
 
                     const data = await fetch(`${API.BASE_URL}auth/email`, {

@@ -2,19 +2,19 @@ import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText
 import '../../assets/css/main.css';
 import '../../assets/css/components/subsidiaries.css';
 import { DynaNavigation } from "../../components/nav.ts";
-import { Redirect } from "./helper.ts";
+import { GetCachedProfileData, ProfileData, Redirect } from "./helper.ts";
 import { API, Drop } from "./RESTSpec.ts";
 
 WebGen({
 })
 Redirect();
 
-const view = View<{ list: Drop[], type: Drop[ "type" ] }>(({ state, update }) => Vertical(
+const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(({ state, update }) => Vertical(
     DynaNavigation("Music"),
     Horizontal(
         Vertical(
             Horizontal(
-                PlainText("Hi Gregor! 👋")
+                PlainText(`Hi ${state.aboutMe?.name}! 👋`)
                     .setFont(2.260625, 700),
                 Spacer()
             ).setMargin("0 0 18px"),
@@ -82,7 +82,7 @@ const view = View<{ list: Drop[], type: Drop[ "type" ] }>(({ state, update }) =>
         return Center(PlainText("Wow such empty")).setPadding("5rem");
     })()).addClass("loading"),
 ))
-    .change(({ update }) => update({ type: "PUBLISHED" }))
+    .change(({ update }) => update({ type: "PUBLISHED", aboutMe: GetCachedProfileData() }))
     .appendOn(document.body);
 
 API.music(API.getToken()).list.get()

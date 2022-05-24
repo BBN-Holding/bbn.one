@@ -6,10 +6,21 @@ import { ColumEntry } from "./types.ts";
 export const allowedAudioFormats = [ "audio/flac", "audio/wav" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
+export type ProfileData = {
+    user: string;
+    name: string;
+    email: string;
+    picture?: string;
+};
+
+export function GetCachedProfileData(): ProfileData {
+    return JSON.parse(atob(localStorage[ "access-token" ].split(".")[ 1 ]));
+}
+
 export function Redirect() {
-    if (localStorage[ "access-token" ] && location.href.includes("/signin"))
+    if (localStorage[ "refresh-token" ] && location.href.includes("/signin"))
         location.href = "/music"; // TODO do this better
-    else if (!localStorage[ "access-token" ] && !location.href.includes("/signin"))
+    else if (!localStorage[ "refresh-token" ] && !location.href.includes("/signin"))
         location.href = "/signin";
 }
 
