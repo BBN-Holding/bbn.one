@@ -24,7 +24,7 @@ View<{ error?: string, signup?: boolean, resetToken: string, loading: boolean }>
                 .setWidth("21rem")
                 .setFont(5.375, 800),
             (() => {
-                if (state.loading) return Box(Custom(loadingWheel() as Element as HTMLElement), PlainText("Loading...")).addClass("loading");
+                if (state.loading) return Box(Custom(loadingWheel() as Element as HTMLElement), PlainText("Loading...")).addClass("loading", "loader");
                 if (state.resetToken)
                     return Page((formData) => [
                         Input({ placeholder: "New Password", type: "password", ...syncFromData(formData, "password") }),
