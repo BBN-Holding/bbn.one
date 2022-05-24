@@ -35,3 +35,13 @@ TODO: FIX ME
     left: .7rem;
     width: 1.2rem;
 }
+
+.loading {
+    width: 100%;
+    height: 7rem;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    margin-top: -1rem;
+}
