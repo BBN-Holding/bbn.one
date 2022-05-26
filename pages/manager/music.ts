@@ -119,5 +119,6 @@ function DropEntry(x: Drop): Component {
     )
         .setGap("40px")
         .addClass("list-entry")
-        .addClass("limited-width");
+        .addClass("limited-width")
+        .onClick(() => x.type === "UNSUBMITTED" ? location.href = "/music/new-drop?id=" + x.id : {});
 }
