@@ -107,10 +107,12 @@ function DropEntry(x: Drop): Component {
                 .setMargin("-0.4rem 0 0")
                 .setFont(2.25, 700),
             PlainText(x.release ?? "(no release date)")
-                .setFont(1, 700).addClass("entry-subtitle")
+                .setFont(1, 700)
+                .addClass("entry-subtitle")
         ),
         CenterV(
             PlainText(x.upc ? `UPC ${x.upc}` : "(no upc number)")
+                .addClass("entry-subtitle")
                 .setFont(1, 700)
         ),
         Spacer()
