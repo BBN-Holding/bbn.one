@@ -143,3 +143,7 @@ nav.music {
 .isList {
     justify-content: space-between;
 }
+
+.wbutton.disabled {
+    z-index: 0;
+}
