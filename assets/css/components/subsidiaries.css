@@ -13,3 +13,13 @@
         height: 3rem;
     }
 }
+
+.limited-width {
+    max-width: 69rem;
+    width: calc(100% - 2rem);
+    margin: 2.3rem auto 0;
+}
+
+.entry-subtitle {
+    color: rgb(255 255 255 / 80%);
+}

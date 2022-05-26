@@ -1,6 +1,8 @@
-import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box } from "../../deps.ts";
+import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/components/subsidiaries.css';
+import '../../assets/css/music.css'
+import artwork from "../../assets/img/template-artwork.png";
 import { DynaNavigation } from "../../components/nav.ts";
 import { GetCachedProfileData, ProfileData, Redirect } from "./helper.ts";
 import { API, Drop } from "./RESTSpec.ts";
@@ -53,32 +55,41 @@ const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(
         )
     )
         .setPadding("5rem 0 0 0")
-        .addClass("subsidiary-list"),
+        .addClass("limited-width"),
     Box((() => {
         if (!state.list)
             return Custom(loadingWheel() as Element as HTMLElement)
         if (state.list.length != 0)
             return Vertical(
+                PlainText("History")
+                    .addClass("list-title")
+                    .addClass("limited-width"),
                 state.list
                     .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
                     .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
                     .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
                     .map(x => Horizontal(
-                        // Horizontal(
-                        //     PlainText("Latest Drop"),
-                        //     Spacer()
-                        // ),
-                        Vertical(
-                            Spacer(),
-                            PlainText(x.title ?? "(no name)"),
-                            PlainText(x.release ?? "(no release date)"),
-                            PlainText(x.upc ? `UPC ${x.upc}` : "(no upc number)"),
-                            Spacer()
+                        Custom(img(x.artwork ?? artwork)),
+                        CenterV(
+                            PlainText(x.title ?? "(no name)")
+                                .setMargin("-0.4rem 0 0")
+                                .setFont(2.25, 700),
+                            PlainText(x.release ?? "(no release date)")
+                                .setFont(1, 700).addClass("entry-subtitle"),
                         ),
+                        CenterV(
+                            PlainText(x.upc ? `UPC ${x.upc}` : "(no upc number)")
+                                .setFont(1, 700),
+                        ),
+
                         Spacer()
-                    ))
-            ).setWidth("100%")
-                .addClass("subsidiary-list");
+                    )
+                        .setGap("40px")
+                        .addClass("list-entry")
+                        .addClass("limited-width")
+                    )
+            )
+                .setGap("20px");
         return Center(PlainText("Wow such empty")).setPadding("5rem");
     })()).addClass("loading"),
 ))
