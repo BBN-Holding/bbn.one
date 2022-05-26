@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV } from "../../deps.ts";
+import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/components/subsidiaries.css';
 import '../../assets/css/music.css'
@@ -47,7 +47,7 @@ const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(
             Button("Submit new Drop")
                 .onPromiseClick(async () => {
                     const id = await API.music(API.getToken()).post();
-                    // Currently not supported:
+                    // TODO: Currently not supported:
                     // location.href = `/music/new-drop/${id}`;
                     location.href = `/music/new-drop?id=${id}`;
                 }),
@@ -61,33 +61,22 @@ const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(
             return Custom(loadingWheel() as Element as HTMLElement)
         if (state.list.length != 0)
             return Vertical(
-                PlainText("History")
-                    .addClass("list-title")
-                    .addClass("limited-width"),
-                state.list
-                    .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
-                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
-                    .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
-                    .map(x => Horizontal(
-                        Custom(img(x.artwork ?? artwork)),
-                        CenterV(
-                            PlainText(x.title ?? "(no name)")
-                                .setMargin("-0.4rem 0 0")
-                                .setFont(2.25, 700),
-                            PlainText(x.release ?? "(no release date)")
-                                .setFont(1, 700).addClass("entry-subtitle"),
-                        ),
-                        CenterV(
-                            PlainText(x.upc ? `UPC ${x.upc}` : "(no upc number)")
-                                .setFont(1, 700),
-                        ),
-
-                        Spacer()
-                    )
-                        .setGap("40px")
-                        .addClass("list-entry")
-                        .addClass("limited-width")
-                    )
+                CategoryRender(
+                    state.list
+                        .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
+                        .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
+                        .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
+                        .filter((_, i) => i == 0),
+                    "Latest Drop"
+                ),
+                CategoryRender(
+                    state.list
+                        .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
+                        .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
+                        .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
+                        .filter((_, i) => i > 0),
+                    "History"
+                )
             )
                 .setGap("20px");
         return Center(PlainText("Wow such empty")).setPadding("5rem");
@@ -98,3 +87,35 @@ const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(
 
 API.music(API.getToken()).list.get()
     .then(x => view.viewOptions().update({ list: x }))
+
+function CategoryRender(dropList: Drop[], title: string): Component | (Component | null)[] | null {
+    if (dropList.length == 0)
+        return null;
+    return [
+        PlainText(title)
+            .addClass("list-title")
+            .addClass("limited-width"),
+        ...dropList.map(x => DropEntry(x))
+    ];
+}
+
+function DropEntry(x: Drop): Component {
+    return Horizontal(
+        Custom(img(x.artwork ?? artwork)),
+        CenterV(
+            PlainText(x.title ?? "(no name)")
+                .setMargin("-0.4rem 0 0")
+                .setFont(2.25, 700),
+            PlainText(x.release ?? "(no release date)")
+                .setFont(1, 700).addClass("entry-subtitle")
+        ),
+        CenterV(
+            PlainText(x.upc ? `UPC ${x.upc}` : "(no upc number)")
+                .setFont(1, 700)
+        ),
+        Spacer()
+    )
+        .setGap("40px")
+        .addClass("list-entry")
+        .addClass("limited-width");
+}
