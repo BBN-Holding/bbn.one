@@ -76,7 +76,18 @@ const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(
                         .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
                         .filter((_, i) => i > 0),
                     "History"
-                )
+                ),
+                state.list
+                    .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
+                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
+                    .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
+                    .length == 0
+                    ?
+                    Center(
+                        PlainText(`You don’t have any ${EnumToDisplay(state.type)} Drops`)
+                            .setFont(1.6, 700)
+                    ).setMargin("100px 0 0")
+                    : null
             )
                 .setGap("20px");
         return Center(PlainText("Wow such empty")).setPadding("5rem");
@@ -87,6 +98,14 @@ const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(
 
 API.music(API.getToken()).list.get()
     .then(x => view.viewOptions().update({ list: x }))
+
+function EnumToDisplay(state?: Drop[ "type" ]) {
+    switch (state) {
+        case "PRIVATE": return "unpublished";
+        case "PUBLISHED": return "published";
+        default: return "";
+    }
+}
 
 function CategoryRender(dropList: Drop[], title: string): Component | (Component | null)[] | null {
     if (dropList.length == 0)
