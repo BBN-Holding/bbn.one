@@ -10,25 +10,30 @@ nav {
     user-select: none;
     background: #37517e;
 }
+
 nav.music {
     background: linear-gradient(139.46deg, #F19D2D 6.59%, #DB5721 101.73%);
 }
-nav > div {
+
+nav>div {
     height: 4.5rem;
     max-width: 69rem;
     width: 100%;
     margin: 0 auto;
     align-items: center;
 }
+
 nav img {
     height: 1.7rem;
     margin-top: .3rem;
 }
+
 nav .wbutton {
     font-weight: 500;
     font-size: 1rem;
     padding: 0 0.7rem;
 }
+
 nav .wbutton.normal.contact {
     border: 2px solid #47b2e4;
     background: transparent;
@@ -40,6 +45,7 @@ nav .wbutton.normal.contact {
     height: unset;
     line-height: 1.5;
 }
+
 nav .wbutton.contact:is(:hover, :focus) {
     background: #47b2e4;
 }
@@ -51,11 +57,13 @@ TODO: Fix mobile issue
     nav img {
         height: 1.1rem;
     }
+
     nav div {
         height: 3.5rem;
         gap: 1.2rem;
         font-size: .8rem;
     }
+
     nav a.button {
         border: 1px solid #47b2e4;
         padding: 5px 12px 6px;
@@ -68,11 +76,13 @@ TODO: Fix mobile issue
     nav img {
         height: 1.1rem;
     }
+
     nav div {
         height: 3.5rem;
         gap: 1.2rem;
         font-size: .8rem;
     }
+
     nav a.button {
         border: 1px solid #47b2e4;
         padding: 5px 12px 6px;
@@ -80,13 +90,16 @@ TODO: Fix mobile issue
         font-size: 11px;
     }
 }
+
 @media(max-width:530px) {
     nav div {
         gap: 1rem;
         font-size: .8rem;
         grid-template-columns: auto repeat(5, max-content);
     }
-    nav a.button, nav a:nth-child(2) {
+
+    nav a.button,
+    nav a:nth-child(2) {
         display: none;
         visibility: hidden;
         margin-right: -1rem;
@@ -98,4 +111,14 @@ TODO: Fix mobile issue
         position: absolute;
         overflow: hidden;
     }
+}
+
+.profile-picture {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    font-weight: 800;
 }

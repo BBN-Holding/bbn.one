@@ -10,7 +10,7 @@ WebGen({
 Redirect();
 
 const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(({ state, update }) => Vertical(
-    DynaNavigation("Music"),
+    DynaNavigation("Music", state.aboutMe),
     Horizontal(
         Vertical(
             Horizontal(

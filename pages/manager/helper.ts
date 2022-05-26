@@ -72,6 +72,19 @@ export function getYearList(): string[] {
         .map((x) => x.toString());
 }
 
+export function stringToColour(str: string) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    let colour = '#';
+    for (let i = 0; i < 3; i++) {
+        const value = (hash >> (i * 8)) & 0xFF;
+        colour += ('00' + value.toString(16)).substr(-2);
+    }
+    return colour;
+}
+
 export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: { file: File, blob: Blob }[]) => void) {
     const table = Table(_columns, []).draw();
     table.ondragleave = (ev) => {

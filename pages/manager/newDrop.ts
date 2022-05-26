@@ -1,15 +1,15 @@
-import '../../assets/css/main.css';
-import '../../assets/css/components/subsidiaries.css';
-import '../../assets/css/wizard.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 
 import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV } from "../../deps.ts";
 import { TableData } from "./types.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, Redirect, syncFromData, Table, UploadTable } from "./helper.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, GetCachedProfileData, ProfileData, Redirect, syncFromData, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
 import { API, Drop } from "./RESTSpec.ts";
+import '../../assets/css/wizard.css';
+import '../../assets/css/components/subsidiaries.css';
+import '../../assets/css/main.css';
 
 WebGen({
     theme: SupportedThemes.dark,
@@ -40,8 +40,8 @@ function uploadFilesDialog(onData: (files: { blob: Blob, file: File, url: string
 
 // TODO: Wizard Restore
 // TODO: Input zu neuen FormComponents umlagern
-View<{ restoreData: Drop }>(({ state, update }) => Vertical(
-    DynaNavigation("Music"),
+View<{ restoreData: Drop, aboutMe: ProfileData }>(({ state, update }) => Vertical(
+    DynaNavigation("Music", state.aboutMe),
     Spacer(),
     state.restoreData == null
         ? (() => {
@@ -59,6 +59,7 @@ View<{ restoreData: Drop }>(({ state, update }) => Vertical(
         })()
         : wizard(state.restoreData)
 ))
+    .change(({ update }) => update({ aboutMe: GetCachedProfileData() }))
     .addClass("fullscreen")
     .appendOn(document.body);
 

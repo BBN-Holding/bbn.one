@@ -21,7 +21,7 @@ body {
 }
 
 nav.music {
-    background: transparent !important;
+    background: transparent;
 }
 
 .drop-area {

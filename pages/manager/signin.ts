@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, Color, Center, Custom, loadingWheel, Dialog, Horizontal, img, Input, Page, PlainText, Spacer, Vertical, View, WebGen, ButtonComponent, Box } from "../../deps.ts";
+import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, Input, Page, PlainText, Spacer, Vertical, View, WebGen, ButtonComponent, Box } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import '../../assets/css/components/subsidiaries.css';
