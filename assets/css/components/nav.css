@@ -32,6 +32,8 @@ nav .wbutton {
     font-weight: 500;
     font-size: 1rem;
     padding: 0 0.7rem;
+    /* TODO: Clean up this */
+    --color-grayscaled-inline-font: white;
 }
 
 nav .wbutton.normal.contact {
