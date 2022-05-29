@@ -1,6 +1,5 @@
 import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component } from "../../deps.ts";
 import '../../assets/css/main.css';
-import '../../assets/css/components/subsidiaries.css';
 import '../../assets/css/music.css'
 import artwork from "../../assets/img/template-artwork.png";
 import { DynaNavigation } from "../../components/nav.ts";

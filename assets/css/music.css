@@ -26,3 +26,7 @@
 .unset-height {
     height: unset !important;
 }
+
+.entry-subtitle {
+    color: rgb(255 255 255 / 80%);
+}

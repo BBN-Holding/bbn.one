@@ -124,6 +124,12 @@ cardlist {
     height: 20px;
 }
 
+.limited-width {
+    max-width: 69rem;
+    width: calc(100% - 2rem);
+    margin: 2.3rem auto 0;
+}
+
 .tag {
     --background-color-h: 31 !important;
     --background-color-s: 100% !important;

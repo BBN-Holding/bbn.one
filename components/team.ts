@@ -11,7 +11,7 @@ export const renderTeam = (sizelimt?: number) =>
             .setMargin("0 0 5rem"),
         Grid(
             ...members.filter((_, i) => sizelimt ? i < sizelimt : true).map(x => renderPerson(assets[ x.iconId as keyof typeof assets ], x.name, x.title, Object.entries(x.links).map(([ id, link ]) => [ actions[ id as keyof typeof actions ], link ])))
-        ).setEvenColumns(1, "repeat(auto-fit,minmax(23rem,1fr))").setGap("var(--gap)"),
+        ).setDynamicColumns(30).setGap("var(--gap)"),
         sizelimt
             ? Horizontal(
                 Button("View More")
@@ -20,5 +20,5 @@ export const renderTeam = (sizelimt?: number) =>
             ).setMargin("2rem 0 0")
             : null
     ))
-        .setMaxWidth("69rem")
+        .addClass("limited-width")
         .asComponent()

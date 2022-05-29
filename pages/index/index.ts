@@ -36,8 +36,8 @@ View(() => Vertical(
         align: x.align as "down" | "right" | "left",
         description: PlainText(x.description)
     }))))
-        .addClass("services")
-        .setEvenColumns(1, "repeat(auto-fit,minmax(6rem,1fr))")
+        .addClass("limited-width")
+        .setDynamicColumns(7)
         .setGap("var(--gap)"),
     renderTeam(6)
         .setId("team"),

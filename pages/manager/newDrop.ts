@@ -8,7 +8,6 @@ import { allowedAudioFormats, allowedImageFormats, CenterAndRight, GetCachedProf
 import { TableDef } from "./music/table.ts";
 import { API, Drop } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
-import '../../assets/css/components/subsidiaries.css';
 import '../../assets/css/main.css';
 
 WebGen({

@@ -1,7 +1,6 @@
 import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, Input, Page, PlainText, Spacer, Vertical, View, WebGen, ButtonComponent, Box } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
-import '../../assets/css/components/subsidiaries.css';
 import heroImage from '../../assets/img/hero-img.png';
 import googleLog from '../../assets/img/googleLogo.svg';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -77,7 +76,7 @@ View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, 
             })()
         ).setGap("11px"),
         Spacer()
-    ).addClass("subsidiary-list"),
+    ).addClass("limited-width"),
     Custom(img(heroImage)).addClass("background-image")
 ))
     .change(({ update }) => {
