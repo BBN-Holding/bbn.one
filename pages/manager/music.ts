@@ -9,7 +9,7 @@ import { API, Drop } from "./RESTSpec.ts";
 WebGen({
 })
 Redirect();
-
+const imageCache = new Map<string, string>();
 const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(({ state, update }) => Vertical(
     DynaNavigation("Music", state.aboutMe),
     Horizontal(
@@ -92,10 +92,26 @@ const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(
         return Center(PlainText("Wow such empty")).setPadding("5rem");
     })()).addClass("loading"),
 ))
-    .change(({ update }) => update({ type: "PUBLISHED", aboutMe: GetCachedProfileData() }))
+    .change(({ update }) => { update({ type: "PUBLISHED", aboutMe: GetCachedProfileData() }) })
     .appendOn(document.body);
 
 API.music(API.getToken()).list.get()
+    .then(x => {
+        Promise.all(x
+            .map(async x => ([
+                x.id,
+                URL.createObjectURL(await API.music(API.getToken())[ "{id}" ](x.id).artwork())
+            ] as [ key: string, value: string ])))
+            .then(x => {
+                for (const [ key, value ] of x) {
+                    console.log(key, value);
+                    imageCache.set(key, value);
+                }
+                view.viewOptions().update({});
+            })
+
+        return x;
+    })
     .then(x => view.viewOptions().update({ list: x }))
 
 function EnumToDisplay(state?: Drop[ "type" ]) {
@@ -119,7 +135,7 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
 
 function DropEntry(x: Drop): Component {
     return Horizontal(
-        Custom(img(x.artwork ?? artwork)),
+        Custom(img(imageCache.get(x.id) ?? artwork)),
         CenterV(
             PlainText(x.title ?? "(no name)")
                 .setMargin("-0.4rem 0 0")

@@ -160,6 +160,14 @@ export const API = {
                     }
                 })).ok);
             },
+            artwork: async () => {
+                return await fetch(`${API.BASE_URL}music/${id}/artwork`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": token
+                    }
+                }).then(x => x.blob());
+            },
             get: async () => {
                 return (await fetch(`${API.BASE_URL}music/${id}`, {
                     method: "GET",
@@ -168,11 +176,6 @@ export const API = {
                     }
                 }).then(x => x.json())).drop;
             },
-            artwork: {
-                get: () => {
-                    return new Blob();
-                }
-            }
         })
     })
 };

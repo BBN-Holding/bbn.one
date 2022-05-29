@@ -176,17 +176,17 @@ const wizard = (restore?: Drop) => Wizard({
                         PlainText("Upload your Cover"),
                         Button("Manual Upload")
                             .onClick(() => uploadFilesDialog(([ { blob, url } ]) => {
-                                formData.set("artwork.url", url)
+                                formData.set("artwork-url", url)
                                 formData.set("artwork", blob)
                                 update({});
                             }, allowedImageFormats.join(",")))
                     ),
                     DropAreaInput(CenterV(
-                        formData.has("artwork.url")
-                            ? ImageFrom(formData, "artwork.url")!
+                        formData.has("artwork-url")
+                            ? ImageFrom(formData, "artwork-url")!
                             : PlainText("Drag & Drop your File here")
                     ), allowedImageFormats, ([ { blob, url } ]) => {
-                        formData.set("artwork.url", url)
+                        formData.set("artwork-url", url)
                         formData.set("artwork", blob)
                         update({});
                     }).addClass("drop-area")
@@ -212,9 +212,9 @@ const wizard = (restore?: Drop) => Wizard({
                         Table<TableData>(TableDef(formData), formData.getAll("songs").map(x => {
                             return <TableData>{
                                 Id: x,
-                                Name: formData.get(`song.${x}.name`)?.toString(),
-                                Year: formData.get(`song.${x}.year`)?.toString(),
-                                Explicit: formData.get(`song.${x}.explicit`) == "true",
+                                Name: formData.get(`song-${x}-name`)?.toString(),
+                                Year: formData.get(`song-${x}-year`)?.toString(),
+                                Explicit: formData.get(`song-${x}-explicit`) == "true",
                             };
                         }))
                             .addClass("inverted-class")
@@ -255,9 +255,9 @@ function addSongs(list: { blob: Blob; file: File; }[], formData: FormData, updat
             .replaceAll("-", " ")
             .replace(/\.[^/.]+$/, "");
 
-        formData.set(`song.${id}.blob`, blob);
-        formData.set(`song.${id}.title`, cleanedUpTitle); // Our AI prediceted name
-        formData.set(`song.${id}.year`, new Date().getFullYear().toString());
+        formData.set(`song-${id}-blob`, blob);
+        formData.set(`song-${id}-title`, cleanedUpTitle); // Our AI prediceted name
+        formData.set(`song-${id}-year`, new Date().getFullYear().toString());
         // TODO Add Defaults for Country, Primary Genre => Access global FormData and merge it to one and then pull it
     });
     update({});

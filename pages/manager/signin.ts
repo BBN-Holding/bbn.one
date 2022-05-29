@@ -83,7 +83,7 @@ View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, 
         if (type == "forgot-password" && id) {
             update({ loading: true })
             API.auth.fromEmail.get(id).then(x => {
-                update({ resetToken: x.JWT, loading: false })
+                update({ resetToken: x.refreshToken, loading: false })
             }).catch(() => {
                 update({ resetToken: "!", loading: false })
             })

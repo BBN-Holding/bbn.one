@@ -11,17 +11,17 @@ export const TableDef = (formData: FormData) => <ColumEntry<TableData>[]>[
     [ "Artists", "max-content", () => Spacer() ],
     [ "Year", "max-content", ({ Id }) =>
         DropDownInput("Year", getYearList())
-            .syncFormData(formData, `song.${Id}.year`)
+            .syncFormData(formData, `song-${Id}-year`)
             .setStyle(ButtonStyle.Inline)
     ],
     [ "Country", "max-content", ({ Id }) =>
         DropDownInput("Country", language)
-            .syncFormData(formData, `song.${Id}.country`)
+            .syncFormData(formData, `song-${Id}-country`)
             .setStyle(ButtonStyle.Inline)
     ],
     [ "Primary Genre", "max-content", ({ Id }) =>
         DropDownInput("Primary Genre", primary)
-            .syncFormData(formData, `song.${Id}.primaryGenre`)
+            .syncFormData(formData, `song-${Id}-primaryGenre`)
             .setStyle(ButtonStyle.Inline)
     ],
     [ "Secondary Genre", "max-content", () =>
@@ -30,7 +30,7 @@ export const TableDef = (formData: FormData) => <ColumEntry<TableData>[]>[
             .setColor(Color.Disabled)
     ],
     [ "Explicit", "max-content", ({ Id }) =>
-        Checkbox(formData.get(`song.${Id}.explicit`) == "true")
-            .onClick((_, value) => formData.set(`song.${Id}.explicit`, !value ? "true" : "false"))
+        Checkbox(formData.get(`song-${Id}-explicit`) == "true")
+            .onClick((_, value) => formData.set(`song-${Id}-explicit`, !value ? "true" : "false"))
     ],
 ];
