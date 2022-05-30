@@ -37,15 +37,18 @@ function uploadFilesDialog(onData: (files: { blob: Blob, file: File, url: string
     };
 }
 
-// TODO: Wizard Restore
 // TODO: Input zu neuen FormComponents umlagern
 View<{ restoreData: Drop, aboutMe: ProfileData }>(({ state, update }) => Vertical(
     DynaNavigation("Music", state.aboutMe),
     Spacer(),
     state.restoreData == null
         ? (() => {
-            API.music(API.getToken())[ '{id}' ](params.get("id")!).get().then(restoreData => {
-                update({ restoreData })
+            API.music(API.getToken())[ '{id}' ](params.get("id")!).get().then(async restoreData => {
+                if (restoreData.artwork) {
+                    const blob = await API.music(API.getToken())[ "{id}" ](params.get("id")!).artwork()
+                    update({ restoreData: { ...restoreData, [ "artwork-url" ]: URL.createObjectURL(blob) } })
+                }
+                else update({ restoreData })
             }).catch(() => {
                 setTimeout(() => location.reload(), 1000);
             })
@@ -195,7 +198,7 @@ const wizard = (restore?: Drop) => Wizard({
             ).asComponent()
         ),
     ]).setDefaultValues({
-        // artwork: TODO(Backend): Implement fetchting files
+        [ "artwork-url" ]: restore?.[ "artwork-url" ]
     }),
     Page((formData) => [
         Spacer(),

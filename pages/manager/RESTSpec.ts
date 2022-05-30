@@ -13,6 +13,7 @@ export type Drop = {
     primaryGenre?: string;
     release?: string;
     artwork?: string;
+    [ "artwork-url" ]?: string;
     compositionCopyright?: string;
     soundRecordingCopyright?: string;
     comments?: string;
