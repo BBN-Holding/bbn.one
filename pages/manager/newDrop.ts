@@ -215,7 +215,7 @@ const wizard = (restore?: Drop) => Wizard({
                         Table<TableData>(TableDef(formData), formData.getAll("songs").map(x => {
                             return <TableData>{
                                 Id: x,
-                                Name: formData.get(`song-${x}-name`)?.toString(),
+                                Title: formData.get(`song-${x}-title`)?.toString(),
                                 Year: formData.get(`song-${x}-year`)?.toString(),
                                 Explicit: formData.get(`song-${x}-explicit`) == "true",
                             };
@@ -229,7 +229,7 @@ const wizard = (restore?: Drop) => Wizard({
             Spacer()
         ),
     ]).setDefaultValues({
-        songs: JSON.stringify(restore?.songs)
+        songs: restore?.songs ? JSON.stringify(restore?.songs) : undefined
     }),
     Page((formData) => [
         Spacer(),
