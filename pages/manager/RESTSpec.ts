@@ -151,7 +151,7 @@ export const API = {
             assert(typeof data.id == "string")
             return data.id as string;
         },
-        [ "{id}" ]: (id: string) => ({
+        id: (id: string) => ({
             put: async (data: FormData) => {
                 assert((await fetch(`${API.BASE_URL}music/${id}`, {
                     method: "PUT",

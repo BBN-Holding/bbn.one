@@ -100,7 +100,7 @@ API.music(API.getToken()).list.get()
         Promise.all(x
             .map(async x => ([
                 x.id,
-                URL.createObjectURL(await API.music(API.getToken())[ "{id}" ](x.id).artwork())
+                URL.createObjectURL(await API.music(API.getToken()).id(x.id).artwork())
             ] as [ key: string, value: string ])))
             .then(x => {
                 for (const [ key, value ] of x) {

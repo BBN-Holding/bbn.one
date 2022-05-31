@@ -16,6 +16,7 @@ WebGen({
 })
 Redirect()
 const params = new URLSearchParams(location.search);
+
 if (!params.has("id")) {
     alert("ID is missing")
     location.href = "/music";
@@ -43,9 +44,9 @@ View<{ restoreData: Drop, aboutMe: ProfileData }>(({ state, update }) => Vertica
     Spacer(),
     state.restoreData == null
         ? (() => {
-            API.music(API.getToken())[ '{id}' ](params.get("id")!).get().then(async restoreData => {
+            API.music(API.getToken())[ 'id' ](params.get("id")!).get().then(async restoreData => {
                 if (restoreData.artwork) {
-                    const blob = await API.music(API.getToken())[ "{id}" ](params.get("id")!).artwork()
+                    const blob = await API.music(API.getToken())[ "id" ](params.get("id")!).artwork()
                     update({ restoreData: { ...restoreData, [ "artwork-url" ]: URL.createObjectURL(blob) } })
                 }
                 else update({ restoreData })
@@ -76,11 +77,14 @@ const wizard = (restore?: Drop) => Wizard({
         }
         await API
             .music(API.getToken())
-        [ '{id}' ](new URLSearchParams(location.search).get("id")!)
+            .id(params.get("id")!)
             .put(single);
     },
-    submitAction: () => {
-
+    submitAction: async () => {
+        const single = new FormData();
+        single.set("type", <Drop[ "type" ]>"UNDER_REVIEW")
+        await API.music(API.getToken()).id(params.get("id")!).put(single);
+        location.href = "/music"
     }
 }, ({ Next }) => [
     Page((formData) => [
