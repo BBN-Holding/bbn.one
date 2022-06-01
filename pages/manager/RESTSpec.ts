@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-unused-vars
 import { delay } from "https://deno.land/std@0.140.0/async/mod.ts";
 import { assert } from "https://deno.land/std@0.140.0/testing/asserts.ts";
-export type ArtistTypes = "PRIMARY" | "FEATURING" | "SONGWRITER" | "PRODUCERS";
+export type ArtistTypes = "PRIMARY" | "FEATURING" | "SONGWRITER" | "PRODUCER";
 
 export type Drop = {
     id: string;
