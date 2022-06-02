@@ -8,6 +8,7 @@ import { TableDef } from "./music/table.ts";
 import { API, Drop } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
 import '../../assets/css/main.css';
+import { FormToRecord, RecordToForm } from "./data.ts";
 
 WebGen({
     theme: SupportedThemes.dark,
@@ -42,15 +43,6 @@ View<{ restoreData: Drop, aboutMe: ProfileData }>(({ state, update }) => Vertica
     Spacer(),
     state.restoreData == null
         ? (() => {
-            API.music(API.getToken())[ 'id' ](params.get("id")!).get().then(async restoreData => {
-                if (restoreData.artwork) {
-                    const blob = await API.music(API.getToken())[ "id" ](params.get("id")!).artwork()
-                    update({ restoreData: { ...restoreData, [ "artwork-url" ]: URL.createObjectURL(blob) } })
-                }
-                else update({ restoreData })
-            }).catch(() => {
-                setTimeout(() => location.reload(), 1000);
-            })
             return CenterV(
                 Center(
                     Custom(loadingWheel() as Element as HTMLElement)
@@ -60,7 +52,18 @@ View<{ restoreData: Drop, aboutMe: ProfileData }>(({ state, update }) => Vertica
         })()
         : wizard(state.restoreData)
 ))
-    .change(({ update }) => update({ aboutMe: GetCachedProfileData() }))
+    .change(({ update }) => {
+        update({ aboutMe: GetCachedProfileData() });
+        API.music(API.getToken())[ 'id' ](params.get("id")!).get().then(async restoreData => {
+            if (restoreData.artwork) {
+                const blob = await API.music(API.getToken())[ "id" ](params.get("id")!).artwork()
+                update({ restoreData: { ...restoreData, [ "artwork-url" ]: URL.createObjectURL(blob) } })
+            }
+            else update({ restoreData })
+        }).catch(() => {
+            setTimeout(() => location.reload(), 1000);
+        })
+    })
     .addClass("fullscreen")
     .appendOn(document.body);
 
@@ -128,7 +131,8 @@ const wizard = (restore?: Drop) => Wizard({
                     .setWidth(inputWidth),
                 Button("Aristlist")
                     .onClick(() => {
-                        EditArtists(formData.get("artistList") ? JSON.parse(formData.get("artistList")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => formData.set("artistList", JSON.stringify(x)))
+                        console.log(formData.get("artists"))
+                        EditArtists(formData.get("artists") ? JSON.parse(formData.get("artists")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => formData.set("artists", JSON.stringify(x)))
                     }),
                 Center(PlainText("Set your target Audience")),
                 Grid(
@@ -147,7 +151,7 @@ const wizard = (restore?: Drop) => Wizard({
         title: restore?.title,
         release: restore?.release,
         language: restore?.language,
-        artistList: JSON.stringify(restore?.artists),
+        artists: JSON.stringify(restore?.artists),
         primaryGenre: restore?.primaryGenre,
     }),
     Page((formData) => [
@@ -214,14 +218,11 @@ const wizard = (restore?: Drop) => Wizard({
                             .onClick(() => uploadFilesDialog((list) => addSongs(list, formData, update), allowedAudioFormats.join(",")))
                     ),
                     formData.has("songs") ?
-                        Table<TableData>(TableDef(formData), formData.getAll("songs").map(x => {
-                            return <TableData>{
-                                Id: x,
-                                Title: formData.get(`song-${x}-title`)?.toString(),
-                                Year: formData.get(`song-${x}-year`)?.toString(),
-                                Explicit: formData.get(`song-${x}-explicit`) == "true",
-                            };
-                        }))
+                        Table<TableData>(
+                            TableDef(formData),
+                            FormToRecord(formData, "song", [])
+                                .map(x => ({ Id: x.id }))
+                        )
                             .addClass("inverted-class", "light-mode")
                         : UploadTable(TableDef(formData), (list) => addSongs(list, formData, update))
                             .addClass("inverted-class", "light-mode")
@@ -230,14 +231,23 @@ const wizard = (restore?: Drop) => Wizard({
             ).asComponent(),
             Spacer()
         ),
-    ]).setDefaultValues({
-        songs: restore?.songs ? JSON.stringify(restore?.songs) : undefined
-    }),
+    ]).setDefaultValues(restore?.songs
+        ? RecordToForm(new FormData(), "song", restore.songs.map(x => ({
+            id: x.Id,
+            title: x.Title,
+            country: x.Country,
+            primaryGenre: x.PrimaryGenre,
+            year: x.Year?.toString(),
+            artists: x.Artists,
+            explicit: x.Explicit ? "true" : "false"
+        })))
+        : {}
+    ),
     Page((formData) => [
         Spacer(),
         Horizontal(
             Spacer(),
-            PlainText("Thank! Thats everything we need."),
+            PlainText("Thanks! Thats everything we need."),
             Spacer(),
         ),
         Horizontal(

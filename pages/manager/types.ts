@@ -11,4 +11,4 @@ export type TableData = {
     Year?: number;
 };
 
-export type ColumEntry<Data, Entry = keyof Data> = [ id: Entry, size: string, render: (data: Data, index: number) => Component ];
+export type ColumEntry<Data, Entry = keyof Data> = [ id: string | Entry, size: string, render: (data: Data, index: number) => Component ];

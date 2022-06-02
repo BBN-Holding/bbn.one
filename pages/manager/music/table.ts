@@ -6,8 +6,8 @@ import primary from "../../../data/primary.json" assert { type: "json"};
 import language from "../../../data/language.json" assert { type: "json"};
 
 
-export const TableDef = (formData: FormData) => <ColumEntry<TableData>[]>[
-    [ "Title", "auto", ({ Title }) => PlainText(Title ?? "-").setFont(1, 500) ],
+export const TableDef = (formData: FormData) => <ColumEntry<{ Id: string }>[]>[
+    [ "Title", "auto", ({ Id }) => PlainText(formData.get(`song-${Id}-title`)?.toString() ?? "-").setFont(1, 500) ],
     [ "Artists", "max-content", () => Spacer() ],
     [ "Year", "max-content", ({ Id }) =>
         DropDownInput("Year", getYearList())
