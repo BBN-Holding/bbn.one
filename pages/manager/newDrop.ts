@@ -38,7 +38,7 @@ function uploadFilesDialog(onData: (files: { blob: Blob, file: File, url: string
 }
 
 // TODO: Input zu neuen FormComponents umlagern
-View<{ restoreData: Drop, aboutMe: ProfileData }>(({ state, update }) => Vertical(
+View<{ restoreData: Drop, aboutMe: ProfileData }>(({ state }) => Vertical(
     DynaNavigation("Music", state.aboutMe),
     Spacer(),
     state.restoreData == null
@@ -56,7 +56,7 @@ View<{ restoreData: Drop, aboutMe: ProfileData }>(({ state, update }) => Vertica
         update({ aboutMe: GetCachedProfileData() });
         API.music(API.getToken())[ 'id' ](params.get("id")!).get().then(async restoreData => {
             if (restoreData.artwork) {
-                const blob = await API.music(API.getToken())[ "id" ](params.get("id")!).artwork()
+                const blob = await API.music(API.getToken()).id(params.get("id")!).artwork()
                 update({ restoreData: { ...restoreData, [ "artwork-url" ]: URL.createObjectURL(blob) } })
             }
             else update({ restoreData })
@@ -89,12 +89,14 @@ const wizard = (restore?: Drop) => Wizard({
     }
 }, ({ Next }) => [
     Page((formData) => [
-        PlainText("Lets make your Drop hit!"),
+        PlainText("Lets make your Drop hit!")
+            .setWidth("max(1rem, 25rem)")
+            .setFont(3.448125, 800),
         Spacer(),
         Horizontal(
             Spacer(),
             Vertical(
-                Center(PlainText("First we need an UPC/EAN number:")),
+                Center(PlainText("First we need an UPC/EAN number:").addClass("title")),
                 Input({
                     ...syncFromData(formData, "upc"),
                     placeholder: "UPC/EAN"
@@ -111,7 +113,7 @@ const wizard = (restore?: Drop) => Wizard({
         Spacer(),
         Center(
             Vertical(
-                Center(PlainText("Enter your Album details.")),
+                Center(PlainText("Enter your Album details.").addClass("title")),
                 Input({
                     ...syncFromData(formData, "title"),
                     placeholder: "Title"
@@ -134,7 +136,7 @@ const wizard = (restore?: Drop) => Wizard({
                         console.log(formData.get("artists"))
                         EditArtists(formData.get("artists") ? JSON.parse(formData.get("artists")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => formData.set("artists", JSON.stringify(x)))
                     }),
-                Center(PlainText("Set your target Audience")),
+                Center(PlainText("Set your target Audience").addClass("title")),
                 Grid(
                     DropDownInput("Primary Genre", primary)
                         .syncFormData(formData, "primaryGenre")
@@ -158,7 +160,7 @@ const wizard = (restore?: Drop) => Wizard({
         Spacer(),
         Center(
             Vertical(
-                Center(PlainText("Display the Copyright")),
+                Center(PlainText("Display the Copyright").addClass("title")),
                 Input({
                     placeholder: "Composition Copyright",
                     ...syncFromData(formData, "compositionCopyright")
@@ -182,7 +184,7 @@ const wizard = (restore?: Drop) => Wizard({
             View(({ update }) =>
                 Vertical(
                     CenterAndRight(
-                        PlainText("Upload your Cover"),
+                        PlainText("Upload your Cover").addClass("title"),
                         Button("Manual Upload")
                             .onClick(() => uploadFilesDialog(([ { blob, url } ]) => {
                                 formData.set("artwork-url", url)
@@ -213,7 +215,7 @@ const wizard = (restore?: Drop) => Wizard({
             View(({ update }) =>
                 Vertical(
                     CenterAndRight(
-                        PlainText("Manage your Music"),
+                        PlainText("Manage your Music").addClass("title"),
                         Button("Manual Upload")
                             .onClick(() => uploadFilesDialog((list) => addSongs(list, formData, update), allowedAudioFormats.join(",")))
                     ),
@@ -247,7 +249,7 @@ const wizard = (restore?: Drop) => Wizard({
         Spacer(),
         Horizontal(
             Spacer(),
-            PlainText("Thanks! Thats everything we need."),
+            PlainText("Thanks! Thats everything we need.").addClass("ending-title"),
             Spacer(),
         ),
         Horizontal(

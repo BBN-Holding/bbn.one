@@ -150,3 +150,16 @@ nav.music {
 .wbutton.disabled {
     z-index: 0;
 }
+
+span.title {
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.ending-title {
+    font-size: 50px;
+    font-weight: 800;
+    max-width: 23rem;
+    text-align: center;
+    margin-bottom: 5rem;
+}
