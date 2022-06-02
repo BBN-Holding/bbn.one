@@ -1,10 +1,9 @@
 import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
-
-import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV } from "../../deps.ts";
+import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV, Dialog, Box } from "../../deps.ts";
 import { TableData } from "./types.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, GetCachedProfileData, ProfileData, Redirect, syncFromData, Table, UploadTable } from "./helper.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, ProfileData, Redirect, syncFromData, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
 import { API, Drop } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
@@ -21,7 +20,6 @@ if (!params.has("id")) {
     alert("ID is missing")
     location.href = "/music";
 }
-
 const gapSize = "15px";
 const inputWidth = "436px";
 function uploadFilesDialog(onData: (files: { blob: Blob, file: File, url: string }[]) => void, accept: string) {
@@ -128,10 +126,10 @@ const wizard = (restore?: Drop) => Wizard({
                     .setEvenColumns(2)
                     .setGap(gapSize)
                     .setWidth(inputWidth),
-                Input({
-                    placeholder: "Artistlist",
-                    ...syncFromData(formData, "artistList"),
-                }),
+                Button("Aristlist")
+                    .onClick(() => {
+                        EditArtists(formData.get("artistList") ? JSON.parse(formData.get("artistList")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => formData.set("artistList", JSON.stringify(x)))
+                    }),
                 Center(PlainText("Set your target Audience")),
                 Grid(
                     DropDownInput("Primary Genre", primary)
@@ -224,9 +222,9 @@ const wizard = (restore?: Drop) => Wizard({
                                 Explicit: formData.get(`song-${x}-explicit`) == "true",
                             };
                         }))
-                            .addClass("inverted-class")
+                            .addClass("inverted-class", "light-mode")
                         : UploadTable(TableDef(formData), (list) => addSongs(list, formData, update))
-                            .addClass("inverted-class")
+                            .addClass("inverted-class", "light-mode")
 
                 ).setGap(gapSize),
             ).asComponent(),

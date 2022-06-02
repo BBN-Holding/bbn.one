@@ -13,6 +13,7 @@
 
 .list-entry img {
     height: 109px;
+    aspect-ratio: 1 / 1;
     border-radius: 10px;
 }
 

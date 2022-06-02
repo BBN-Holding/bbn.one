@@ -49,13 +49,7 @@ nav.music {
     background: rgb(255 255 255 / 15%);
 }
 
-.inverted-class {
-    width: calc(100vw - 32px);
-    max-width: 50rem;
-    max-height: 25rem;
-    height: 100vh;
-    box-sizing: border-box;
-    padding: calc(var(--gap) / 2);
+.light-mode {
     --color-critical-hue: 360deg;
     --color-critical-saturation: 86%;
     --color-critical-lightness: 65%;
@@ -81,6 +75,15 @@ nav.music {
     --on-card-background: rgb(255, 255, 255);
     --text-red: #f81919;
     --color-grayscaled-inline-font: black;
+}
+
+.inverted-class {
+    width: calc(100vw - 32px);
+    max-width: 50rem;
+    max-height: 25rem;
+    height: 100vh;
+    box-sizing: border-box;
+    padding: calc(var(--gap) / 2);
 }
 
 .inverted-class .wggrid {
