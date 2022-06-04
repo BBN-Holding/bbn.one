@@ -18,11 +18,13 @@ export type ProfileData = {
 export function GetCachedProfileData(): ProfileData {
     return JSON.parse(atob(localStorage[ "access-token" ].split(".")[ 1 ]));
 }
-function renewAccessTokenIfNeeded(exp: number) {
-    // We should renew the token one minute before it expires
-    if (exp! * 1000 < new Date().getTime() + (1 * 60 * 1000)) {
+function renewAccessTokenIfNeeded(exp?: number) {
+    if (!exp) return Redirect();
+    // We should renew the token 30s before it expires
+    if (exp * 1000 < new Date().getTime() + (0.5 * 60 * 1000)) {
         API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] }).then(({ accessToken }) => {
             localStorage[ "access-token" ] = accessToken;
+            console.log("Refreshed token");
         }).catch(() => {
             localStorage.clear();
             Redirect();
@@ -40,7 +42,7 @@ export function RegisterAuthRefresh() {
     }
     console.log("Token will expire in: ", new Date(exp * 1000))
     renewAccessTokenIfNeeded(exp);
-    setInterval(() => renewAccessTokenIfNeeded(exp), 1000)
+    setInterval(() => renewAccessTokenIfNeeded(GetCachedProfileData().exp), 1000)
 }
 export function Redirect() {
     if (localStorage[ "refresh-token" ] && location.href.includes("/signin"))
