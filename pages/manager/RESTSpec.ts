@@ -28,7 +28,6 @@ export type Drop = {
         Year?: number;
     }[];
 };
-
 export const API = {
     getToken: () => localStorage[ "access-token" ],
     BASE_URL: "http://localhost:8443/api/",
@@ -51,8 +50,12 @@ export const API = {
     auth: {
         refreshAccessToken: {
             post: async ({ refreshToken }: { refreshToken: string }) => {
-                await delay(1000);
-                return { accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlciI6MTAsIm5hbWUiOiJsdWNzb2Z0IiwibWFpbCI6Im1haWxAbHVjc29mdC5kZSIsInBpY3R1cmUiOiJodHRwczovL2x1Y3NvZnQuZGUvaW1nLzNEX2RhcmtfbHVjc29mdC5wbmciLCJpYXQiOjE1MTYyMzkwMjJ9.blMgwFi72mQZ4lxEAXeVfpK_pK6yJyZFyfAtn58xB-4" };
+                return await fetch(`${API.BASE_URL}auth/refresh-access-token`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": refreshToken
+                    }
+                }).then(x => x.json()) as { accessToken: string };
             }
         },
         google: {

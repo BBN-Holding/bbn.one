@@ -117,9 +117,12 @@ function handleSignUpInButton(formData: FormData, state: Partial<{ error?: strin
             else
                 update({ error: "Wrong Email or Password" });
         else {
-            localStorage[ "refresh-token" ] = data.refreshToken;
-            localStorage[ "access-token" ] = data.refreshToken; // TODO: Fix this shit
-            Redirect();
+            API.auth.refreshAccessToken.post({ refreshToken: data.refreshToken }).then(({ accessToken }) => {
+                localStorage[ "access-token" ] = accessToken;
+                localStorage[ "refresh-token" ] = data!.refreshToken;
+            }).finally(() => {
+                Redirect();
+            });
         }
     };
 }

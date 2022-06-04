@@ -1,7 +1,7 @@
 // This code Will be proted to webgen
 
 import { Box, Button, Card, Component, Custom, Dialog, DropDownInput, Grid, headless, Horizontal, Icon, Input, Page, PlainText, Spacer, Vertical, View } from "../../deps.ts";
-import { ArtistTypes, Drop } from "./RESTSpec.ts";
+import { API, ArtistTypes, Drop } from "./RESTSpec.ts";
 import { ColumEntry } from "./types.ts";
 
 export const allowedAudioFormats = [ "audio/flac", "audio/wav" ];
@@ -12,12 +12,36 @@ export type ProfileData = {
     name: string;
     email: string;
     picture?: string;
+    exp?: number;
 };
 
 export function GetCachedProfileData(): ProfileData {
     return JSON.parse(atob(localStorage[ "access-token" ].split(".")[ 1 ]));
 }
-
+function renewAccessTokenIfNeeded(exp: number) {
+    // We should renew the token one minute before it expires
+    if (exp! * 1000 < new Date().getTime() + (1 * 60 * 1000)) {
+        API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] }).then(({ accessToken }) => {
+            localStorage[ "access-token" ] = accessToken;
+        }).catch(() => {
+            localStorage.clear();
+            Redirect();
+        })
+    }
+}
+export function RegisterAuthRefresh() {
+    console.log(JSON.parse(atob(localStorage[ "access-token" ].split(".")[ 1 ])));
+    console.log(JSON.parse(atob(localStorage[ "refresh-token" ].split(".")[ 1 ])));
+    const { exp } = GetCachedProfileData()
+    if (!exp) {
+        localStorage.clear()
+        Redirect();
+        return;
+    }
+    console.log("Token will expire in: ", new Date(exp * 1000))
+    renewAccessTokenIfNeeded(exp);
+    setInterval(() => renewAccessTokenIfNeeded(exp), 1000)
+}
 export function Redirect() {
     if (localStorage[ "refresh-token" ] && location.href.includes("/signin"))
         location.href = "/music"; // TODO do this better

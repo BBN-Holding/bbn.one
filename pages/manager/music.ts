@@ -3,12 +3,13 @@ import '../../assets/css/main.css';
 import '../../assets/css/music.css'
 import artwork from "../../assets/img/template-artwork.png";
 import { DynaNavigation } from "../../components/nav.ts";
-import { GetCachedProfileData, ProfileData, Redirect } from "./helper.ts";
+import { GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh } from "./helper.ts";
 import { API, Drop } from "./RESTSpec.ts";
 
 WebGen({
 })
 Redirect();
+RegisterAuthRefresh();
 const imageCache = new Map<string, string>();
 const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(({ state, update }) => Vertical(
     DynaNavigation("Music", state.aboutMe),
