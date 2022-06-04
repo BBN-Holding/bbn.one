@@ -3,7 +3,7 @@ import '../../assets/css/main.css';
 import '../../assets/css/music.css'
 import artwork from "../../assets/img/template-artwork.png";
 import { DynaNavigation } from "../../components/nav.ts";
-import { GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh } from "./helper.ts";
+import { GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "./helper.ts";
 import { API, Drop } from "./RESTSpec.ts";
 
 WebGen({
@@ -11,28 +11,28 @@ WebGen({
 Redirect();
 RegisterAuthRefresh();
 const imageCache = new Map<string, string>();
-const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(({ state, update }) => Vertical(
-    DynaNavigation("Music", state.aboutMe),
+const view = View<{ list: Drop[], type: Drop[ "type" ] }>(({ state, update }) => Vertical(
+    DynaNavigation("Music", GetCachedProfileData()),
     Horizontal(
         Vertical(
             Horizontal(
-                PlainText(`Hi ${state.aboutMe?.name}! 👋`)
+                PlainText(`Hi ${GetCachedProfileData().name}! 👋`)
                     .setFont(2.260625, 700),
                 Spacer()
             ).setMargin("0 0 18px"),
             Horizontal(
-                Button("Published")
+                Button(`Published ${getListCount([ "PUBLISHED" ], state)}`)
                     .setColor(Color.Colored)
                     .addClass("tag")
                     .setStyle(state.type == "PUBLISHED" ? ButtonStyle.Normal : ButtonStyle.Secondary)
                     .onClick(() => update({ type: "PUBLISHED" })),
-                Button("Unpublished")
+                Button(`Unpublished ${getListCount([ "UNDER_REVIEW", "PRIVATE" ], state)}`)
                     .setColor(Color.Colored)
                     .setStyle(state.type == "PRIVATE" ? ButtonStyle.Normal : ButtonStyle.Secondary)
                     .onClick(() => update({ type: "PRIVATE" }))
                     .addClass("tag"),
                 state.list?.find(x => x.type == "UNSUBMITTED") ?
-                    Button(`Drafts (${state.list.filter(x => x.type == "UNSUBMITTED").length})`)
+                    Button(`Drafts ${getListCount([ "UNSUBMITTED" ], state)}`)
                         .setColor(Color.Colored)
                         .onClick(() => update({ type: "UNSUBMITTED" }))
                         .setStyle(state.type == "UNSUBMITTED" ? ButtonStyle.Normal : ButtonStyle.Secondary)
@@ -93,27 +93,37 @@ const view = View<{ list: Drop[], type: Drop[ "type" ], aboutMe: ProfileData }>(
         return Center(PlainText("Wow such empty")).setPadding("5rem");
     })()).addClass("loading"),
 ))
-    .change(({ update }) => { update({ type: "PUBLISHED", aboutMe: GetCachedProfileData() }) })
-    .appendOn(document.body);
-
-API.music(API.getToken()).list.get()
-    .then(x => {
-        Promise.all(x
-            .map(async x => ([
-                x.id,
-                URL.createObjectURL(await API.music(API.getToken()).id(x.id).artwork())
-            ] as [ key: string, value: string ])))
-            .then(x => {
-                for (const [ key, value ] of x) {
-                    console.log(key, value);
-                    imageCache.set(key, value);
-                }
-                view.viewOptions().update({});
-            })
-
-        return x;
+    .change(({ update }) => {
+        update({ type: "PUBLISHED" })
     })
-    .then(x => view.viewOptions().update({ list: x }))
+    .appendOn(document.body);
+renewAccessTokenIfNeeded().then(() => {
+    API.music(API.getToken()).list.get()
+        .then(x => {
+            Promise.all(x
+                .map(async x => ([
+                    x.id,
+                    x.artwork ? URL.createObjectURL(await API.music(API.getToken()).id(x.id).artwork()) : undefined
+                ] as [ key: string, value?: string ])
+                ))
+                .then(x => {
+                    for (const [ key, value ] of x.filter(([ _, value ]) => value)) {
+                        imageCache.set(key, value!);
+                    }
+                    view.viewOptions().update({});
+                })
+
+            return x;
+        })
+        .then(x => view.viewOptions().update({ list: x }))
+})
+
+
+function getListCount(list: Drop[ "type" ][], state: Partial<{ list: Drop[]; type: Drop[ "type" ]; aboutMe: ProfileData; }>) {
+    const length = state.list?.filter(x => list.includes(x.type)).length;
+    if (length) return `(${length})`
+    return "";
+}
 
 function EnumToDisplay(state?: Drop[ "type" ]) {
     switch (state) {

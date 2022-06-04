@@ -82,8 +82,11 @@ View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, 
     .change(({ update }) => {
         if (type == "forgot-password" && id) {
             update({ loading: true })
-            API.auth.fromEmail.get(id).then(x => {
-                update({ resetToken: x.refreshToken, loading: false })
+            API.auth.fromEmail.get(id).then(async x => {
+                localStorage[ "refesh-token" ] = x.refreshToken;
+                localStorage[ "access-token" ] = (await API.auth.refreshAccessToken.post({ refreshToken: x.refreshToken })).accessToken;
+
+                update({ resetToken: API.getToken(), loading: false })
             }).catch(() => {
                 update({ resetToken: "!", loading: false })
             })

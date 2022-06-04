@@ -18,29 +18,31 @@ export type ProfileData = {
 export function GetCachedProfileData(): ProfileData {
     return JSON.parse(atob(localStorage[ "access-token" ].split(".")[ 1 ]));
 }
-function renewAccessTokenIfNeeded(exp?: number) {
+export async function renewAccessTokenIfNeeded(exp?: number) {
     if (!exp) return Redirect();
     // We should renew the token 30s before it expires
-    if (exp * 1000 < new Date().getTime() + (0.5 * 60 * 1000)) {
-        API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] }).then(({ accessToken }) => {
+    if (isExpired(exp)) {
+        try {
+            const { accessToken } = await API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] });
             localStorage[ "access-token" ] = accessToken;
             console.log("Refreshed token");
-        }).catch(() => {
+        } catch (_) {
             localStorage.clear();
             Redirect();
-        })
+        }
     }
 }
+export function isExpired(exp: number) {
+    return exp * 1000 < new Date().getTime() + (0.5 * 60 * 1000);
+}
+
 export function RegisterAuthRefresh() {
-    console.log(JSON.parse(atob(localStorage[ "access-token" ].split(".")[ 1 ])));
-    console.log(JSON.parse(atob(localStorage[ "refresh-token" ].split(".")[ 1 ])));
     const { exp } = GetCachedProfileData()
     if (!exp) {
         localStorage.clear()
         Redirect();
         return;
     }
-    console.log("Token will expire in: ", new Date(exp * 1000))
     renewAccessTokenIfNeeded(exp);
     setInterval(() => renewAccessTokenIfNeeded(GetCachedProfileData().exp), 1000)
 }
