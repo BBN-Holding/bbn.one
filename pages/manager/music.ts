@@ -97,7 +97,7 @@ const view = View<{ list: Drop[], type: Drop[ "type" ] }>(({ state, update }) =>
         update({ type: "PUBLISHED" })
     })
     .appendOn(document.body);
-renewAccessTokenIfNeeded().then(() => {
+renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(() => {
     API.music(API.getToken()).list.get()
         .then(x => {
             Promise.all(x
