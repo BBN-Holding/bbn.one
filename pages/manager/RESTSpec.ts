@@ -30,7 +30,7 @@ export type Drop = {
 };
 export const API = {
     getToken: () => localStorage[ "access-token" ],
-    BASE_URL: "http://localhost:8443/api/",
+    BASE_URL: location.hostname == "bbn.one" ? "https://bbn.one/api/" : "http://localhost:8443/api/",
     user: (token: string) => ({
         setMe: {
             post: async (para: Partial<{ name: string, password: string }>) => {
