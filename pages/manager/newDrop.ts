@@ -120,11 +120,18 @@ const wizard = (restore?: Drop) => Wizard({
                     placeholder: "Title"
                 }).setWidth(inputWidth),
                 Grid(
-                    Input({
-                        ...syncFromData(formData, "release"),
-                        placeholder: "Release Date",
-                        type: "text"
-                    }),
+                    (() => {
+                        // TODO: Remake this hacky input to DateInput()
+                        const input = Input({
+                            value: formData.get("release")?.toString(),
+                            placeholder: "Release Date",
+                            type: "date" as "text"
+                        }).draw();
+                        const rawInput = input.querySelector("input")!;
+                        rawInput.style.paddingRight = "5px";
+                        rawInput.onchange = () => formData.set("release", rawInput.value)
+                        return Custom(input);
+                    })(),
                     DropDownInput("Language", language)
                         .syncFormData(formData, "language")
                         .addClass("custom")
