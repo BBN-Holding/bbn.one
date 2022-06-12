@@ -194,24 +194,24 @@ const wizard = (restore?: Drop) => Wizard({
                         Button("Manual Upload")
                             .onClick(() => uploadFilesDialog(([ file ]) => {
                                 formData.set("artwork-url", URL.createObjectURL(file))
+                                formData.set("loading", "-")
                                 update({});
                                 setTimeout(() => {
                                     const image = document.querySelector(".upload-image")!
-
                                     StreamingUploadHandler({
                                         prepare: () => {
-                                            formData.set("loading", "-")
                                             const animation = image.animate([
                                                 { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
                                                 { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
                                             ], { duration: 100, fill: 'forwards' });
                                             animation.currentTime = 0;
                                             animation.pause();
-
                                         },
                                         credentials: () => API.getToken(),
-                                        backendResponse: () => {
+                                        backendResponse: (id) => {
+                                            formData.set("artwork", id);
                                             formData.delete("loading")
+                                            update({});
                                         },
                                         onUploadTick: async (percentage) => {
                                             const animation = image.animate([
@@ -235,8 +235,10 @@ const wizard = (restore?: Drop) => Wizard({
                         formData.set("artwork-url", url)
                         // formData.set("artwork", blob)
                         update({});
-                    }).addClass("drop-area")
+                    }).addClass("drop-area"),
+                    Custom(loadingWheel() as Element as HTMLElement)
                 )
+                    .addClass(formData.has("loading") ? "loading" : "normal")
                     .setGap(gapSize)
             ).asComponent()
         ),

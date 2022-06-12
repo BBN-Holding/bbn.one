@@ -1,6 +1,5 @@
-// We can remove this polyfill in the future when every browser supports WebSocketStreams
 import { API } from "./RESTSpec.ts";
-import { Buffer } from "https://deno.land/std@0.143.0/streams/buffer.ts";
+
 export type StreamingUploadEvents = {
     credentials: () => string,
     prepare: () => void,
@@ -12,7 +11,7 @@ export type StreamingUploadEvents = {
 export function StreamingUploadHandler(events: StreamingUploadEvents, dropId: string, file: File) {
     try {
         events.prepare();
-        const ws = new WebSocket(`${API.BASE_URL.replace("https", "wss").replace("http", "ws")}music/${dropId}/upload/artwork`);
+        const ws = new WebSocket(`${API.BASE_URL.replace("https", "wss").replace("http", "ws")}music/${dropId}/upload`);
         let bytesUploaded = 0;
         const stream = file
             .stream()
