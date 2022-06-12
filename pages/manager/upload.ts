@@ -40,7 +40,7 @@ export function StreamingUploadHandler(events: StreamingUploadEvents, dropId: st
                 }
             } else {
                 reader.releaseLock();
-                events.backendResponse(data);
+                events.backendResponse(JSON.parse(data).id);
             }
         }
         // await write(writable, "end");
