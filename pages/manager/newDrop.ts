@@ -193,48 +193,15 @@ const wizard = (restore?: Drop) => Wizard({
                         PlainText("Upload your Cover").addClass("title"),
                         Button("Manual Upload")
                             .onClick(() => uploadFilesDialog(([ file ]) => {
-                                formData.set("artwork-url", URL.createObjectURL(file))
-                                formData.set("loading", "-")
-                                update({});
-                                setTimeout(() => {
-                                    const image = document.querySelector(".upload-image")!
-                                    StreamingUploadHandler({
-                                        prepare: () => {
-                                            const animation = image.animate([
-                                                { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
-                                                { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
-                                            ], { duration: 100, fill: 'forwards' });
-                                            animation.currentTime = 0;
-                                            animation.pause();
-                                        },
-                                        credentials: () => API.getToken(),
-                                        backendResponse: (id) => {
-                                            formData.set("artwork", id);
-                                            formData.delete("loading")
-                                            update({});
-                                        },
-                                        onUploadTick: async (percentage) => {
-                                            const animation = image.animate([
-                                                { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
-                                                { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
-                                            ], { duration: 100, fill: 'forwards' });
-                                            animation.currentTime = percentage;
-                                            animation.pause();
-                                            await delay(10);
-                                        },
-                                        uploadDone: () => { }
-                                    }, params.get("id")!, file)
-                                })
+                                uploadArtwork(formData, file, update);
                             }, allowedImageFormats.join(",")))
                     ),
                     DropAreaInput(CenterV(
                         formData.has("artwork-url")
                             ? ImageFrom(formData, "artwork-url").addClass("upload-image")
                             : PlainText("Drag & Drop your File here")
-                    ), allowedImageFormats, ([ { url } ]) => {
-                        formData.set("artwork-url", url)
-                        // formData.set("artwork", blob)
-                        update({});
+                    ), allowedImageFormats, ([ { file } ]) => {
+                        uploadArtwork(formData, file, update)
                     }).addClass("drop-area"),
                     Custom(loadingWheel() as Element as HTMLElement)
                 )
@@ -303,6 +270,41 @@ const wizard = (restore?: Drop) => Wizard({
         comments: restore?.comments
     })
 ])
+function uploadArtwork(formData: FormData, file: File, update: (data: Partial<unknown>) => void) {
+    formData.set("artwork-url", URL.createObjectURL(file));
+    formData.set("loading", "-");
+    update({});
+    setTimeout(() => {
+        const image = document.querySelector(".upload-image")!;
+        StreamingUploadHandler({
+            prepare: () => {
+                const animation = image.animate([
+                    { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
+                    { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
+                ], { duration: 100, fill: 'forwards' });
+                animation.currentTime = 0;
+                animation.pause();
+            },
+            credentials: () => API.getToken(),
+            backendResponse: (id) => {
+                formData.set("artwork", id);
+                formData.delete("loading");
+                update({});
+            },
+            onUploadTick: async (percentage) => {
+                const animation = image.animate([
+                    { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
+                    { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
+                ], { duration: 100, fill: 'forwards' });
+                animation.currentTime = percentage;
+                animation.pause();
+                await delay(10);
+            },
+            uploadDone: () => { }
+        }, params.get("id")!, file);
+    });
+}
+
 function addSongs(list: File[], formData: FormData, update: (data: Partial<unknown>) => void) {
     list.map(x => ({ file: x, id: crypto.randomUUID() })).forEach(({ file, id }) => {
         formData.append("songs", id);
@@ -311,7 +313,25 @@ function addSongs(list: File[], formData: FormData, update: (data: Partial<unkno
             .replaceAll("-", " ")
             .replace(/\.[^/.]+$/, "");
 
-        formData.set(`song-${id}-blob`, file.slice());
+        StreamingUploadHandler({
+            prepare: () => {
+                formData.set(`song-${id}-progress`, "0");
+            },
+            credentials: () => API.getToken(),
+            backendResponse: (fileId) => {
+                formData.set(`song-${id}-file`, fileId);
+                formData.delete(`song-${id}-progress`)
+                update({});
+            },
+            onUploadTick: async (percentage) => {
+                formData.set(`song-${id}-progress`, percentage.toString())
+                await delay(10);
+                update({});
+            },
+            uploadDone: () => {
+
+            }
+        }, params.get("id")!, file);
         formData.set(`song-${id}-title`, cleanedUpTitle); // Our AI prediceted name
         formData.set(`song-${id}-year`, new Date().getFullYear().toString());
         // TODO Add Defaults for Country, Primary Genre => Access global FormData and merge it to one and then pull it
