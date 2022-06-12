@@ -115,7 +115,7 @@ export function stringToColour(str: string) {
     return colour;
 }
 
-export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: { file: File, blob: Blob }[]) => void) {
+export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: File[]) => void) {
     const table = Table(_columns, []).draw();
     table.ondragleave = (ev) => {
         ev.preventDefault();
@@ -125,12 +125,9 @@ export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: {
         ev.preventDefault();
         table.classList.add("hover");
     };
-    table.ondrop = async (ev) => {
+    table.ondrop = (ev) => {
         ev.preventDefault();
-        upload(await Promise.all(Array.from(ev.dataTransfer?.files ?? []).filter(x => allowedAudioFormats.includes(x.type)).map(async x => {
-            const blob = new Blob([ await x.arrayBuffer() ], { type: x.type });
-            return { file: x, blob };
-        })));
+        upload(Array.from(ev.dataTransfer?.files ?? []).filter(x => allowedAudioFormats.includes(x.type)));
     }
     table.append(Vertical(
         PlainText("Nothing here yet").addClass("droptitle"),

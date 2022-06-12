@@ -9,6 +9,8 @@ import { API, Drop } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
 import '../../assets/css/main.css';
 import { FormToRecord, RecordToForm } from "./data.ts";
+import { StreamingUploadHandler } from "./upload.ts";
+import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 
 WebGen({
     theme: SupportedThemes.dark,
@@ -24,17 +26,13 @@ if (!params.has("id")) {
 }
 const gapSize = "15px";
 const inputWidth = "436px";
-function uploadFilesDialog(onData: (files: { blob: Blob, file: File, url: string }[]) => void, accept: string) {
+function uploadFilesDialog(onData: (files: File[]) => void, accept: string) {
     const upload = createElement("input")
     upload.type = "file";
     upload.accept = accept;
     upload.click();
-    upload.onchange = async () => {
-        const list = await Promise.all(Array.from(upload.files ?? []).map(async file => {
-            const blob = new Blob([ await file.arrayBuffer() ], { type: file.type });
-            return { blob, file, url: URL.createObjectURL(blob) };
-        }))
-        onData(list);
+    upload.onchange = () => {
+        onData(Array.from(upload.files ?? []));
     };
 }
 
@@ -194,19 +192,48 @@ const wizard = (restore?: Drop) => Wizard({
                     CenterAndRight(
                         PlainText("Upload your Cover").addClass("title"),
                         Button("Manual Upload")
-                            .onClick(() => uploadFilesDialog(([ { blob, url } ]) => {
-                                formData.set("artwork-url", url)
-                                formData.set("artwork", blob)
+                            .onClick(() => uploadFilesDialog(([ file ]) => {
+                                formData.set("artwork-url", URL.createObjectURL(file))
                                 update({});
+                                setTimeout(() => {
+                                    const image = document.querySelector(".upload-image")!
+
+                                    StreamingUploadHandler({
+                                        prepare: () => {
+                                            formData.set("loading", "-")
+                                            const animation = image.animate([
+                                                { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
+                                                { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
+                                            ], { duration: 100, fill: 'forwards' });
+                                            animation.currentTime = 0;
+                                            animation.pause();
+
+                                        },
+                                        credentials: () => API.getToken(),
+                                        backendResponse: () => {
+                                            formData.delete("loading")
+                                        },
+                                        onUploadTick: async (percentage) => {
+                                            const animation = image.animate([
+                                                { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
+                                                { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
+                                            ], { duration: 100, fill: 'forwards' });
+                                            animation.currentTime = percentage;
+                                            animation.pause();
+                                            await delay(10);
+                                        },
+                                        uploadDone: () => { }
+                                    }, params.get("id")!, file)
+                                })
                             }, allowedImageFormats.join(",")))
                     ),
                     DropAreaInput(CenterV(
                         formData.has("artwork-url")
-                            ? ImageFrom(formData, "artwork-url")!
+                            ? ImageFrom(formData, "artwork-url").addClass("upload-image")
                             : PlainText("Drag & Drop your File here")
-                    ), allowedImageFormats, ([ { blob, url } ]) => {
+                    ), allowedImageFormats, ([ { url } ]) => {
                         formData.set("artwork-url", url)
-                        formData.set("artwork", blob)
+                        // formData.set("artwork", blob)
                         update({});
                     }).addClass("drop-area")
                 )
@@ -215,7 +242,9 @@ const wizard = (restore?: Drop) => Wizard({
         ),
     ]).setDefaultValues({
         [ "artwork-url" ]: restore?.[ "artwork-url" ]
-    }),
+    }).addValidator((thing) => thing.object({
+        loading: thing.void()
+    })),
     Page((formData) => [
         Spacer(),
         Horizontal(
@@ -272,15 +301,15 @@ const wizard = (restore?: Drop) => Wizard({
         comments: restore?.comments
     })
 ])
-function addSongs(list: { blob: Blob; file: File; }[], formData: FormData, update: (data: Partial<unknown>) => void) {
-    list.map(x => ({ ...x, id: crypto.randomUUID() })).forEach(({ blob, file, id }) => {
+function addSongs(list: File[], formData: FormData, update: (data: Partial<unknown>) => void) {
+    list.map(x => ({ file: x, id: crypto.randomUUID() })).forEach(({ file, id }) => {
         formData.append("songs", id);
         const cleanedUpTitle = file.name
             .replaceAll("_", " ")
             .replaceAll("-", " ")
             .replace(/\.[^/.]+$/, "");
 
-        formData.set(`song-${id}-blob`, blob);
+        formData.set(`song-${id}-blob`, file.slice());
         formData.set(`song-${id}-title`, cleanedUpTitle); // Our AI prediceted name
         formData.set(`song-${id}-year`, new Date().getFullYear().toString());
         // TODO Add Defaults for Country, Primary Genre => Access global FormData and merge it to one and then pull it
@@ -288,6 +317,6 @@ function addSongs(list: { blob: Blob; file: File; }[], formData: FormData, updat
     update({});
 }
 
-function ImageFrom(formData: FormData, key: string): Component | undefined {
-    return formData.has(key) ? Custom(img(formData.get(key)! as string)) : undefined;
+function ImageFrom(formData: FormData, key: string): Component {
+    return Custom(img(formData.get(key)! as string));
 }
