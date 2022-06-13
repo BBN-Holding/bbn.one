@@ -1,6 +1,6 @@
 export function RecordToForm(formData: FormData, prefix: string, data: (Record<string, string | undefined> & { id: string })[]) {
     data.forEach(entry => {
-        formData.append(prefix, entry.id)
+        formData.append(prefix + "s", entry.id)
         for (const [ key, value ] of Object.entries(entry)) {
             if (key == "id") continue;
             if (value)
