@@ -1,13 +1,22 @@
-import { ButtonStyle, Checkbox, Color, DropDownInput, PlainText, Spacer } from "../../../deps.ts";
+import { Box, ButtonStyle, Checkbox, Color, createElement, Custom, DropDownInput, PlainText, Spacer } from "../../../deps.ts";
 import { getYearList } from "../helper.ts";
-import { ColumEntry, TableData } from "../types.ts";
+import { ColumEntry } from "../types.ts";
 
 import primary from "../../../data/primary.json" assert { type: "json"};
 import language from "../../../data/language.json" assert { type: "json"};
 
 
 export const TableDef = (formData: FormData) => <ColumEntry<{ Id: string }>[]>[
-    [ "Title", "auto", ({ Id }) => PlainText(formData.get(`song-${Id}-progress`)?.toString() ?? formData.get(`song-${Id}-title`)?.toString() ?? "-").setFont(1, 500) ],
+    [ "Title", "auto", ({ Id }) =>
+        formData.has(`song-${Id}-progress`) ? Box(
+            Custom((() => {
+                const element = createElement("progress")
+                element.max = 100;
+                element.value = parseFloat(formData.get(`song-${Id}-progress`)?.toString() ?? "")
+                return element;
+            })())
+        ) :
+            PlainText(formData.get(`song-${Id}-progress`)?.toString() ?? formData.get(`song-${Id}-title`)?.toString() ?? "-").setFont(1, 500) ],
     [ "Artists", "max-content", () => Spacer() ],
     [ "Year", "max-content", ({ Id }) =>
         DropDownInput("Year", getYearList())
