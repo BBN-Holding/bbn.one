@@ -166,12 +166,12 @@ span.title {
 
 .artists-list {
     display: flex;
-    margin-right: 0.8rem;
+    margin-right: 0.9rem;
 }
 
 .artists-list :is(.profile-picture, .wiconbutton) {
     border: 3px solid white;
-    margin-right: -0.8rem;
+    margin-right: -0.9rem;
     height: 27px;
     width: 27px;
     border-radius: 8px;
