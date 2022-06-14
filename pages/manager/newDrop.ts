@@ -225,12 +225,24 @@ const wizard = (restore?: Drop) => Wizard({
                         Button("Manual Upload")
                             .onClick(() => uploadFilesDialog((list) => addSongs(list, formData, update), allowedAudioFormats.join(",")))
                     ),
-                    formData.has("songs") ?
+                    formData.getAll("songs").filter(x => x).length ?
                         Table<TableData>(
                             TableDef(formData),
                             FormToRecord(formData, "song", [])
                                 .map(x => ({ Id: x.id }))
                         )
+                            .setDelete(({ Id }) => {
+                                const list = formData.getAll("songs").filter(x => x != Id)
+                                console.log(list);
+                                formData.delete("songs")
+                                if (list.length === 0) {
+                                    formData.set("songs", "")
+                                }
+                                for (const iterator of list) {
+                                    formData.append("songs", iterator)
+                                }
+                                update({})
+                            })
                             .addClass("inverted-class", "light-mode")
                         : UploadTable(TableDef(formData), (list) => addSongs(list, formData, update))
                             .addClass("inverted-class", "light-mode")

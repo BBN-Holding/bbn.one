@@ -1,4 +1,4 @@
-import { Box, ButtonStyle, Checkbox, Color, Component, createElement, Custom, Dialog, DropDownInput, IconButton, img, Input, PlainText, Spacer, View } from "../../../deps.ts";
+import { Box, ButtonStyle, Checkbox, Color, Component, createElement, Custom, Dialog, DropDownInput, IconButton, img, Input, PlainText, View } from "../../../deps.ts";
 import { EditArtists, getYearList, stringToColour, syncFromData } from "../helper.ts";
 import { ColumEntry } from "../types.ts";
 
@@ -75,5 +75,5 @@ export const TableDef = (formData: FormData) => <ColumEntry<{ Id: string }>[]>[
     [ "Explicit", "max-content", ({ Id }) =>
         Checkbox(formData.get(`song-${Id}-explicit`) == "true")
             .onClick((_, value) => formData.set(`song-${Id}-explicit`, !value ? "true" : "false"))
-    ],
+    ]
 ];

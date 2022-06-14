@@ -14,7 +14,7 @@ export function RecordToForm(formData: FormData, prefix: string, data: (Record<s
 export function FormToRecord<list extends string>(formData: FormData, prefix: string, finder: list[]): ({ id: string } & { [ type in list ]: string })[] {
     const idlist = formData.getAll(prefix + "s")
     const list = [];
-    for (const id of idlist) {
+    for (const id of idlist.filter(x => x)) {
         const entry: Record<string, string> & { id: string } = { id: id.toString() };
         for (const key of finder) {
             if (formData.has(`${prefix}-${id}-${key}`))
