@@ -17,7 +17,7 @@ export type Drop = {
     compositionCopyright?: string;
     soundRecordingCopyright?: string;
     comments?: string;
-    songs?: {
+    song?: {
         Id: string;
         Title?: string;
         PrimaryGenre?: string;

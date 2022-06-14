@@ -1,6 +1,7 @@
 // This code Will be proted to webgen
 
 import { Box, Button, Card, Component, Custom, Dialog, DropDownInput, Grid, headless, Horizontal, Icon, Input, Page, PlainText, Spacer, Vertical, View } from "../../deps.ts";
+import { DeleteFromForm } from "./data.ts";
 import { API, ArtistTypes, Drop } from "./RESTSpec.ts";
 import { ColumEntry } from "./types.ts";
 
@@ -180,7 +181,10 @@ export function EditArtists(list: NonNullable<Drop[ "artists" ]>) {
                         Name: data.get(`actor-${id}-name`)!.toString(),
                         Type: data.get(`actor-${id}-type`)!.toString()
                     };
-                })),
+                })).setDelete(({ id }) => {
+                    DeleteFromForm(data, "actor", (x) => x != id);
+                    update({})
+                }),
                 Horizontal(
                     Spacer(),
                     Button("Add Artist") // TODO: Remove this in the future => switch to ghost rows

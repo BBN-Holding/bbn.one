@@ -1,14 +1,14 @@
 import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
-import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV, Dialog, Box } from "../../deps.ts";
+import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV } from "../../deps.ts";
 import { TableData } from "./types.ts";
 import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, syncFromData, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
 import { API, Drop } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
 import '../../assets/css/main.css';
-import { FormToRecord, RecordToForm } from "./data.ts";
+import { DeleteFromForm, FormToRecord, RecordToForm } from "./data.ts";
 import { StreamingUploadHandler } from "./upload.ts";
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 
@@ -137,9 +137,8 @@ const wizard = (restore?: Drop) => Wizard({
                     .setEvenColumns(2)
                     .setGap(gapSize)
                     .setWidth(inputWidth),
-                Button("Aristlist")
+                Button("Artists")
                     .onClick(() => {
-                        console.log(formData.get("artists"))
                         EditArtists(formData.get("artists") ? JSON.parse(formData.get("artists")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => formData.set("artists", JSON.stringify(x)))
                     }),
                 Center(PlainText("Set your target Audience").addClass("title")),
@@ -225,22 +224,14 @@ const wizard = (restore?: Drop) => Wizard({
                         Button("Manual Upload")
                             .onClick(() => uploadFilesDialog((list) => addSongs(list, formData, update), allowedAudioFormats.join(",")))
                     ),
-                    formData.getAll("songs").filter(x => x).length ?
+                    formData.getAll("song").filter(x => x).length ?
                         Table<TableData>(
                             TableDef(formData),
                             FormToRecord(formData, "song", [])
                                 .map(x => ({ Id: x.id }))
                         )
                             .setDelete(({ Id }) => {
-                                const list = formData.getAll("songs").filter(x => x != Id)
-                                console.log(list);
-                                formData.delete("songs")
-                                if (list.length === 0) {
-                                    formData.set("songs", "")
-                                }
-                                for (const iterator of list) {
-                                    formData.append("songs", iterator)
-                                }
+                                DeleteFromForm(formData, "song", (x) => x != Id);
                                 update({})
                             })
                             .addClass("inverted-class", "light-mode")
@@ -251,8 +242,8 @@ const wizard = (restore?: Drop) => Wizard({
             ).asComponent(),
             Spacer()
         ),
-    ]).setDefaultValues(restore?.songs
-        ? RecordToForm(new FormData(), "song", restore.songs.map(x => ({
+    ]).setDefaultValues(restore?.song
+        ? RecordToForm(new FormData(), "song", restore.song.map(x => ({
             id: x.Id,
             title: x.Title,
             country: x.Country,
@@ -319,7 +310,7 @@ function uploadArtwork(formData: FormData, file: File, update: (data: Partial<un
 
 function addSongs(list: File[], formData: FormData, update: (data: Partial<unknown>) => void) {
     list.map(x => ({ file: x, id: crypto.randomUUID() })).forEach(({ file, id }) => {
-        formData.append("songs", id);
+        formData.append("song", id);
         const cleanedUpTitle = file.name
             .replaceAll("_", " ")
             .replaceAll("-", " ")

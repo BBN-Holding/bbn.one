@@ -1,6 +1,6 @@
 export function RecordToForm(formData: FormData, prefix: string, data: (Record<string, string | undefined> & { id: string })[]) {
     data.forEach(entry => {
-        formData.append(prefix + "s", entry.id)
+        formData.append(prefix, entry.id)
         for (const [ key, value ] of Object.entries(entry)) {
             if (key == "id") continue;
             if (value)
@@ -10,9 +10,18 @@ export function RecordToForm(formData: FormData, prefix: string, data: (Record<s
 
     return formData;
 }
-
+// deno-lint-ignore no-explicit-any
+export function DeleteFromForm(fromData: FormData, prefix: string, filter: (data: any) => boolean) {
+    const filtered = fromData.getAll(prefix).filter(filter);
+    fromData.delete(prefix);
+    for (const iterator of filtered) {
+        fromData.append("actor", iterator)
+    }
+    if (filtered.length === 0)
+        fromData.set(prefix, "");
+}
 export function FormToRecord<list extends string>(formData: FormData, prefix: string, finder: list[]): ({ id: string } & { [ type in list ]: string })[] {
-    const idlist = formData.getAll(prefix + "s")
+    const idlist = formData.getAll(prefix)
     const list = [];
     for (const id of idlist.filter(x => x)) {
         const entry: Record<string, string> & { id: string } = { id: id.toString() };
