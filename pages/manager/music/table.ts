@@ -1,10 +1,14 @@
-import { Box, ButtonStyle, Checkbox, Color, createElement, Custom, DropDownInput, PlainText, Spacer } from "../../../deps.ts";
-import { getYearList } from "../helper.ts";
+import { Box, ButtonStyle, Checkbox, Color, Component, createElement, Custom, DropDownInput, IconButton, img, PlainText, Spacer, View } from "../../../deps.ts";
+import { EditArtists, getYearList, stringToColour } from "../helper.ts";
 import { ColumEntry } from "../types.ts";
 
 import primary from "../../../data/primary.json" assert { type: "json"};
 import language from "../../../data/language.json" assert { type: "json"};
-
+function ProfilePicture(component: Component, name: string) {
+    const ele = component.draw()
+    ele.style.backgroundColor = stringToColour(name);
+    return Custom(ele).addClass("profile-picture")
+}
 
 export const TableDef = (formData: FormData) => <ColumEntry<{ Id: string }>[]>[
     [ "Title", "auto", ({ Id }) =>
@@ -17,7 +21,22 @@ export const TableDef = (formData: FormData) => <ColumEntry<{ Id: string }>[]>[
             })())
         ) :
             PlainText(formData.get(`song-${Id}-progress`)?.toString() ?? formData.get(`song-${Id}-title`)?.toString() ?? "-").setFont(1, 500) ],
-    [ "Artists", "max-content", () => Spacer() ],
+    [ "Artists", "max-content", ({ Id }) =>
+        View(({ update }) => Box(
+            ...JSON.parse(formData.get(`song-${Id}-artists`)?.toString() ?? "[]").map(([ name, url, _type ]: string[]) =>
+                ProfilePicture(url ? Custom(img(url)) : PlainText(""), name)
+            ),
+            IconButton("add")
+        )
+            .addClass("artists-list")
+            .onClick(() => {
+                EditArtists(formData.get(`song-${Id}-artists`) ? JSON.parse(formData.get(`song-${Id}-artists`)!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => {
+                    formData.set(`song-${Id}-artists`, JSON.stringify(x));
+                    update({})
+                })
+            })
+        ).asComponent()
+    ],
     [ "Year", "max-content", ({ Id }) =>
         DropDownInput("Year", getYearList())
             .syncFormData(formData, `song-${Id}-year`)
