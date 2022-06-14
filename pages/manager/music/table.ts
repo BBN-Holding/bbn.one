@@ -1,5 +1,5 @@
-import { Box, ButtonStyle, Checkbox, Color, Component, createElement, Custom, DropDownInput, IconButton, img, PlainText, Spacer, View } from "../../../deps.ts";
-import { EditArtists, getYearList, stringToColour } from "../helper.ts";
+import { Box, ButtonStyle, Checkbox, Color, Component, createElement, Custom, Dialog, DropDownInput, IconButton, img, Input, PlainText, Spacer, View } from "../../../deps.ts";
+import { EditArtists, getYearList, stringToColour, syncFromData } from "../helper.ts";
 import { ColumEntry } from "../types.ts";
 
 import primary from "../../../data/primary.json" assert { type: "json"};
@@ -20,7 +20,22 @@ export const TableDef = (formData: FormData) => <ColumEntry<{ Id: string }>[]>[
                 return element;
             })())
         ) :
-            PlainText(formData.get(`song-${Id}-progress`)?.toString() ?? formData.get(`song-${Id}-title`)?.toString() ?? "-").setFont(1, 500) ],
+            // TODO: Refactor this to InlineTextInput() and add a custom size
+            View(({ update }) =>
+                PlainText(formData.get(`song-${Id}-title`)?.toString() ?? "-").setFont(1, 500)
+                    .onClick(() => {
+                        Dialog(() => Input({
+                            placeholder: "title",
+                            ...syncFromData(formData, `song-${Id}-title`),
+                        }))
+                            .onClose(() => update({}))
+                            .setTitle("Change Title")
+                            .addButton("Update", "close")
+                            .allowUserClose()
+                            .open()
+                    })
+            ).asComponent()
+    ],
     [ "Artists", "max-content", ({ Id }) =>
         View(({ update }) => Box(
             ...JSON.parse(formData.get(`song-${Id}-artists`)?.toString() ?? "[]").map(([ name, url, _type ]: string[]) =>

@@ -2,7 +2,7 @@ import bbnLogo from '../assets/img/bbnBig.svg';
 import bbnMusicLogo from '../assets/img/bbnMusicBig.svg';
 
 import '../assets/css/components/nav.css';
-import { Box, Button, ButtonStyle, Color, Component, createElement, Custom, Horizontal, img, PlainText, Spacer } from "../deps.ts";
+import { Button, ButtonStyle, Color, Component, createElement, Custom, Horizontal, img, PlainText, Spacer } from "../deps.ts";
 import { ProfileData, stringToColour } from "../pages/manager/helper.ts";
 
 const Nav = (component: Component) => {
