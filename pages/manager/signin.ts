@@ -41,6 +41,7 @@ View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, 
                     Button("Sign in with Google")
                         .setMargin("0 0 .8rem")
                         .setJustify("center")
+                        .asLinkButton(`${API.BASE_URL}auth/google-redirect?redirect=${location.href}&type=google-auth`)
                         .addPrefix(Custom(img(googleLog)).addClass("prefix-logo")),
                     ...state.signup ? [ Input({ placeholder: "Name", type: "text", ...syncFromData(formData, "name") }) ] : [],
                     Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
