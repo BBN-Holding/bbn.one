@@ -31,3 +31,13 @@
 .entry-subtitle {
     color: rgb(255 255 255 / 80%);
 }
+
+.under-review {
+    background-color: #BCBCBC;
+    color: rgba(0, 0, 0, 0.8);
+    border-radius: 10rem;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 0.2rem 0.8rem;
+    margin: 0 2rem;
+}

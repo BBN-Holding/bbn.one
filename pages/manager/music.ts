@@ -160,7 +160,11 @@ function DropEntry(x: Drop): Component {
                 .addClass("entry-subtitle")
                 .setFont(1, 700)
         ),
-        Spacer()
+        Spacer(),
+        x.type == "UNDER_REVIEW"
+            ? CenterV(PlainText("Under Review")
+                .addClass("entry-subtitle", "under-review"))
+            : null
     )
         .setGap("40px")
         .addClass("list-entry")
