@@ -24,6 +24,7 @@ export type Drop = {
         SecondaryGenre?: string;
         Artists?: string;
         Country?: string;
+        File?: string;
         Explicit?: boolean;
         Year?: number;
     }[];
@@ -132,6 +133,17 @@ export const API = {
         }
     },
     music: (token: string) => ({
+        reviews: {
+            get: async () => {
+                const data = await fetch(`${API.BASE_URL}music/reviews`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": token
+                    }
+                }).then(x => x.json())
+                return data.drops as Drop[];
+            },
+        },
         list: {
             get: async () => {
                 const data = await fetch(`${API.BASE_URL}music/list`, {
@@ -163,6 +175,14 @@ export const API = {
                         "Authorization": token
                     }
                 })).ok);
+            },
+            song: async (song: string) => {
+                return await fetch(`${API.BASE_URL}music/${id}/song/${song}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": token
+                    }
+                }).then(x => x.blob());
             },
             artwork: async () => {
                 return await fetch(`${API.BASE_URL}music/${id}/artwork`, {

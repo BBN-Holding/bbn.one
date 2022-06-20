@@ -12,6 +12,10 @@ export type ProfileData = {
     user: string;
     name: string;
     email: string;
+    groups: {
+        slug: string,
+        permissions: string[]
+    }[];
     picture?: string;
     exp?: number;
 };

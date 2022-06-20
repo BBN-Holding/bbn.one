@@ -11,7 +11,7 @@ WebGen({
 Redirect();
 RegisterAuthRefresh();
 const imageCache = new Map<string, string>();
-const view = View<{ list: Drop[], type: Drop[ "type" ] }>(({ state, update }) => Vertical(
+const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ state, update }) => Vertical(
     DynaNavigation("Music", GetCachedProfileData()),
     Horizontal(
         Vertical(
@@ -38,6 +38,13 @@ const view = View<{ list: Drop[], type: Drop[ "type" ] }>(({ state, update }) =>
                         .setStyle(state.type == "UNSUBMITTED" ? ButtonStyle.Normal : ButtonStyle.Secondary)
                         .addClass("tag")
                     : null,
+                state.reviews ?
+                    Button(`Reviews (${state.reviews.length})`)
+                        .setColor(Color.Colored)
+                        .onClick(() => update({ type: "UNDER_REVIEW" }))
+                        .setStyle(state.type == "UNDER_REVIEW" ? ButtonStyle.Normal : ButtonStyle.Secondary)
+                        .addClass("tag")
+                    : null,
                 Spacer()
             ).setGap("10px")
         ),
@@ -59,6 +66,36 @@ const view = View<{ list: Drop[], type: Drop[ "type" ] }>(({ state, update }) =>
     Box((() => {
         if (!state.list)
             return Custom(loadingWheel() as Element as HTMLElement)
+        if (state.reviews && state.reviews.length != 0 && state.type == "UNDER_REVIEW")
+            return Vertical(
+                state.reviews.map(x => Horizontal(
+                    Vertical(
+                        PlainText(x.title ?? "(no text)")
+                            .setMargin("-0.4rem 0 0")
+                            .setFont(2, 700),
+                        PlainText(x.id)
+                    ),
+                    Spacer(),
+                    CenterV(
+                        x.song
+                            ? Button(`Download Songs (${x.song.length})`)
+                                .setStyle(ButtonStyle.Inline)
+                                .setColor(Color.Colored)
+                                .onPromiseClick(async () => {
+                                    // Promise.all(x.song?.map(x => x.File))
+                                    alert(JSON.stringify(x.song));
+                                })
+                                .addClass("tag")
+                                .setMargin("0 0.5rem")
+                            : PlainText("No Songs")
+                                .setMargin("0 1.5rem")
+                                .setJustify("center")
+                    ).setJustify("center")
+                )
+                    .setPadding("0.5rem")
+                    .addClass("list-entry")
+                    .addClass("limited-width"))
+            ).setGap("1rem").setMargin("1rem 0 0")
         if (state.list.length != 0)
             return Vertical(
                 CategoryRender(
@@ -116,6 +153,9 @@ renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(() => {
             return x;
         })
         .then(x => view.viewOptions().update({ list: x }))
+
+    if (GetCachedProfileData().groups.find(x => x.permissions.includes("songs-review")))
+        API.music(API.getToken()).reviews.get().then(x => view.viewOptions().update({ reviews: x }))
 })
 
 

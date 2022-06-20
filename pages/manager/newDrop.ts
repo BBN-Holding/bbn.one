@@ -250,6 +250,7 @@ const wizard = (restore?: Drop) => Wizard({
             primaryGenre: x.PrimaryGenre,
             year: x.Year?.toString(),
             artists: x.Artists,
+            file: x.File,
             explicit: x.Explicit ? "true" : "false"
         })))
         : {}
