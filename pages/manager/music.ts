@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component } from "../../deps.ts";
+import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, createElement } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css'
 import artwork from "../../assets/img/template-artwork.png";
@@ -73,7 +73,7 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
                         PlainText(x.title ?? "(no text)")
                             .setMargin("-0.4rem 0 0")
                             .setFont(2, 700),
-                        PlainText(x.id)
+                        PlainText(x.id + " - " + x.user)
                     ),
                     Spacer(),
                     CenterV(
@@ -83,7 +83,13 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
                                 .setColor(Color.Colored)
                                 .onPromiseClick(async () => {
                                     // Promise.all(x.song?.map(x => x.File))
-                                    alert(JSON.stringify(x.song));
+                                    for (const song of x.song!) {
+                                        const id = await API.music(API.getToken()).id(x.id).song(song.File!)
+                                        const element = createElement("a");
+                                        element.href = URL.createObjectURL(id);
+                                        element.download = song.Title ?? "missing title";
+                                        element.click();
+                                    }
                                 })
                                 .addClass("tag")
                                 .setMargin("0 0.5rem")
