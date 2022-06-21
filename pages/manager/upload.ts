@@ -29,7 +29,9 @@ export function StreamingUploadHandler(events: StreamingUploadEvents, dropId: st
         const reader = stream.getReader();
 
         ws.onmessage = async ({ data }) => {
-            if (data == "next") {
+            if (data == "file") {
+                ws.send("file " + JSON.stringify({ filename: file.name, type: file.type }))
+            } else if (data == "next") {
                 const read = await reader.read()
                 console.log(read.value);
                 if (read.value)

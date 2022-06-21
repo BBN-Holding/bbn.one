@@ -82,14 +82,8 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
                                 .setStyle(ButtonStyle.Inline)
                                 .setColor(Color.Colored)
                                 .onPromiseClick(async () => {
-                                    // Promise.all(x.song?.map(x => x.File))
-                                    for (const song of x.song!) {
-                                        const id = await API.music(API.getToken()).id(x.id).song(song.File!)
-                                        const element = createElement("a");
-                                        element.href = URL.createObjectURL(id);
-                                        element.download = song.Title ?? "missing title";
-                                        element.click();
-                                    }
+                                    const { code } = await API.music(API.getToken()).id(x.id).songSownload();
+                                    window.open(`${API.BASE_URL}music/${x.id}/songs-download/${code}`, '_blank')
                                 })
                                 .addClass("tag")
                                 .setMargin("0 0.5rem")

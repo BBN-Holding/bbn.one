@@ -176,13 +176,13 @@ export const API = {
                     }
                 })).ok);
             },
-            song: async (song: string) => {
-                return await fetch(`${API.BASE_URL}music/${id}/song/${song}`, {
-                    method: "GET",
+            songSownload: async (): Promise<{ code: string }> => {
+                return await fetch(`${API.BASE_URL}music/${id}/song-download`, {
+                    method: "POST",
                     headers: {
                         "Authorization": token
                     }
-                }).then(x => x.blob());
+                }).then(x => x.json());
             },
             artwork: async () => {
                 return await fetch(`${API.BASE_URL}music/${id}/artwork`, {
