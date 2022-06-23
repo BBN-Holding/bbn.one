@@ -83,7 +83,7 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
                             .addClass("tag")
                             .onPromiseClick(async () => {
                                 const form = new FormData();
-                                form.set("type", "PRIVATE");
+                                form.set("type", "PUBLISHED");
                                 await API.music(API.getToken()).id(x.id).put(form);
 
                                 const list = await API.music(API.getToken()).reviews.get();
