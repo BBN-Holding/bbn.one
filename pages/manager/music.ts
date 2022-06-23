@@ -38,7 +38,7 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
                         .setStyle(state.type == "UNSUBMITTED" ? ButtonStyle.Normal : ButtonStyle.Secondary)
                         .addClass("tag")
                     : null,
-                state.reviews ?
+                state.reviews && state.reviews?.length != 0 ?
                     Button(`Reviews (${state.reviews.length})`)
                         .setColor(Color.Colored)
                         .onClick(() => update({ type: "UNDER_REVIEW" }))
@@ -77,8 +77,31 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
                     ),
                     Spacer(),
                     CenterV(
+                        Button("Approve")
+                            .setStyle(ButtonStyle.Inline)
+                            .setColor(Color.Colored)
+                            .addClass("tag")
+                            .onPromiseClick(async () => {
+                                const form = new FormData();
+                                form.set("type", "PRIVATE");
+                                await API.music(API.getToken()).id(x.id).put(form);
+
+                                const list = await API.music(API.getToken()).reviews.get();
+                                view.viewOptions().update({ reviews: list })
+                            })
+                    ),
+                    CenterV(
+                        Button("Meta")
+                            .setStyle(ButtonStyle.Inline)
+                            .setColor(Color.Colored)
+                            .addClass("tag")
+                            .onClick(() => {
+                                alert(JSON.stringify(x))
+                            })
+                    ),
+                    CenterV(
                         x.song
-                            ? Button(`Download Songs (${x.song.length})`)
+                            ? Button(`Download (${x.song.length})`)
                                 .setStyle(ButtonStyle.Inline)
                                 .setColor(Color.Colored)
                                 .onPromiseClick(async () => {
