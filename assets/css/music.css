@@ -41,3 +41,26 @@
     padding: 0.2rem 0.8rem;
     margin: 0 2rem;
 }
+
+@media (max-width: 600px) {
+    .action-bar {
+        flex-wrap: wrap-reverse;
+        justify-content: space-between;
+    }
+
+    .action-bar>.vertical-stack:last-child {
+        flex-direction: row;
+        display: flex;
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .list-entry {
+        gap: 18px !important;
+    }
+
+    .list-entry img {
+        height: 75px;
+    }
+}

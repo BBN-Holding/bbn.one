@@ -11,6 +11,16 @@ WebGen({
 Redirect();
 RegisterAuthRefresh();
 const imageCache = new Map<string, string>();
+function MediaQuery(query: string, view: (matches: boolean) => Component) {
+    const holder = createElement("div");
+    holder.innerHTML = "";
+    holder.append(view(matchMedia(query).matches).draw())
+    matchMedia(query).addEventListener("change", ({ matches }) => {
+        holder.innerHTML = "";
+        holder.append(view(matches).draw())
+    }, { passive: true })
+    return Custom(holder);
+}
 const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ state, update }) => Vertical(
     DynaNavigation("Music", GetCachedProfileData()),
     Horizontal(
@@ -62,6 +72,7 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
         )
     )
         .setPadding("5rem 0 0 0")
+        .addClass("action-bar")
         .addClass("limited-width"),
     Box((() => {
         if (!state.list)
@@ -203,25 +214,28 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
         PlainText(title)
             .addClass("list-title")
             .addClass("limited-width"),
-        ...dropList.map(x => DropEntry(x))
+        MediaQuery("(max-width: 600px)",
+            (matches) =>
+                Box(...dropList.map(x => DropEntry(x, matches)))
+        ),
     ];
 }
 
-function DropEntry(x: Drop): Component {
+function DropEntry(x: Drop, matches: boolean): Component {
     return Horizontal(
         Custom(img(imageCache.get(x.id) ?? artwork)),
         CenterV(
             PlainText(x.title ?? "(no name)")
                 .setMargin("-0.4rem 0 0")
-                .setFont(2.25, 700),
+                .setFont(matches ? 1.2 : 2.25, 700),
             PlainText(x.release ?? "(no release date)")
-                .setFont(1, 700)
+                .setFont(matches ? 0.8 : 1, 700)
                 .addClass("entry-subtitle")
         ),
         CenterV(
             PlainText(x.upc ? `UPC ${x.upc}` : "(no upc number)")
                 .addClass("entry-subtitle")
-                .setFont(1, 700)
+                .setFont(matches ? 0.8 : 1, 700)
         ),
         Spacer(),
         x.type == "UNDER_REVIEW"
