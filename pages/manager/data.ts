@@ -15,7 +15,7 @@ export function DeleteFromForm(fromData: FormData, prefix: string, filter: (data
     const filtered = fromData.getAll(prefix).filter(filter);
     fromData.delete(prefix);
     for (const iterator of filtered) {
-        fromData.append("actor", iterator)
+        fromData.append(prefix, iterator)
     }
     if (filtered.length === 0)
         fromData.set(prefix, "");
