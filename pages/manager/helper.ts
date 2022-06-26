@@ -19,7 +19,13 @@ export type ProfileData = {
     picture?: string;
     exp?: number;
 };
+export function IsLoggedIn(): ProfileData | null {
+    return localStorage[ "access-token" ] ? JSON.parse(atob(localStorage[ "access-token" ]?.split(".")[ 1 ])) : null;
+}
 
+/**
+ * @deprecated
+ */
 export function GetCachedProfileData(): ProfileData {
     return JSON.parse(atob(localStorage[ "access-token" ].split(".")[ 1 ]));
 }

@@ -3,7 +3,7 @@ import bbnMusicLogo from '../assets/img/bbnMusicBig.svg';
 
 import '../assets/css/components/nav.css';
 import { Button, ButtonStyle, Color, Component, createElement, Custom, Horizontal, img, PlainText, Spacer } from "../deps.ts";
-import { ProfileData, stringToColour } from "../pages/manager/helper.ts";
+import { IsLoggedIn, stringToColour } from "../pages/manager/helper.ts";
 
 const Nav = (component: Component) => {
     const nav = createElement("nav");
@@ -25,10 +25,10 @@ function ProfilePicture(component: Component, name: string) {
     ele.style.backgroundColor = stringToColour(name);
     return Custom(ele).addClass("profile-picture")
 }
-export function DynaNavigation(type: "Home" | "Music", user?: ProfileData) {
+export function DynaNavigation(type: "Home" | "Music", user = IsLoggedIn()) {
     return Nav(
         Horizontal(
-            Custom(img(type == "Home" ? bbnLogo : bbnMusicLogo)),
+            Custom(img(type == "Home" ? bbnLogo : bbnMusicLogo)).onClick(() => { location.href = "/" }),
             Spacer(),
             [
                 [ "Home", "/#" ],
@@ -41,18 +41,19 @@ export function DynaNavigation(type: "Home" | "Music", user?: ProfileData) {
                     .asLinkButton(link)
                     .setStyle(ButtonStyle.Inline)
             ),
-            type == "Home" ?
-                Button("Contact Us")
+            (!user && type == "Home" ?
+                Button("Sign in")
                     .setColor(Color.Colored)
                     .addClass("contact") : null,
-            user
-                ? ProfilePicture(
-                    user.picture ?
-                        Custom(img(user?.picture))
-                        : PlainText(getNameInital(user.name)),
-                    user.name
-                )
-                : null
+                user
+                    ? ProfilePicture(
+                        user.picture ?
+                            Custom(img(user?.picture))
+                            : PlainText(getNameInital(user.name)),
+                        user.name
+                    )
+                    : null)
+                ?.onClick(() => { location.href = "/signin" }) ?? null
         ).setGap("0.4rem")
     ).addClass(type.toLowerCase())
 }
