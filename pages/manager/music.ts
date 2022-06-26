@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, createElement, Icon } from "../../deps.ts";
+import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, createElement, Icon, MaterialIcons } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css'
 import artwork from "../../assets/img/template-artwork.png";
@@ -7,6 +7,7 @@ import { GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, renew
 import { API, Drop } from "./RESTSpec.ts";
 
 WebGen({
+    icon: new MaterialIcons()
 })
 Redirect();
 RegisterAuthRefresh();
@@ -90,10 +91,38 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
                     ),
                     Spacer(),
                     CenterV(
+                        Button("Meta")
+                            .setStyle(ButtonStyle.Inline)
+                            .setColor(Color.Colored)
+                            .addClass("tag")
+                            .onClick(() => {
+                                alert(JSON.stringify(x))
+                            })
+                    ),
+                    CenterV(
+                        Button(`Download (${x.song?.length ?? 0})`)
+                            .setStyle(ButtonStyle.Inline)
+                            .setColor(Color.Colored)
+                            .onPromiseClick(async () => {
+                                if ((x.song?.length ?? 0) != 0) {
+                                    const { code } = await API.music(API.getToken()).id(x.id).songSownload();
+                                    window.open(`${API.BASE_URL}music/${x.id}/songs-download/${code}`, '_blank')
+                                }
+                            })
+                            .addClass("tag")
+                            .setMargin("0 0.5rem")
+                    ).setJustify("center"),
+                    CenterV(
                         Button(Icon("block"))
                             .setStyle(ButtonStyle.Inline)
                             .setColor(Color.Colored)
                             .addClass("tag")
+                            .onPromiseClick(async () => {
+                                const form = new FormData();
+                                form.set("type", "PRIVATE");
+                                await API.music(API.getToken()).id(x.id).put(form);
+                                await loadSongs();
+                            })
                     ),
                     CenterV(
                         Button(Icon("task_alt"))
@@ -104,35 +133,9 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
                                 const form = new FormData();
                                 form.set("type", "PUBLISHED");
                                 await API.music(API.getToken()).id(x.id).put(form);
-
-                                const list = await API.music(API.getToken()).reviews.get();
-                                view.viewOptions().update({ reviews: list })
+                                await loadSongs();
                             })
                     ),
-                    CenterV(
-                        Button("Meta")
-                            .setStyle(ButtonStyle.Inline)
-                            .setColor(Color.Colored)
-                            .addClass("tag")
-                            .onClick(() => {
-                                alert(JSON.stringify(x))
-                            })
-                    ),
-                    CenterV(
-                        x.song
-                            ? Button(`Download (${x.song.length})`)
-                                .setStyle(ButtonStyle.Inline)
-                                .setColor(Color.Colored)
-                                .onPromiseClick(async () => {
-                                    const { code } = await API.music(API.getToken()).id(x.id).songSownload();
-                                    window.open(`${API.BASE_URL}music/${x.id}/songs-download/${code}`, '_blank')
-                                })
-                                .addClass("tag")
-                                .setMargin("0 0.5rem")
-                            : PlainText("No Songs")
-                                .setMargin("0 1.5rem")
-                                .setJustify("center")
-                    ).setJustify("center")
                 )
                     .setPadding("0.5rem")
                     .addClass("list-entry")
@@ -176,21 +179,19 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
         update({ type: "PUBLISHED" })
     })
     .appendOn(document.body);
-renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(async () => {
+renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(() => loadSongs())
+
+
+async function loadSongs() {
     await Promise.all([
-        (async () => { const list = await API.music(API.getToken()).list.get(); view.viewOptions().update({ list }) })(),
+        (async () => { const list = await API.music(API.getToken()).list.get(); view.viewOptions().update({ list }); })(),
         (async () => {
             if (GetCachedProfileData().groups.find(x => x.permissions.includes("songs-review"))) {
                 const list = await API.music(API.getToken()).reviews.get();
-                view.viewOptions().update({ reviews: list })
+                view.viewOptions().update({ reviews: list });
             }
         })()
-    ])
-    await imageLoader();
-})
-
-
-async function imageLoader() {
+    ]);
     const source = new Set([
         ...await API.music(API.getToken()).reviews.get(),
         ...await API.music(API.getToken()).list.get()
