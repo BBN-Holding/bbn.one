@@ -228,7 +228,7 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
             .addClass("limited-width"),
         MediaQuery("(max-width: 600px)",
             (matches) =>
-                Box(...dropList.map(x => DropEntry(x, matches)))
+                Vertical(...dropList.map(x => DropEntry(x, matches))).setGap("1rem")
         ),
     ];
 }
