@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, createElement } from "../../deps.ts";
+import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, createElement, Icon } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css'
 import artwork from "../../assets/img/template-artwork.png";
@@ -22,7 +22,7 @@ function MediaQuery(query: string, view: (matches: boolean) => Component) {
     return Custom(holder);
 }
 const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ state, update }) => Vertical(
-    DynaNavigation("Music", GetCachedProfileData()),
+    DynaNavigation("Music"),
     Horizontal(
         Vertical(
             Horizontal(
@@ -90,7 +90,13 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
                     ),
                     Spacer(),
                     CenterV(
-                        Button("Approve")
+                        Button(Icon("block"))
+                            .setStyle(ButtonStyle.Inline)
+                            .setColor(Color.Colored)
+                            .addClass("tag")
+                    ),
+                    CenterV(
+                        Button(Icon("task_alt"))
                             .setStyle(ButtonStyle.Inline)
                             .setColor(Color.Colored)
                             .addClass("tag")
@@ -192,8 +198,7 @@ renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(() => {
 
     if (GetCachedProfileData().groups.find(x => x.permissions.includes("songs-review")))
         API.music(API.getToken()).reviews.get()
-            .then(drops => Promise.all(drops.map(async (x) => ({ ...x, artwork: x.artwork ? URL.createObjectURL(await API.music(API.getToken()).id(x.id).artwork()) : undefined }))))
-            .then(x => view.viewOptions().update({ reviews: x }))
+            .then(x => view.viewOptions().update({ reviews: x.map(x => x) }))
 })
 
 
