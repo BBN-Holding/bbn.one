@@ -176,31 +176,34 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
         update({ type: "PUBLISHED" })
     })
     .appendOn(document.body);
-renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(() => {
-    API.music(API.getToken()).list.get()
-        .then(x => {
-            Promise.all(x
-                .map(async x => ([
-                    x.id,
-                    x.artwork ? URL.createObjectURL(await API.music(API.getToken()).id(x.id).artwork()) : undefined
-                ] as [ key: string, value?: string ])
-                ))
-                .then(x => {
-                    for (const [ key, value ] of x.filter(([ _, value ]) => value)) {
-                        imageCache.set(key, value!);
-                    }
-                    view.viewOptions().update({});
-                })
-
-            return x;
-        })
-        .then(x => view.viewOptions().update({ list: x }))
-
-    if (GetCachedProfileData().groups.find(x => x.permissions.includes("songs-review")))
-        API.music(API.getToken()).reviews.get()
-            .then(x => view.viewOptions().update({ reviews: x.map(x => x) }))
+renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(async () => {
+    await Promise.all([
+        (async () => { const list = await API.music(API.getToken()).list.get(); view.viewOptions().update({ list }) })(),
+        (async () => {
+            if (GetCachedProfileData().groups.find(x => x.permissions.includes("songs-review"))) {
+                const list = await API.music(API.getToken()).reviews.get();
+                view.viewOptions().update({ reviews: list })
+            }
+        })()
+    ])
+    await imageLoader();
 })
 
+
+async function imageLoader() {
+    const source = new Set([
+        ...await API.music(API.getToken()).reviews.get(),
+        ...await API.music(API.getToken()).list.get()
+    ])
+    for (const iterator of source) {
+        (async () => {
+            if (!iterator.artwork?.trim()) return;
+            const image = await API.music(API.getToken()).id(iterator.id).artwork()
+            imageCache.set(iterator.id, URL.createObjectURL(image))
+            view.viewOptions().update({})
+        })()
+    }
+}
 
 function getListCount(list: Drop[ "type" ][], state: Partial<{ list: Drop[]; type: Drop[ "type" ]; aboutMe: ProfileData; }>) {
     const length = state.list?.filter(x => list.includes(x.type)).length;
