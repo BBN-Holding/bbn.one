@@ -41,18 +41,19 @@ export function DynaNavigation(type: "Home" | "Music", user = IsLoggedIn()) {
                     .asLinkButton(link)
                     .setStyle(ButtonStyle.Inline)
             ),
-            (!user && type == "Home" ?
-                Button("Sign in")
-                    .setColor(Color.Colored)
-                    .addClass("contact") : null,
-                user
-                    ? ProfilePicture(
-                        user.picture ?
-                            Custom(img(user?.picture))
-                            : PlainText(getNameInital(user.name)),
-                        user.name
-                    )
+            (user
+                ? ProfilePicture(
+                    user.picture ?
+                        Custom(img(user?.picture))
+                        : PlainText(getNameInital(user.name)),
+                    user.name
+                )
+                : (type == "Home" ?
+                    Button("Sign in")
+                        .setColor(Color.Colored)
+                        .addClass("contact")
                     : null)
+            )
                 ?.onClick(() => { location.href = "/signin" }) ?? null
         ).setGap("0.4rem")
     ).addClass(type.toLowerCase())
