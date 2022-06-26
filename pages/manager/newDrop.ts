@@ -254,7 +254,10 @@ const wizard = (restore?: Drop) => Wizard({
             explicit: x.Explicit ? "true" : "false"
         })))
         : {}
-    ),
+    ).addValidator((v) => v.object({
+        loading: v.void(),
+        song: v.string().or(v.array(v.string()))
+    })),
     Page((formData) => [
         Spacer(),
         Horizontal(
@@ -309,9 +312,12 @@ function uploadArtwork(formData: FormData, file: File, update: (data: Partial<un
     });
 }
 
+const lockedLoading = new Set();
 function addSongs(list: File[], formData: FormData, update: (data: Partial<unknown>) => void) {
     list.map(x => ({ file: x, id: crypto.randomUUID() })).forEach(({ file, id }) => {
         formData.append("song", id);
+        formData.set("loading", "-");
+        lockedLoading.add(id);
         const cleanedUpTitle = file.name
             .replaceAll("_", " ")
             .replaceAll("-", " ")
@@ -325,6 +331,9 @@ function addSongs(list: File[], formData: FormData, update: (data: Partial<unkno
             backendResponse: (fileId) => {
                 formData.set(`song-${id}-file`, fileId);
                 formData.delete(`song-${id}-progress`)
+                lockedLoading.delete(id);
+                if (lockedLoading.size == 0)
+                    formData.delete("loading");
                 update({});
             },
             onUploadTick: async (percentage) => {
