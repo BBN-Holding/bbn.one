@@ -80,6 +80,8 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ] }>(({ st
         if (state.reviews && state.reviews.length != 0 && state.type == "UNDER_REVIEW")
             return Vertical(
                 state.reviews.map(x => Horizontal(
+
+                    Custom(img(imageCache.get(x.id) ?? artwork)).addClass("small-preview"),
                     Vertical(
                         PlainText(x.title ?? "(no text)")
                             .setMargin("-0.4rem 0 0")
@@ -189,7 +191,9 @@ renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(() => {
         .then(x => view.viewOptions().update({ list: x }))
 
     if (GetCachedProfileData().groups.find(x => x.permissions.includes("songs-review")))
-        API.music(API.getToken()).reviews.get().then(x => view.viewOptions().update({ reviews: x }))
+        API.music(API.getToken()).reviews.get()
+            .then(drops => Promise.all(drops.map(async (x) => ({ ...x, artwork: x.artwork ? URL.createObjectURL(await API.music(API.getToken()).id(x.id).artwork()) : undefined }))))
+            .then(x => view.viewOptions().update({ reviews: x }))
 })
 
 

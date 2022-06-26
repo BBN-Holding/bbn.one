@@ -64,3 +64,9 @@
         height: 75px;
     }
 }
+
+img.small-preview {
+    height: 2.2rem;
+    border-radius: 3px;
+    margin: 0 0.4rem 0 0;
+}
