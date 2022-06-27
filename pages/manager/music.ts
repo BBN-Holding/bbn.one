@@ -227,7 +227,7 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
         PlainText(title)
             .addClass("list-title")
             .addClass("limited-width"),
-        MediaQuery("(max-width: 600px)",
+        MediaQuery("(max-width: 700px)",
             (matches) =>
                 Vertical(...dropList.map(x => DropEntry(x, matches))).setGap("1rem")
         ),

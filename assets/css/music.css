@@ -42,7 +42,7 @@
     margin: 0 2rem;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
     .action-bar {
         flex-wrap: wrap-reverse;
         justify-content: space-between;

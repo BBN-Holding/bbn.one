@@ -8,7 +8,7 @@
     height: 64px;
 }
 
-@media(max-width:600px) {
+@media(max-width:700px) {
     .subsidiary-list * {
         height: 3rem;
     }

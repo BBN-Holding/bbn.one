@@ -25,7 +25,8 @@
     }
 }
 
-.footer div:nth-child(2) span:nth-child(1), .footer div:nth-child(3) span:nth-child(1) {
+.footer div:nth-child(2) span:nth-child(1),
+.footer div:nth-child(3) span:nth-child(1) {
     display: block;
     font-weight: 400;
     font-size: 1.2rem;
@@ -57,7 +58,7 @@
     color: #45669e;
 }
 
-@media(max-width:650px) {
+@media(max-width:700px) {
     .footer {
         margin: 3rem auto 0;
         padding: 2rem 0;
@@ -70,7 +71,8 @@
         height: 14px;
     }
 
-    .footer div:nth-child(2) span:nth-child(1), .footer div:nth-child(3) span:nth-child(1) {
+    .footer div:nth-child(2) span:nth-child(1),
+    .footer div:nth-child(3) span:nth-child(1) {
         font-size: 1.1rem;
         margin-bottom: 1rem;
     }
