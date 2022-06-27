@@ -1,6 +1,6 @@
 // This code Will be proted to webgen
 
-import { Box, Button, Card, Component, Custom, Dialog, DropDownInput, Grid, headless, Horizontal, Icon, Input, Page, PlainText, Spacer, Vertical, View } from "../../deps.ts";
+import { Box, Button, Card, Component, Custom, Dialog, DropDownInput, Grid, headless, Horizontal, Icon, Input, Page, PlainText, Spacer, Vertical, View, ViewClass } from "../../deps.ts";
 import { DeleteFromForm } from "./data.ts";
 import { API, ArtistTypes, Drop } from "./RESTSpec.ts";
 import { ColumEntry } from "./types.ts";
@@ -14,7 +14,7 @@ export type ProfileData = {
     email: string;
     groups: {
         slug: string,
-        permissions: string[]
+        permissions: string[];
     }[];
     picture?: string;
     exp?: number;
@@ -48,14 +48,14 @@ export function isExpired(exp: number) {
 }
 
 export function RegisterAuthRefresh() {
-    const { exp } = GetCachedProfileData()
+    const { exp } = GetCachedProfileData();
     if (!exp) {
-        localStorage.clear()
+        localStorage.clear();
         Redirect();
         return;
     }
     renewAccessTokenIfNeeded(exp);
-    setInterval(() => renewAccessTokenIfNeeded(GetCachedProfileData().exp), 1000)
+    setInterval(() => renewAccessTokenIfNeeded(GetCachedProfileData().exp), 1000);
 }
 export function Redirect() {
     if (localStorage[ "refresh-token" ] && location.href.includes("/signin"))
@@ -80,7 +80,7 @@ export function CenterAndRight(center: Component, right: Component): Component {
 class TableComponent<Data> extends Component {
     hasDelete = false;
     #columns: ColumEntry<Data>[];
-    #data: Data[]
+    #data: Data[];
 
     constructor(_columns: ColumEntry<Data>[], data: Data[]) {
         super();
@@ -125,7 +125,7 @@ export function syncFromData(formData: FormData, key: string) {
     return {
         liveOn: (value: string) => formData.set(key, value),
         value: formData.get(key)?.toString(),
-    }
+    };
 }
 
 // BBN Stuff
@@ -154,7 +154,7 @@ export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: F
     table.ondragleave = (ev) => {
         ev.preventDefault();
         table.classList.remove("hover");
-    }
+    };
     table.ondragover = (ev) => {
         ev.preventDefault();
         table.classList.add("hover");
@@ -162,7 +162,7 @@ export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: F
     table.ondrop = (ev) => {
         ev.preventDefault();
         upload(Array.from(ev.dataTransfer?.files ?? []).filter(x => allowedAudioFormats.includes(x.type)));
-    }
+    };
     table.append(Vertical(
         PlainText("Nothing here yet").addClass("droptitle"),
         PlainText("Drag & Drop your Files here").addClass("dropsubtitle")
@@ -174,9 +174,9 @@ export function EditArtists(list: NonNullable<Drop[ "artists" ]>) {
     const formdefault = new FormData();
     list.forEach(([ name, _img, type ]) => {
         const id = crypto.randomUUID();
-        formdefault.append("actor", id)
-        formdefault.set(`actor-${id}-name`, name)
-        formdefault.set(`actor-${id}-type`, type)
+        formdefault.append("actor", id);
+        formdefault.set(`actor-${id}-name`, name);
+        formdefault.set(`actor-${id}-type`, type);
     });
 
     const form = Page((data) => [
@@ -193,17 +193,17 @@ export function EditArtists(list: NonNullable<Drop[ "artists" ]>) {
                     };
                 })).setDelete(({ id }) => {
                     DeleteFromForm(data, "actor", (x) => x != id);
-                    update({})
+                    update({});
                 }),
                 Horizontal(
                     Spacer(),
                     Button("Add Artist") // TODO: Remove this in the future => switch to ghost rows
                         .onClick(() => {
                             const id = crypto.randomUUID();
-                            data.append("actor", id)
-                            data.set(`actor-${id}-name`, "")
-                            data.set(`actor-${id}-type`, "PRIMARY")
-                            update({})
+                            data.append("actor", id);
+                            data.set(`actor-${id}-name`, "");
+                            data.set(`actor-${id}-type`, "PRIMARY");
+                            update({});
                         })
                 ).setPadding("0 0 3rem 0")
             )
@@ -211,7 +211,7 @@ export function EditArtists(list: NonNullable<Drop[ "artists" ]>) {
                 .setWidth("clamp(0rem, 100vw, 60vw)")
                 .setMargin("0 -.6rem 0 0")
         ).asComponent()
-    ])
+    ]);
     return new Promise<Drop[ "artists" ]>((done) => {
         const dialog = Dialog(() => Box(...form.setDefaultValues(formdefault).getComponents()))
             .setTitle("Manage your Artists")
@@ -226,10 +226,39 @@ export function EditArtists(list: NonNullable<Drop[ "artists" ]>) {
                     .map((i) =>
                         [ data.get(`actor-${i}-name`), "", data.get(`actor-${i}-type`) ] as
                         [ name: string, img: string, type: ArtistTypes ]
-                    ))
+                    ));
 
                 return "remove";
             })
-            .open()
-    })
+            .open();
+    });
+}
+
+
+export async function loadSongs(view: ViewClass<{
+    list: Drop[];
+    reviews: Drop[];
+    type: Drop[ "type" ];
+}>, imageCache: Map<string, string>) {
+    await Promise.all([
+        (async () => { const list = await API.music(API.getToken()).list.get(); view.viewOptions().update({ list }); })(),
+        (async () => {
+            if (GetCachedProfileData().groups.find(x => x.permissions.includes("songs-review"))) {
+                const list = await API.music(API.getToken()).reviews.get();
+                view.viewOptions().update({ reviews: list });
+            }
+        })()
+    ]);
+    const source = new Set([
+        ...await API.music(API.getToken()).reviews.get(),
+        ...await API.music(API.getToken()).list.get()
+    ]);
+    for (const iterator of source) {
+        (async () => {
+            if (!iterator.artwork?.trim()) return;
+            const image = await API.music(API.getToken()).id(iterator.id).artwork();
+            imageCache.set(iterator.id, URL.createObjectURL(image));
+            view.viewOptions().update({});
+        })();
+    }
 }
