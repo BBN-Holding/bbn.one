@@ -15,19 +15,19 @@ import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 WebGen({
     theme: SupportedThemes.dark,
     icon: new MaterialIcons()
-})
-Redirect()
+});
+Redirect();
 RegisterAuthRefresh();
 const params = new URLSearchParams(location.search);
 
 if (!params.has("id")) {
-    alert("ID is missing")
+    alert("ID is missing");
     location.href = "/music";
 }
 const gapSize = "15px";
 const inputWidth = "436px";
 function uploadFilesDialog(onData: (files: File[]) => void, accept: string) {
-    const upload = createElement("input")
+    const upload = createElement("input");
     upload.type = "file";
     upload.accept = accept;
     upload.click();
@@ -37,7 +37,7 @@ function uploadFilesDialog(onData: (files: File[]) => void, accept: string) {
 }
 
 // TODO: Input zu neuen FormComponents umlagern
-View<{ restoreData: Drop, aboutMe: ProfileData }>(({ state }) => Vertical(
+View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
     DynaNavigation("Music", state.aboutMe),
     Spacer(),
     state.restoreData == null
@@ -55,13 +55,13 @@ View<{ restoreData: Drop, aboutMe: ProfileData }>(({ state }) => Vertical(
         update({ aboutMe: GetCachedProfileData() });
         API.music(API.getToken())[ 'id' ](params.get("id")!).get().then(async restoreData => {
             if (restoreData.artwork) {
-                const blob = await API.music(API.getToken()).id(params.get("id")!).artwork()
-                update({ restoreData: { ...restoreData, [ "artwork-url" ]: URL.createObjectURL(blob) } })
+                const blob = await API.music(API.getToken()).id(params.get("id")!).artwork();
+                update({ restoreData: { ...restoreData, [ "artwork-url" ]: URL.createObjectURL(blob) } });
             }
-            else update({ restoreData })
+            else update({ restoreData });
         }).catch(() => {
             setTimeout(() => location.reload(), 1000);
-        })
+        });
     })
     .addClass("fullscreen")
     .appendOn(document.body);
@@ -82,9 +82,9 @@ const wizard = (restore?: Drop) => Wizard({
     },
     submitAction: async () => {
         const single = new FormData();
-        single.set("type", <Drop[ "type" ]>"UNDER_REVIEW")
+        single.set("type", <Drop[ "type" ]>"UNDER_REVIEW");
         await API.music(API.getToken()).id(params.get("id")!).put(single);
-        location.href = "/music"
+        location.href = "/music";
     }
 }, ({ Next }) => [
     Page((formData) => [
@@ -127,7 +127,7 @@ const wizard = (restore?: Drop) => Wizard({
                         }).draw();
                         const rawInput = input.querySelector("input")!;
                         rawInput.style.paddingRight = "5px";
-                        rawInput.onchange = () => formData.set("release", rawInput.value)
+                        rawInput.onchange = () => formData.set("release", rawInput.value);
                         return Custom(input);
                     })(),
                     DropDownInput("Language", language)
@@ -139,7 +139,7 @@ const wizard = (restore?: Drop) => Wizard({
                     .setWidth(inputWidth),
                 Button("Artists")
                     .onClick(() => {
-                        EditArtists(formData.get("artists") ? JSON.parse(formData.get("artists")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => formData.set("artists", JSON.stringify(x)))
+                        EditArtists(formData.get("artists") ? JSON.parse(formData.get("artists")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => formData.set("artists", JSON.stringify(x)));
                     }),
                 Center(PlainText("Set your target Audience").addClass("title")),
                 Grid(
@@ -160,7 +160,13 @@ const wizard = (restore?: Drop) => Wizard({
         language: restore?.language,
         artists: JSON.stringify(restore?.artists),
         primaryGenre: restore?.primaryGenre,
-    }),
+    }).addValidator((e) => e.object({
+        title: e.string(),
+        artists: e.string().or(e.array(e.string())),
+        release: e.string(),
+        language: e.string(),
+        primaryGenre: e.string()
+    })),
     Page((formData) => [
         Spacer(),
         Center(
@@ -182,7 +188,10 @@ const wizard = (restore?: Drop) => Wizard({
     ]).setDefaultValues({
         compositionCopyright: restore?.compositionCopyright,
         soundRecordingCopyright: restore?.soundRecordingCopyright
-    }),
+    }).addValidator((e) => e.object({
+        compositionCopyright: e.string(),
+        soundRecordingCopyright: e.string()
+    })),
     Page((formData) => [
         Spacer(),
         Center(
@@ -200,7 +209,7 @@ const wizard = (restore?: Drop) => Wizard({
                             ? ImageFrom(formData, "artwork-url").addClass("upload-image")
                             : PlainText("Drag & Drop your File here")
                     ), allowedImageFormats, ([ { file } ]) => {
-                        uploadArtwork(formData, file, update)
+                        uploadArtwork(formData, file, update);
                     }).addClass("drop-area"),
                     Custom(loadingWheel() as Element as HTMLElement)
                 )
@@ -211,7 +220,8 @@ const wizard = (restore?: Drop) => Wizard({
     ]).setDefaultValues({
         [ "artwork-url" ]: restore?.[ "artwork-url" ]
     }).addValidator((thing) => thing.object({
-        loading: thing.void()
+        loading: thing.void(),
+        [ "artwork-url" ]: thing.string()
     })),
     Page((formData) => [
         Spacer(),
@@ -232,7 +242,7 @@ const wizard = (restore?: Drop) => Wizard({
                         )
                             .setDelete(({ Id }) => {
                                 DeleteFromForm(formData, "song", (x) => x != Id);
-                                update({})
+                                update({});
                             })
                             .addClass("inverted-class", "light-mode")
                         : UploadTable(TableDef(formData), (list) => addSongs(list, formData, update))
@@ -276,7 +286,7 @@ const wizard = (restore?: Drop) => Wizard({
     ]).setDefaultValues({
         comments: restore?.comments
     })
-])
+]);
 function uploadArtwork(formData: FormData, file: File, update: (data: Partial<unknown>) => void) {
     formData.set("artwork-url", URL.createObjectURL(file));
     formData.set("loading", "-");
@@ -330,14 +340,14 @@ function addSongs(list: File[], formData: FormData, update: (data: Partial<unkno
             credentials: () => API.getToken(),
             backendResponse: (fileId) => {
                 formData.set(`song-${id}-file`, fileId);
-                formData.delete(`song-${id}-progress`)
+                formData.delete(`song-${id}-progress`);
                 lockedLoading.delete(id);
                 if (lockedLoading.size == 0)
                     formData.delete("loading");
                 update({});
             },
             onUploadTick: async (percentage) => {
-                formData.set(`song-${id}-progress`, percentage.toString())
+                formData.set(`song-${id}-progress`, percentage.toString());
                 await delay(10);
                 update({});
             },
