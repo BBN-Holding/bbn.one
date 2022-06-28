@@ -7,13 +7,13 @@ import { DynaNavigation } from "../../components/nav.ts";
 import { Redirect, syncFromData } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
 WebGen({
-})
+});
 Redirect();
 
-const para = new URLSearchParams(location.search)
+const para = new URLSearchParams(location.search);
 const { id, type } = { id: para.get("id"), type: para.get("type") };
 
-View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, password: string }>(({ state, update }) => Vertical(
+View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, password: string; }>(({ state, update }) => Vertical(
     DynaNavigation("Home"),
     Horizontal(
         Vertical(
@@ -33,7 +33,7 @@ View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, 
                                 await API.user(state.resetToken!).setMe.post({
                                     password: formData.get("password")?.toString()
                                 });
-                                update({ resetToken: undefined, password: formData.get("password")?.toString() })
+                                update({ resetToken: undefined, password: formData.get("password")?.toString() });
                             }),
                         PlainText(state.resetToken?.startsWith("!") ? "Error: Link is invalid" : "").addClass("error-message")
                     ]).disableAutoSpacerAtBottom().getComponents();
@@ -82,18 +82,18 @@ View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, 
 ))
     .change(({ update }) => {
         if (type == "forgot-password" && id) {
-            update({ loading: true })
+            update({ loading: true });
             API.auth.fromEmail.get(id).then(async x => {
                 localStorage[ "refesh-token" ] = x.refreshToken;
                 localStorage[ "access-token" ] = (await API.auth.refreshAccessToken.post({ refreshToken: x.refreshToken })).accessToken;
 
-                update({ resetToken: API.getToken(), loading: false })
+                update({ resetToken: API.getToken(), loading: false });
             }).catch(() => {
-                update({ resetToken: "!", loading: false })
-            })
+                update({ resetToken: "!", loading: false });
+            });
         }
     })
-    .appendOn(document.body)
+    .appendOn(document.body);
 
 function handleSignUpInButton(formData: FormData, state: Partial<{ error?: string | undefined; signup?: boolean | undefined; }>, update: (data: Partial<{ error?: string | undefined; signup?: boolean | undefined; }>) => void): (env: MouseEvent, e: ButtonComponent) => Promise<void> {
     return async () => {
@@ -102,7 +102,7 @@ function handleSignUpInButton(formData: FormData, state: Partial<{ error?: strin
             password: formData.get("password")?.toString() ?? "",
             name: formData.get("name")?.toString() ?? ""
         };
-        let data: { refreshToken: string } | null = null;
+        let data: { refreshToken: string; } | null = null;
         if (state.signup)
             data = await API.auth.register.post({
                 name,
@@ -117,7 +117,7 @@ function handleSignUpInButton(formData: FormData, state: Partial<{ error?: strin
 
         if (!data)
             if (state.signup)
-                update({ error: "Email is not unique" });
+                update({ error: "Email is not unique/valid" });
             else
                 update({ error: "Wrong Email or Password" });
         else {
