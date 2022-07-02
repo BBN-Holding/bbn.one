@@ -13,7 +13,7 @@ Redirect();
 const para = new URLSearchParams(location.search);
 const { id, type, state, code } = { id: para.get("id"), type: para.get("type"), state: para.get("state"), code: para.get("code") };
 
-View<{ mode: "login" | "register" | "reset-password"; error?: string, signup?: boolean, resetToken?: string, loading: boolean, password: string; }>(({ state, update }) => Vertical(
+View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: string, signup?: boolean, resetToken?: string, loading: boolean, password: string; }>(({ state, update }) => Vertical(
     DynaNavigation("Home"),
     Horizontal(
         Vertical(
@@ -55,7 +55,7 @@ View<{ mode: "login" | "register" | "reset-password"; error?: string, signup?: b
                                 PlainText("New here?"),
                                 Button("Create a Account")
                                     .setStyle(ButtonStyle.Inline)
-                                    .onClick(() => update({ mode: "register" }))
+                                    .onClick(() => update({ mode: "register", email: formData.get("email")?.toString() }))
                                     .setColor(Color.Colored)
                                     .addClass("link"),
                                 Spacer()
@@ -66,7 +66,7 @@ View<{ mode: "login" | "register" | "reset-password"; error?: string, signup?: b
                                 Button("Reset it here")
                                     .setStyle(ButtonStyle.Inline)
                                     .setColor(Color.Colored)
-                                    .onClick(() => update({ mode: state.mode == "login" ? "reset-password" : "login" }))
+                                    .onClick(() => update({ mode: state.mode == "login" ? "reset-password" : "login", email: formData.get("email")?.toString() }))
                                     .addClass("link"),
                                 Spacer()
                             )
@@ -82,7 +82,7 @@ View<{ mode: "login" | "register" | "reset-password"; error?: string, signup?: b
                                 PlainText("Known here?"),
                                 Button("Sign in")
                                     .setStyle(ButtonStyle.Inline)
-                                    .onClick(() => update({ mode: "login" }))
+                                    .onClick(() => update({ mode: "login", email: formData.get("email")?.toString() }))
                                     .setColor(Color.Colored)
                                     .addClass("link"),
                                 Spacer()
@@ -98,7 +98,7 @@ View<{ mode: "login" | "register" | "reset-password"; error?: string, signup?: b
                                             email: formData.get("email")?.toString() ?? ""
                                         });
                                     else
-                                        update({ error: "Email is missing" });
+                                        update({ error: "Email is missing", email: formData.get("email")?.toString() });
 
                                 })
                                 .setJustify("center"),
@@ -114,7 +114,7 @@ View<{ mode: "login" | "register" | "reset-password"; error?: string, signup?: b
                                 .setMargin("1rem 0 0"),
                         ]
                     })[ state.mode ?? "login" ],
-                ]).disableAutoSpacerAtBottom().getComponents();
+                ]).setDefaultValues({ email: state.email }).disableAutoSpacerAtBottom().getComponents();
             })()
         ).setGap("11px"),
         Spacer()
