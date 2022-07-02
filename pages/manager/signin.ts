@@ -11,7 +11,7 @@ WebGen({
 Redirect();
 
 const para = new URLSearchParams(location.search);
-const { id, type } = { id: para.get("id"), type: para.get("type") };
+const { id, type, state, code } = { id: para.get("id"), type: para.get("type"), state: para.get("state"), code: para.get("code") };
 
 View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, password: string; }>(({ state, update }) => Vertical(
     DynaNavigation("Home"),
@@ -81,6 +81,14 @@ View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, 
     Custom(img(heroImage)).addClass("background-image")
 ))
     .change(({ update }) => {
+        if (type == "google" && state && code) {
+            update({ loading: true });
+            API.auth.google.post({ code, state }).then(async x => {
+                localStorage[ "refesh-token" ] = x.refreshToken;
+                localStorage[ "access-token" ] = (await API.auth.refreshAccessToken.post({ refreshToken: x.refreshToken })).accessToken;
+                Redirect();
+            });
+        }
         if (type == "forgot-password" && id) {
             update({ loading: true });
             API.auth.fromEmail.get(id).then(async x => {

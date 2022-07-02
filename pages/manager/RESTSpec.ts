@@ -34,7 +34,7 @@ export const API = {
     BASE_URL: location.hostname == "bbn.one" ? "https://bbn.one/api/" : "http://localhost:8443/api/",
     user: (token: string) => ({
         setMe: {
-            post: async (para: Partial<{ name: string, password: string }>) => {
+            post: async (para: Partial<{ name: string, password: string; }>) => {
                 const data = await fetch(`${API.BASE_URL}user/set-me`, {
                     method: "POST",
                     headers: {
@@ -42,7 +42,7 @@ export const API = {
                         "Authorization": token
                     },
                     body: JSON.stringify(para)
-                }).then(x => x.json())
+                }).then(x => x.json());
                 console.log(data);
                 return data;
             }
@@ -50,19 +50,21 @@ export const API = {
     }),
     auth: {
         refreshAccessToken: {
-            post: async ({ refreshToken }: { refreshToken: string }) => {
+            post: async ({ refreshToken }: { refreshToken: string; }) => {
                 return await fetch(`${API.BASE_URL}auth/refresh-access-token`, {
                     method: "POST",
                     headers: {
                         "Authorization": refreshToken
                     }
-                }).then(x => x.json()) as { accessToken: string };
+                }).then(x => x.json()) as { accessToken: string; };
             }
         },
         google: {
-            post: async ({ email, password }: { email: string, password: string }) => {
-                await delay(1000);
-                return { refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlciI6MTAsIm5hbWUiOiJsdWNzb2Z0IiwibWFpbCI6Im1haWxAbHVjc29mdC5kZSIsInBpY3R1cmUiOiJodHRwczovL2x1Y3NvZnQuZGUvaW1nLzNEX2RhcmtfbHVjc29mdC5wbmciLCJpYXQiOjE1MTYyMzkwMjJ9.blMgwFi72mQZ4lxEAXeVfpK_pK6yJyZFyfAtn58xB-4" };
+            post: async ({ code, state }: { code: string, state: string; }) => {
+                const param = new URLSearchParams({ code, state });
+                return await fetch(`${API.BASE_URL}auth/google?${param.toString()}`, {
+                    method: "POST"
+                }).then(x => x.json()) as { refreshToken: string; };
             }
         },
         fromEmail: {
@@ -72,13 +74,13 @@ export const API = {
                     headers: {
                         "Content-Type": "application/json"
                     }
-                }).then(x => x.json())
+                }).then(x => x.json());
                 console.log(data);
                 return data;
             }
         },
         forgotPassword: {
-            post: async ({ email }: { email: string }) => {
+            post: async ({ email }: { email: string; }) => {
                 await fetch(`${API.BASE_URL}auth/forgot-password`, {
                     method: "POST",
                     headers: {
@@ -87,11 +89,11 @@ export const API = {
                     body: JSON.stringify({
                         email
                     })
-                })
+                });
             }
         },
         register: {
-            post: async ({ email, password, name }: { email: string, password: string, name: string }): Promise<{ refreshToken: string } | null> => {
+            post: async ({ email, password, name }: { email: string, password: string, name: string; }): Promise<{ refreshToken: string; } | null> => {
                 try {
                     const data = await fetch(`${API.BASE_URL}auth/register`, {
                         method: "POST",
@@ -103,7 +105,7 @@ export const API = {
                             password,
                             name
                         })
-                    }).then(x => x.json())
+                    }).then(x => x.json());
                     return data;
                 } catch (error) {
                     return null;
@@ -111,7 +113,7 @@ export const API = {
             }
         },
         email: {
-            post: async ({ email, password }: { email: string, password: string }): Promise<{ refreshToken: string } | null> => {
+            post: async ({ email, password }: { email: string, password: string; }): Promise<{ refreshToken: string; } | null> => {
                 try {
 
                     const data = await fetch(`${API.BASE_URL}auth/email`, {
@@ -123,7 +125,7 @@ export const API = {
                             email,
                             password
                         })
-                    }).then(x => x.json())
+                    }).then(x => x.json());
                     console.log(data);
                     return data;
                 } catch (error) {
@@ -140,7 +142,7 @@ export const API = {
                         "Content-Type": "application/json",
                         "Authorization": token
                     }
-                }).then(x => x.json())
+                }).then(x => x.json());
                 return data.drops as Drop[];
             },
         },
@@ -151,7 +153,7 @@ export const API = {
                         "Content-Type": "application/json",
                         "Authorization": token
                     }
-                }).then(x => x.json())
+                }).then(x => x.json());
                 return data.drops as Drop[];
             }
         },
@@ -162,8 +164,8 @@ export const API = {
                     "Content-Type": "application/json",
                     "Authorization": token
                 }
-            }).then(x => x.json())
-            assert(typeof data.id == "string")
+            }).then(x => x.json());
+            assert(typeof data.id == "string");
             return data.id as string;
         },
         id: (id: string) => ({
@@ -176,7 +178,7 @@ export const API = {
                     }
                 })).ok);
             },
-            songSownload: async (): Promise<{ code: string }> => {
+            songSownload: async (): Promise<{ code: string; }> => {
                 return await fetch(`${API.BASE_URL}music/${id}/song-download`, {
                     method: "POST",
                     headers: {
