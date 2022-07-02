@@ -102,7 +102,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                         password
                                     });
                                     if (!data)
-                                        update({ error: "Email is not unique/valid", name: formData.get("name")?.toString() ?? "" });
+                                        update({ error: !email || !name || !password ? "Missing credentials" : "Email is not unique/valid", name: formData.get("name")?.toString() ?? "" });
                                     else
                                         signIn(data);
                                 })
