@@ -50,18 +50,17 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: st
                             Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password"), value: state.password }),
                             Button("Login")
                                 .onPromiseClick(async () => {
-                                    const { name, email, password } = {
+                                    const { email, password } = {
                                         email: formData.get("email")?.toString() ?? "",
                                         password: formData.get("password")?.toString() ?? "",
-                                        name: formData.get("name")?.toString() ?? ""
                                     };
-                                    const data = await API.auth.register.post({
-                                        name,
+                                    const data = await API.auth.email.post({
                                         email,
                                         password
                                     });
+
                                     if (!data)
-                                        update({ error: "Email is not unique/valid" });
+                                        update({ error: "Wrong Email or Password" });
                                     else
                                         signIn(data);
                                 })
@@ -92,17 +91,18 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: st
                             Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password"), value: state.password }),
                             Button("Register")
                                 .onPromiseClick(async () => {
-                                    const { email, password } = {
+                                    const { name, email, password } = {
                                         email: formData.get("email")?.toString() ?? "",
                                         password: formData.get("password")?.toString() ?? "",
+                                        name: formData.get("name")?.toString() ?? ""
                                     };
-                                    const data = await API.auth.email.post({
+                                    const data = await API.auth.register.post({
+                                        name,
                                         email,
                                         password
                                     });
-
                                     if (!data)
-                                        update({ error: "Wrong Email or Password" });
+                                        update({ error: "Email is not unique/valid" });
                                     else
                                         signIn(data);
                                 })
