@@ -69,7 +69,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 PlainText("New here?"),
                                 Button("Create a Account")
                                     .setStyle(ButtonStyle.Inline)
-                                    .onClick(() => update({ mode: "register", email: formData.get("email")?.toString() }))
+                                    .onClick(() => update({ mode: "register", email: formData.get("email")?.toString(), error: undefined }))
                                     .setColor(Color.Colored)
                                     .addClass("link"),
                                 Spacer()
@@ -80,7 +80,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 Button("Reset it here")
                                     .setStyle(ButtonStyle.Inline)
                                     .setColor(Color.Colored)
-                                    .onClick(() => update({ mode: state.mode == "login" ? "reset-password" : "login", email: formData.get("email")?.toString() }))
+                                    .onClick(() => update({ mode: state.mode == "login" ? "reset-password" : "login", email: formData.get("email")?.toString(), error: undefined }))
                                     .addClass("link"),
                                 Spacer()
                             )
@@ -111,7 +111,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 PlainText("Known here?"),
                                 Button("Sign in")
                                     .setStyle(ButtonStyle.Inline)
-                                    .onClick(() => update({ mode: "login", email: formData.get("email")?.toString() }))
+                                    .onClick(() => update({ mode: "login", email: formData.get("email")?.toString(), error: undefined }))
                                     .setColor(Color.Colored)
                                     .addClass("link"),
                                 Spacer()
@@ -135,7 +135,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 PlainText("Known here?"),
                                 Button("Sign in")
                                     .setStyle(ButtonStyle.Inline)
-                                    .onClick(() => update({ mode: "login" }))
+                                    .onClick(() => update({ mode: "login", error: undefined }))
                                     .setColor(Color.Colored)
                                     .addClass("link"),
                                 Spacer()
