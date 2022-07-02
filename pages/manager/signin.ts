@@ -84,7 +84,7 @@ View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, 
         if (type == "google" && state && code) {
             update({ loading: true });
             API.auth.google.post({ code, state }).then(async x => {
-                localStorage[ "refesh-token" ] = x.refreshToken;
+                localStorage[ "refresh-token" ] = x.refreshToken;
                 localStorage[ "access-token" ] = (await API.auth.refreshAccessToken.post({ refreshToken: x.refreshToken })).accessToken;
                 Redirect();
             });
@@ -92,7 +92,7 @@ View<{ error?: string, signup?: boolean, resetToken?: string, loading: boolean, 
         if (type == "forgot-password" && id) {
             update({ loading: true });
             API.auth.fromEmail.get(id).then(async x => {
-                localStorage[ "refesh-token" ] = x.refreshToken;
+                localStorage[ "refresh-token" ] = x.refreshToken;
                 localStorage[ "access-token" ] = (await API.auth.refreshAccessToken.post({ refreshToken: x.refreshToken })).accessToken;
 
                 update({ resetToken: API.getToken(), loading: false });
