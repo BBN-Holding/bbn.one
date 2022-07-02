@@ -60,7 +60,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: st
                                     });
 
                                     if (!data)
-                                        update({ error: "Wrong Email or Password" });
+                                        update({ error: "Wrong Email or Password", email: formData.get("email")?.toString() });
                                     else
                                         signIn(data);
                                 })
