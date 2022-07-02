@@ -93,9 +93,13 @@ View<{ mode: "login" | "register" | "reset-password"; error?: string, signup?: b
                             Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
                             Button("Reset")
                                 .onPromiseClick(async () => {
-                                    await API.auth.forgotPassword.post({
-                                        email: formData.get("email")?.toString() ?? ""
-                                    });
+                                    if (formData.get("email"))
+                                        await API.auth.forgotPassword.post({
+                                            email: formData.get("email")?.toString() ?? ""
+                                        });
+                                    else
+                                        update({ error: "Email is missign" });
+
                                 })
                                 .setJustify("center"),
                             Horizontal(
