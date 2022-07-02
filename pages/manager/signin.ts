@@ -13,7 +13,7 @@ Redirect();
 const para = new URLSearchParams(location.search);
 const { id, type, state, code } = { id: para.get("id"), type: para.get("type"), state: para.get("state"), code: para.get("code") };
 
-View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: string, signup?: boolean, resetToken?: string, loading: boolean, password: string; }>(({ state, update }) => Vertical(
+View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: string, resetToken?: string, loading: boolean, password: string; }>(({ state, update }) => Vertical(
     DynaNavigation("Home"),
     Horizontal(
         Vertical(
@@ -49,7 +49,22 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: st
                             Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
                             Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password"), value: state.password }),
                             Button("Login")
-                                .onPromiseClick(handleSignUpInButton(formData, state, update))
+                                .onPromiseClick(async () => {
+                                    const { name, email, password } = {
+                                        email: formData.get("email")?.toString() ?? "",
+                                        password: formData.get("password")?.toString() ?? "",
+                                        name: formData.get("name")?.toString() ?? ""
+                                    };
+                                    const data = await API.auth.register.post({
+                                        name,
+                                        email,
+                                        password
+                                    });
+                                    if (!data)
+                                        update({ error: "Email is not unique/valid" });
+                                    else
+                                        signIn(data);
+                                })
                                 .setJustify("center"),
                             Horizontal(
                                 PlainText("New here?"),
@@ -76,7 +91,21 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: st
                             Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
                             Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password"), value: state.password }),
                             Button("Register")
-                                .onPromiseClick(handleSignUpInButton(formData, state, update))
+                                .onPromiseClick(async () => {
+                                    const { email, password } = {
+                                        email: formData.get("email")?.toString() ?? "",
+                                        password: formData.get("password")?.toString() ?? "",
+                                    };
+                                    const data = await API.auth.email.post({
+                                        email,
+                                        password
+                                    });
+
+                                    if (!data)
+                                        update({ error: "Wrong Email or Password" });
+                                    else
+                                        signIn(data);
+                                })
                                 .setJustify("center"),
                             Horizontal(
                                 PlainText("Known here?"),
@@ -145,38 +174,11 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: st
     })
     .appendOn(document.body);
 
-function handleSignUpInButton(formData: FormData, state: Partial<{ error?: string | undefined; signup?: boolean | undefined; }>, update: (data: Partial<{ error?: string | undefined; signup?: boolean | undefined; }>) => void): (env: MouseEvent, e: ButtonComponent) => Promise<void> {
-    return async () => {
-        const { name, email, password } = {
-            email: formData.get("email")?.toString() ?? "",
-            password: formData.get("password")?.toString() ?? "",
-            name: formData.get("name")?.toString() ?? ""
-        };
-        let data: { refreshToken: string; } | null = null;
-        if (state.signup)
-            data = await API.auth.register.post({
-                name,
-                email,
-                password
-            });
-        else
-            data = await API.auth.email.post({
-                email,
-                password
-            });
-
-        if (!data)
-            if (state.signup)
-                update({ error: "Email is not unique/valid" });
-            else
-                update({ error: "Wrong Email or Password" });
-        else {
-            API.auth.refreshAccessToken.post({ refreshToken: data.refreshToken }).then(({ accessToken }) => {
-                localStorage[ "access-token" ] = accessToken;
-                localStorage[ "refresh-token" ] = data!.refreshToken;
-            }).finally(() => {
-                Redirect();
-            });
-        }
-    };
+function signIn(data: { refreshToken: string; }) {
+    API.auth.refreshAccessToken.post({ refreshToken: data.refreshToken }).then(({ accessToken }) => {
+        localStorage[ "access-token" ] = accessToken;
+        localStorage[ "refresh-token" ] = data!.refreshToken;
+    }).finally(() => {
+        Redirect();
+    });
 }
