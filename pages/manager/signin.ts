@@ -13,7 +13,7 @@ Redirect();
 const para = new URLSearchParams(location.search);
 const { id, type, state, code } = { id: para.get("id"), type: para.get("type"), state: para.get("state"), code: para.get("code") };
 
-View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: string, resetToken?: string, loading: boolean, password: string; }>(({ state, update }) => Vertical(
+View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: string; error?: string, resetToken?: string, loading: boolean, password: string; }>(({ state, update }) => Vertical(
     DynaNavigation("Home"),
     Horizontal(
         Vertical(
@@ -102,7 +102,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: st
                                         password
                                     });
                                     if (!data)
-                                        update({ error: "Email is not unique/valid" });
+                                        update({ error: "Email is not unique/valid", name: formData.get("name")?.toString() ?? "" });
                                     else
                                         signIn(data);
                                 })
@@ -143,7 +143,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, error?: st
                                 .setMargin("1rem 0 0"),
                         ]
                     })[ state.mode ?? "login" ],
-                ]).setDefaultValues({ email: state.email }).disableAutoSpacerAtBottom().getComponents();
+                ]).setDefaultValues({ email: state.email, name: state.name }).disableAutoSpacerAtBottom().getComponents();
             })()
         ).setGap("11px"),
         Spacer()
