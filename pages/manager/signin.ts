@@ -98,7 +98,7 @@ View<{ mode: "login" | "register" | "reset-password"; error?: string, signup?: b
                                             email: formData.get("email")?.toString() ?? ""
                                         });
                                     else
-                                        update({ error: "Email is missign" });
+                                        update({ error: "Email is missing" });
 
                                 })
                                 .setJustify("center"),
