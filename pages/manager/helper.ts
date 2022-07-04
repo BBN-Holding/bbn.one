@@ -240,18 +240,19 @@ export async function loadSongs(view: ViewClass<{
     reviews: Drop[];
     type: Drop[ "type" ];
 }>, imageCache: Map<string, string>) {
-    await Promise.all([
-        (async () => { const list = await API.music(API.getToken()).list.get(); view.viewOptions().update({ list }); })(),
-        (async () => {
+    const source = new Set([
+        ...await (async () => {
             if (GetCachedProfileData().groups.find(x => x.permissions.includes("songs-review"))) {
                 const list = await API.music(API.getToken()).reviews.get();
                 view.viewOptions().update({ reviews: list });
+                return list;
             }
+            return [];
+        })(),
+        ...await (async () => {
+            const list = await API.music(API.getToken()).list.get(); view.viewOptions().update({ list });
+            return list;
         })()
-    ]);
-    const source = new Set([
-        ...await API.music(API.getToken()).reviews.get(),
-        ...await API.music(API.getToken()).list.get()
     ]);
     for (const iterator of source) {
         (async () => {
