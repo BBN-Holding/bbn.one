@@ -1,28 +1,21 @@
-import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, createElement, Icon, MaterialIcons } from "../../deps.ts";
+import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, MaterialIcons, ViewClass } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import artwork from "../../assets/img/template-artwork.png";
 import { DynaNavigation } from "../../components/nav.ts";
-import { GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "./helper.ts";
+import { GetCachedProfileData, MediaQuery, ProfileData, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "./helper.ts";
 import { API, Drop } from "./RESTSpec.ts";
 import { loadSongs } from "./helper.ts";
+import { ViewState } from "./types.ts";
+import { ReviewPanel } from "./reviews.ts";
 WebGen({
     icon: new MaterialIcons()
 });
 Redirect();
 RegisterAuthRefresh();
 const imageCache = new Map<string, string>();
-function MediaQuery(query: string, view: (matches: boolean) => Component) {
-    const holder = createElement("div");
-    holder.innerHTML = "";
-    holder.append(view(matchMedia(query).matches).draw());
-    matchMedia(query).addEventListener("change", ({ matches }) => {
-        holder.innerHTML = "";
-        holder.append(view(matches).draw());
-    }, { passive: true });
-    return Custom(holder);
-}
-const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ]; }>(({ state, update }) => Vertical(
+
+const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(
     DynaNavigation("Music"),
     Horizontal(
         Vertical(
@@ -79,7 +72,7 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ]; }>(({ s
         if (!state.list)
             return Custom(loadingWheel() as Element as HTMLElement);
         if (state.reviews && state.reviews.length != 0 && state.type == "UNDER_REVIEW")
-            return ReviewPanel(state);
+            return ReviewPanel(imageCache, () => view, state);
         if (state.list.length != 0)
             return Vertical(
                 CategoryRender(
@@ -119,144 +112,6 @@ const view = View<{ list: Drop[], reviews: Drop[], type: Drop[ "type" ]; }>(({ s
     })
     .appendOn(document.body);
 renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(() => loadSongs(view, imageCache));
-
-
-function ReviewPanel(state: Partial<{ list: Drop[]; reviews: Drop[]; type: Drop[ "type" ]; }>): Component {
-    return Vertical(
-        state.reviews!.map(x =>
-            MediaQuery("(max-width: 880px)", (small) =>
-                small ? Vertical(
-                    Horizontal(
-                        Custom(img(imageCache.get(x.id) ?? artwork)).addClass("small-preview"),
-                        Vertical(
-                            PlainText(x.title ?? "(no text)")
-                                .setMargin("-0.4rem 0 0")
-                                .setFont(2, 700),
-                            MediaQuery("(max-width: 530px)", (small) => small ? Vertical(
-                                PlainText(x.id),
-                                PlainText(x.user ?? "(no user)")
-                            ) : PlainText(x.id + " - " + x.user))
-
-                        ),
-                        Spacer()
-                    ),
-                    Horizontal(
-                        Spacer(),
-                        CenterV(
-                            Button("Meta")
-                                .setStyle(ButtonStyle.Inline)
-                                .setColor(Color.Colored)
-                                .addClass("tag")
-                                .onClick(() => {
-                                    alert(JSON.stringify(x));
-                                })
-                        ),
-                        CenterV(
-                            Button(`Download (${x.song?.length ?? 0})`)
-                                .setStyle(ButtonStyle.Inline)
-                                .setColor(Color.Colored)
-                                .onPromiseClick(async () => {
-                                    if ((x.song?.length ?? 0) != 0) {
-                                        const { code } = await API.music(API.getToken()).id(x.id).songSownload();
-                                        window.open(`${API.BASE_URL}music/${x.id}/songs-download/${code}`, '_blank');
-                                    }
-                                })
-                                .addClass("tag")
-                                .setMargin("0 0.5rem")
-                        ).setJustify("center"),
-                        CenterV(
-                            Button(Icon("block"))
-                                .setStyle(ButtonStyle.Inline)
-                                .setColor(Color.Colored)
-                                .addClass("tag")
-                                .onPromiseClick(async () => {
-                                    const form = new FormData();
-                                    form.set("type", "PRIVATE");
-                                    await API.music(API.getToken()).id(x.id).put(form);
-                                    await loadSongs(view, imageCache);
-                                })
-                        ),
-                        CenterV(
-                            Button(Icon("task_alt"))
-                                .setStyle(ButtonStyle.Inline)
-                                .setColor(Color.Colored)
-                                .addClass("tag")
-                                .onPromiseClick(async () => {
-                                    const form = new FormData();
-                                    form.set("type", "PUBLISHED");
-                                    await API.music(API.getToken()).id(x.id).put(form);
-                                    await loadSongs(view, imageCache);
-                                })
-                        )
-                    )
-                ).setPadding("0.5rem")
-                    .setGap("0.8rem")
-                    .addClass("list-entry")
-                    .addClass("limited-width")
-                    :
-                    Horizontal(
-                        Custom(img(imageCache.get(x.id) ?? artwork)).addClass("small-preview"),
-                        Vertical(
-                            PlainText(x.title ?? "(no text)")
-                                .setMargin("-0.4rem 0 0")
-                                .setFont(2, 700),
-                            PlainText(x.id + " - " + x.user)
-                        ),
-                        Spacer(),
-                        CenterV(
-                            Button("Meta")
-                                .setStyle(ButtonStyle.Inline)
-                                .setColor(Color.Colored)
-                                .addClass("tag")
-                                .onClick(() => {
-                                    alert(JSON.stringify(x));
-                                })
-                        ),
-                        CenterV(
-                            Button(`Download (${x.song?.length ?? 0})`)
-                                .setStyle(ButtonStyle.Inline)
-                                .setColor(Color.Colored)
-                                .onPromiseClick(async () => {
-                                    if ((x.song?.length ?? 0) != 0) {
-                                        const { code } = await API.music(API.getToken()).id(x.id).songSownload();
-                                        window.open(`${API.BASE_URL}music/${x.id}/songs-download/${code}`, '_blank');
-                                    }
-                                })
-                                .addClass("tag")
-                                .setMargin("0 0.5rem")
-                        ).setJustify("center"),
-                        CenterV(
-                            Button(Icon("block"))
-                                .setStyle(ButtonStyle.Inline)
-                                .setColor(Color.Colored)
-                                .addClass("tag")
-                                .onPromiseClick(async () => {
-                                    const form = new FormData();
-                                    form.set("type", "PRIVATE");
-                                    await API.music(API.getToken()).id(x.id).put(form);
-                                    await loadSongs(view, imageCache);
-                                })
-                        ),
-                        CenterV(
-                            Button(Icon("task_alt"))
-                                .setStyle(ButtonStyle.Inline)
-                                .setColor(Color.Colored)
-                                .addClass("tag")
-                                .onPromiseClick(async () => {
-                                    const form = new FormData();
-                                    form.set("type", "PUBLISHED");
-                                    await API.music(API.getToken()).id(x.id).put(form);
-                                    await loadSongs(view, imageCache);
-                                })
-                        )
-                    )
-                        .setPadding("0.5rem")
-                        .addClass("list-entry")
-                        .addClass("limited-width")
-            )
-        )
-    ).setGap("1rem").setMargin("1rem 0 0");
-}
 
 function getListCount(list: Drop[ "type" ][], state: Partial<{ list: Drop[]; type: Drop[ "type" ]; aboutMe: ProfileData; }>) {
     const length = state.list?.filter(x => list.includes(x.type)).length;

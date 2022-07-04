@@ -1,6 +1,6 @@
 // This code Will be proted to webgen
 
-import { Box, Button, Card, Component, Custom, Dialog, DropDownInput, Grid, headless, Horizontal, Icon, Input, Page, PlainText, Spacer, Vertical, View, ViewClass } from "../../deps.ts";
+import { Box, Button, Card, Component, createElement, Custom, Dialog, DropDownInput, Grid, headless, Horizontal, Icon, Input, Page, PlainText, Spacer, Vertical, View, ViewClass } from "../../deps.ts";
 import { DeleteFromForm } from "./data.ts";
 import { API, ArtistTypes, Drop } from "./RESTSpec.ts";
 import { ColumEntry } from "./types.ts";
@@ -21,6 +21,17 @@ export type ProfileData = {
 };
 export function IsLoggedIn(): ProfileData | null {
     return localStorage[ "access-token" ] ? JSON.parse(atob(localStorage[ "access-token" ]?.split(".")[ 1 ])) : null;
+}
+
+export function MediaQuery(query: string, view: (matches: boolean) => Component) {
+    const holder = createElement("div");
+    holder.innerHTML = "";
+    holder.append(view(matchMedia(query).matches).draw());
+    matchMedia(query).addEventListener("change", ({ matches }) => {
+        holder.innerHTML = "";
+        holder.append(view(matches).draw());
+    }, { passive: true });
+    return Custom(holder);
 }
 
 /**
