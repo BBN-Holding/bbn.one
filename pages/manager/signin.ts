@@ -30,10 +30,14 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                         Button("Reset your Password")
                             .setJustify("center")
                             .onPromiseClick(async () => {
-                                await API.user(state.resetToken!).setMe.post({
-                                    password: formData.get("password")?.toString()
-                                });
-                                update({ resetToken: undefined, password: formData.get("password")?.toString() });
+                                try {
+                                    await API.user(state.resetToken!).setMe.post({
+                                        password: formData.get("password")?.toString()
+                                    });
+                                    update({ resetToken: undefined, password: formData.get("password")?.toString() });
+                                } catch (_) {
+                                    update({ error: "Failed: Please try again later" });
+                                }
                             }),
                         PlainText(state.resetToken?.startsWith("!") ? "Error: Link is invalid" : "").addClass("error-message")
                     ]).disableAutoSpacerAtBottom().getComponents();
@@ -122,13 +126,16 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                             Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
                             Button("Reset")
                                 .onPromiseClick(async () => {
-                                    if (formData.get("email"))
-                                        await API.auth.forgotPassword.post({
-                                            email: formData.get("email")?.toString() ?? ""
-                                        });
-                                    else
-                                        update({ error: "Email is missing", email: formData.get("email")?.toString() });
-
+                                    try {
+                                        if (formData.get("email"))
+                                            await API.auth.forgotPassword.post({
+                                                email: formData.get("email")?.toString() ?? ""
+                                            });
+                                        else
+                                            update({ error: "Email is missing", email: formData.get("email")?.toString() });
+                                    } catch (_) {
+                                        update({ error: "Please try again later" });
+                                    }
                                 })
                                 .setJustify("center"),
                             Horizontal(
