@@ -8,6 +8,7 @@ serve({
     assets: {
         "sitemap.xml": "./static/sitemap.xml",
         "robots.txt": "./static/robots.txt",
+        "favicon.ico": "./static/favicon.ico"
     },
     pages: {
         "index": "./pages/index/index.ts",
