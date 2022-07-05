@@ -9,26 +9,27 @@ const Nav = (component: Component) => {
     const nav = createElement("nav");
     nav.append(component.draw());
     return Custom(nav);
-}
+};
 
-function getNameInital(name: string) {
+function getNameInital(raw: string) {
+    const name = raw.trim();
     if (name.includes(", "))
-        return name.split(", ").map(x => x.at(0)!.toUpperCase()).join("")
+        return name.split(", ").map(x => x.at(0)?.toUpperCase()).join("");
     if (name.includes(","))
-        return name.split(",").map(x => x.at(0)!.toUpperCase()).join("")
+        return name.split(",").map(x => x.at(0)?.toUpperCase()).join("");
     if (name.includes(" "))
-        return name.split(" ").map(x => x.at(0)!.toUpperCase()).join("")
-    return name.at(0)!.toUpperCase()
+        return name.split(" ").map(x => x.at(0)?.toUpperCase()).join("");
+    return name.at(0)!.toUpperCase();
 }
 function ProfilePicture(component: Component, name: string) {
-    const ele = component.draw()
+    const ele = component.draw();
     ele.style.backgroundColor = stringToColour(name);
-    return Custom(ele).addClass("profile-picture")
+    return Custom(ele).addClass("profile-picture");
 }
 export function DynaNavigation(type: "Home" | "Music", user = IsLoggedIn()) {
     return Nav(
         Horizontal(
-            Custom(img(type == "Home" ? bbnLogo : bbnMusicLogo)).onClick(() => { location.href = "/" }),
+            Custom(img(type == "Home" ? bbnLogo : bbnMusicLogo)).onClick(() => { location.href = "/"; }),
             Spacer(),
             [
                 [ "Home", "/#" ],
@@ -54,7 +55,7 @@ export function DynaNavigation(type: "Home" | "Music", user = IsLoggedIn()) {
                         .addClass("contact")
                     : null)
             )
-                ?.onClick(() => { location.href = "/signin" }) ?? null
+                ?.onClick(() => { location.href = "/signin"; }) ?? null
         ).setGap("0.4rem")
-    ).addClass(type.toLowerCase())
+    ).addClass(type.toLowerCase());
 }
