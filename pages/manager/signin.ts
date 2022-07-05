@@ -51,7 +51,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                     ...(<{ [ key in NonNullable<typeof state.mode> ]: Component[]; }>{
                         login: [
                             Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
-                            Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password"), value: state.password }),
+                            Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password") }),
                             Button("Login")
                                 .onPromiseClick(async () => {
                                     const { email, password } = {
@@ -150,7 +150,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 .setMargin("1rem 0 0"),
                         ]
                     })[ state.mode ?? "login" ],
-                ]).setDefaultValues({ email: state.email, name: state.name }).disableAutoSpacerAtBottom().getComponents();
+                ]).setDefaultValues({ email: state.email, name: state.name, password: state.password }).disableAutoSpacerAtBottom().getComponents();
             })()
         ).setGap("11px"),
         Spacer()
