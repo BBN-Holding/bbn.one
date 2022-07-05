@@ -81,17 +81,15 @@ export const API = {
             }
         },
         forgotPassword: {
-            post: async ({ email }: { email: string; }) => {
-                await fetch(`${API.BASE_URL}auth/forgot-password`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        email
-                    })
-                });
-            }
+            post: ({ email }: { email: string; }) => fetch(`${API.BASE_URL}auth/forgot-password`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email
+                })
+            }).then(x => x.text())
         },
         register: {
             post: async ({ email, password, name }: { email: string, password: string, name: string; }): Promise<{ refreshToken: string; } | null> => {
@@ -171,13 +169,15 @@ export const API = {
         },
         id: (id: string) => ({
             put: async (data: FormData) => {
-                assert((await fetch(`${API.BASE_URL}music/${id}`, {
+                const fetchData = await fetch(`${API.BASE_URL}music/${id}`, {
                     method: "PUT",
                     body: data,
                     headers: {
                         "Authorization": token
                     }
-                })).ok);
+                });
+                await fetchData.text();
+                assert(fetchData.ok);
             },
             songSownload: async (): Promise<{ code: string; }> => {
                 return await fetch(`${API.BASE_URL}music/${id}/song-download`, {
