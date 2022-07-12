@@ -38,8 +38,7 @@ function uploadFilesDialog(onData: (files: File[]) => void, accept: string) {
 
 // TODO: Input zu neuen FormComponents umlagern
 View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
-    DynaNavigation("Music", state.aboutMe),
-    Spacer(),
+    ...DynaNavigation("Music", state.aboutMe),
     state.restoreData == null
         ? (() => {
             return CenterV(
@@ -49,7 +48,7 @@ View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
                 Spacer()
             ).addClass("wwizard");
         })()
-        : wizard(state.restoreData)
+        : wizard(state.restoreData).addClass("wizard-box")
 ))
     .change(({ update }) => {
         update({ aboutMe: GetCachedProfileData() });
@@ -88,6 +87,7 @@ const wizard = (restore?: Drop) => Wizard({
     }
 }, ({ Next }) => [
     Page((formData) => [
+        Spacer(),
         PlainText("Lets make your Drop hit!")
             .setWidth("max(1rem, 25rem)")
             .setFont(3.448125, 800),

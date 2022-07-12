@@ -10,6 +10,7 @@ export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
 export type ProfileData = {
     user: string;
+    email_verified?: boolean;
     name: string;
     email: string;
     groups: {
@@ -45,14 +46,18 @@ export async function renewAccessTokenIfNeeded(exp?: number) {
     // We should renew the token 30s before it expires
     if (isExpired(exp)) {
         try {
-            const { accessToken } = await API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] });
-            localStorage[ "access-token" ] = accessToken;
-            console.log("Refreshed token");
+            await forceRefreshToken();
         } catch (_) {
             localStorage.clear();
             Redirect();
         }
     }
+
+}
+export async function forceRefreshToken() {
+    const { accessToken } = await API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] });
+    localStorage[ "access-token" ] = accessToken;
+    console.log("Refreshed token");
 }
 export function isExpired(exp: number) {
     return exp * 1000 < new Date().getTime() + (0.5 * 60 * 1000);

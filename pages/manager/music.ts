@@ -16,7 +16,7 @@ RegisterAuthRefresh();
 const imageCache = new Map<string, string>();
 
 const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(
-    DynaNavigation("Music"),
+    ...DynaNavigation("Music"),
     Horizontal(
         Vertical(
             Horizontal(

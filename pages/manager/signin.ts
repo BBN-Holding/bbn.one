@@ -1,20 +1,24 @@
-import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, Input, Page, PlainText, Spacer, Vertical, View, WebGen, ButtonComponent, Box, Component } from "../../deps.ts";
+import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, Input, Page, PlainText, Spacer, Vertical, View, WebGen, Box, Component } from "../../deps.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import heroImage from '../../assets/img/hero-img.png';
 import googleLog from '../../assets/img/googleLogo.svg';
 import { DynaNavigation } from "../../components/nav.ts";
-import { Redirect, syncFromData } from "./helper.ts";
+import { forceRefreshToken, Redirect, syncFromData } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
+import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 WebGen({
 });
-Redirect();
-
 const para = new URLSearchParams(location.search);
-const { id, type, state, code } = { id: para.get("id"), type: para.get("type"), state: para.get("state"), code: para.get("code") };
+const { token, type, state, code } = {
+    token: para.get("token"),
+    type: para.get("type"),
+    state: para.get("state"),
+    code: para.get("code")
+};
 
 View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: string; error?: string, resetToken?: string, loading: boolean, password: string; }>(({ state, update }) => Vertical(
-    DynaNavigation("Home"),
+    ...DynaNavigation("Home"),
     Horizontal(
         Vertical(
             PlainText("Welcome back!")
@@ -157,7 +161,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
     ).addClass("limited-width"),
     Custom(img(heroImage)).addClass("background-image")
 ))
-    .change(({ update }) => {
+    .change(async ({ update }) => {
         update({ mode: "login" });
         if (type == "google" && state && code) {
             update({ loading: true });
@@ -167,9 +171,9 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                 Redirect();
             });
         }
-        if (type == "forgot-password" && id) {
+        else if (type == "forgot-password" && token) {
             update({ loading: true });
-            API.auth.fromEmail.get(id).then(async x => {
+            API.auth.fromUserInteraction.get(token).then(async x => {
                 localStorage[ "refresh-token" ] = x.refreshToken;
                 localStorage[ "access-token" ] = (await API.auth.refreshAccessToken.post({ refreshToken: x.refreshToken })).accessToken;
 
@@ -178,6 +182,15 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                 update({ resetToken: "!", loading: false });
             });
         }
+        else if (type == "sign-up" && token) {
+            update({ loading: true });
+            await API.user(API.getToken()).mail.validate.post(token);
+            await forceRefreshToken();
+            await delay(1000);
+            Redirect();
+        }
+        else
+            Redirect();
     })
     .appendOn(document.body);
 

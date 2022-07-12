@@ -25,9 +25,11 @@ TODO: FIX ME
 
 .background-image {
     position: fixed;
-    right: -3rem;
-    width: 60%;
-    bottom: -5rem;
+    top: 57%;
+    width: 50%;
+    left: 66%;
+    z-index: -1;
+    transform: translate(-50%, -50%);
 }
 
 .prefix-logo {

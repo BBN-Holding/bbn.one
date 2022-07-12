@@ -1,9 +1,9 @@
 .opener-background {
     background: #37517e;
     position: relative;
-    margin-top: 4.5rem;
     padding: 0 1rem;
 }
+
 .opener {
     max-width: 69rem;
     width: 100%;
@@ -22,19 +22,22 @@
 .opener div span {
     display: block;
 }
+
 .opener div span:nth-child(1) {
     font-size: 48px;
     font-weight: 700;
     line-height: 56px;
     margin: 0 0 10px;
 }
+
 .opener div span:nth-child(2) {
-    color: rgba(255,255,255,.6);
+    color: rgba(255, 255, 255, .6);
     margin-bottom: 50px;
     font-size: 24px;
     font-weight: 500;
     line-height: 1.2;
 }
+
 .opener a {
     background: #47b2e4;
     display: inline-block;
@@ -46,25 +49,22 @@
     margin: 10px 0 0;
     padding: 10.5px 28px 11px;
 }
+
 @media(max-width:950px) {
     .opener div span:nth-child(1) {
         font-size: 40px;
         line-height: 1.2;
     }
+
     .opener div span:nth-child(2) {
         font-size: 19px;
         margin-bottom: 2rem;
     }
+
     .opener a {
         font-size: 13px;
         margin: 0;
         padding: 8px 23px;
-    }
-}
-
-@media(max-width:780px) {
-    .opener-background {
-        margin-top: 3.5rem;
     }
 }
 
@@ -86,10 +86,12 @@
     .opener {
         overflow: hidden;
     }
+
     .opener div span:nth-child(1) {
         font-size: 30px;
         line-height: 1.1;
     }
+
     .opener div span:nth-child(2) {
         font-size: 15px;
         margin-bottom: 1rem;

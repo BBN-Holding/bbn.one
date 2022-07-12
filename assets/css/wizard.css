@@ -1,11 +1,15 @@
 .fullscreen .wwizard {
-    min-height: 100vh;
-    height: 100vh;
+
+    height: 100%;
     max-width: 69rem;
     width: calc(100vw - 32px);
     margin: 0 auto 0;
     box-sizing: border-box;
-    padding-top: 5rem;
+}
+
+.fullscreen>div {
+    min-height: 100vh;
+    height: 100vh;
 }
 
 .fullscreen .wwizard .footer {
@@ -17,7 +21,7 @@
 }
 
 body {
-    background: linear-gradient(139.46deg, #F19D2D 6.59%, #DB5721 101.73%) !important;
+    background: linear-gradient(139.46deg, #F19D2D 6.59%, #DB5721 101.73%) no-repeat center center fixed !important;
 }
 
 nav.music {
@@ -175,4 +179,13 @@ span.title {
     height: 27px;
     width: 27px;
     border-radius: 8px;
+}
+
+
+.wizard-box {
+    display: contents;
+}
+
+.wizard-box>article {
+    display: contents;
 }

@@ -34,6 +34,28 @@ export const API = {
     getToken: () => localStorage[ "access-token" ],
     BASE_URL: location.hostname == "bbn.one" ? "https://bbn.one/api/" : "http://localhost:8443/api/",
     user: (token: string) => ({
+        mail: {
+            validate: {
+                post: (token: string) => {
+                    return fetch(`${API.BASE_URL}user/mail/validate/` + encodeURIComponent(token), {
+                        method: "POST",
+                        headers: {
+                            "Authorization": token
+                        },
+                    }).then(x => x.json());
+                }
+            },
+            resentVerifyEmail: {
+                post: () => {
+                    return fetch(`${API.BASE_URL}user/mail/resent-verify-email`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": token
+                        },
+                    }).then(x => x.json());
+                }
+            }
+        },
         setMe: {
             post: async (para: Partial<{ name: string, password: string; }>) => {
                 const data = await fetch(`${API.BASE_URL}user/set-me`, {
@@ -68,15 +90,14 @@ export const API = {
                 }).then(x => x.json()) as { refreshToken: string; };
             }
         },
-        fromEmail: {
+        fromUserInteraction: {
             get: async (id: string) => {
-                const data = await fetch(`${API.BASE_URL}auth/from-email/${id}`, {
+                const data = await fetch(`${API.BASE_URL}auth/from-user-interaction/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
                     }
                 }).then(x => x.json());
-                console.log(data);
                 return data;
             }
         },
@@ -94,7 +115,7 @@ export const API = {
         register: {
             post: async ({ email, password, name }: { email: string, password: string, name: string; }): Promise<{ refreshToken: string; } | null> => {
                 try {
-                    const data = await fetch(`${API.BASE_URL}auth/register`, {
+                    return await fetch(`${API.BASE_URL}auth/register`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -105,7 +126,6 @@ export const API = {
                             name
                         })
                     }).then(x => x.json());
-                    return data;
                 } catch (error) {
                     return null;
                 }
