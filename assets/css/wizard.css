@@ -112,6 +112,16 @@ nav.music {
     letter-spacing: 0;
 }
 
+.inverted-class .winput {
+    height: 13px;
+    margin: 0 -0.6rem;
+    padding: 7px 8px;
+}
+
+.inverted-class .winput.inline input {
+    font-size: .7rem;
+}
+
 .inverted-class .wbutton:focus {
     z-index: 2;
 }
@@ -188,4 +198,21 @@ span.title {
 
 .wizard-box>article {
     display: contents;
+}
+
+.winput.inline {
+    background: transparent;
+    padding: 7px 13px;
+}
+
+.winput.inline input {
+    font-weight: bold;
+    font-size: 13.8px;
+    padding: 0;
+    color: hsl(var(--background-color-h), var(--background-color-s), var(--background-color-l));
+}
+
+.winput.inline:focus-within {
+    box-shadow: none;
+    background: hsla(var(--background-color-h), var(--background-color-s), var(--background-color-l), 25%);
 }
