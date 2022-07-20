@@ -11,8 +11,13 @@ export function ReviewPanel(imageCache: Map<string, string>, view: () => ViewCla
                 .addClass("list-title")
                 .addClass("limited-width"),
             Vertical(...state.reviews!.filter(x => x.type == "UNDER_REVIEW").map(x => RenderEntry(imageCache, x, view))).setGap("1rem"),
-        ] : [],
+        ] : [ PlainText("No Reviews")
+            .addClass("list-title")
+            .addClass("limited-width") ],
         PlainText("").setMargin("1rem 0"),
+        PlainText("Other Drops")
+            .addClass("list-title")
+            .addClass("limited-width"),
         ...state.reviews!.filter(x => x.type != "UNDER_REVIEW").map(x =>
             RenderEntry(imageCache, x, view)
         )
