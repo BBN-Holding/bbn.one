@@ -56,24 +56,8 @@ export const TableDef = (formData: FormData) => <ColumEntry<{ Id: string; }>[]>[
                 element.value = parseFloat(formData.get(`song-${Id}-progress`)?.toString() ?? "");
                 return element;
             })())
-        ) :
-            // TODO: Refactor this to InlineTextInput() and add a custom size
-            View(({ update }) =>
-                new InlineTextInput()
-                    .syncFormData(formData, `song-${Id}-title`),
-                // PlainText(formData.get(`song-${Id}-title`)?.toString() ?? "-").setFont(1, 500)
-                //     .onClick(() => {
-                //         Dialog(() => Input({
-                //             placeholder: "title",
-                //             ...syncFromData(formData, `song-${Id}-title`),
-                //         }))
-                //             .onClose(() => update({}))
-                //             .setTitle("Change Title")
-                //             .addButton("Update", "close")
-                //             .allowUserClose()
-                //             .open();
-                //     })
-            ).asComponent()
+        ) : View(() => new InlineTextInput().syncFormData(formData, `song-${Id}-title`))
+            .asComponent()
     ],
     [ "Artists", "max-content", ({ Id }) =>
         View(({ update }) => Box(
