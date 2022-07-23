@@ -85,7 +85,7 @@ const wizard = (restore?: Drop) => Wizard({
         await API.music(API.getToken()).id(params.get("id")!).put(single);
         location.href = "/music";
     }
-}, ({ Next }) => [
+}, ({ Next, PageData }) => [
     Page((formData) => [
         Spacer(),
         PlainText("Lets make your Drop hit!")
@@ -232,7 +232,7 @@ const wizard = (restore?: Drop) => Wizard({
                     CenterAndRight(
                         PlainText("Manage your Music").addClass("title"),
                         Button("Manual Upload")
-                            .onClick(() => uploadFilesDialog((list) => addSongs(list, formData, update), allowedAudioFormats.join(",")))
+                            .onClick(() => uploadFilesDialog((list) => addSongs(PageData, list, formData, update), allowedAudioFormats.join(",")))
                     ),
                     formData.getAll("song").filter(x => x).length ?
                         Table<TableData>(
@@ -245,7 +245,7 @@ const wizard = (restore?: Drop) => Wizard({
                                 update({});
                             })
                             .addClass("inverted-class", "light-mode")
-                        : UploadTable(TableDef(formData), (list) => addSongs(list, formData, update))
+                        : UploadTable(TableDef(formData), (list) => addSongs(PageData, list, formData, update))
                             .addClass("inverted-class", "light-mode")
 
                 ).setGap(gapSize),
@@ -323,10 +323,11 @@ function uploadArtwork(formData: FormData, file: File, update: (data: Partial<un
 }
 
 const lockedLoading = new Set();
-function addSongs(list: File[], formData: FormData, update: (data: Partial<unknown>) => void) {
+function addSongs(meta: () => FormData[], list: File[], formData: FormData, update: (data: Partial<unknown>) => void) {
     list.map(x => ({ file: x, id: crypto.randomUUID() })).forEach(({ file, id }) => {
         formData.append("song", id);
         formData.set("loading", "-");
+        formData.set(`song-${id}-artists`, meta()[ 1 ].get("artists")?.toString() ?? "[]");
         lockedLoading.add(id);
         const cleanedUpTitle = file.name
             .replaceAll("_", " ")
