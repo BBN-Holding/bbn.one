@@ -70,3 +70,9 @@ img.small-preview {
     border-radius: 3px;
     margin: 0 0.4rem 0 0;
 }
+
+.explainer-text {
+    display: block;
+    text-align: center;
+    padding: 0 1rem;
+}

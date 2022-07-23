@@ -8,6 +8,7 @@ import { API, Drop } from "./RESTSpec.ts";
 import { loadSongs } from "./helper.ts";
 import { ViewState } from "./types.ts";
 import { ReviewPanel } from "./reviews.ts";
+import { ExplainerText } from "./music/text.ts";
 WebGen({
     icon: new MaterialIcons()
 });
@@ -91,17 +92,7 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
                         .filter((_, i) => i > 0),
                     "History"
                 ),
-                state.list
-                    .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
-                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
-                    .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
-                    .length == 0
-                    ?
-                    Center(
-                        PlainText(`You don’t have any ${EnumToDisplay(state.type)} Drops`)
-                            .setFont(1.6, 700)
-                    ).setMargin("100px 0 0")
-                    : null
+                ExplainerText(state)
             )
                 .setGap("20px");
         return Center(PlainText("Wow such empty")).setPadding("5rem");
@@ -119,13 +110,6 @@ function getListCount(list: Drop[ "type" ][], state: Partial<{ list: Drop[]; typ
     return "";
 }
 
-function EnumToDisplay(state?: Drop[ "type" ]) {
-    switch (state) {
-        case "PRIVATE": return "unpublished";
-        case "PUBLISHED": return "published";
-        default: return "";
-    }
-}
 
 function CategoryRender(dropList: Drop[], title: string): Component | (Component | null)[] | null {
     if (dropList.length == 0)
