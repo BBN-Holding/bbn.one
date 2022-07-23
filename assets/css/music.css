@@ -7,6 +7,16 @@
     cursor: pointer;
 }
 
+@media (prefers-color-scheme: light) {
+    .list-entry {
+        color: var(--on-card-background);
+        background: hsl(var(--background-color-h), var(--background-color-s), var(--background-color-l));
+        --background-color-h: var(--color-grayscaled-hue);
+        --background-color-s: var(--color-grayscaled-saturation);
+        --background-color-l: var(--color-grayscaled-lightness);
+    }
+}
+
 .list-entry:hover {
     background: rgba(255, 255, 255, 0.07);
 }

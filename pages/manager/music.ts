@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, MaterialIcons, ViewClass } from "webgen/mod.ts";
+import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, MaterialIcons, ViewClass, SupportedThemes } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import artwork from "../../assets/img/template-artwork.png";
@@ -10,7 +10,10 @@ import { ViewState } from "./types.ts";
 import { ReviewPanel } from "./reviews.ts";
 import { ExplainerText } from "./music/text.ts";
 WebGen({
-    icon: new MaterialIcons()
+    icon: new MaterialIcons(),
+    events: {
+        themeChanged: (data) => document.head.querySelector("meta[name=theme-color]")?.setAttribute("content", data == SupportedThemes.autoLight ? "#e6e6e6" : "#0a0a0a")
+    }
 });
 Redirect();
 RegisterAuthRefresh();

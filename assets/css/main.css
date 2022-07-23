@@ -6,6 +6,10 @@
 }
 
 body {
+    color: var(--on-background-text);
+}
+
+body {
     font-family: 'open sans';
 }
 
