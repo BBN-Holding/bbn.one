@@ -327,7 +327,7 @@ function addSongs(meta: () => FormData[], list: File[], formData: FormData, upda
     list.map(x => ({ file: x, id: crypto.randomUUID() })).forEach(({ file, id }) => {
         formData.append("song", id);
         formData.set("loading", "-");
-        formData.set(`song-${id}-artists`, meta()[ 1 ].get("artists")?.toString() ?? "[]");
+
         lockedLoading.add(id);
         const cleanedUpTitle = file.name
             .replaceAll("_", " ")
@@ -358,9 +358,16 @@ function addSongs(meta: () => FormData[], list: File[], formData: FormData, upda
         }, params.get("id")!, file);
         formData.set(`song-${id}-title`, cleanedUpTitle); // Our AI prediceted name
         formData.set(`song-${id}-year`, new Date().getFullYear().toString());
-        // TODO Add Defaults for Country, Primary Genre => Access global FormData and merge it to one and then pull it
+        applyFromPage(meta(), formData, 1, "artists", `song-${id}-artists`);
+        applyFromPage(meta(), formData, 1, "primaryGenre", `song-${id}-primaryGenre`);
+        applyFromPage(meta(), formData, 1, "language", `song-${id}-country`);
     });
     update({});
+}
+
+function applyFromPage(meta: FormData[], current: FormData, index: number, src: string, dest: string) {
+    if (meta[ index ].has(src))
+        current.set(dest, meta[ index ].get(src)!.toString());
 }
 
 function ImageFrom(formData: FormData, key: string): Component {
