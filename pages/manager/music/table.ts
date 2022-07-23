@@ -1,4 +1,4 @@
-import { Box, ButtonStyle, Checkbox, Color, Component, createElement, Custom, DropDownInput, IconButton, img, InputForm, PlainText, View } from "../../../deps.ts";
+import { Box, ButtonStyle, Checkbox, Color, Component, createElement, Custom, DropDownInput, IconButton, img, InputForm, PlainText, View } from "webgen/mod.ts";
 import { EditArtists, getYearList, stringToColour } from "../helper.ts";
 import { ColumEntry } from "../types.ts";
 

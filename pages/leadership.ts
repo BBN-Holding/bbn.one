@@ -1,4 +1,4 @@
-import { Vertical, View, WebGen } from "../deps.ts";
+import { Vertical, View, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../components/nav.ts";
 import { renderTeam } from "../components/team.ts";
 import { renderFooter } from "../components/footer.ts";
@@ -10,4 +10,4 @@ View(() => Vertical(
     renderTeam(),
     renderFooter()
 ))
-    .appendOn(document.body)
+    .appendOn(document.body);

@@ -1,6 +1,6 @@
 // This code Will be proted to webgen
 
-import { Box, Button, Card, Component, createElement, Custom, Dialog, DropDownInput, Grid, headless, Horizontal, Icon, Input, Page, PlainText, Spacer, Vertical, View, ViewClass } from "../../deps.ts";
+import { Box, Button, Card, Component, createElement, Custom, Dialog, DropDownInput, Grid, headless, Horizontal, Icon, Input, Page, PlainText, Spacer, Vertical, View, ViewClass } from "webgen/mod.ts";
 import { DeleteFromForm } from "./data.ts";
 import { API, ArtistTypes, Drop } from "./RESTSpec.ts";
 import { ColumEntry } from "./types.ts";

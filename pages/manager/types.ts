@@ -1,4 +1,4 @@
-import { Component } from "../../deps.ts";
+import { Component } from "webgen/mod.ts";
 import { Drop } from "./RESTSpec.ts";
 
 export type TableData = {

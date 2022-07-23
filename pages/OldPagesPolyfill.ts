@@ -1,4 +1,4 @@
-import { WebGen } from "../deps.ts";
+import { WebGen } from "webgen/mod.ts";
 
 const style = document.body.style;
 style.maxWidth = "70rem";

@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, Input, Page, PlainText, Spacer, Vertical, View, WebGen, Box, Component } from "../../deps.ts";
+import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, Input, Page, PlainText, Spacer, Vertical, View, WebGen, Box, Component } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import heroImage from '../../assets/img/hero-img.png';

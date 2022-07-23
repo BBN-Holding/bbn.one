@@ -1,4 +1,4 @@
-import { PlainText, View, Grid, Vertical, Button, Color, Horizontal } from "../deps.ts";
+import { PlainText, View, Grid, Vertical, Button, Color, Horizontal } from "webgen/mod.ts";
 import '../assets/css/components/team.css';
 import { assets } from "../assets/img/team/assets.ts";
 import { actions } from "./actions.ts";
@@ -21,4 +21,4 @@ export const renderTeam = (sizelimt?: number) =>
             : null
     ))
         .addClass("limited-width")
-        .asComponent()
+        .asComponent();

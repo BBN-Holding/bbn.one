@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, Custom, img, CenterV, Component, Icon, ViewClass } from "../../deps.ts";
+import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, Custom, img, CenterV, Component, Icon, ViewClass } from "webgen/mod.ts";
 import { loadSongs, MediaQuery } from "./helper.ts";
 import { API, Drop } from "./RESTSpec.ts";
 import artwork from "../../assets/img/template-artwork.png";

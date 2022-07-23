@@ -1,4 +1,4 @@
-import { Card, Custom, Grid, Horizontal, img, modernCard, PlainText, Spacer, Vertical, View, WebGen } from "../../deps.ts";
+import { Card, Custom, Grid, Horizontal, img, modernCard, PlainText, Spacer, Vertical, View, WebGen } from "webgen/mod.ts";
 import { renderOpener } from "./components/opener.ts";
 import { renderTeam } from "../../components/team.ts";
 import '../../assets/css/main.css';
@@ -60,4 +60,4 @@ View(() => Vertical(
         .addClass("scoped-size"),
     renderFooter()
 ))
-    .appendOn(document.body)
+    .appendOn(document.body);

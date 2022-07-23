@@ -1,4 +1,4 @@
-import { Card, createElement, custom, img, headless, Custom, PlainText } from "../deps.ts";
+import { Card, createElement, custom, img, headless, Custom, PlainText } from "webgen/mod.ts";
 import none from '../assets/img/team/none.webp';
 import { renderAction } from "./actions.ts";
 

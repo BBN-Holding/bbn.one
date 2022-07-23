@@ -1,21 +1,21 @@
-import { createElement, custom, img, PlainText } from "../../../deps.ts";
+import { createElement, custom, img, PlainText } from "webgen/mod.ts";
 import '../../../assets/css/components/opener.css';
 import heroImage from '../../../assets/img/hero-img.png';
 
 // TODO: refactor this to Stack based layout
 export function renderOpener() {
-    const opener = custom("div", undefined, "opener")
-    const shell = custom("div", opener, 'opener-background')
+    const opener = custom("div", undefined, "opener");
+    const shell = custom("div", opener, 'opener-background');
     shell.id = "home";
-    const leftSide = createElement('div')
-    const mainTitle = PlainText("We represent your interests").draw()
-    const subTitle = PlainText("We offer a wide range of services. From issuing prepaid credit cards to distributing music all over the world.").draw()
-    const button = custom('a', "Get started") as HTMLAnchorElement
-    button.href = "#services"
-    leftSide.append(mainTitle, subTitle, button)
-    const image = img(heroImage)
-    image.loading = "lazy"
-    const rightSide = custom('div', image)
-    opener.append(leftSide, rightSide)
+    const leftSide = createElement('div');
+    const mainTitle = PlainText("We represent your interests").draw();
+    const subTitle = PlainText("We offer a wide range of services. From issuing prepaid credit cards to distributing music all over the world.").draw();
+    const button = custom('a', "Get started") as HTMLAnchorElement;
+    button.href = "#services";
+    leftSide.append(mainTitle, subTitle, button);
+    const image = img(heroImage);
+    image.loading = "lazy";
+    const rightSide = custom('div', image);
+    opener.append(leftSide, rightSide);
     return shell;
 }
