@@ -4,6 +4,9 @@
     border-radius: 10px;
     margin: 0 auto;
     transition: 250ms ease background;
+}
+
+.list-entry.action {
     cursor: pointer;
 }
 
@@ -17,7 +20,7 @@
     }
 }
 
-.list-entry:hover {
+.list-entry.action:hover {
     background: rgba(255, 255, 255, 0.07);
 }
 
