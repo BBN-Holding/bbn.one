@@ -51,7 +51,7 @@ View(() => Vertical(
             { width: 5 },
             Card(modernCard({
                 title: "How much of the income goes to me?",
-                description: PlainText("BBN Music gives you 100% of the income from your products every month on the 21st. BBN Music is the only company in the whole industry that does not take a revenue cut.")
+                description: PlainText("BBN Music gives you 97% of the income from your products every month on the 21st. BBN Music is the only company in the whole industry that takes a revenue cut this low!")
             })),
         ],
         Spacer()
