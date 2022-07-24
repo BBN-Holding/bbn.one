@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, loadingWheel, Center, Color, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, MaterialIcons, ViewClass, SupportedThemes } from "webgen/mod.ts";
+import { loadingWheel, Center, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, MaterialIcons, ViewClass } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import artwork from "../../assets/img/template-artwork.png";
@@ -9,10 +9,12 @@ import { loadSongs } from "./helper.ts";
 import { ViewState } from "./types.ts";
 import { ReviewPanel } from "./reviews.ts";
 import { ExplainerText } from "./music/text.ts";
+import { ActionBar } from "./misc/actionbar.ts";
+import { changeThemeColor } from "./misc/common.ts";
 WebGen({
     icon: new MaterialIcons(),
     events: {
-        themeChanged: (data) => document.head.querySelector("meta[name=theme-color]")?.setAttribute("content", data == SupportedThemes.autoLight ? "#e6e6e6" : "#0a0a0a")
+        themeChanged: changeThemeColor()
     }
 });
 Redirect();
@@ -21,57 +23,38 @@ const imageCache = new Map<string, string>();
 
 const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(
     ...DynaNavigation("Music"),
-    Horizontal(
-        Vertical(
-            Horizontal(
-                PlainText(`Hi ${GetCachedProfileData().name}! 👋`)
-                    .setFont(2.260625, 700),
-                Spacer()
-            ).setMargin("0 0 18px"),
-            Horizontal(
-                Button(`Published ${getListCount([ "PUBLISHED" ], state)}`)
-                    .setColor(Color.Colored)
-                    .addClass("tag")
-                    .setStyle(state.type == "PUBLISHED" ? ButtonStyle.Normal : ButtonStyle.Secondary)
-                    .onClick(() => update({ type: "PUBLISHED" })),
-                Button(`Unpublished ${getListCount([ "UNDER_REVIEW", "PRIVATE" ], state)}`)
-                    .setColor(Color.Colored)
-                    .setStyle(state.type == "PRIVATE" ? ButtonStyle.Normal : ButtonStyle.Secondary)
-                    .onClick(() => update({ type: "PRIVATE" }))
-                    .addClass("tag"),
-                state.list?.find(x => x.type == "UNSUBMITTED") ?
-                    Button(`Drafts ${getListCount([ "UNSUBMITTED" ], state)}`)
-                        .setColor(Color.Colored)
-                        .onClick(() => update({ type: "UNSUBMITTED" }))
-                        .setStyle(state.type == "UNSUBMITTED" ? ButtonStyle.Normal : ButtonStyle.Secondary)
-                        .addClass("tag")
-                    : null,
-                state.reviews && state.reviews?.length != 0 ?
-                    Button(`Reviews (${state.reviews.length})`)
-                        .setColor(Color.Colored)
-                        .onClick(() => update({ type: "UNDER_REVIEW" }))
-                        .setStyle(state.type == "UNDER_REVIEW" ? ButtonStyle.Normal : ButtonStyle.Secondary)
-                        .addClass("tag")
-                    : null,
-                Spacer()
-            ).setGap("10px")
-        ),
-        Spacer(),
-        Vertical(
-            Spacer(),
-            Button("Submit new Drop")
-                .onPromiseClick(async () => {
-                    const id = await API.music(API.getToken()).post();
-                    // TODO: Currently not supported:
-                    // location.href = `/music/new-drop/${id}`;
-                    location.href = `/music/new-drop?id=${id}`;
-                }),
-            Spacer()
-        )
-    )
-        .setPadding("5rem 0 0 0")
-        .addClass("action-bar")
-        .addClass("limited-width"),
+    ActionBar(`Hi ${GetCachedProfileData().name}! 👋`, [
+        {
+            title: `Published ${getListCount([ "PUBLISHED" ], state)}`,
+            selected: state.type == "PUBLISHED",
+            onclick: () => update({ type: "PUBLISHED" })
+        },
+        {
+            title: `Unpublished ${getListCount([ "UNDER_REVIEW", "PRIVATE" ], state)}`,
+            selected: state.type == "PRIVATE",
+            onclick: () => update({ type: "PRIVATE" })
+        },
+        {
+            title: `Drafts ${getListCount([ "UNSUBMITTED" ], state)}`,
+            selected: state.type == "UNSUBMITTED",
+            onclick: () => update({ type: "UNSUBMITTED" }),
+            hide: !state.list?.find(x => x.type == "UNSUBMITTED")
+        },
+        {
+            title: `Reviews (${state.reviews?.length})`,
+            selected: state.type == "UNDER_REVIEW",
+            onclick: () => update({ type: "UNDER_REVIEW" }),
+            hide: !(state.reviews && state.reviews?.length != 0)
+        }
+    ],
+        {
+            title: "Submit new Drop",
+            onclick: async () => {
+                const id = await API.music(API.getToken()).post();
+                location.href = `/music/new-drop?id=${id}`;
+            }
+        }
+    ),
     Box((() => {
         if (!state.list)
             return Custom(loadingWheel() as Element as HTMLElement);
@@ -151,7 +134,6 @@ function DropEntry(x: Drop, matches: boolean): Component {
             : null
     )
         .setGap("40px")
-        .addClass("list-entry")
-        .addClass("limited-width")
+        .addClass("list-entry", x.type == "UNSUBMITTED" ? "action" : "non-action", "limited-width")
         .onClick(() => x.type === "UNSUBMITTED" ? location.href = "/music/new-drop?id=" + x.id : {});
 }
