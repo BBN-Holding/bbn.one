@@ -28,7 +28,7 @@ function ProfilePicture(component: Component, name: string) {
     ele.style.backgroundColor = stringToColour(name);
     return Custom(ele).addClass("profile-picture");
 }
-export function DynaNavigation(type: "Home" | "Music", user = IsLoggedIn()) {
+export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLoggedIn()) {
     return [
         user && user.email_verified != true ? Nav(Horizontal(
             CenterV(
@@ -45,7 +45,7 @@ export function DynaNavigation(type: "Home" | "Music", user = IsLoggedIn()) {
         Nav(
             Horizontal(
                 CenterV(
-                    Custom(img(type == "Home" ? bbnLogo : bbnMusicLogo)).onClick(() => { location.href = "/"; }),
+                    Custom(img(type == "Music" ? bbnMusicLogo : bbnLogo)).onClick(() => { location.href = "/"; }),
                 ),
                 Spacer(),
                 [

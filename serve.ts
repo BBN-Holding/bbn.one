@@ -19,6 +19,7 @@ serve({
         "signin": "./pages/manager/signin.ts",
         "signin-google": "./pages/manager/misc/redirect.ts",
         "music": "./pages/manager/music.ts",
-        "music/new-drop": "./pages/manager/newDrop.ts"
+        "music/new-drop": "./pages/manager/newDrop.ts",
+        "settings": "./pages/manager/settings/mod.ts"
     }
 });

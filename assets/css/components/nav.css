@@ -11,6 +11,10 @@ nav {
     background: #37517e;
 }
 
+nav.settings {
+    background: transparent;
+}
+
 nav.music {
     background: linear-gradient(139.46deg, #F19D2D 6.59%, #DB5721 101.73%);
 }
