@@ -70,7 +70,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                     if (!data)
                                         update({ error: "Wrong Email or Password", email: formData.get("email")?.toString() });
                                     else
-                                        signIn(data);
+                                        logIn(data, "email").finally(Redirect);
                                 })
                                 .setJustify("center"),
                             Horizontal(
@@ -112,7 +112,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                     if (!data)
                                         update({ error: !email || !name || !password ? "Missing credentials" : "Email is not unique/valid", name: formData.get("name")?.toString() ?? "" });
                                     else
-                                        signIn(data);
+                                        logIn(data, "email").finally(Redirect);
                                 })
                                 .setJustify("center"),
                             Horizontal(
@@ -165,18 +165,14 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
         update({ mode: "login" });
         if (type == "google" && state && code) {
             update({ loading: true });
-            API.auth.google.post({ code, state }).then(async x => {
-                localStorage[ "refresh-token" ] = x.refreshToken;
-                localStorage[ "access-token" ] = (await API.auth.refreshAccessToken.post({ refreshToken: x.refreshToken })).accessToken;
-                Redirect();
-            });
+            API.auth.google.post({ code, state })
+                .then(x => logIn(x, "0auth"))
+                .then(Redirect);
         }
         else if (type == "forgot-password" && token) {
             update({ loading: true });
             API.auth.fromUserInteraction.get(token).then(async x => {
-                localStorage[ "refresh-token" ] = x.refreshToken;
-                localStorage[ "access-token" ] = (await API.auth.refreshAccessToken.post({ refreshToken: x.refreshToken })).accessToken;
-
+                await logIn(x, "email");
                 update({ resetToken: API.getToken(), loading: false });
             }).catch(() => {
                 update({ resetToken: "!", loading: false });
@@ -194,11 +190,9 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
     })
     .appendOn(document.body);
 
-function signIn(data: { refreshToken: string; }) {
-    API.auth.refreshAccessToken.post({ refreshToken: data.refreshToken }).then(({ accessToken }) => {
-        localStorage[ "access-token" ] = accessToken;
-        localStorage[ "refresh-token" ] = data!.refreshToken;
-    }).finally(() => {
-        Redirect();
-    });
+async function logIn(data: { refreshToken: string; }, mode: "email" | "0auth") {
+    const { accessToken } = await API.auth.refreshAccessToken.post({ refreshToken: data.refreshToken });
+    localStorage[ "access-token" ] = accessToken;
+    localStorage[ "refresh-token" ] = data!.refreshToken;
+    localStorage[ "type" ] = mode;
 }
