@@ -170,3 +170,45 @@ cardlist {
         height: unset;
     }
 }
+
+
+
+.list-entry {
+    background: rgba(255, 255, 255, 0.04);
+    height: unset;
+    border-radius: 10px;
+    margin: 0 auto;
+    transition: 250ms ease background;
+}
+
+.list-entry.action {
+    cursor: pointer;
+}
+
+@media (prefers-color-scheme: light) {
+    .list-entry {
+        color: var(--on-card-background);
+        background: hsl(var(--background-color-h), var(--background-color-s), var(--background-color-l));
+        --background-color-h: var(--color-grayscaled-hue);
+        --background-color-s: var(--color-grayscaled-saturation);
+        --background-color-l: var(--color-grayscaled-lightness);
+    }
+}
+
+.list-entry.action:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.list-entry img {
+    height: 109px;
+    aspect-ratio: 1 / 1;
+    border-radius: 10px;
+}
+
+.meta-data {
+    height: 54px;
+}
+
+.subtitle {
+    opacity: 69%;
+}
