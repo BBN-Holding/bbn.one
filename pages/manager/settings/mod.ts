@@ -55,7 +55,7 @@ View<ViewState>(({ state, update }) => Vertical(
     .appendOn(document.body);
 
 
-function returnFunction(update: (data: Partial<ViewState>) => void): { title: string; onclick: () => void | Promise<void>; }[] | undefined {
+function returnFunction(update: (data: Partial<ViewState>) => void): { title: string; onclick: () => void | Promise<void>; }[] {
     return [ { title: "Settings", onclick: () => update({ mode: "landing-page" }) } ];
 }
 
