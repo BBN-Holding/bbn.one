@@ -212,3 +212,20 @@ cardlist {
 .subtitle {
     opacity: 69%;
 }
+
+.action-bar {
+    cursor: default;
+}
+
+.history-entry {
+    opacity: 60%;
+    cursor: pointer;
+}
+
+.history-entry:hover {
+    opacity: 70%;
+}
+
+.history-entry .webgen-icon {
+    margin: 0 .5rem;
+}
