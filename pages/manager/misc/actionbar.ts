@@ -32,7 +32,7 @@ export function ActionBar(title: string, categories?: { title: string, selected:
             Vertical(
                 Spacer(),
                 Button(action.title)
-                    .onClick(action.onclick),
+                    .onPromiseClick(async () => { await action.onclick(); }),
                 Spacer()
             ) : null
     )
