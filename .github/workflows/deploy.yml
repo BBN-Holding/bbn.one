@@ -1,4 +1,4 @@
-name: Deplox to Prod
+name: Deploy to Prod
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
         with:
           local: ./dist
           remote: /root/bbn.one
-          host: ${{ secrets.WEB_HOST }}
-          port: ${{ secrets.WEB_PORT }}
-          username: ${{ secrets.WEB_USERNAME }}
-          password: ${{ secrets.WEB_PASSWORD }}
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
