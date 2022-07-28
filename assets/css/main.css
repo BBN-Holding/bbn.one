@@ -229,3 +229,29 @@ cardlist {
 .history-entry .webgen-icon {
     margin: 0 .5rem;
 }
+
+.image-edit {
+    display: grid;
+    cursor: pointer;
+}
+
+.image-edit img {
+    width: 95%;
+    border-radius: 37px;
+}
+
+.image-edit .wiconbutton {
+    border-radius: 100%;
+    justify-self: flex-end;
+    margin-top: -1.7rem;
+    width: unset;
+    aspect-ratio: 1 / 1;
+}
+
+.image-edit .wiconbutton span {
+    font-size: 19px;
+}
+
+.settings-form {
+    justify-content: center;
+}

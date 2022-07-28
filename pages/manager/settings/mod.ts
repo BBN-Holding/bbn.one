@@ -1,5 +1,5 @@
-import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
-import { Redirect, RegisterAuthRefresh } from "../helper.ts";
+import { Box, Color, Custom, Grid, IconButton, img, Input, MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
+import { GetCachedProfileData, Redirect, RegisterAuthRefresh } from "../helper.ts";
 import '../../../assets/css/main.css';
 import { changeThemeColor } from "../misc/common.ts";
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -45,10 +45,29 @@ View<ViewState>(({ state, update }) => Vertical(
             ).setGap("20px")
         ],
         "change-personal": [
-            ActionBar("Personal", undefined, undefined, returnFunction(update)),
+            ActionBar("Personal", undefined, { title: "Update", onclick: () => { } }, returnFunction(update)),
             Vertical(
-
-            ).setGap("20px")
+                Grid(
+                    Box(
+                        Custom(img(GetCachedProfileData().picture)),
+                        IconButton("edit")
+                    ).addClass("image-edit").onClick(() => alert("Unsupported")),
+                    [
+                        { width: 2 },
+                        Vertical(
+                            Input({
+                                placeholder: "Name"
+                            }),
+                            Input({
+                                placeholder: "Email"
+                            }).setWidth("100%")
+                        ).setGap("20px")
+                    ]
+                )
+                    .setDynamicColumns(1, "12rem")
+                    .addClass("settings-form")
+                    .setGap("15px")
+            ).setGap("20px").addClass("limited-width")
         ]
     }[ state.mode ?? "landing-page" ]
 
