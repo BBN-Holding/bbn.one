@@ -39,9 +39,27 @@ View<ViewState>(({ state, update }) => Vertical(
             ).setGap("20px")
         ],
         "change-password": [
-            ActionBar("Change Password", undefined, undefined, returnFunction(update)),
+            ActionBar("Change Password", undefined, { title: "Change", onclick: () => { } }, returnFunction(update)),
             Vertical(
-
+                Grid(
+                    [
+                        { width: 2 },
+                        Vertical(
+                            Input({
+                                placeholder: "Current Password"
+                            }),
+                            Input({
+                                placeholder: "New Password"
+                            }),
+                            Input({
+                                placeholder: "Verify New Password"
+                            })
+                        ).setGap("20px")
+                    ]
+                )
+                    .setDynamicColumns(1, "12rem")
+                    .addClass("settings-form")
+                    .setGap("15px")
             ).setGap("20px")
         ],
         "change-personal": [
@@ -60,7 +78,7 @@ View<ViewState>(({ state, update }) => Vertical(
                             }),
                             Input({
                                 placeholder: "Email"
-                            }).setWidth("100%")
+                            })
                         ).setGap("20px")
                     ]
                 )
