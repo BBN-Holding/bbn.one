@@ -1,8 +1,8 @@
 import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, Custom, img, CenterV, Component, Icon, ViewClass } from "webgen/mod.ts";
-import { loadSongs, MediaQuery } from "./helper.ts";
-import { API, Drop } from "./RESTSpec.ts";
-import artwork from "../../assets/img/template-artwork.png";
-import { ViewState } from "./types.ts";
+import { loadSongs, MediaQuery } from "../helper.ts";
+import { API, Drop } from "../RESTSpec.ts";
+import artwork from "../../../assets/img/template-artwork.png";
+import { ViewState } from "../types.ts";
 
 export function ReviewPanel(imageCache: Map<string, string>, view: () => ViewClass<ViewState>, state: Partial<ViewState>): Component {
     return Vertical(
@@ -21,7 +21,9 @@ export function ReviewPanel(imageCache: Map<string, string>, view: () => ViewCla
         ...state.reviews!.filter(x => x.type != "UNDER_REVIEW").map(x =>
             RenderEntry(imageCache, x, view)
         )
-    ).setGap("1rem").setMargin("1rem 0 0");
+    )
+        .setGap("1rem")
+        .setMargin("1rem 0 0");
 }
 
 function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewClass<ViewState>) {

@@ -7,7 +7,7 @@ import { GetCachedProfileData, MediaQuery, ProfileData, Redirect, RegisterAuthRe
 import { API, Drop } from "./RESTSpec.ts";
 import { loadSongs } from "./helper.ts";
 import { ViewState } from "./types.ts";
-import { ReviewPanel } from "./reviews.ts";
+import { ReviewPanel } from "./admin/reviews.ts";
 import { ExplainerText } from "./music/text.ts";
 import { ActionBar } from "./misc/actionbar.ts";
 import { changeThemeColor } from "./misc/common.ts";
