@@ -1,7 +1,7 @@
 import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
-import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, createElement, img, Custom, Component, DropAreaInput, CenterV } from "webgen/mod.ts";
+import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, img, Custom, Component, DropAreaInput, CenterV } from "webgen/mod.ts";
 import { TableData } from "./types.ts";
 import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, syncFromData, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
@@ -9,7 +9,7 @@ import { API, Drop } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
 import '../../assets/css/main.css';
 import { DeleteFromForm, FormToRecord, RecordToForm } from "./data.ts";
-import { StreamingUploadHandler } from "./upload.ts";
+import { StreamingUploadHandler, uploadFilesDialog } from "./upload.ts";
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 
 WebGen({
@@ -26,15 +26,7 @@ if (!params.has("id")) {
 }
 const gapSize = "15px";
 const inputWidth = "436px";
-function uploadFilesDialog(onData: (files: File[]) => void, accept: string) {
-    const upload = createElement("input");
-    upload.type = "file";
-    upload.accept = accept;
-    upload.click();
-    upload.onchange = () => {
-        onData(Array.from(upload.files ?? []));
-    };
-}
+
 
 // TODO: Input zu neuen FormComponents umlagern
 View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
@@ -293,7 +285,7 @@ function uploadArtwork(formData: FormData, file: File, update: (data: Partial<un
     update({});
     setTimeout(() => {
         const image = document.querySelector(".upload-image")!;
-        StreamingUploadHandler({
+        StreamingUploadHandler(`music/${params.get("id")!}/upload`, {
             prepare: () => {
                 const animation = image.animate([
                     { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
@@ -315,10 +307,10 @@ function uploadArtwork(formData: FormData, file: File, update: (data: Partial<un
                 ], { duration: 100, fill: 'forwards' });
                 animation.currentTime = percentage;
                 animation.pause();
-                await delay(10);
+                await delay(5);
             },
             uploadDone: () => { }
-        }, params.get("id")!, file);
+        }, file);
     });
 }
 
@@ -334,7 +326,7 @@ function addSongs(meta: () => FormData[], list: File[], formData: FormData, upda
             .replaceAll("-", " ")
             .replace(/\.[^/.]+$/, "");
 
-        StreamingUploadHandler({
+        StreamingUploadHandler(`music/${params.get("id")!}/upload`, {
             prepare: () => {
                 formData.set(`song-${id}-progress`, "0");
             },
@@ -355,7 +347,7 @@ function addSongs(meta: () => FormData[], list: File[], formData: FormData, upda
             uploadDone: () => {
 
             }
-        }, params.get("id")!, file);
+        }, file);
         formData.set(`song-${id}-title`, cleanedUpTitle); // Our AI prediceted name
         formData.set(`song-${id}-year`, new Date().getFullYear().toString());
         applyFromPage(meta(), formData, 1, "artists", `song-${id}-artists`);

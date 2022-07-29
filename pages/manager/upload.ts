@@ -1,3 +1,4 @@
+import { createElement } from "https://raw.githubusercontent.com/lucsoft/WebGen/285feef/mod.ts";
 import { API } from "./RESTSpec.ts";
 
 export type StreamingUploadEvents = {
@@ -5,13 +6,22 @@ export type StreamingUploadEvents = {
     prepare: () => void,
     onUploadTick: (percentage: number) => Promise<void>,
     uploadDone: () => void,
-    backendResponse: (id: string) => void
-}
+    backendResponse: (id: string) => void;
+};
 
-export function StreamingUploadHandler(events: StreamingUploadEvents, dropId: string, file: File) {
+export function uploadFilesDialog(onData: (files: File[]) => void, accept: string) {
+    const upload = createElement("input");
+    upload.type = "file";
+    upload.accept = accept;
+    upload.click();
+    upload.onchange = () => {
+        onData(Array.from(upload.files ?? []));
+    };
+}
+export function StreamingUploadHandler(path: string, events: StreamingUploadEvents, file: File) {
     try {
         events.prepare();
-        const ws = new WebSocket(`${API.BASE_URL.replace("https", "wss").replace("http", "ws")}music/${dropId}/upload`);
+        const ws = new WebSocket(`${API.BASE_URL.replace("https", "wss").replace("http", "ws")}${path}`);
         let bytesUploaded = 0;
         const stream = file
             .stream()
@@ -25,14 +35,14 @@ export function StreamingUploadHandler(events: StreamingUploadEvents, dropId: st
             }));
         ws.onopen = () => {
             ws.send(events.credentials());
-        }
+        };
         const reader = stream.getReader();
 
         ws.onmessage = async ({ data }) => {
             if (data == "file") {
-                ws.send("file " + JSON.stringify({ filename: file.name, type: file.type }))
+                ws.send("file " + JSON.stringify({ filename: file.name, type: file.type }));
             } else if (data == "next") {
-                const read = await reader.read()
+                const read = await reader.read();
                 console.log(read.value);
                 if (read.value)
                     ws.send(read.value);
@@ -44,7 +54,7 @@ export function StreamingUploadHandler(events: StreamingUploadEvents, dropId: st
                 reader.releaseLock();
                 events.backendResponse(JSON.parse(data).id);
             }
-        }
+        };
         // await write(writable, "end");
         // const reader = readable.getReader();
         // const { id } = JSON.parse((await reader.read()).value as string);
