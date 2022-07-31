@@ -1,11 +1,12 @@
 // deno-lint-ignore-file no-unused-vars
 import { delay } from "https://deno.land/std@0.140.0/async/mod.ts";
 import { assert } from "https://deno.land/std@0.140.0/testing/asserts.ts";
+import { ObjectId } from "https://deno.land/x/mongo@v0.30.0/mod.ts";
 export type ArtistTypes = "PRIMARY" | "FEATURING" | "SONGWRITER" | "PRODUCER";
 
 export type Drop = {
     id: string;
-    user?: string;
+    user: ObjectId;
     type: 'PUBLISHED' | 'PRIVATE' | 'UNDER_REVIEW' | 'UNSUBMITTED';
     title?: string;
     upc?: string;
@@ -23,7 +24,7 @@ export type Drop = {
         Title?: string;
         PrimaryGenre?: string;
         SecondaryGenre?: string;
-        Artists?: string;
+        Artists?: [ name: string, img: string, type: ArtistTypes ][];
         Country?: string;
         File?: string;
         Explicit?: boolean;
@@ -45,9 +46,9 @@ export const API = {
                     }).then(x => x.json());
                 }
             },
-            resentVerifyEmail: {
+            resendVerifyEmail: {
                 post: () => {
-                    return fetch(`${API.BASE_URL}user/mail/resent-verify-email`, {
+                    return fetch(`${API.BASE_URL}user/mail/resend-verify-email`, {
                         method: "POST",
                         headers: {
                             "Authorization": token

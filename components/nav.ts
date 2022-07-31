@@ -38,7 +38,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLog
             Button("Resend Verify Email")
                 .addClass("link")
                 .onPromiseClick(async () => {
-                    await API.user(API.getToken()).mail.resentVerifyEmail.post();
+                    await API.user(API.getToken()).mail.resendVerifyEmail.post();
                     await delay(1000);
                 })
         )).addClass("email-banner", type.toLowerCase()) : Box(),
