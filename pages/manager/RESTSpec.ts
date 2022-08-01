@@ -6,7 +6,7 @@ export type ArtistTypes = "PRIMARY" | "FEATURING" | "SONGWRITER" | "PRODUCER";
 
 export type Drop = {
     id: string;
-    user: ObjectId;
+    user: string;
     type: 'PUBLISHED' | 'PRIVATE' | 'UNDER_REVIEW' | 'UNSUBMITTED';
     title?: string;
     upc?: string;

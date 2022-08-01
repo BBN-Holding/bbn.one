@@ -15,15 +15,27 @@ export function ReviewPanel(imageCache: Map<string, string>, view: () => ViewCla
             .addClass("list-title")
             .addClass("limited-width") ],
         PlainText("").setMargin("1rem 0"),
-        PlainText("Other Drops")
+        PlainText("Published")
             .addClass("list-title")
             .addClass("limited-width"),
-        ...state.reviews!.filter(x => x.type != "UNDER_REVIEW").map(x =>
+        ...state.reviews!.filter(x => x.type == "PUBLISHED").map(x =>
+            RenderEntry(imageCache, x, view)
+        ),
+        PlainText("Private")
+            .addClass("list-title")
+            .addClass("limited-width"),
+        ...state.reviews!.filter(x => x.type == "PRIVATE").map(x =>
+            RenderEntry(imageCache, x, view)
+        ),
+        PlainText("Drafts")
+            .addClass("list-title")
+            .addClass("limited-width"),
+        ...state.reviews!.filter(x => x.type == "UNSUBMITTED").map(x =>
             RenderEntry(imageCache, x, view)
         )
     )
         .setGap("1rem")
-        .setMargin("1rem 0 0");
+        .setMargin("1rem 0");
 }
 
 function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewClass<ViewState>) {
