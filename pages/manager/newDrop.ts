@@ -136,6 +136,7 @@ const wizard = (restore?: Drop) => Wizard({
                     .setEvenColumns(2)
                     .setGap(gapSize)
                     .setWidth(inputWidth),
+                // TODO: Make this a nicer component
                 Button("Artists")
                     .onClick(() => {
                         EditArtists(formData.get("artists") ? JSON.parse(formData.get("artists")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => formData.set("artists", JSON.stringify(x)));

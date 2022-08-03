@@ -263,3 +263,7 @@ cardlist {
 .settings-form {
     justify-content: center;
 }
+
+.justify-content-space {
+    justify-content: space-between;
+}

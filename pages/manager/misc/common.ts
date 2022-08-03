@@ -5,11 +5,11 @@ export function changeThemeColor(): ((data: SupportedThemes, options: Style) => 
     return (data) => document.head.querySelector("meta[name=theme-color]")?.setAttribute("content", data == SupportedThemes.autoLight ? "#e6e6e6" : "#0a0a0a");
 }
 
-export function changePage<TypeT extends { mode: string; }>(update: (data: Partial<TypeT>) => void, type: TypeT[ "mode" ]) {
+export function changePage<TypeT extends { route: string; }>(update: (data: Partial<TypeT>) => void, type: TypeT[ "route" ]) {
     return () => {
         const url = new URL(location.toString());
-        url.searchParams.set("mode", type);
+        url.searchParams.set("route", type);
         history.pushState({}, '', url);
-        update({ mode: type } as Partial<TypeT>);
+        update({ route: type } as Partial<TypeT>);
     };
 }

@@ -31,7 +31,7 @@ View<EditViewState>(({ state, update }) => Vertical(
         {
             "edit-drop": ChangeDrop(state.data, update),
             main: ChangeMain(state.data, update)
-        }[ state.mode ?? "main" ]
+        }[ state.route ?? "main" ]
     ] : [
         CenterV(
             Center(
@@ -43,8 +43,8 @@ View<EditViewState>(({ state, update }) => Vertical(
 ))
     .appendOn(document.body)
     .change(({ update }) => {
-        if (data.mode)
-            update({ mode: data.mode as EditViewState[ "mode" ] });
+        if (data.route)
+            update({ route: data.route as EditViewState[ "route" ] });
 
         API.music(API.getToken())
             .id(data.id)

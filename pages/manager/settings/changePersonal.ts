@@ -35,7 +35,7 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                     // IDEA: Move this to a ImageUploadInput with Animations
                     View<{ path: string; }>(({ state, update }) => Box(
                         Custom(img(state.path)).addClass("upload-image"),
-                        IconButton("edit") // TODO: Waiting for Backend
+                        IconButton("edit")
                     )
                         .addClass("image-edit")
                         .onClick(() => uploadFilesDialog(([ file ]) => {
