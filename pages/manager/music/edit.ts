@@ -6,6 +6,9 @@ import { ActionBar } from "../misc/actionbar.ts";
 import { Entry } from "../misc/Entry.ts";
 import { DynaNavigation } from "../../../components/nav.ts";
 import { API, Drop } from "../RESTSpec.ts";
+import { EditViewState } from "./types.ts";
+import { ChangeMain } from "./changeMain.ts";
+import { ChangeDrop } from "./changeDrop.ts";
 WebGen({
     icon: new MaterialIcons(),
     events: {
@@ -22,30 +25,13 @@ if (!data.id) {
     location.href = "/music";
 }
 
-View<{ data: Drop; }>(({ state }) => Vertical(
+View<EditViewState>(({ state, update }) => Vertical(
     DynaNavigation("Music"),
     state.data ? [
-        Grid(
-            Box(
-                Custom(img(state.data[ "artwork-url" ])).addClass("upload-image"),
-            )
-                .addClass("image-edit", "small"),
-        )
-            .setEvenColumns(1, "10rem")
-            .addClass("limited-width")
-            .setMargin("3rem auto -3rem"),
-        ActionBar(state.data.title ?? "(no title)"),
-        Vertical(
-            Entry("Drop", "Change Title, Release Date, ..."),
-            Entry("Songs", "Move Songs, Remove Songs, Add Songs, ..."),
-            Entry("Additional Data", "Change Release Date/Time, Store, Regions, ..."),
-            Entry("Export", "Download your complete Drop with every Song"),
-            Entry("Takedown", "Completely Takedown your Drop")
-                .addClass("entry-alert"),
-        )
-            .setMargin("0 0 22px")
-            .setGap("22px")
-
+        {
+            "edit-drop": ChangeDrop(state.data, update),
+            main: ChangeMain(state.data, update)
+        }[ state.mode ?? "main" ]
     ] : [
         CenterV(
             Center(
@@ -57,6 +43,9 @@ View<{ data: Drop; }>(({ state }) => Vertical(
 ))
     .appendOn(document.body)
     .change(({ update }) => {
+        if (data.mode)
+            update({ mode: data.mode as EditViewState[ "mode" ] });
+
         API.music(API.getToken())
             .id(data.id)
             .get()
