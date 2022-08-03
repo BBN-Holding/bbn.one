@@ -66,10 +66,16 @@ const wizard = (restore?: Drop) => Wizard({
         for (const [ key, value ] of list) {
             single.append(key, value);
         }
-        await API
-            .music(API.getToken())
-            .id(params.get("id")!)
-            .put(single);
+        try {
+
+            await API
+                .music(API.getToken())
+                .id(params.get("id")!)
+                .put(single);
+
+        } catch (error) {
+            alert("Unexpected Error happend while updating your Drop\nPlease try again later");
+        }
     },
     submitAction: async () => {
         const single = new FormData();
