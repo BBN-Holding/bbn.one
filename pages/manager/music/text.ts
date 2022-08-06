@@ -25,3 +25,13 @@ function EnumToDisplay(state?: Drop[ "type" ]) {
         default: return "";
     }
 }
+
+export function DropTypeToText(state?: Drop[ "type" ]) {
+    switch (state) {
+        case "PRIVATE": return "Unpublished";
+        case "PUBLISHED": return "Published";
+        case "UNDER_REVIEW": return "Under Review";
+        case "UNSUBMITTED": return "Draft";
+        default: return "";
+    }
+}
