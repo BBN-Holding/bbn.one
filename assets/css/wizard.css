@@ -157,10 +157,6 @@ nav.music {
     font-weight: 400;
 }
 
-.isList {
-    justify-content: space-between;
-}
-
 .wbutton.disabled {
     z-index: 0;
 }

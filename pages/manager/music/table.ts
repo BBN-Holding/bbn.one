@@ -31,7 +31,7 @@ export class InlineTextInput extends InputForm<string> {
                 this.formData.set(this.key, this.saveData(value));
 
         });
-        this.wrapper.classList.add("isList");
+        this.wrapper.classList.add("justify-content-space");
     }
     saveData(data: string): FormDataEntryValue {
         return data;

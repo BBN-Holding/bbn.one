@@ -5,7 +5,7 @@ import { ObjectId } from "https://deno.land/x/mongo@v0.30.0/mod.ts";
 export type ArtistTypes = "PRIMARY" | "FEATURING" | "SONGWRITER" | "PRODUCER";
 
 export type Drop = {
-    id: string;
+    _id: string;
     user: string;
     type: 'PUBLISHED' | 'PRIVATE' | 'UNDER_REVIEW' | 'UNSUBMITTED';
     title?: string;

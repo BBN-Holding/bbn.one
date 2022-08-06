@@ -5,7 +5,7 @@ import { API } from "../RESTSpec.ts";
 import { delay } from "https://deno.land/std@0.149.0/async/mod.ts";
 import { returnFunction, ViewState } from "./helper.ts";
 import { StreamingUploadHandler, uploadFilesDialog } from "../upload.ts";
-
+import { Validate } from "../misc/common.ts";
 export function ChangePersonal(update: (data: Partial<ViewState>) => void): WizardComponent {
     return Wizard({
         cancelAction: () => { },
@@ -13,18 +13,14 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
     }, ({ PageValid }) => [
         Page((data) => [
             ActionBar("Personal", undefined, {
-                title: "Update", onclick: async () => {
-                    const newLocal = PageValid();
-                    if (newLocal === true) {
-                        document.querySelector<HTMLElement>("#error-message-area")!.innerText = "";
+                title: "Update", onclick: () => {
+                    Validate(PageValid, async () => {
                         await API.user(API.getToken()).setMe.post({
                             name: data.get("name")?.toString()
                         });
                         await delay(300);
                         await forceRefreshToken();
-                    } else {
-                        document.querySelector<HTMLElement>("#error-message-area")!.innerText = newLocal.error.errors.map(x => x.message).join("\n");
-                    }
+                    });
                 }
             }, returnFunction(update)),
             PlainText("")

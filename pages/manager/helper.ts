@@ -199,7 +199,7 @@ export function EditArtists(list: NonNullable<Drop[ "artists" ]>) {
         View(({ update }) =>
             Vertical(
                 Table([
-                    [ "Type", "10rem", ({ id }) => DropDownInput("Type", <ArtistTypes[]>[ "PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER" ]).syncFormData(data, `actor-${id}-type`) ],
+                    [ "Type", "10rem", ({ id }) => DropDownInput("Type", <ArtistTypes[]>[ "PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER" ]).addClass("justify-content-space").syncFormData(data, `actor-${id}-type`) ],
                     [ "Name", "auto", ({ id }) => Input({ placeholder: "Name", ...syncFromData(data, `actor-${id}-name`) }) ]
                 ], data.getAll("actor").map((id) => {
                     return {

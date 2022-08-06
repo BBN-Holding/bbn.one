@@ -1,8 +1,8 @@
-import { Button, ButtonStyle, Color, Custom, DropDownInput, Grid, Input, Page, Spacer, Wizard } from "webgen/mod.ts";
+import { Button, ButtonStyle, Color, Custom, DropDownInput, Grid, Input, Page, PlainText, Spacer, Wizard } from "webgen/mod.ts";
 import { EditArtists, syncFromData } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
-import { changePage } from "../misc/common.ts";
-import { Drop } from "../RESTSpec.ts";
+import { changePage, Validate } from "../misc/common.ts";
+import { API, Drop } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
@@ -11,13 +11,22 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
     return Wizard({
         cancelAction: () => { },
         submitAction: () => { },
-    }, () => [
+    }, ({ PageValid, PageData, PageID }) => [
         Page(data => [
             ActionBar("Drop", undefined, {
                 title: "Update", onclick: () => {
-
+                    Validate(PageValid, async () => {
+                        await API.music(API.getToken())
+                            .id(drop._id)
+                            .put(PageData()[ PageID() ]);
+                        location.reload(); // Handle this Smarter => Make it a Reload Event.
+                    });
                 }
             }, [ { title: drop.title ?? "(no-title)", onclick: changePage(update, "main") } ]),
+            PlainText("")
+                .addClass("error-message", "limited-width")
+                .setId("error-message-area"),
+
             // TODO: Upload profile picture
             Grid(
                 [
@@ -50,7 +59,7 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                             EditArtists(data.get("artists") ? JSON.parse(data.get("artists")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => data.set("artists", JSON.stringify(x)));
                         }),
                 ],
-                [ { width: 2 }, Spacer() ],
+                [ { width: 2, heigth: 2 }, Spacer() ],
                 DropDownInput("Primary Genre", primary)
                     .syncFormData(data, "primaryGenre")
                     .addClass("justify-content-space"),
