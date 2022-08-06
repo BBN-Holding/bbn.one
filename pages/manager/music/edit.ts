@@ -1,4 +1,4 @@
-import { Box, Center, CenterV, Custom, Grid, img, loadingWheel, MaterialIcons, PlainText, Spacer, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Center, CenterV, Custom, loadingWheel, MaterialIcons, Spacer, Vertical, View, WebGen } from "webgen/mod.ts";
 import { Redirect, RegisterAuthRefresh } from "../helper.ts";
 import { changeThemeColor } from "../misc/common.ts";
 import '../../../assets/css/main.css';

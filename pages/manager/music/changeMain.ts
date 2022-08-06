@@ -1,5 +1,3 @@
-import data from "https://deno.land/std@0.140.0/_wasm_crypto/crypto.wasm.mjs";
-import { update } from "https://deno.land/x/mongo@v0.30.0/src/collection/commands/update.ts";
 import { Box, Custom, Grid, img, Page, Vertical, Wizard } from "webgen/mod.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage } from "../misc/common.ts";

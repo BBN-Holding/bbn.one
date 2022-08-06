@@ -73,7 +73,7 @@ const wizard = (restore?: Drop) => Wizard({
                 .id(params.get("id")!)
                 .put(single);
 
-        } catch (error) {
+        } catch (_error) {
             //TODO: Move this to a notification
             alert("Unexpected Error happend while updating your Drop\nPlease try again later...");
         }
