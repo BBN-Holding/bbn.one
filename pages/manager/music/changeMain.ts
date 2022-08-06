@@ -24,7 +24,7 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
             ActionBar(data.title ?? "(no title)"),
             Vertical(
                 Entry("Drop", "Change Title, Release Date, ...", changePage(update, "edit-drop")),
-                Entry("Songs", "Move Songs, Remove Songs, Add Songs, ..."),
+                Entry("Songs", "Move Songs, Remove Songs, Add Songs, ...", changePage(update, "edit-songs")),
                 Entry("Additional Data", "Change Release Date/Time, Store, Regions, ..."),
                 Entry("Export", "Download your complete Drop with every Song", () => DownloadDrop(data)),
                 Entry("Takedown", "Completely Takedown your Drop")

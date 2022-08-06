@@ -4,7 +4,7 @@ import { Box, Button, Card, Component, createElement, Custom, Dialog, DropDownIn
 import { DeleteFromForm } from "./data.ts";
 import { API, ArtistTypes, Drop } from "./RESTSpec.ts";
 import { ColumEntry } from "./types.ts";
-
+import '../../assets/css/wtable.css';
 export const allowedAudioFormats = [ "audio/flac", "audio/wav" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
@@ -273,8 +273,8 @@ export async function loadSongs(view: ViewClass<{
     for (const iterator of source) {
         (async () => {
             if (!iterator.artwork?.trim()) return;
-            const image = await API.music(API.getToken()).id(iterator.id).artwork();
-            imageCache.set(iterator.id, URL.createObjectURL(image));
+            const image = await API.music(API.getToken()).id(iterator._id).artwork();
+            imageCache.set(iterator._id, URL.createObjectURL(image));
             view.viewOptions().update({});
         })();
     }

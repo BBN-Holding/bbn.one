@@ -1,7 +1,7 @@
 import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
-import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, img, Custom, Component, DropAreaInput, CenterV } from "webgen/mod.ts";
+import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV } from "webgen/mod.ts";
 import { TableData } from "./types.ts";
 import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, syncFromData, Table, UploadTable } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
@@ -11,6 +11,7 @@ import '../../assets/css/main.css';
 import { DeleteFromForm, FormToRecord, RecordToForm } from "./data.ts";
 import { StreamingUploadHandler, uploadFilesDialog } from "./upload.ts";
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
+import { addSongs, ImageFrom } from "./music/data.ts";
 
 WebGen({
     theme: SupportedThemes.dark,
@@ -24,6 +25,7 @@ if (!params.has("id")) {
     alert("ID is missing");
     location.href = "/music";
 }
+const dropId = params.get("id")!;
 const gapSize = "15px";
 const inputWidth = "436px";
 
@@ -232,7 +234,7 @@ const wizard = (restore?: Drop) => Wizard({
                     CenterAndRight(
                         PlainText("Manage your Music").addClass("title"),
                         Button("Manual Upload")
-                            .onClick(() => uploadFilesDialog((list) => addSongs(PageData, list, formData, update), allowedAudioFormats.join(",")))
+                            .onClick(() => uploadFilesDialog((list) => addSongs(dropId, PageData, list, formData, update), allowedAudioFormats.join(",")))
                     ),
                     formData.getAll("song").filter(x => x).length ?
                         Table<TableData>(
@@ -245,7 +247,7 @@ const wizard = (restore?: Drop) => Wizard({
                                 update({});
                             })
                             .addClass("inverted-class", "light-mode")
-                        : UploadTable(TableDef(formData), (list) => addSongs(PageData, list, formData, update))
+                        : UploadTable(TableDef(formData), (list) => addSongs(dropId, PageData, list, formData, update))
                             .addClass("inverted-class", "light-mode")
 
                 ).setGap(gapSize),
@@ -320,56 +322,4 @@ function uploadArtwork(formData: FormData, file: File, update: (data: Partial<un
             uploadDone: () => { }
         }, file);
     });
-}
-
-const lockedLoading = new Set();
-function addSongs(meta: () => FormData[], list: File[], formData: FormData, update: (data: Partial<unknown>) => void) {
-    list.map(x => ({ file: x, id: crypto.randomUUID() })).forEach(({ file, id }) => {
-        formData.append("song", id);
-        formData.set("loading", "-");
-
-        lockedLoading.add(id);
-        const cleanedUpTitle = file.name
-            .replaceAll("_", " ")
-            .replaceAll("-", " ")
-            .replace(/\.[^/.]+$/, "");
-
-        StreamingUploadHandler(`music/${params.get("id")!}/upload`, {
-            prepare: () => {
-                formData.set(`song-${id}-progress`, "0");
-            },
-            credentials: () => API.getToken(),
-            backendResponse: (fileId) => {
-                formData.set(`song-${id}-file`, fileId);
-                formData.delete(`song-${id}-progress`);
-                lockedLoading.delete(id);
-                if (lockedLoading.size == 0)
-                    formData.delete("loading");
-                update({});
-            },
-            onUploadTick: async (percentage) => {
-                formData.set(`song-${id}-progress`, percentage.toString());
-                await delay(10);
-                update({});
-            },
-            uploadDone: () => {
-
-            }
-        }, file);
-        formData.set(`song-${id}-title`, cleanedUpTitle); // Our AI prediceted name
-        formData.set(`song-${id}-year`, new Date().getFullYear().toString());
-        applyFromPage(meta(), formData, 1, "artists", `song-${id}-artists`);
-        applyFromPage(meta(), formData, 1, "primaryGenre", `song-${id}-primaryGenre`);
-        applyFromPage(meta(), formData, 1, "language", `song-${id}-country`);
-    });
-    update({});
-}
-
-function applyFromPage(meta: FormData[], current: FormData, index: number, src: string, dest: string) {
-    if (meta[ index ].has(src))
-        current.set(dest, meta[ index ].get(src)!.toString());
-}
-
-function ImageFrom(formData: FormData, key: string): Component {
-    return Custom(img(formData.get(key)! as string));
 }

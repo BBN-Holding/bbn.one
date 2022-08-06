@@ -8,6 +8,7 @@ import { API } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
 import { ChangeMain } from "./changeMain.ts";
 import { ChangeDrop } from "./changeDrop.ts";
+import { ChangeSongs } from "./changeSongs.ts";
 WebGen({
     icon: new MaterialIcons(),
     events: {
@@ -29,6 +30,7 @@ View<EditViewState>(({ state, update }) => Vertical(
     state.data ? [
         {
             "edit-drop": ChangeDrop(state.data, update),
+            "edit-songs": ChangeSongs(state.data, update),
             main: ChangeMain(state.data, update)
         }[ state.route ?? "main" ]
     ] : [

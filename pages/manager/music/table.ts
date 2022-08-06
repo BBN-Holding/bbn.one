@@ -55,8 +55,8 @@ export const TableDef = (formData: FormData) => <ColumEntry<{ Id: string; }>[]>[
                 element.max = 100;
                 element.value = parseFloat(formData.get(`song-${Id}-progress`)?.toString() ?? "");
                 return element;
-            })())
-        ) : View(() => new InlineTextInput().syncFormData(formData, `song-${Id}-title`))
+            })()).addClass("low-level")
+        ) : View(() => new InlineTextInput().syncFormData(formData, `song-${Id}-title`).addClass("low-level"))
             .asComponent()
     ],
     [ "Artists", "max-content", ({ Id }) =>
@@ -79,24 +79,29 @@ export const TableDef = (formData: FormData) => <ColumEntry<{ Id: string; }>[]>[
         DropDownInput("Year", getYearList())
             .syncFormData(formData, `song-${Id}-year`)
             .setStyle(ButtonStyle.Inline)
+            .addClass("low-level")
     ],
     [ "Country", "max-content", ({ Id }) =>
         DropDownInput("Country", language)
             .syncFormData(formData, `song-${Id}-country`)
             .setStyle(ButtonStyle.Inline)
+            .addClass("low-level")
     ],
     [ "Primary Genre", "max-content", ({ Id }) =>
         DropDownInput("Primary Genre", primary)
             .syncFormData(formData, `song-${Id}-primaryGenre`)
             .setStyle(ButtonStyle.Inline)
+            .addClass("low-level")
     ],
     [ "Secondary Genre", "max-content", () =>
         DropDownInput("Secondary Genre", primary)
             .setStyle(ButtonStyle.Inline)
             .setColor(Color.Disabled)
+            .addClass("low-level")
     ],
     [ "Explicit", "max-content", ({ Id }) =>
         Checkbox(formData.get(`song-${Id}-explicit`) == "true")
             .onClick((_, value) => formData.set(`song-${Id}-explicit`, !value ? "true" : "false"))
+            .addClass("low-level")
     ]
 ];
