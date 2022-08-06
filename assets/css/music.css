@@ -57,3 +57,11 @@ img.small-preview {
     text-align: center;
     padding: 0 1rem;
 }
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-image: linear-gradient(360deg, #00000000, #f19d2d2b);
+        background-size: 100vw 100vh;
+        background-repeat: no-repeat;
+    }
+}

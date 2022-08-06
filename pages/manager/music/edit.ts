@@ -2,10 +2,9 @@ import { Box, Center, CenterV, Custom, Grid, img, loadingWheel, MaterialIcons, P
 import { Redirect, RegisterAuthRefresh } from "../helper.ts";
 import { changeThemeColor } from "../misc/common.ts";
 import '../../../assets/css/main.css';
-import { ActionBar } from "../misc/actionbar.ts";
-import { Entry } from "../misc/Entry.ts";
+import '../../../assets/css/music.css';
 import { DynaNavigation } from "../../../components/nav.ts";
-import { API, Drop } from "../RESTSpec.ts";
+import { API } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
 import { ChangeMain } from "./changeMain.ts";
 import { ChangeDrop } from "./changeDrop.ts";
