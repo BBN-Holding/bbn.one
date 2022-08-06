@@ -3,6 +3,7 @@ import { update } from "https://deno.land/x/mongo@v0.30.0/src/collection/command
 import { Box, Custom, Grid, img, Page, Vertical, Wizard } from "webgen/mod.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage } from "../misc/common.ts";
+import { DownloadDrop } from "../misc/drop.ts";
 import { Entry } from "../misc/Entry.ts";
 import { Drop } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
@@ -27,7 +28,7 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
                 Entry("Drop", "Change Title, Release Date, ...", changePage(update, "edit-drop")),
                 Entry("Songs", "Move Songs, Remove Songs, Add Songs, ..."),
                 Entry("Additional Data", "Change Release Date/Time, Store, Regions, ..."),
-                Entry("Export", "Download your complete Drop with every Song"),
+                Entry("Export", "Download your complete Drop with every Song", () => DownloadDrop(data)),
                 Entry("Takedown", "Completely Takedown your Drop")
                     .addClass("entry-alert"),
             )

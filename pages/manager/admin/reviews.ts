@@ -3,6 +3,7 @@ import { loadSongs, MediaQuery } from "../helper.ts";
 import { API, Drop } from "../RESTSpec.ts";
 import artwork from "../../../assets/img/template-artwork.png";
 import { ViewState } from "../types.ts";
+import { DownloadDrop } from "../misc/drop.ts";
 
 export function ReviewPanel(imageCache: Map<string, string>, view: () => ViewClass<ViewState>, state: Partial<ViewState>): Component {
     return Vertical(
@@ -41,15 +42,15 @@ export function ReviewPanel(imageCache: Map<string, string>, view: () => ViewCla
 function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewClass<ViewState>) {
     return MediaQuery("(max-width: 880px)", (small) => small ? Vertical(
         Horizontal(
-            Custom(img(imageCache.get(x.id) ?? artwork)).addClass("small-preview"),
+            Custom(img(imageCache.get(x._id) ?? artwork)).addClass("small-preview"),
             Vertical(
                 PlainText(x.title ?? "(no text)")
                     .setMargin("-0.4rem 0 0")
                     .setFont(2, 700),
                 MediaQuery("(max-width: 530px)", (small) => small ? Vertical(
-                    PlainText(x.id),
+                    PlainText(x._id),
                     PlainText(x.user ?? "(no user)")
-                ) : PlainText(x.id + " - " + x.user))
+                ) : PlainText(x._id + " - " + x.user))
 
             ),
             Spacer()
@@ -69,12 +70,7 @@ function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewC
                 Button(`Download (${x.song?.length ?? 0})`)
                     .setStyle(ButtonStyle.Inline)
                     .setColor(Color.Colored)
-                    .onPromiseClick(async () => {
-                        if ((x.song?.length ?? 0) != 0) {
-                            const { code } = await API.music(API.getToken()).id(x.id).songSownload();
-                            window.open(`${API.BASE_URL}music/${x.id}/songs-download/${code}`, '_blank');
-                        }
-                    })
+                    .onPromiseClick(() => DownloadDrop(x))
                     .addClass("tag")
                     .setMargin("0 0.5rem")
             ).setJustify("center"),
@@ -86,12 +82,12 @@ function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewC
         .addClass("limited-width")
         :
         Horizontal(
-            Custom(img(imageCache.get(x.id) ?? artwork)).addClass("small-preview"),
+            Custom(img(imageCache.get(x._id) ?? artwork)).addClass("small-preview"),
             Vertical(
                 PlainText(x.title ?? "(no text)")
                     .setMargin("-0.4rem 0 0")
                     .setFont(2, 700),
-                PlainText(x.id + " - " + x.user)
+                PlainText(x._id + " - " + x.user)
             ),
             Spacer(),
             CenterV(
@@ -107,12 +103,7 @@ function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewC
                 Button(`Download (${x.song?.length ?? 0})`)
                     .setStyle(ButtonStyle.Inline)
                     .setColor(Color.Colored)
-                    .onPromiseClick(async () => {
-                        if ((x.song?.length ?? 0) != 0) {
-                            const { code } = await API.music(API.getToken()).id(x.id).songSownload();
-                            window.open(`${API.BASE_URL}music/${x.id}/songs-download/${code}`, '_blank');
-                        }
-                    })
+                    .onPromiseClick(() => DownloadDrop(x))
                     .addClass("tag")
                     .setMargin("0 0.5rem")
             ).setJustify("center"),
@@ -134,7 +125,7 @@ function ReviewActions(x: Drop, imageCache: Map<string, string>, view: ViewClass
                 .onPromiseClick(async () => {
                     const form = new FormData();
                     form.set("type", "PRIVATE");
-                    await API.music(API.getToken()).id(x.id).put(form);
+                    await API.music(API.getToken()).id(x._id).put(form);
                     await loadSongs(view, imageCache);
                 })
         ),
@@ -146,7 +137,7 @@ function ReviewActions(x: Drop, imageCache: Map<string, string>, view: ViewClass
                 .onPromiseClick(async () => {
                     const form = new FormData();
                     form.set("type", "PUBLISHED");
-                    await API.music(API.getToken()).id(x.id).put(form);
+                    await API.music(API.getToken()).id(x._id).put(form);
                     await loadSongs(view, imageCache);
                 })
         )
