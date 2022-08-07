@@ -113,7 +113,7 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
 
 function DropEntry(x: Drop, matches: boolean): Component {
     return Horizontal(
-        Custom(img(imageCache.get(x.id) ?? artwork)),
+        Custom(img(imageCache.get(x._id) ?? artwork)),
         CenterV(
             PlainText(x.title ?? "(no name)")
                 .setMargin("-0.4rem 0 0")
@@ -134,6 +134,6 @@ function DropEntry(x: Drop, matches: boolean): Component {
             : null
     )
         .setGap("40px")
-        .addClass("list-entry", x.type == "UNSUBMITTED" ? "action" : "non-action", "limited-width")
-        .onClick(() => x.type === "UNSUBMITTED" ? location.href = "/music/new-drop?id=" + x.id : {});
+        .addClass("list-entry", "action", "limited-width")
+        .onClick(() => x.type === "UNSUBMITTED" ? location.href = "/music/new-drop?id=" + x._id : location.href = "/music/edit?id=" + x._id);
 }

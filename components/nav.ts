@@ -45,7 +45,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLog
         Nav(
             Horizontal(
                 CenterV(
-                    Custom(img(type == "Music" ? bbnMusicLogo : bbnLogo)).onClick(() => { location.href = "/"; }),
+                    Custom(img(type == "Music" ? bbnMusicLogo : bbnLogo)).onClick(() => { location.href = type == "Music" ? "/music" : "/"; }),
                 ),
                 Spacer(),
                 [
