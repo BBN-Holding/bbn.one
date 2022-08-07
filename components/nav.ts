@@ -2,11 +2,11 @@ import bbnLogo from '../assets/img/bbnBig.svg';
 import bbnMusicLogo from '../assets/img/bbnMusicBig.svg';
 
 import '../assets/css/components/nav.css';
-import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, PlainText, Spacer, Vertical } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, MaterialIcons, PlainText, Spacer, Vertical, View } from "webgen/mod.ts";
 import { IsLoggedIn, stringToColour } from "../pages/manager/helper.ts";
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 import { API } from "../pages/manager/RESTSpec.ts";
-
+new MaterialIcons();
 const Nav = (component: Component) => {
     const nav = createElement("nav");
     nav.append(component.draw());
@@ -28,6 +28,31 @@ function ProfilePicture(component: Component, name: string) {
     ele.style.backgroundColor = stringToColour(name);
     return Custom(ele).addClass("profile-picture");
 }
+const dropOver = Box(
+    Vertical(
+        PlainText("SWITCH TO").addClass("title"),
+        Horizontal(
+            Custom(img(bbnLogo)),
+            Spacer(),
+            Icon("arrow_forward_ios")
+        ).addClass("small-entry")
+            .onClick(() => location.href = "/"),
+        Horizontal(
+            Custom(img(bbnMusicLogo)),
+            Spacer(),
+            Icon("arrow_forward_ios")
+        ).addClass("small-entry")
+            .onClick(() => location.href = "/music"),
+        Horizontal(
+            PlainText("Go to Settings"),
+            Spacer(),
+            Icon("arrow_forward_ios")
+        ).addClass("small-entry", "settings")
+            .onClick(() => location.href = "/settings")
+    )
+).addClass("drop-over").setId("drop-over").draw();
+dropOver.onblur = () => dropOver.classList.remove("open");
+dropOver.tabIndex = 0;
 export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLoggedIn()) {
     return [
         user && user.email_verified != true ? Nav(Horizontal(
@@ -44,9 +69,21 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLog
         )).addClass("email-banner", type.toLowerCase()) : Box(),
         Nav(
             Horizontal(
+                Custom(dropOver),
                 Vertical(
-                    Custom(img(type == "Music" ? bbnMusicLogo : bbnLogo)).onClick(() => { location.href = type == "Music" ? "/music" : "/"; }),
-                ).addClass("justify-content-center"),
+                    Icon("apps"),
+                    Vertical(
+                        Custom(img(type == "Music" ? bbnMusicLogo : bbnLogo)),
+                    ),
+                )
+                    .setGap(".5rem")
+                    .setDirection("row")
+                    .setAlign("center")
+                    .addClass("justify-content-center", "clickable")
+                    .onClick(() => {
+                        dropOver.classList.add("open");
+                        dropOver.focus();
+                    }),
                 Spacer(),
                 [
                     [ "Home", "/#" ],
@@ -72,7 +109,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLog
                             .addClass("contact")
                         : null)
                 )
-                    ?.onClick(() => { location.href = "/signin"; }) ?? null
+                    ?.onClick(() => { location.href = "/settings"; }) ?? null
             )
                 .setMargin("0.5rem auto")
                 .setGap("0.4rem"),

@@ -22,7 +22,6 @@ RegisterAuthRefresh();
 const imageCache = new Map<string, string>();
 
 const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(
-    ...DynaNavigation("Music"),
     ActionBar(`Hi ${GetCachedProfileData().name}! 👋`, [
         {
             title: `Published ${getListCount([ "PUBLISHED" ], state)}`,
@@ -86,8 +85,9 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
 ))
     .change(({ update }) => {
         update({ type: "PUBLISHED" });
-    })
-    .appendOn(document.body);
+    });
+
+View(() => Vertical(...DynaNavigation("Music"), view.asComponent())).appendOn(document.body);
 renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(() => loadSongs(view, imageCache));
 
 function getListCount(list: Drop[ "type" ][], state: Partial<{ list: Drop[]; type: Drop[ "type" ]; aboutMe: ProfileData; }>) {

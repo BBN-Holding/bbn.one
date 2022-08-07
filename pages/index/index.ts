@@ -1,4 +1,4 @@
-import { Card, Custom, Grid, Horizontal, img, modernCard, PlainText, Spacer, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Card, Custom, Grid, Horizontal, img, MaterialIcons, modernCard, PlainText, Spacer, Vertical, View, WebGen } from "webgen/mod.ts";
 import { renderOpener } from "./components/opener.ts";
 import { renderTeam } from "../../components/team.ts";
 import '../../assets/css/main.css';
@@ -8,13 +8,13 @@ import { asset } from "../../assets/img/subsidiaries/index.ts";
 import '../../assets/css/components/subsidiaries.css';
 import services from "../../data/services.json" assert { type: "json" };
 
-WebGen({ autoLoadFonts: false });
+WebGen({ autoLoadFonts: false, icon: new MaterialIcons() });
 
 View(() => Vertical(
     DynaNavigation("Home"),
     Custom(renderOpener()),
     Horizontal(
-        Custom(img(asset.bbnMusic)),
+        Custom(img(asset.bbnMusic)).onClick(() => location.href = "/music"),
         Spacer(),
         Custom(img(asset.bbnHosting)),
         Spacer(),

@@ -30,6 +30,7 @@ nav>div {
     width: 100%;
     margin: 0 auto;
     align-items: center;
+    position: relative;
 }
 
 nav img {
@@ -78,7 +79,7 @@ nav .wbutton.contact:is(:hover, :focus) {
         height: 1.3rem;
     }
 
-    nav div {
+    nav>div {
         height: 2.5rem;
         gap: 1.2rem;
         font-size: .8rem;
@@ -103,7 +104,6 @@ nav .wbutton.contact:is(:hover, :focus) {
 @media(max-width:360px) {
     nav {
         position: absolute;
-        overflow: hidden;
     }
 }
 
@@ -126,4 +126,64 @@ nav.email-banner {
 
 nav.email-banner a {
     padding: 0.1rem 0.4rem;
+}
+
+.drop-over {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #212121;
+    border-radius: 0.3rem;
+    padding: .4rem .8rem;
+    transform: scale(0.5) translate(-30%, -200%);
+    opacity: 0.1;
+    width: 100%;
+    max-width: 15rem;
+    transition: opacity 100ms ease;
+    outline: none;
+}
+
+.drop-over:focus,
+.drop-over:focus-within,
+.drop-over.open {
+    opacity: 1;
+    display: block;
+    transform: scale(1) translate(0, 0);
+}
+
+.drop-over .title {
+    font-size: 0.7rem;
+    font-weight: 900;
+    opacity: .8;
+}
+
+.drop-over img {
+    height: 1.4rem;
+}
+
+.drop-over .small-entry {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    margin: .1rem 0;
+}
+
+.drop-over .small-entry:hover {
+    opacity: 0.8;
+}
+
+.drop-over .small-entry .webgen-icon {
+    font-size: 0.9rem;
+    margin-left: 2rem;
+
+}
+
+.drop-over .small-entry.settings {
+    margin-top: .8rem;
+    font-size: 0.9rem;
+}
+
+.clickable {
+    cursor: pointer;
 }
