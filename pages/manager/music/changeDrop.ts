@@ -1,11 +1,14 @@
-import { Button, ButtonStyle, Color, Custom, DropDownInput, Grid, Input, Page, PlainText, Spacer, Wizard } from "webgen/mod.ts";
-import { EditArtists, syncFromData } from "../helper.ts";
+import { Box, Button, ButtonStyle, Color, Custom, DropDownInput, Grid, IconButton, img, Input, Page, PlainText, Spacer, View, Wizard } from "webgen/mod.ts";
+import { allowedImageFormats, EditArtists, syncFromData } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage, Validate } from "../misc/common.ts";
 import { API, Drop } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
+import { uploadFilesDialog } from "../upload.ts";
+import { StreamingUploadHandler } from "../upload.ts";
+import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 
 export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({
@@ -27,8 +30,51 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                 .addClass("error-message", "limited-width")
                 .setId("error-message-area"),
 
-            // TODO: Upload profile picture
             Grid(
+                // TODO: Refactor this into ImageInput()
+                Grid(
+                    View<{ path: string; }>(({ state, update }) => Box(
+                        Custom(img(state.path)).addClass("upload-image"),
+                        IconButton("edit")
+                    )
+                        .addClass("image-edit")
+                        .onClick(() => uploadFilesDialog(([ file ]) => {
+                            update({ path: URL.createObjectURL(file) });
+                            setTimeout(() => {
+                                const image = document.querySelector(".upload-image")!;
+                                StreamingUploadHandler(`music/${drop._id}/upload`, {
+                                    uploadDone: () => {
+                                        const animation = image.animate([
+                                            { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
+                                            { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
+                                        ], { duration: 100, fill: 'forwards' });
+                                        animation.currentTime = 0;
+                                        animation.pause();
+                                    },
+                                    prepare: () => {
+                                        data.set("loading", "-");
+                                    },
+                                    backendResponse: (id) => {
+                                        data.set("artwork", id);
+                                        data.delete("loading");
+                                        update({});
+                                    },
+                                    credentials: () => API.getToken(),
+                                    onUploadTick: async (percentage) => {
+                                        const animation = image.animate([
+                                            { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
+                                            { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
+                                        ], { duration: 100, fill: 'forwards' });
+                                        animation.currentTime = percentage;
+                                        animation.pause();
+                                        await delay(5);
+                                    }
+                                }, file);
+                            });
+                        }, allowedImageFormats.join(","))))
+                        .change(({ update }) => update({ path: drop[ "artwork-url" ] }))
+                        .asComponent(),
+                ).setDynamicColumns(2, "12rem"),
                 [
                     { width: 2 },
                     Input({

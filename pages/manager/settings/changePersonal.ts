@@ -6,6 +6,7 @@ import { delay } from "https://deno.land/std@0.149.0/async/mod.ts";
 import { returnFunction, ViewState } from "./helper.ts";
 import { StreamingUploadHandler, uploadFilesDialog } from "../upload.ts";
 import { Validate } from "../misc/common.ts";
+
 export function ChangePersonal(update: (data: Partial<ViewState>) => void): WizardComponent {
     return Wizard({
         cancelAction: () => { },
@@ -48,12 +49,12 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                                         animation.pause();
                                     },
                                     prepare: () => {
-
+                                        data.set("loading", "-");
                                     },
                                     backendResponse: async () => {
                                         await forceRefreshToken();
                                         update({ path: GetCachedProfileData().picture });
-                                        console.log("done");
+                                        data.delete("loading");
                                     },
                                     credentials: () => API.getToken(),
                                     onUploadTick: async (percentage) => {
