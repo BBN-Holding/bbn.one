@@ -178,6 +178,7 @@ cardlist {
     height: unset;
     border-radius: 10px;
     margin: 0 auto;
+    box-sizing: border-box;
     transition: 250ms ease background-color;
 }
 
@@ -210,7 +211,7 @@ cardlist {
 }
 
 .meta-data {
-    height: 54px;
+    min-height: 54px;
 }
 
 .subtitle {
