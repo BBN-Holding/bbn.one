@@ -2,7 +2,7 @@ import bbnLogo from '../assets/img/bbnBig.svg';
 import bbnMusicLogo from '../assets/img/bbnMusicBig.svg';
 
 import '../assets/css/components/nav.css';
-import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, img, PlainText, Spacer } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, PlainText, Spacer, Vertical } from "webgen/mod.ts";
 import { IsLoggedIn, stringToColour } from "../pages/manager/helper.ts";
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 import { API } from "../pages/manager/RESTSpec.ts";
@@ -44,9 +44,9 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLog
         )).addClass("email-banner", type.toLowerCase()) : Box(),
         Nav(
             Horizontal(
-                CenterV(
+                Vertical(
                     Custom(img(type == "Music" ? bbnMusicLogo : bbnLogo)).onClick(() => { location.href = type == "Music" ? "/music" : "/"; }),
-                ),
+                ).addClass("justify-content-center"),
                 Spacer(),
                 [
                     [ "Home", "/#" ],
