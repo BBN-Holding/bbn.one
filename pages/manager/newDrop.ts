@@ -96,12 +96,12 @@ const wizard = (restore?: Drop) => Wizard({
         Horizontal(
             Spacer(),
             Vertical(
-                Center(PlainText("First we need an UPC/EAN number:").addClass("title")),
+                Center(PlainText("Do you have an UPC/EAN number?").addClass("title")),
                 Input({
                     ...syncFromData(formData, "upc"),
                     placeholder: "UPC/EAN"
                 }).setWidth(inputWidth),
-                Button("I don't have one")
+                Button("No, I don't have one.")
                     .setJustify("center")
                     .setStyle(ButtonStyle.Secondary)
                     .onClick(Next)
