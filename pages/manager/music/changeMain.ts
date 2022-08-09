@@ -1,4 +1,5 @@
 import { Box, Custom, Grid, Horizontal, img, Page, PlainText, Spacer, Vertical, Wizard } from "webgen/mod.ts";
+import { GetCachedProfileData } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage } from "../misc/common.ts";
 import { DownloadDrop } from "../misc/drop.ts";
@@ -71,6 +72,6 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
 const Permissions = {
     canTakedown: (drop: Drop) => drop.type == "PUBLISHED",
     canSubmit: (drop: Drop) => (<Drop[ "type" ][]>[ "UNSUBMITTED", "PRIVATE" ]).includes(drop.type),
-    canEdit: (drop: Drop) => drop.type == "PRIVATE" || drop.type == "UNSUBMITTED",
+    canEdit: (drop: Drop) => (drop.type == "PRIVATE" || drop.type == "UNSUBMITTED") || GetCachedProfileData().groups.find(x => x.permissions.includes("songs-review")),
     canCancelReview: (drop: Drop) => drop.type == "UNDER_REVIEW"
 };
