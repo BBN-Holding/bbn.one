@@ -3,7 +3,6 @@ import { loadSongs, MediaQuery } from "../helper.ts";
 import { API, Drop } from "../RESTSpec.ts";
 import artwork from "../../../assets/img/template-artwork.png";
 import { ViewState } from "../types.ts";
-import { DownloadDrop } from "../misc/drop.ts";
 
 export function ReviewPanel(imageCache: Map<string, string>, view: () => ViewClass<ViewState>, state: Partial<ViewState>): Component {
     return Vertical(
@@ -58,22 +57,12 @@ function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewC
         Horizontal(
             Spacer(),
             CenterV(
-                Button("Meta")
+                Button("Edit")
                     .setStyle(ButtonStyle.Inline)
                     .setColor(Color.Colored)
                     .addClass("tag")
-                    .onClick(() => {
-                        alert(JSON.stringify(x));
-                    })
+                    .onClick(() => location.href = "/music/edit?id=" + x._id)
             ),
-            CenterV(
-                Button(`Download (${x.song?.length ?? 0})`)
-                    .setStyle(ButtonStyle.Inline)
-                    .setColor(Color.Colored)
-                    .onPromiseClick(() => DownloadDrop(x))
-                    .addClass("tag")
-                    .setMargin("0 0.5rem")
-            ).setJustify("center"),
             ReviewActions(x, imageCache, view())
         )
     ).setPadding("0.5rem")
@@ -91,22 +80,12 @@ function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewC
             ),
             Spacer(),
             CenterV(
-                Button("Meta")
+                Button("Edit")
                     .setStyle(ButtonStyle.Inline)
                     .setColor(Color.Colored)
                     .addClass("tag")
-                    .onClick(() => {
-                        alert(JSON.stringify(x));
-                    })
+                    .onClick(() => location.href = "/music/edit?id=" + x._id)
             ),
-            CenterV(
-                Button(`Download (${x.song?.length ?? 0})`)
-                    .setStyle(ButtonStyle.Inline)
-                    .setColor(Color.Colored)
-                    .onPromiseClick(() => DownloadDrop(x))
-                    .addClass("tag")
-                    .setMargin("0 0.5rem")
-            ).setJustify("center"),
             ReviewActions(x, imageCache, view())
         )
             .setPadding("0.5rem")
