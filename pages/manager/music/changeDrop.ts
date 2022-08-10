@@ -133,7 +133,9 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
             primaryGenre: drop.primaryGenre,
             compositionCopyright: drop.compositionCopyright,
             soundRecordingCopyright: drop.soundRecordingCopyright
-        })
+        }).addValidator((v) => v.object({
+            loading: v.void()
+        }))
     ]
     );
 }
