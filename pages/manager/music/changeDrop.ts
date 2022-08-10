@@ -39,11 +39,12 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                     )
                         .addClass("image-edit")
                         .onClick(() => uploadFilesDialog(([ file ]) => {
+                            data.set("loading", "-");
                             update({ path: URL.createObjectURL(file) });
                             setTimeout(() => {
                                 const image = document.querySelector(".upload-image")!;
                                 StreamingUploadHandler(`music/${drop._id}/upload`, {
-                                    uploadDone: () => {
+                                    prepare: () => {
                                         const animation = image.animate([
                                             { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
                                             { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
@@ -51,15 +52,12 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                                         animation.currentTime = 0;
                                         animation.pause();
                                     },
-                                    prepare: () => {
-                                        data.set("loading", "-");
-                                    },
+                                    credentials: () => API.getToken(),
                                     backendResponse: (id) => {
                                         data.set("artwork", id);
                                         data.delete("loading");
                                         update({});
                                     },
-                                    credentials: () => API.getToken(),
                                     onUploadTick: async (percentage) => {
                                         const animation = image.animate([
                                             { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
@@ -68,7 +66,8 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                                         animation.currentTime = percentage;
                                         animation.pause();
                                         await delay(5);
-                                    }
+                                    },
+                                    uploadDone: () => { }
                                 }, file);
                             });
                         }, allowedImageFormats.join(","))))
