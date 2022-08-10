@@ -23,6 +23,7 @@ export function renderFooter() {
         [ "Service Status", "https://status.bbn.one" ],
         [ "Privacy Policy", "/p/privacy.html" ],
         [ "Terms of Use", "/p/terms.html" ],
+        [ "Distribution Agreement", "/p/distribution.html" ],
         [ "Imprint", "/p/imprint.html" ]
     ];
     colTwo.append(PlainText("Useful Links").draw(), ...list.map(entry => link(entry[ 0 ], entry[ 1 ])));
