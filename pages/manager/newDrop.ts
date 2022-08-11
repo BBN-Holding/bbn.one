@@ -1,9 +1,10 @@
 import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
+import secondary from "../../data/secondary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV } from "webgen/mod.ts";
 import { TableData } from "./types.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, syncFromData, Table, UploadTable } from "./helper.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, MediaQuery, ProfileData, Redirect, RegisterAuthRefresh, syncFromData, Table, UploadTable, getSecondary } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
 import { API, Drop } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
@@ -89,9 +90,13 @@ const wizard = (restore?: Drop) => Wizard({
 }, ({ Next, PageData }) => [
     Page((formData) => [
         Spacer(),
-        PlainText("Lets make your Drop hit!")
-            .setWidth("max(1rem, 25rem)")
-            .setFont(3.448125, 800),
+        MediaQuery(
+            "(max-width: 500px)",
+            (small) =>
+                PlainText("Lets make your Drop hit!")
+                    .setWidth(small ? "max(1rem, 15rem)" : "max(1rem, 25rem)")
+                    .setFont(small ? 2 : 3.448125, 800),
+        ),
         Spacer(),
         Horizontal(
             Spacer(),
@@ -100,9 +105,12 @@ const wizard = (restore?: Drop) => Wizard({
                 Input({
                     ...syncFromData(formData, "upc"),
                     placeholder: "UPC/EAN"
-                }).setWidth(inputWidth),
+                })
+                    .setWidth(inputWidth)
+                    .addClass("max-width"),
                 Button("No, I don't have one.")
                     .setJustify("center")
+                    .addClass("max-width")
                     .setStyle(ButtonStyle.Secondary)
                     .onClick(Next)
             ).setGap(gapSize),
@@ -111,13 +119,13 @@ const wizard = (restore?: Drop) => Wizard({
     ]).setDefaultValues({ upc: restore?.upc }),
     Page((formData) => [
         Spacer(),
-        Center(
-            Vertical(
+        MediaQuery("(max-width: 450px)", (small) =>
+            Grid(
                 Center(PlainText("Enter your Album details.").addClass("title")),
                 Input({
                     ...syncFromData(formData, "title"),
                     placeholder: "Title"
-                }).setWidth(inputWidth),
+                }),
                 Grid(
                     (() => {
                         // TODO: Remake this hacky input to DateInput()
@@ -133,28 +141,37 @@ const wizard = (restore?: Drop) => Wizard({
                     })(),
                     DropDownInput("Language", language)
                         .syncFormData(formData, "language")
-                        .addClass("custom")
+                        .addClass("justify-content-space")
                 )
-                    .setEvenColumns(2)
-                    .setGap(gapSize)
-                    .setWidth(inputWidth),
+                    .setEvenColumns(small ? 1 : 2)
+                    .setGap(gapSize),
                 // TODO: Make this a nicer component
                 Button("Artists")
                     .onClick(() => {
                         EditArtists(formData.get("artists") ? JSON.parse(formData.get("artists")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => formData.set("artists", JSON.stringify(x)));
                     }),
                 Center(PlainText("Set your target Audience").addClass("title")),
-                Grid(
-                    DropDownInput("Primary Genre", primary)
-                        .syncFormData(formData, "primaryGenre")
-                        .addClass("custom"),
-                    DropDownInput("Secondary Genre", primary)
-                        .setStyle(ButtonStyle.Secondary)
-                        .setColor(Color.Disabled),
-                )
-                    .setGap(gapSize)
-                    .setEvenColumns(2)
-            ).setGap(gapSize)
+                View(({ update }) =>
+                    Grid(
+                        DropDownInput("Primary Genre", primary)
+                            .syncFormData(formData, "primaryGenre")
+                            .addClass("justify-content-space")
+                            .onChange(() => {
+                                formData.delete("secondaryGenre");
+                                update({});
+                            }),
+                        DropDownInput("Secondary Genre", getSecondary(secondary, formData) ?? [])
+                            .syncFormData(formData, "secondaryGenre")
+                            .setColor(getSecondary(secondary, formData) ? Color.Grayscaled : Color.Disabled)
+                            .addClass("justify-content-space"),
+                    )
+                        .setGap(gapSize)
+                        .setEvenColumns(small ? 1 : 2)
+                ).asComponent(),
+            )
+                .setEvenColumns(1)
+                .addClass("grid-area")
+                .setGap(gapSize)
         ),
     ]).setDefaultValues({
         title: restore?.title,
@@ -167,26 +184,25 @@ const wizard = (restore?: Drop) => Wizard({
         artists: e.string().or(e.array(e.string())),
         release: e.string(),
         language: e.string(),
-        primaryGenre: e.string()
+        primaryGenre: e.string(),
+        secondaryGenre: e.string().optional()
     })),
     Page((formData) => [
         Spacer(),
-        Center(
-            Vertical(
-                Center(PlainText("Display the Copyright").addClass("title")),
-                Input({
-                    placeholder: "Composition Copyright",
-                    ...syncFromData(formData, "compositionCopyright")
-                })
-                    .setWidth(inputWidth),
-                Input({
-                    placeholder: "Sound Recording Copyright",
-                    ...syncFromData(formData, "soundRecordingCopyright")
-                })
-                    .setWidth(inputWidth),
-            )
-                .setGap(gapSize)
-        ),
+        Grid(
+            Center(PlainText("Display the Copyright").addClass("title")),
+            Input({
+                placeholder: "Composition Copyright",
+                ...syncFromData(formData, "compositionCopyright")
+            }),
+            Input({
+                placeholder: "Sound Recording Copyright",
+                ...syncFromData(formData, "soundRecordingCopyright")
+            }),
+        )
+            .setEvenColumns(1)
+            .addClass("grid-area")
+            .setGap(gapSize)
     ]).setDefaultValues({
         compositionCopyright: restore?.compositionCopyright,
         soundRecordingCopyright: restore?.soundRecordingCopyright
@@ -238,7 +254,7 @@ const wizard = (restore?: Drop) => Wizard({
                     ),
                     formData.getAll("song").filter(x => x).length ?
                         Table<TableData>(
-                            TableDef(formData),
+                            TableDef(formData, update),
                             FormToRecord(formData, "song", [])
                                 .map(x => ({ Id: x.id }))
                         )
@@ -247,7 +263,7 @@ const wizard = (restore?: Drop) => Wizard({
                                 update({});
                             })
                             .addClass("inverted-class", "light-mode")
-                        : UploadTable(TableDef(formData), (list) => addSongs(dropId, PageData, list, formData, update))
+                        : UploadTable(TableDef(formData, update), (list) => addSongs(dropId, PageData, list, formData, update))
                             .addClass("inverted-class", "light-mode")
 
                 ).setGap(gapSize),
@@ -289,6 +305,7 @@ const wizard = (restore?: Drop) => Wizard({
         comments: restore?.comments
     })
 ]);
+
 function uploadArtwork(formData: FormData, file: File, update: (data: Partial<unknown>) => void) {
     formData.set("artwork-url", URL.createObjectURL(file));
     formData.set("loading", "-");

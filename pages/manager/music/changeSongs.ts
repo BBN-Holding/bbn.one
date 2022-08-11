@@ -32,7 +32,7 @@ export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) =
             View(({ update }) => Vertical(
                 data.getAll("song").filter(x => x).length ?
                     Table<TableData>(
-                        TableDef(data),
+                        TableDef(data, update),
                         FormToRecord(data, "song", [])
                             .map(x => ({ Id: x.id }))
                     )
@@ -41,7 +41,7 @@ export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) =
                             update({});
                         })
                         .addClass("limited-width", "light-mode")
-                    : UploadTable(TableDef(data), (list) => addSongsByDrop(drop, list, data, update))
+                    : UploadTable(TableDef(data, update), (list) => addSongsByDrop(drop, list, data, update))
                         .addClass("limited-width", "light-mode"),
                 Horizontal(
                     Spacer(),
@@ -54,6 +54,7 @@ export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) =
             title: x.Title,
             country: x.Country,
             primaryGenre: x.PrimaryGenre,
+            secondaryGenre: x.SecondaryGenre,
             year: x.Year?.toString(),
             artists: JSON.stringify(x.Artists),
             file: x.File,

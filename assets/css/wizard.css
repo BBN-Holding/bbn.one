@@ -85,3 +85,23 @@ span.title {
 .wizard-box>article {
     display: contents;
 }
+
+.max-width {
+    max-width: calc(100vw - 2rem);
+}
+
+.grid-area {
+    max-width: 27.5rem;
+    margin: 0 auto;
+    width: 100%;
+}
+
+@media (max-width: 500px) {
+    span.title {
+        font-size: 1rem;
+    }
+
+    .fullscreen .wwizard .footer .wbutton {
+        width: unset;
+    }
+}

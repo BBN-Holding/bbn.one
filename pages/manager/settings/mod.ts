@@ -1,5 +1,5 @@
 import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
-import { Redirect, RegisterAuthRefresh } from "../helper.ts";
+import { GetCachedProfileData, Redirect, RegisterAuthRefresh } from "../helper.ts";
 import '../../../assets/css/main.css';
 import { changeThemeColor } from "../misc/common.ts";
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -17,7 +17,7 @@ WebGen({
 });
 Redirect();
 RegisterAuthRefresh();
-
+console.log(GetCachedProfileData());
 View<ViewState>(({ state, update }) => Vertical(
     ...DynaNavigation("Settings"),
 

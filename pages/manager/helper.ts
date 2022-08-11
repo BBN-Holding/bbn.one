@@ -17,6 +17,13 @@ export type ProfileData = {
         slug: string,
         permissions: string[];
     }[];
+    logins?: {
+        _id: string;
+        first_login: Date;
+        last_login: Date;
+        ip: string;
+        agent: string;
+    }[];
     picture?: string;
     exp?: number;
 };
@@ -24,9 +31,14 @@ export function IsLoggedIn(): ProfileData | null {
     return localStorage[ "access-token" ] ? JSON.parse(atob(localStorage[ "access-token" ]?.split(".")[ 1 ])) : null;
 }
 
+export function getSecondary(secondary: Record<string, string[]>, formData: FormData, key = "primaryGenre"): string[] | null {
+    //@ts-ignore Yes
+    return secondary[ formData.get(key)?.toString() ?? "" ];
+}
 export function MediaQuery(query: string, view: (matches: boolean) => Component) {
     const holder = createElement("div");
     holder.innerHTML = "";
+    holder.style.display = "contents";
     holder.append(view(matchMedia(query).matches).draw());
     matchMedia(query).addEventListener("change", ({ matches }) => {
         holder.innerHTML = "";
@@ -45,27 +57,28 @@ export async function renewAccessTokenIfNeeded(exp?: number) {
     if (!exp) return Redirect();
     // We should renew the token 30s before it expires
     if (isExpired(exp)) {
-        try {
-            await forceRefreshToken();
-        } catch (_) {
-            localStorage.clear();
-            Redirect();
-        }
+        await forceRefreshToken();
     }
 
 }
 export async function forceRefreshToken() {
-    const { accessToken } = await API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] });
-    localStorage[ "access-token" ] = accessToken;
-    console.log("Refreshed token");
+    try {
+        const { accessToken } = await API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] });
+        localStorage[ "access-token" ] = accessToken;
+        console.log("Refreshed token");
+    } catch (_) {
+        localStorage.clear();
+        Redirect();
+    }
 }
+
 export function isExpired(exp: number) {
     return exp * 1000 < new Date().getTime() + (0.5 * 60 * 1000);
 }
 
 export function RegisterAuthRefresh() {
     const { exp } = GetCachedProfileData();
-    if (!exp) {
+    if (exp && isExpired(exp)) {
         localStorage.clear();
         Redirect();
         return;

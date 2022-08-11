@@ -72,7 +72,7 @@
     font-size: 1rem;
 }
 
-:is(.wtable .wbutton.low-level, .wbutton.low-level.custom) ul {
+:is(.wtable .wbutton.low-level, .wbutton.low-level) ul {
     top: 1.7rem;
     bottom: unset;
     max-height: 15rem;

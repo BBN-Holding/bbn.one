@@ -272,3 +272,13 @@ cardlist {
 .justify-content-center {
     justify-content: center;
 }
+
+
+.wbutton ul {
+    max-height: 14rem;
+    overflow: auto;
+}
+
+.contents {
+    display: contents;
+}

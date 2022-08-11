@@ -42,6 +42,8 @@ export function addSongsByDrop(drop: Drop, list: File[], formData: FormData, upd
         formData.set(`song-${id}-artists`, JSON.stringify(drop.artists ?? "[]"));
         if (drop.primaryGenre)
             formData.set(`song-${id}-primaryGenre`, drop.primaryGenre);
+        if (drop.secondaryGenre)
+            formData.set(`song-${id}-secondaryGenre`, drop.secondaryGenre);
         if (drop.language)
             formData.set(`song-${id}-country`, drop.language);
     });
@@ -85,6 +87,7 @@ export function addSongs(dropId: string, meta: () => FormData[], list: File[], f
         const list = meta();
         applyFromPage(list, formData, 1, "artists", `song-${id}-artists`);
         applyFromPage(list, formData, 1, "primaryGenre", `song-${id}-primaryGenre`);
+        applyFromPage(list, formData, 1, "secondaryGenre", `song-${id}-secondaryGenre`);
         applyFromPage(list, formData, 1, "language", `song-${id}-country`);
     });
     update({});

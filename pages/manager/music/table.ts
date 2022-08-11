@@ -1,8 +1,9 @@
 import { Box, ButtonStyle, Checkbox, Color, Component, createElement, Custom, DropDownInput, IconButton, img, InputForm, PlainText, View } from "webgen/mod.ts";
-import { EditArtists, getYearList, stringToColour } from "../helper.ts";
+import { EditArtists, getYearList, stringToColour, getSecondary } from "../helper.ts";
 import { ColumEntry } from "../types.ts";
 
 import primary from "../../../data/primary.json" assert { type: "json"};
+import secondary from "../../../data/secondary.json" assert { type: "json"};
 import language from "../../../data/language.json" assert { type: "json"};
 import { accessibilityDisableTabOnDisabled } from "https://raw.githubusercontent.com/lucsoft/WebGen/1144da3a8dbcfb22253fb5c4bc8b3f92c4f208bf/src/lib/Accessibility.ts";
 function ProfilePicture(component: Component, name: string) {
@@ -47,7 +48,7 @@ export class InlineTextInput extends InputForm<string> {
     }
 
 }
-export const TableDef = (formData: FormData) => <ColumEntry<{ Id: string; }>[]>[
+export const TableDef = (formData: FormData, update: (data: {}) => void) => <ColumEntry<{ Id: string; }>[]>[
     [ "Title", "auto", ({ Id }) =>
         formData.has(`song-${Id}-progress`) ? Box(
             Custom((() => {
@@ -90,13 +91,17 @@ export const TableDef = (formData: FormData) => <ColumEntry<{ Id: string; }>[]>[
     [ "Primary Genre", "max-content", ({ Id }) =>
         DropDownInput("Primary Genre", primary)
             .syncFormData(formData, `song-${Id}-primaryGenre`)
+            .onChange(() => {
+                formData.delete(`song-${Id}-secondaryGenre`);
+                update({});
+            })
             .setStyle(ButtonStyle.Inline)
             .addClass("low-level")
     ],
-    [ "Secondary Genre", "max-content", () =>
-        DropDownInput("Secondary Genre", primary)
+    [ "Secondary Genre", "max-content", ({ Id }) =>
+        DropDownInput("Secondary Genre", getSecondary(secondary, formData, `song-${Id}-primaryGenre`) ?? [])
+            .syncFormData(formData, `song-${Id}-secondaryGenre`)
             .setStyle(ButtonStyle.Inline)
-            .setColor(Color.Disabled)
             .addClass("low-level")
     ],
     [ "Explicit", "max-content", ({ Id }) =>

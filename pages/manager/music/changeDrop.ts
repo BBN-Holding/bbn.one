@@ -1,11 +1,13 @@
-import { Box, Button, ButtonStyle, Color, Custom, DropDownInput, Grid, IconButton, img, Input, Page, PlainText, Spacer, View, Wizard } from "webgen/mod.ts";
-import { allowedImageFormats, EditArtists, syncFromData } from "../helper.ts";
+import { Box, Button, Custom, DropDownInput, Grid, Horizontal, IconButton, img, Input, Page, PlainText, Spacer, View, Wizard } from "webgen/mod.ts";
+import { allowedImageFormats, EditArtists, syncFromData, getSecondary } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage, Validate } from "../misc/common.ts";
 import { API, Drop } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
+import secondary from "../../../data/secondary.json" assert { type: "json" };
+
 import { uploadFilesDialog } from "../upload.ts";
 import { StreamingUploadHandler } from "../upload.ts";
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
@@ -105,12 +107,26 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                         }),
                 ],
                 [ { width: 2, heigth: 2 }, Spacer() ],
-                DropDownInput("Primary Genre", primary)
-                    .syncFormData(data, "primaryGenre")
-                    .addClass("justify-content-space"),
-                DropDownInput("Secondary Genre", primary)
-                    .setStyle(ButtonStyle.Secondary)
-                    .setColor(Color.Disabled),
+                [
+                    { width: 2 },
+                    View(({ update }) =>
+                        Grid(
+                            DropDownInput("Primary Genre", primary)
+                                .syncFormData(data, "primaryGenre")
+                                .addClass("justify-content-space")
+                                .onChange(() => {
+                                    data.delete("secondaryGenre");
+                                    update({});
+                                }),
+                            DropDownInput("Secondary Genre", getSecondary(secondary, data) ?? [])
+                                .syncFormData(data, "secondaryGenre")
+                                .addClass("justify-content-space"),
+                        )
+                            .setEvenColumns(2, "minmax(2rem, 20rem)")
+                            .setGap("15px")
+                    )
+                        .asComponent()
+                ],
                 Input({
                     placeholder: "Composition Copyright",
                     ...syncFromData(data, "compositionCopyright")
@@ -130,6 +146,7 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
             language: drop.language,
             artists: JSON.stringify(drop.artists),
             primaryGenre: drop.primaryGenre,
+            secondaryGenre: drop.secondaryGenre,
             compositionCopyright: drop.compositionCopyright,
             soundRecordingCopyright: drop.soundRecordingCopyright
         }).addValidator((v) => v.object({
