@@ -49,7 +49,7 @@ export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) =
                         .onClick(() => uploadFilesDialog((list) => addSongsByDrop(drop, list, data, update), allowedAudioFormats.join(",")))
                 ).addClass("limited-width").setMargin("1rem auto 0")
             )).asComponent()
-        ]).setDefaultValues(RecordToForm(new FormData(), "song", drop.song!.map(x => ({
+        ]).setDefaultValues(RecordToForm(new FormData(), "song", drop.song?.map(x => ({
             id: x.Id,
             title: x.Title,
             country: x.Country,
@@ -58,7 +58,7 @@ export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) =
             artists: JSON.stringify(x.Artists),
             file: x.File,
             explicit: x.Explicit ? "true" : "false"
-        })))).addValidator((v) => v.object({
+        })) ?? [])).addValidator((v) => v.object({
             loading: v.void(),
             song: v.string().or(v.array(v.string()))
         }))
