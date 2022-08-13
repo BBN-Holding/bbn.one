@@ -39,25 +39,25 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
                 Entry("Export", "Download your complete Drop with every Song", () => DownloadDrop(data)),
 
                 !Permissions.canCancelReview(data) ? null :
-                    Entry("Cancel Review", "Need to change Something? Cancel it now", () => {
+                    Entry("Cancel Review", "Need to change Something? Cancel it now", async () => {
                         const form = new FormData();
                         form.set("type", <Drop[ "type" ]>"PRIVATE");
-                        API.music(API.getToken()).id(data._id).put(form);
+                        await API.music(API.getToken()).id(data._id).put(form);
                         location.reload();
                     }),
                 !Permissions.canSubmit(data) ? null :
-                    Entry("Publish", "Submit your Drop for Approval", () => {
+                    Entry("Publish", "Submit your Drop for Approval", async () => {
                         const form = new FormData();
                         form.set("type", <Drop[ "type" ]>"UNDER_REVIEW");
-                        API.music(API.getToken()).id(data._id).put(form);
+                        await API.music(API.getToken()).id(data._id).put(form);
                         location.reload();
                     }),
 
                 !Permissions.canTakedown(data) ? null :
-                    Entry("Takedown", "Completely Takedown your Drop", () => {
+                    Entry("Takedown", "Completely Takedown your Drop", async () => {
                         const form = new FormData();
                         form.set("type", <Drop[ "type" ]>"PRIVATE");
-                        API.music(API.getToken()).id(data._id).put(form);
+                        await API.music(API.getToken()).id(data._id).put(form);
                         location.reload();
                     }).addClass("entry-alert"),
 
