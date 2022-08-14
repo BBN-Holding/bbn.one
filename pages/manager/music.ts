@@ -1,4 +1,4 @@
-import { loadingWheel, Center, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, MaterialIcons, ViewClass } from "webgen/mod.ts";
+import { loadingWheel, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, MaterialIcons, ViewClass } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import artwork from "../../assets/img/template-artwork.png";
@@ -59,28 +59,26 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
             return Custom(loadingWheel() as Element as HTMLElement);
         if (state.reviews && state.reviews.length != 0 && state.type == "UNDER_REVIEW")
             return ReviewPanel(imageCache, () => view, state);
-        if (state.list.length != 0)
-            return Vertical(
-                CategoryRender(
-                    state.list
-                        .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
-                        .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
-                        .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
-                        .filter((_, i) => i == 0),
-                    "Latest Drop"
-                ),
-                CategoryRender(
-                    state.list
-                        .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
-                        .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
-                        .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
-                        .filter((_, i) => i > 0),
-                    "History"
-                ),
-                ExplainerText(state)
-            )
-                .setGap("20px");
-        return Center(PlainText("Wow such empty")).setPadding("5rem");
+        return Vertical(
+            CategoryRender(
+                state.list
+                    .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
+                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
+                    .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
+                    .filter((_, i) => i == 0),
+                "Latest Drop"
+            ),
+            CategoryRender(
+                state.list
+                    .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
+                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
+                    .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
+                    .filter((_, i) => i > 0),
+                "History"
+            ),
+            ExplainerText(state)
+        )
+            .setGap("20px");
     })()).addClass("loading"),
 ))
     .change(({ update }) => {
