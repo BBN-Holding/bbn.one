@@ -279,10 +279,16 @@ export async function loadSongs(view: ViewClass<{
             return [];
         })(),
         ...await (async () => {
-            const list = await API.music(API.getToken()).list.get(); view.viewOptions().update({ list });
+            const list = await API.music(API.getToken()).list.get();
+            if (list.find(x => x.type == "UNSUBMITTED"))
+                view.viewOptions().update({ list, type: "UNSUBMITTED" });
+            else
+                view.viewOptions().update({ list });
+
             return list;
         })()
     ]);
+
     for (const iterator of source) {
         (async () => {
             if (!iterator.artwork?.trim()) return;
