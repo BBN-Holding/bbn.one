@@ -292,7 +292,7 @@ export async function loadSongs(view: ViewClass<{
     for (const iterator of source) {
         (async () => {
             if (!iterator.artwork?.trim()) return;
-            const image = await API.music(API.getToken()).id(iterator._id).artwork();
+            const image = await API.music(API.getToken()).id(iterator._id).artworkPreview();
             imageCache.set(iterator._id, URL.createObjectURL(image));
             view.viewOptions().update({});
         })();

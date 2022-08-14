@@ -215,6 +215,14 @@ export const API = {
                     }
                 }).then(x => x.blob());
             },
+            artworkPreview: async () => {
+                return await fetch(`${API.BASE_URL}music/${id}/artwork-preview`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": token
+                    }
+                }).then(x => x.blob());
+            },
             get: async () => {
                 return (await fetch(`${API.BASE_URL}music/${id}`, {
                     method: "GET",
