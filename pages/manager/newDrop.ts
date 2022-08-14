@@ -49,7 +49,7 @@ View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
         update({ aboutMe: GetCachedProfileData() });
         API.music(API.getToken())[ 'id' ](params.get("id")!).get().then(async restoreData => {
             if (restoreData.artwork) {
-                const blob = await API.music(API.getToken()).id(params.get("id")!).artwork();
+                const blob = await API.music(API.getToken()).id(params.get("id")!).artworkPreview();
                 update({ restoreData: { ...restoreData, [ "artwork-url" ]: URL.createObjectURL(blob) } });
             }
             else update({ restoreData });
