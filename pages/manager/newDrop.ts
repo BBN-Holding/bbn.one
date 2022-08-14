@@ -284,7 +284,7 @@ const wizard = (restore?: Drop) => Wizard({
         : {}
     ).addValidator((v) => v.object({
         loading: v.void(),
-        song: v.string().or(v.array(v.string()).min(1))
+        song: v.string().min(1).or(v.string().array().min(1))
     })),
     Page((formData) => [
         Spacer(),
