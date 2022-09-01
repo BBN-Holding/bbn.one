@@ -280,7 +280,8 @@ export async function loadSongs(view: ViewClass<{
         })(),
         ...await (async () => {
             const list = await API.music(API.getToken()).list.get();
-            if (list.find(x => x.type == "UNSUBMITTED"))
+            // Only do it when its the first time
+            if (view.viewOptions().state.list == undefined && list.find(x => x.type == "UNSUBMITTED"))
                 view.viewOptions().update({ list, type: "UNSUBMITTED" });
             else
                 view.viewOptions().update({ list });
