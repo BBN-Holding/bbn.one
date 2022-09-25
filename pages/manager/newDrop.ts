@@ -19,7 +19,7 @@ WebGen({
     icon: new MaterialIcons()
 });
 Redirect();
-RegisterAuthRefresh();
+await RegisterAuthRefresh();
 const params = new URLSearchParams(location.search);
 
 if (!params.has("id")) {

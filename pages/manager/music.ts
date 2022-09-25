@@ -18,7 +18,7 @@ WebGen({
     }
 });
 Redirect();
-RegisterAuthRefresh();
+await RegisterAuthRefresh();
 const imageCache = new Map<string, string>();
 
 const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(

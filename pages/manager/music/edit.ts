@@ -16,7 +16,7 @@ WebGen({
     }
 });
 Redirect();
-RegisterAuthRefresh();
+await RegisterAuthRefresh();
 
 const params = new URLSearchParams(location.search);
 const data = Object.fromEntries(params.entries());

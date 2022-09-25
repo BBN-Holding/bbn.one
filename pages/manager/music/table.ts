@@ -53,7 +53,7 @@ export const TableDef = (formData: FormData, update: (data: {}) => void) => <Col
         formData.has(`song-${Id}-progress`) ? Box(
             Custom((() => {
                 const element = createElement("progress");
-                element.max = 100;
+                element.max = 110;
                 element.value = parseFloat(formData.get(`song-${Id}-progress`)?.toString() ?? "");
                 return element;
             })()).addClass("low-level")

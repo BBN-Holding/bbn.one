@@ -53,8 +53,19 @@ export function MediaQuery(query: string, view: (matches: boolean) => Component)
 export function GetCachedProfileData(): ProfileData {
     return JSON.parse(atob(localStorage[ "access-token" ].split(".")[ 1 ]));
 }
+
+function checkIfRefreshTokenIsValid() {
+    const token = localStorage[ "refresh-token" ];
+    if (!token) return;
+    const tokenData = JSON.parse(atob(token.split(".")[ 1 ]));
+    if (isExpired(tokenData.exp)) {
+        localStorage.clear();
+        Redirect();
+        return;
+    }
+}
 export async function renewAccessTokenIfNeeded(exp?: number) {
-    if (!exp) return Redirect();
+    if (!exp) return;
     // We should renew the token 30s before it expires
     if (isExpired(exp)) {
         await forceRefreshToken();
@@ -67,8 +78,8 @@ export async function forceRefreshToken() {
         localStorage[ "access-token" ] = accessToken;
         console.log("Refreshed token");
     } catch (_) {
-        localStorage.clear();
-        Redirect();
+        // TODO: Make a better offline support
+        location.href = "/";
     }
 }
 
@@ -76,14 +87,10 @@ export function isExpired(exp: number) {
     return exp * 1000 < new Date().getTime() + (0.5 * 60 * 1000);
 }
 
-export function RegisterAuthRefresh() {
+export async function RegisterAuthRefresh() {
     const { exp } = GetCachedProfileData();
-    if (exp && isExpired(exp)) {
-        localStorage.clear();
-        Redirect();
-        return;
-    }
-    renewAccessTokenIfNeeded(exp);
+    checkIfRefreshTokenIsValid();
+    await renewAccessTokenIfNeeded(exp);
     setInterval(() => renewAccessTokenIfNeeded(GetCachedProfileData().exp), 1000);
 }
 export function Redirect() {
