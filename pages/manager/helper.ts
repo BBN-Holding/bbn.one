@@ -5,7 +5,7 @@ import { DeleteFromForm } from "./data.ts";
 import { API, ArtistTypes, Drop } from "./RESTSpec.ts";
 import { ColumEntry } from "./types.ts";
 import '../../assets/css/wtable.css';
-export const allowedAudioFormats = [ "audio/flac", "audio/wav" ];
+export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
 export type ProfileData = {
