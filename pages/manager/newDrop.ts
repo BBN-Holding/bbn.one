@@ -179,13 +179,14 @@ const wizard = (restore?: Drop) => Wizard({
         language: restore?.language,
         artists: JSON.stringify(restore?.artists),
         primaryGenre: restore?.primaryGenre,
+        secondaryGenre: restore?.secondaryGenre
     }).addValidator((e) => e.object({
         title: e.string(),
         artists: e.string().or(e.array(e.string())),
         release: e.string(),
         language: e.string(),
         primaryGenre: e.string(),
-        secondaryGenre: e.string().optional()
+        secondaryGenre: e.string()
     })),
     Page((formData) => [
         Spacer(),
@@ -276,6 +277,7 @@ const wizard = (restore?: Drop) => Wizard({
             title: x.Title,
             country: x.Country,
             primaryGenre: x.PrimaryGenre,
+            secondaryGenre: x.SecondaryGenre,
             year: x.Year?.toString(),
             artists: JSON.stringify(x.Artists),
             file: x.File,
@@ -290,13 +292,13 @@ const wizard = (restore?: Drop) => Wizard({
         Spacer(),
         Horizontal(
             Spacer(),
-            PlainText("Thanks! Thats everything we need.").addClass("ending-title"),
+            PlainText("Thanks! That's everything we need.").addClass("ending-title"),
             Spacer(),
         ),
         Horizontal(
             Spacer(),
             Input({
-                placeholder: "Comments for Submit",
+                placeholder: "Comments for Review Team",
                 ...syncFromData(formData, "comments")
             }),
             Spacer()
