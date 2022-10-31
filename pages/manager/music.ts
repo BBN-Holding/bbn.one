@@ -22,7 +22,7 @@ await RegisterAuthRefresh();
 const imageCache = new Map<string, string>();
 
 const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(
-    ActionBar(`Hi ${GetCachedProfileData().name}! 👋`, [
+    ActionBar(`Hi ${GetCachedProfileData().profile.username}! 👋`, [
         {
             title: `Published ${getListCount([ "PUBLISHED" ], state)}`,
             selected: state.type == "PUBLISHED",

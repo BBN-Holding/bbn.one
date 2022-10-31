@@ -17,7 +17,6 @@ WebGen({
 });
 Redirect();
 await RegisterAuthRefresh();
-console.log(GetCachedProfileData());
 View<ViewState>(({ state, update }) => Vertical(
     ...DynaNavigation("Settings"),
 

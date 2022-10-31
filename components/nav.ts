@@ -2,7 +2,7 @@ import bbnLogo from '../assets/img/bbnBig.svg';
 import bbnMusicLogo from '../assets/img/bbnMusicBig.svg';
 
 import '../assets/css/components/nav.css';
-import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, MaterialIcons, PlainText, Spacer, Vertical, View } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, MaterialIcons, PlainText, Spacer, Vertical } from "webgen/mod.ts";
 import { IsLoggedIn, stringToColour } from "../pages/manager/helper.ts";
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 import { API } from "../pages/manager/RESTSpec.ts";
@@ -55,7 +55,7 @@ dropOver.onblur = () => dropOver.classList.remove("open");
 dropOver.tabIndex = 0;
 export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLoggedIn()) {
     return [
-        user && user.email_verified != true ? Nav(Horizontal(
+        user && user.profile.verified?.email != true ? Nav(Horizontal(
             CenterV(
                 PlainText("Your Email is not verified. Please check your Inbox."),
             ),
@@ -98,10 +98,10 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLog
                 ),
                 (user
                     ? ProfilePicture(
-                        user.picture ?
-                            Custom(img(user?.picture))
-                            : PlainText(getNameInital(user.name)),
-                        user.name
+                        user.profile.avatar ?
+                            Custom(img(user.profile.avatar))
+                            : PlainText(getNameInital(user.profile.username)),
+                        user.profile.username
                     )
                     : (type == "Home" ?
                         Button("Sign in")

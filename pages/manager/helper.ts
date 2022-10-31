@@ -9,26 +9,39 @@ export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
 export type ProfileData = {
-    user: string;
-    email_verified?: boolean;
-    name: string;
-    email: string;
-    groups: {
-        slug: string,
+    _id: string;
+    authentication?: {
+        type: "password";
+        salt: string;
+        hash: string;
+    } | {
+        type: "oauth",
+        provider: "google" | "apple" | "github" | "microsoft" | string,
+        secret: string;
+    };
+    events?: { type: "auth", date: number, ip: string, source?: { type: "browser", }; }[];
+    profile: {
+        email: string;
+        verified?: {
+            email?: boolean,
+        },
+        calledAfter?: string;
+        username: string;
+        avatar?: string;
+        created: number;
         permissions: string[];
-    }[];
-    logins?: {
-        _id: string;
-        first_login: Date;
-        last_login: Date;
-        ip: string;
-        agent: string;
-    }[];
-    picture?: string;
-    exp?: number;
+    };
+    groups: string[];
+    exp: number;
 };
 export function IsLoggedIn(): ProfileData | null {
-    return localStorage[ "access-token" ] ? JSON.parse(atob(localStorage[ "access-token" ]?.split(".")[ 1 ])) : null;
+    try {
+        return localStorage[ "access-token" ] ? JSON.parse(atob(localStorage[ "access-token" ]?.split(".")[ 1 ])).user : null;
+    } catch (_) {
+        // Invalid state. We gonna need to say goodbye to that session
+        localStorage.clear();
+        return null;
+    }
 }
 
 export function getSecondary(secondary: Record<string, string[]>, formData: FormData, key = "primaryGenre"): string[] | null {
@@ -51,7 +64,13 @@ export function MediaQuery(query: string, view: (matches: boolean) => Component)
  * @deprecated
  */
 export function GetCachedProfileData(): ProfileData {
-    return JSON.parse(atob(localStorage[ "access-token" ].split(".")[ 1 ]));
+    try {
+        return JSON.parse(atob(localStorage[ "access-token" ].split(".")[ 1 ])).user;
+    } catch (_) {
+        // Same invalid state. (This is all need for the new migration to the new HmSYS Tokens)
+        localStorage.clear();
+        throw new Error("Invalid State. Relogin is forced.");
+    }
 }
 
 function checkIfRefreshTokenIsValid() {
@@ -74,8 +93,8 @@ export async function renewAccessTokenIfNeeded(exp?: number) {
 }
 export async function forceRefreshToken() {
     try {
-        const { accessToken } = await API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] });
-        localStorage[ "access-token" ] = accessToken;
+        const access = await API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] });
+        localStorage[ "access-token" ] = access.token;
         console.log("Refreshed token");
     } catch (_) {
         // TODO: Make a better offline support
@@ -278,7 +297,7 @@ export async function loadSongs(view: ViewClass<{
 }>, imageCache: Map<string, string>) {
     const source = new Set([
         ...await (async () => {
-            if (GetCachedProfileData().groups.find(x => x.permissions.includes("songs-review"))) {
+            if (API.permission.canReview(GetCachedProfileData().groups)) {
                 const list = await API.music(API.getToken()).reviews.get();
                 view.viewOptions().update({ reviews: list });
                 return list;

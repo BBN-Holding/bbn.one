@@ -34,7 +34,7 @@ export function StreamingUploadHandler(path: string, events: StreamingUploadEven
                 }
             }));
         ws.onopen = () => {
-            ws.send(events.credentials());
+            ws.send("JWT " + events.credentials());
         };
         const reader = stream.getReader();
 
@@ -52,7 +52,7 @@ export function StreamingUploadHandler(path: string, events: StreamingUploadEven
                 }
             } else {
                 reader.releaseLock();
-                events.backendResponse(JSON.parse(data).id);
+                events.backendResponse(data);
             }
         };
         // await write(writable, "end");

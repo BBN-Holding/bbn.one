@@ -30,18 +30,34 @@ export type Drop = {
         Year?: number;
     }[];
 };
+
+export type ErrorObject = {
+    error: true,
+    type: 'assert' | 'client-side' | string,
+    message?: string;
+
+    // Only visable when running in verbose
+    stack?: string;
+};
 export const API = {
     getToken: () => localStorage[ "access-token" ],
-    BASE_URL: location.hostname == "bbn.one" ? "https://bbn.one/api/" : "http://localhost:8443/api/",
+    BASE_URL: location.hostname == "bbn.one" ? "https://bbn.one/api/" : "http://localhost:8000/api/@bbn/",
+    // deno-lint-ignore no-explicit-any
+    isError: (data: any): data is ErrorObject => typeof data === "object" && data.error,
+    permission: {
+        consts: {
+            admin: "6293b146d55350d24e6da542",
+            reviewer: "6293bb4fd55350d24e6da550",
+        },
+        canReview: (x: string[]) => x.find(x => API.permission.consts.admin == x || API.permission.consts.reviewer == x)
+    },
     user: (token: string) => ({
         mail: {
             validate: {
                 post: (token: string) => {
                     return fetch(`${API.BASE_URL}user/mail/validate/` + encodeURIComponent(token), {
                         method: "POST",
-                        headers: {
-                            "Authorization": token
-                        },
+                        headers: headers(token),
                     }).then(x => x.json());
                 }
             },
@@ -49,9 +65,7 @@ export const API = {
                 post: () => {
                     return fetch(`${API.BASE_URL}user/mail/resend-verify-email`, {
                         method: "POST",
-                        headers: {
-                            "Authorization": token
-                        },
+                        headers: headers(token),
                     }).then(x => x.json());
                 }
             }
@@ -60,26 +74,23 @@ export const API = {
             post: async (para: Partial<{ name: string, password: string; }>) => {
                 const data = await fetch(`${API.BASE_URL}user/set-me`, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": token
-                    },
+                    headers: headers(token),
                     body: JSON.stringify(para)
-                }).then(x => x.json());
-                console.log(data);
+                }).then(x => x.text());
                 return data;
             }
         }
     }),
     auth: {
+        fromUserInteractionLink: () => `${API.BASE_URL}auth/google-redirect?redirect=${location.href}&type=google-auth`,
         refreshAccessToken: {
             post: async ({ refreshToken }: { refreshToken: string; }) => {
                 return await fetch(`${API.BASE_URL}auth/refresh-access-token`, {
                     method: "POST",
                     headers: {
-                        "Authorization": refreshToken
+                        "Authorization": "JWT " + refreshToken
                     }
-                }).then(x => x.json()) as { accessToken: string; };
+                }).then(x => x.json()) as { token: string; };
             }
         },
         google: {
@@ -87,7 +98,7 @@ export const API = {
                 const param = new URLSearchParams({ code, state });
                 return await fetch(`${API.BASE_URL}auth/google?${param.toString()}`, {
                     method: "POST"
-                }).then(x => x.json()) as { refreshToken: string; };
+                }).then(x => x.json()) as { token: string; };
             }
         },
         fromUserInteraction: {
@@ -113,26 +124,24 @@ export const API = {
             }).then(x => x.text())
         },
         register: {
-            post: async ({ email, password, name }: { email: string, password: string, name: string; }): Promise<{ refreshToken: string; } | null> => {
-                try {
-                    return await fetch(`${API.BASE_URL}auth/register`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            email,
-                            password,
-                            name
-                        })
-                    }).then(x => x.json());
-                } catch (error) {
-                    return null;
-                }
+            post: async ({ email, password, name }: { email: string, password: string, name: string; }): Promise<{ token: string; } | ErrorObject> => {
+                return await fetch(`${API.BASE_URL}auth/register`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                        name
+                    })
+                })
+                    .then(x => x.json())
+                    .catch(() => <ErrorObject>{ error: true, type: "client-side" });
             }
         },
         email: {
-            post: async ({ email, password }: { email: string, password: string; }): Promise<{ refreshToken: string; } | null> => {
+            post: async ({ email, password }: { email: string, password: string; }): Promise<{ token: string; } | ErrorObject> => {
                 try {
 
                     const data = await fetch(`${API.BASE_URL}auth/email`, {
@@ -145,10 +154,9 @@ export const API = {
                             password
                         })
                     }).then(x => x.json());
-                    console.log(data);
                     return data;
                 } catch (error) {
-                    return null;
+                    return <ErrorObject>{ error: true, type: "client-side" };
                 }
             }
         }
@@ -157,10 +165,7 @@ export const API = {
         reviews: {
             get: async () => {
                 const data = await fetch(`${API.BASE_URL}music/reviews`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": token
-                    }
+                    headers: headers(token)
                 }).then(x => x.json());
                 return data.drops as Drop[];
             },
@@ -168,10 +173,7 @@ export const API = {
         list: {
             get: async () => {
                 const data = await fetch(`${API.BASE_URL}music/list`, {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": token
-                    }
+                    headers: headers(token)
                 }).then(x => x.json());
                 return data.drops as Drop[];
             }
@@ -179,10 +181,7 @@ export const API = {
         post: async () => {
             const data = await fetch(`${API.BASE_URL}music/`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": token
-                }
+                headers: headers(token)
             }).then(x => x.json());
             assert(typeof data.id == "string");
             return data.id as string;
@@ -192,9 +191,7 @@ export const API = {
                 const fetchData = await fetch(`${API.BASE_URL}music/${id}`, {
                     method: "PUT",
                     body: data,
-                    headers: {
-                        "Authorization": token
-                    }
+                    headers: headers(token)
                 });
                 await fetchData.text();
                 assert(fetchData.ok);
@@ -202,35 +199,33 @@ export const API = {
             songSownload: async (): Promise<{ code: string; }> => {
                 return await fetch(`${API.BASE_URL}music/${id}/song-download`, {
                     method: "POST",
-                    headers: {
-                        "Authorization": token
-                    }
+                    headers: headers(token)
                 }).then(x => x.json());
             },
             artwork: async () => {
                 return await fetch(`${API.BASE_URL}music/${id}/artwork`, {
                     method: "GET",
-                    headers: {
-                        "Authorization": token
-                    }
+                    headers: headers(token)
                 }).then(x => x.blob());
             },
             artworkPreview: async () => {
                 return await fetch(`${API.BASE_URL}music/${id}/artwork-preview`, {
                     method: "GET",
-                    headers: {
-                        "Authorization": token
-                    }
+                    headers: headers(token)
                 }).then(x => x.blob());
             },
             get: async () => {
                 return (await fetch(`${API.BASE_URL}music/${id}`, {
                     method: "GET",
-                    headers: {
-                        "Authorization": token
-                    }
-                }).then(x => x.json())).drop;
+                    headers: headers(token)
+                }).then(x => x.json()));
             },
         })
     })
 };
+
+function headers(token: string): HeadersInit | undefined {
+    return {
+        "Authorization": "JWT " + token
+    };
+}

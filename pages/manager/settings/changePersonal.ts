@@ -53,7 +53,7 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                                     },
                                     backendResponse: async () => {
                                         await forceRefreshToken();
-                                        update({ path: GetCachedProfileData().picture });
+                                        update({ path: GetCachedProfileData().profile.avatar });
                                         data.delete("loading");
                                     },
                                     credentials: () => API.getToken(),
@@ -69,7 +69,7 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                                 }, file);
                             });
                         }, allowedImageFormats.join(","))))
-                        .change(({ update }) => update({ path: GetCachedProfileData().picture }))
+                        .change(({ update }) => update({ path: GetCachedProfileData().profile.avatar }))
                         .asComponent(),
                     [
                         { width: 2 },
@@ -94,8 +94,8 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
             email: v.string().min(1),
             name: v.string().min(1)
         })).setDefaultValues({
-            email: GetCachedProfileData().email,
-            name: GetCachedProfileData().name,
+            email: GetCachedProfileData().profile.email,
+            name: GetCachedProfileData().profile.username,
         })
     ]);
 }
