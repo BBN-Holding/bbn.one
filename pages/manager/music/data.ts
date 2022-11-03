@@ -16,6 +16,14 @@ export function addSongsByDrop(drop: Drop, list: File[], formData: FormData, upd
             .replace(/\.[^/.]+$/, "");
 
         StreamingUploadHandler(`music/${drop._id}/upload`, {
+            failure: () => {
+                formData.set(`song-${id}-error`, "upload-failure");
+                lockedLoading.delete(id);
+                if (lockedLoading.size == 0)
+                    formData.delete("loading");
+                alert("Your Upload has failed. Please try a different file or try again later");
+                update({});
+            },
             prepare: () => {
                 formData.set(`song-${id}-progress`, "0");
             },
@@ -61,6 +69,14 @@ export function addSongs(dropId: string, meta: () => FormData[], list: File[], f
             .replace(/\.[^/.]+$/, "");
 
         StreamingUploadHandler(`music/${dropId}/upload`, {
+            failure: () => {
+                formData.set(`song-${id}-error`, "upload-failure");
+                lockedLoading.delete(id);
+                if (lockedLoading.size == 0)
+                    formData.delete("loading");
+                alert("Your Upload has failed. Please try a different file or try again later");
+                update({});
+            },
             prepare: () => {
                 formData.set(`song-${id}-progress`, "0");
             },

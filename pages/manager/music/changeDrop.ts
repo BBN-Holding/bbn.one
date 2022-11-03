@@ -46,6 +46,11 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                             setTimeout(() => {
                                 const image = document.querySelector(".upload-image")!;
                                 StreamingUploadHandler(`music/${drop._id}/upload`, {
+                                    failure: () => {
+                                        data.delete("loading");
+                                        alert("Your Upload has failed. Please try a different file or try again later");
+                                        update({});
+                                    },
                                     prepare: () => {
                                         const animation = image.animate([
                                             { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },

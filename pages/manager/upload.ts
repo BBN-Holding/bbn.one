@@ -7,6 +7,7 @@ export type StreamingUploadEvents = {
     onUploadTick: (percentage: number) => Promise<void>,
     uploadDone: () => void,
     backendResponse: (id: string) => void;
+    failure: () => void,
 };
 
 export function uploadFilesDialog(onData: (files: File[]) => void, accept: string) {
@@ -39,7 +40,11 @@ export function StreamingUploadHandler(path: string, events: StreamingUploadEven
         const reader = stream.getReader();
 
         ws.onmessage = async ({ data }) => {
-            if (data == "file") {
+            if (data == "failed") {
+                console.log("Looks like we failed.");
+                events.failure();
+            }
+            else if (data == "file") {
                 ws.send("file " + JSON.stringify({ filename: file.name, type: file.type }));
             } else if (data == "next") {
                 const read = await reader.read();
