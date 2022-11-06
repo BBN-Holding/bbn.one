@@ -107,10 +107,15 @@ export function isExpired(exp: number) {
 }
 
 export async function RegisterAuthRefresh() {
-    const { exp } = GetCachedProfileData();
-    checkIfRefreshTokenIsValid();
-    await renewAccessTokenIfNeeded(exp);
-    setInterval(() => renewAccessTokenIfNeeded(GetCachedProfileData().exp), 1000);
+    try {
+        const { exp } = GetCachedProfileData();
+        checkIfRefreshTokenIsValid();
+        await renewAccessTokenIfNeeded(exp);
+        setInterval(() => renewAccessTokenIfNeeded(GetCachedProfileData().exp), 1000);
+    } catch (_) {
+        localStorage.clear();
+        location.href = "/signin";
+    }
 }
 export function Redirect() {
     if (localStorage[ "refresh-token" ] && location.href.includes("/signin"))
