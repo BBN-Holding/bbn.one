@@ -53,7 +53,8 @@ View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
                 update({ restoreData: { ...restoreData, [ "artwork-url" ]: URL.createObjectURL(blob) } });
             }
             else update({ restoreData });
-        }).catch(() => {
+        }).catch((e) => {
+            alert(e);
             setTimeout(() => location.reload(), 1000);
         });
     })

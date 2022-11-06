@@ -72,6 +72,6 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
 const Permissions = {
     canTakedown: (drop: Drop) => drop.type == "PUBLISHED",
     canSubmit: (drop: Drop) => (<Drop[ "type" ][]>[ "UNSUBMITTED", "PRIVATE" ]).includes(drop.type),
-    canEdit: (drop: Drop) => (drop.type == "PRIVATE" || drop.type == "UNSUBMITTED") || GetCachedProfileData().groups.find(x => x.permissions.includes("songs-review")),
+    canEdit: (drop: Drop) => (drop.type == "PRIVATE" || drop.type == "UNSUBMITTED") || API.permission.canReview(GetCachedProfileData().groups),
     canCancelReview: (drop: Drop) => drop.type == "UNDER_REVIEW"
 };

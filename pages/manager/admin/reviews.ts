@@ -103,7 +103,7 @@ function ReviewActions(x: Drop, imageCache: Map<string, string>, view: ViewClass
                 .addClass("tag")
                 .onPromiseClick(async () => {
                     const form = new FormData();
-                    form.set("type", "PRIVATE");
+                    form.set("type", "REVIEW_DECLINED");
                     await API.music(API.getToken()).id(x._id).put(form);
                     await loadSongs(view, imageCache);
                 })

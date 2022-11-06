@@ -49,9 +49,9 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                     Button("Sign in with Google")
                         .setMargin("0 0 .8rem")
                         .setJustify("center")
-                        .asLinkButton(`${API.BASE_URL}auth/google-redirect?redirect=${location.href}&type=google-auth`)
+                        .asLinkButton(API.auth.fromUserInteractionLink())
                         .addPrefix(Custom(img(googleLog)).addClass("prefix-logo")),
-                    Horizontal(state.error ? PlainText(`Error: ${state.error}`).addClass("error-message") : null, Spacer()),
+                    Horizontal(state.error != undefined ? PlainText(`Error: ${state.error || "Something happend. Please try again later"}.`).addClass("error-message") : null, Spacer()),
                     ...(<{ [ key in NonNullable<typeof state.mode> ]: Component[]; }>{
                         login: [
                             Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
@@ -66,9 +66,11 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                         email,
                                         password
                                     });
-
-                                    if (!data)
-                                        update({ error: "Wrong Email or Password", email: formData.get("email")?.toString() });
+                                    if (API.isError(data))
+                                        update({
+                                            error: data.message || "",
+                                            email: formData.get("email")?.toString()
+                                        });
                                     else
                                         logIn(data, "email").finally(Redirect);
                                 })
@@ -109,8 +111,8 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                         email,
                                         password
                                     });
-                                    if (!data)
-                                        update({ error: !email || !name || !password ? "Missing credentials" : "Email is not unique/valid", name: formData.get("name")?.toString() ?? "" });
+                                    if (API.isError(data))
+                                        update({ error: data.message || "", name: formData.get("name")?.toString() ?? "" });
                                     else
                                         logIn(data, "email").finally(Redirect);
                                 })
@@ -190,9 +192,9 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
     })
     .appendOn(document.body);
 
-async function logIn(data: { refreshToken: string; }, mode: "email" | "0auth") {
-    const { accessToken } = await API.auth.refreshAccessToken.post({ refreshToken: data.refreshToken });
-    localStorage[ "access-token" ] = accessToken;
-    localStorage[ "refresh-token" ] = data!.refreshToken;
+async function logIn(data: { token: string; }, mode: "email" | "0auth") {
+    const access = await API.auth.refreshAccessToken.post({ refreshToken: data.token });
+    localStorage[ "access-token" ] = access.token;
+    localStorage[ "refresh-token" ] = data!.token;
     localStorage[ "type" ] = mode;
 }

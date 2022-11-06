@@ -40,6 +40,11 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                             setTimeout(() => {
                                 const image = document.querySelector(".upload-image")!;
                                 StreamingUploadHandler(`user/upload`, {
+                                    failure: () => {
+                                        data.delete("loading");
+                                        alert("Your Upload has failed. Please try a different file or try again later");
+                                        update({});
+                                    },
                                     uploadDone: () => {
                                         const animation = image.animate([
                                             { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
@@ -53,7 +58,7 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                                     },
                                     backendResponse: async () => {
                                         await forceRefreshToken();
-                                        update({ path: GetCachedProfileData().picture });
+                                        update({ path: GetCachedProfileData().profile.avatar });
                                         data.delete("loading");
                                     },
                                     credentials: () => API.getToken(),
@@ -69,7 +74,7 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                                 }, file);
                             });
                         }, allowedImageFormats.join(","))))
-                        .change(({ update }) => update({ path: GetCachedProfileData().picture }))
+                        .change(({ update }) => update({ path: GetCachedProfileData().profile.avatar }))
                         .asComponent(),
                     [
                         { width: 2 },
@@ -94,8 +99,8 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
             email: v.string().min(1),
             name: v.string().min(1)
         })).setDefaultValues({
-            email: GetCachedProfileData().email,
-            name: GetCachedProfileData().name,
+            email: GetCachedProfileData().profile.email,
+            name: GetCachedProfileData().profile.username,
         })
     ]);
 }

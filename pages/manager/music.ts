@@ -22,14 +22,14 @@ await RegisterAuthRefresh();
 const imageCache = new Map<string, string>();
 
 const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(
-    ActionBar(`Hi ${GetCachedProfileData().name}! 👋`, [
+    ActionBar(`Hi ${GetCachedProfileData().profile.username}! 👋`, [
         {
             title: `Published ${getListCount([ "PUBLISHED" ], state)}`,
             selected: state.type == "PUBLISHED",
             onclick: () => update({ type: "PUBLISHED" })
         },
         {
-            title: `Unpublished ${getListCount([ "UNDER_REVIEW", "PRIVATE" ], state)}`,
+            title: `Unpublished ${getListCount([ "UNDER_REVIEW", "PRIVATE", "REVIEW_DECLINED" ], state)}`,
             selected: state.type == "PRIVATE",
             onclick: () => update({ type: "PRIVATE" })
         },
@@ -63,7 +63,7 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
             CategoryRender(
                 state.list
                     .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
-                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
+                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" || x.type == "REVIEW_DECLINED" : true)
                     .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
                     .filter((_, i) => i == 0),
                 "Latest Drop"
@@ -71,7 +71,7 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
             CategoryRender(
                 state.list
                     .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
-                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" : true)
+                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" || x.type == "REVIEW_DECLINED" : true)
                     .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
                     .filter((_, i) => i > 0),
                 "History"
@@ -128,6 +128,10 @@ function DropEntry(x: Drop, matches: boolean): Component {
         Spacer(),
         x.type == "UNDER_REVIEW"
             ? CenterV(PlainText("Under Review")
+                .addClass("entry-subtitle", "under-review"))
+            : null,
+        x.type == "REVIEW_DECLINED"
+            ? CenterV(PlainText("Declined")
                 .addClass("entry-subtitle", "under-review"))
             : null
     )
