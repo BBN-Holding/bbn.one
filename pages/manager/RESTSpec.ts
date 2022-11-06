@@ -5,7 +5,7 @@ export type ArtistTypes = "PRIMARY" | "FEATURING" | "SONGWRITER" | "PRODUCER";
 export type Drop = {
     _id: string;
     user: string;
-    type: 'PUBLISHED' | 'PRIVATE' | 'UNDER_REVIEW' | 'UNSUBMITTED';
+    type: 'PUBLISHED' | 'PRIVATE' | 'UNDER_REVIEW' | 'UNSUBMITTED' | 'REVIEW_DECLINED';
     title?: string;
     upc?: string;
     artists?: [ name: string, img: string, type: ArtistTypes ][];
