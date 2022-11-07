@@ -36,7 +36,7 @@ export type ProfileData = {
 };
 export function IsLoggedIn(): ProfileData | null {
     try {
-        return localStorage[ "access-token" ] ? JSON.parse(atob(localStorage[ "access-token" ]?.split(".")[ 1 ])).user : null;
+        return localStorage[ "access-token" ] ? JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ]?.split(".")[ 1 ])).user : null;
     } catch (_) {
         // Invalid state. We gonna need to say goodbye to that session
         localStorage.clear();
@@ -60,12 +60,19 @@ export function MediaQuery(query: string, view: (matches: boolean) => Component)
     return Custom(holder);
 }
 
+function b64DecodeUnicode(value: string) {
+    // Going backwards: from bytestream, to percent-encoding, to original string.
+    return decodeURIComponent(atob(value).split('').map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+}
+
 /**
  * @deprecated
  */
 export function GetCachedProfileData(): ProfileData {
     try {
-        return JSON.parse(atob(localStorage[ "access-token" ].split(".")[ 1 ])).user;
+        return JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ])).user;
     } catch (_) {
         // Same invalid state. (This is all need for the new migration to the new HmSYS Tokens)
         localStorage.clear();
@@ -76,7 +83,7 @@ export function GetCachedProfileData(): ProfileData {
 function checkIfRefreshTokenIsValid() {
     const token = localStorage[ "refresh-token" ];
     if (!token) return;
-    const tokenData = JSON.parse(atob(token.split(".")[ 1 ]));
+    const tokenData = JSON.parse(b64DecodeUnicode(token.split(".")[ 1 ]));
     if (isExpired(tokenData.exp)) {
         localStorage.clear();
         Redirect();
