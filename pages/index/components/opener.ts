@@ -11,7 +11,7 @@ export function renderOpener() {
     const mainTitle = PlainText("We represent your interests").draw();
     const subTitle = PlainText("We offer a wide range of services. From issuing prepaid credit cards to distributing music all over the world.").draw();
     const button = custom('a', "Get started") as HTMLAnchorElement;
-    button.href = "#services";
+    button.href = "/signin";
     leftSide.append(mainTitle, subTitle, button);
     const image = img(heroImage);
     image.loading = "lazy";
