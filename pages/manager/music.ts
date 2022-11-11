@@ -1,9 +1,8 @@
 import { loadingWheel, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, MaterialIcons, ViewClass } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
-import artwork from "../../assets/img/template-artwork.png";
 import { DynaNavigation } from "../../components/nav.ts";
-import { GetCachedProfileData, MediaQuery, ProfileData, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "./helper.ts";
+import { GetCachedProfileData, MediaQuery, ProfileData, ReCache, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded, showPreviewImage } from "./helper.ts";
 import { API, Drop } from "./RESTSpec.ts";
 import { loadSongs } from "./helper.ts";
 import { ViewState } from "./types.ts";
@@ -19,7 +18,6 @@ WebGen({
 });
 Redirect();
 await RegisterAuthRefresh();
-const imageCache = new Map<string, string>();
 
 const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(
     ActionBar(`Hi ${GetCachedProfileData().profile.username}! 👋`, [
@@ -58,7 +56,7 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
         if (!state.list)
             return Custom(loadingWheel() as Element as HTMLElement);
         if (state.reviews && state.reviews.length != 0 && state.type == "UNDER_REVIEW")
-            return ReviewPanel(imageCache, () => view, state);
+            return ReviewPanel(() => view, state);
         return Vertical(
             CategoryRender(
                 state.list
@@ -86,7 +84,7 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
     });
 
 View(() => Vertical(...DynaNavigation("Music"), view.asComponent())).appendOn(document.body);
-renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(() => loadSongs(view, imageCache));
+renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(() => loadSongs(view));
 
 function getListCount(list: Drop[ "type" ][], state: Partial<{ list: Drop[]; type: Drop[ "type" ]; aboutMe: ProfileData; }>) {
     const length = state.list?.filter(x => list.includes(x.type)).length;
@@ -111,7 +109,7 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
 
 function DropEntry(x: Drop, matches: boolean): Component {
     return Horizontal(
-        Custom(img(imageCache.get(x._id) ?? artwork)),
+        showPreviewImage(x),
         CenterV(
             PlainText(x.title ?? "(no name)")
                 .setMargin("-0.4rem 0 0")
