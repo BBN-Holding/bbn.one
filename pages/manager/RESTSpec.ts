@@ -66,7 +66,7 @@ export const API = {
                     return fetch(`${API.BASE_URL}user/mail/resend-verify-email`, {
                         method: "POST",
                         headers: headers(token),
-                    }).then(x => x.json());
+                    }).then(x => x.text());
                 }
             }
         },
