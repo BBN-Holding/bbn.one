@@ -1,16 +1,15 @@
 import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, Custom, img, CenterV, Component, Icon, ViewClass } from "webgen/mod.ts";
-import { loadSongs, MediaQuery } from "../helper.ts";
+import { loadSongs, MediaQuery, showPreviewImage } from "../helper.ts";
 import { API, Drop } from "../RESTSpec.ts";
-import artwork from "../../../assets/img/template-artwork.png";
 import { ViewState } from "../types.ts";
 
-export function ReviewPanel(imageCache: Map<string, string>, view: () => ViewClass<ViewState>, state: Partial<ViewState>): Component {
+export function ReviewPanel(view: () => ViewClass<ViewState>, state: Partial<ViewState>): Component {
     return Vertical(
         (state.reviews?.find(x => x.type == "UNDER_REVIEW")) ? [
             PlainText("Reviews")
                 .addClass("list-title")
                 .addClass("limited-width"),
-            Vertical(...state.reviews!.filter(x => x.type == "UNDER_REVIEW").map(x => RenderEntry(imageCache, x, view))).setGap("1rem"),
+            Vertical(...state.reviews!.filter(x => x.type == "UNDER_REVIEW").map(x => RenderEntry(x, view))).setGap("1rem"),
         ] : [ PlainText("No Reviews")
             .addClass("list-title")
             .addClass("limited-width") ],
@@ -19,29 +18,29 @@ export function ReviewPanel(imageCache: Map<string, string>, view: () => ViewCla
             .addClass("list-title")
             .addClass("limited-width"),
         ...state.reviews!.filter(x => x.type == "PUBLISHED").map(x =>
-            RenderEntry(imageCache, x, view)
+            RenderEntry(x, view)
         ),
         PlainText("Private")
             .addClass("list-title")
             .addClass("limited-width"),
         ...state.reviews!.filter(x => x.type == "PRIVATE").map(x =>
-            RenderEntry(imageCache, x, view)
+            RenderEntry(x, view)
         ),
         PlainText("Drafts")
             .addClass("list-title")
             .addClass("limited-width"),
         ...state.reviews!.filter(x => x.type == "UNSUBMITTED").map(x =>
-            RenderEntry(imageCache, x, view)
+            RenderEntry(x, view)
         )
     )
         .setGap("1rem")
         .setMargin("1rem 0");
 }
 
-function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewClass<ViewState>) {
+function RenderEntry(x: Drop, view: () => ViewClass<ViewState>) {
     return MediaQuery("(max-width: 880px)", (small) => small ? Vertical(
         Horizontal(
-            Custom(img(imageCache.get(x._id) ?? artwork)).addClass("small-preview"),
+            showPreviewImage(x).addClass("small-preview"),
             Vertical(
                 PlainText(x.title ?? "(no text)")
                     .setMargin("-0.4rem 0 0")
@@ -63,7 +62,7 @@ function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewC
                     .addClass("tag")
                     .onClick(() => location.href = "/music/edit?id=" + x._id)
             ),
-            ReviewActions(x, imageCache, view())
+            ReviewActions(x, view())
         )
     ).setPadding("0.5rem")
         .setGap("0.8rem")
@@ -71,7 +70,7 @@ function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewC
         .addClass("limited-width")
         :
         Horizontal(
-            Custom(img(imageCache.get(x._id) ?? artwork)).addClass("small-preview"),
+            showPreviewImage(x).addClass("small-preview"),
             Vertical(
                 PlainText(x.title ?? "(no text)")
                     .setMargin("-0.4rem 0 0")
@@ -86,7 +85,7 @@ function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewC
                     .addClass("tag")
                     .onClick(() => location.href = "/music/edit?id=" + x._id)
             ),
-            ReviewActions(x, imageCache, view())
+            ReviewActions(x, view())
         )
             .setPadding("0.5rem")
             .addClass("list-entry")
@@ -94,7 +93,7 @@ function RenderEntry(imageCache: Map<string, string>, x: Drop, view: () => ViewC
     );
 }
 
-function ReviewActions(x: Drop, imageCache: Map<string, string>, view: ViewClass<ViewState>) {
+function ReviewActions(x: Drop, view: ViewClass<ViewState>) {
     return x.type == "UNDER_REVIEW" ? [
         CenterV(
             Button(Icon("block"))
@@ -105,7 +104,7 @@ function ReviewActions(x: Drop, imageCache: Map<string, string>, view: ViewClass
                     const form = new FormData();
                     form.set("type", "REVIEW_DECLINED");
                     await API.music(API.getToken()).id(x._id).put(form);
-                    await loadSongs(view, imageCache);
+                    await loadSongs(view);
                 })
         ),
         CenterV(
@@ -117,7 +116,7 @@ function ReviewActions(x: Drop, imageCache: Map<string, string>, view: ViewClass
                     const form = new FormData();
                     form.set("type", "PUBLISHED");
                     await API.music(API.getToken()).id(x._id).put(form);
-                    await loadSongs(view, imageCache);
+                    await loadSongs(view);
                 })
         )
     ] : [];

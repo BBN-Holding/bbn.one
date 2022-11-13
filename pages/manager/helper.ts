@@ -1,10 +1,11 @@
 // This code Will be ported to webgen
 
-import { Box, Button, Card, Component, createElement, Custom, Dialog, DropDownInput, Grid, headless, Horizontal, Icon, Input, Page, PlainText, Spacer, Vertical, View, ViewClass } from "webgen/mod.ts";
+import { Box, Button, Card, Component, createElement, Custom, Dialog, DropDownInput, Grid, headless, Horizontal, Icon, img, Input, loadingWheel, Page, PlainText, Spacer, Vertical, View, ViewClass } from "webgen/mod.ts";
 import { DeleteFromForm } from "./data.ts";
 import { API, ArtistTypes, Drop } from "./RESTSpec.ts";
 import { ColumEntry } from "./types.ts";
 import '../../assets/css/wtable.css';
+import artwork from "../../assets/img/template-artwork.png";
 export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
@@ -47,6 +48,29 @@ export function IsLoggedIn(): ProfileData | null {
 export function getSecondary(secondary: Record<string, string[]>, formData: FormData, key = "primaryGenre"): string[] | null {
     //@ts-ignore Yes
     return secondary[ formData.get(key)?.toString() ?? "" ];
+}
+export const GLOBAL_CACHE = new Map<string, {
+    // deno-lint-ignore no-explicit-any
+    data?: any,
+    render: Component;
+}>();
+// TODO: Move this to WebGen
+export function ReCache<Data>(cacheId: string, loader: () => Promise<Data>, render: (type: "cache" | "loaded", data: undefined | Data) => Component) {
+    if (!GLOBAL_CACHE.has(cacheId)) {
+        const shell = createElement("div");
+        GLOBAL_CACHE.set(cacheId, {
+            render: Custom(shell)
+        });
+
+        shell.append(render("cache", undefined).draw());
+        loader()
+            .then(x => render("loaded", x))
+            .then(x => x.draw())
+            .then(x => shell.children[ 0 ].replaceWith(x));
+    }
+
+    const data = GLOBAL_CACHE.get(cacheId)!;
+    return Box(data.render);
 }
 export function MediaQuery(query: string, view: (matches: boolean) => Component) {
     const holder = createElement("div");
@@ -300,40 +324,32 @@ export function EditArtists(list: NonNullable<Drop[ "artists" ]>) {
             .open();
     });
 }
-
-
+export function showPreviewImage(x: Drop) {
+    return ReCache(x._id,
+        () => loadImage(x),
+        (type, data) => type == "cache"
+            ? Custom(img(data || artwork))
+            : Custom(img(data || artwork))
+    );
+}
+export async function loadImage(x: Drop) {
+    if (!x.artwork) return undefined;
+    const image = await API.music(API.getToken()).id(x._id).artworkPreview();
+    return URL.createObjectURL(image);
+}
 export async function loadSongs(view: ViewClass<{
     list: Drop[];
     reviews: Drop[];
     type: Drop[ "type" ];
-}>, imageCache: Map<string, string>) {
-    const source = new Set([
-        ...await (async () => {
-            if (API.permission.canReview(GetCachedProfileData().groups)) {
-                const list = await API.music(API.getToken()).reviews.get();
-                view.viewOptions().update({ reviews: list });
-                return list;
-            }
-            return [];
-        })(),
-        ...await (async () => {
-            const list = await API.music(API.getToken()).list.get();
-            // Only do it when its the first time
-            if (view.viewOptions().state.list == undefined && list.find(x => x.type == "UNSUBMITTED"))
-                view.viewOptions().update({ list, type: "UNSUBMITTED" });
-            else
-                view.viewOptions().update({ list });
-
-            return list;
-        })()
-    ]);
-
-    for (const iterator of source) {
-        (async () => {
-            if (!iterator.artwork?.trim()) return;
-            const image = await API.music(API.getToken()).id(iterator._id).artworkPreview();
-            imageCache.set(iterator._id, URL.createObjectURL(image));
-            view.viewOptions().update({});
-        })();
+}>) {
+    if (API.permission.canReview(GetCachedProfileData().groups)) {
+        const list = await API.music(API.getToken()).reviews.get();
+        view.viewOptions().update({ reviews: list });
     }
+    const list = await API.music(API.getToken()).list.get();
+    // Only do it when its the first time
+    if (view.viewOptions().state.list == undefined && list.find(x => x.type == "UNSUBMITTED"))
+        view.viewOptions().update({ list, type: "UNSUBMITTED" });
+    else
+        view.viewOptions().update({ list });
 }

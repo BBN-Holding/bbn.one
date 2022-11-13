@@ -13,6 +13,10 @@
     color: rgb(255 255 255 / 80%);
 }
 
+.list-entry img {
+    display: block;
+}
+
 .under-review {
     background-color: #BCBCBC;
     color: rgba(0, 0, 0, 0.8);
@@ -46,7 +50,7 @@
     }
 }
 
-img.small-preview {
+.small-preview img {
     height: 2.2rem;
     border-radius: 3px;
     margin: 0 0.4rem 0 0;
