@@ -149,7 +149,10 @@ const wizard = (restore?: Drop) => Wizard({
                 // TODO: Make this a nicer component
                 Button("Artists")
                     .onClick(() => {
-                        EditArtists(formData.get("artists") ? JSON.parse(formData.get("artists")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => formData.set("artists", JSON.stringify(x)));
+                        EditArtists(formData.get("artists")
+                            ? JSON.parse(formData.get("artists")!.toString())
+                            : [ [ "", "", "PRIMARY" ] ])
+                            .then((x) => formData.set("artists", JSON.stringify(x?.map(x => x.map(x => x.trim())))));
                     }),
                 Center(PlainText("Set your target Audience").addClass("title")),
                 View(({ update }) =>

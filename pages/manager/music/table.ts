@@ -6,6 +6,7 @@ import primary from "../../../data/primary.json" assert { type: "json"};
 import secondary from "../../../data/secondary.json" assert { type: "json"};
 import language from "../../../data/language.json" assert { type: "json"};
 import { accessibilityDisableTabOnDisabled } from "https://raw.githubusercontent.com/lucsoft/WebGen/1144da3a8dbcfb22253fb5c4bc8b3f92c4f208bf/src/lib/Accessibility.ts";
+import { Drop } from "../RESTSpec.ts";
 function ProfilePicture(component: Component, name: string) {
     const ele = component.draw();
     ele.style.backgroundColor = stringToColour(name);
@@ -70,7 +71,7 @@ export const TableDef = (formData: FormData, update: (data: {}) => void) => <Col
             .addClass("artists-list")
             .onClick(() => {
                 EditArtists(formData.get(`song-${Id}-artists`) ? JSON.parse(formData.get(`song-${Id}-artists`)!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => {
-                    formData.set(`song-${Id}-artists`, JSON.stringify(x));
+                    formData.set(`song-${Id}-artists`, JSON.stringify(x?.map(x => x.map(x => x.trim()))));
                     update({});
                 });
             })
