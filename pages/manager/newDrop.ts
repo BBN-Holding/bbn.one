@@ -275,6 +275,7 @@ const wizard = (restore?: Drop) => Wizard({
     ]).setDefaultValues(restore?.song
         ? RecordToForm(new FormData(), "song", restore.song.map(x => ({
             id: x.Id,
+            isrc: x.ISRC,
             title: x.Title,
             country: x.Country,
             primaryGenre: x.PrimaryGenre,
