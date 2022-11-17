@@ -339,7 +339,14 @@ function uploadArtwork(formData: FormData, file: File, update: (data: Partial<un
                 animation.pause();
                 await delay(5);
             },
-            uploadDone: () => { }
+            uploadDone: () => { },
+            failure: () => {
+                formData.delete("loading");
+                formData.delete("artwork");
+                formData.delete("artwork-url");
+                alert("Your Upload has failed. Please try a different file or try again later");
+                update({});
+            }
         }, file);
     });
 }

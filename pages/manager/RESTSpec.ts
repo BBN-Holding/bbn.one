@@ -20,6 +20,7 @@ export type Drop = {
     comments?: string;
     song?: {
         Id: string;
+        ISRC?: string;
         Title?: string;
         PrimaryGenre?: string;
         SecondaryGenre?: string;
