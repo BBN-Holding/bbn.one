@@ -235,32 +235,6 @@ cardlist {
     margin: 0 .5rem;
 }
 
-.image-edit {
-    display: grid;
-    cursor: pointer;
-}
-
-.image-edit img {
-    width: 95%;
-    border-radius: 20%;
-}
-
-.image-edit.small img {
-    border-radius: 10%;
-}
-
-.image-edit .wiconbutton {
-    border-radius: 100%;
-    justify-self: flex-end;
-    margin-top: -1.7rem;
-    width: unset;
-    aspect-ratio: 1 / 1;
-}
-
-.image-edit .wiconbutton span {
-    font-size: 19px;
-}
-
 .settings-form {
     justify-content: center;
 }
@@ -281,4 +255,22 @@ cardlist {
 
 .contents {
     display: contents;
+}
+
+.upload-image {
+    position: relative;
+}
+
+.upload-image .wimage {
+    height: 12rem;
+    aspect-ratio: 1/1;
+}
+
+.upload-image .wiconbutton {
+    position: absolute;
+    top: .4rem;
+    right: .4rem;
+    transform: translate(50%, -50%) scale(0.8);
+    border-radius: 100%;
+    padding: 1px 0 2px 1px;
 }

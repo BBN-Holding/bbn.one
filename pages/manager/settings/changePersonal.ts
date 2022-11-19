@@ -1,4 +1,4 @@
-import { Box, Color, Custom, Grid, IconButton, img, TextInput, Page, PlainText, Vertical, View, Wizard, WizardComponent } from "webgen/mod.ts";
+import { Box, Color, Grid, IconButton, TextInput, Page, PlainText, Vertical, Wizard, WizardComponent, Reactive, Image, AdvancedImage } from "webgen/mod.ts";
 import { allowedImageFormats, forceRefreshToken, GetCachedProfileData } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { API } from "../RESTSpec.ts";
@@ -15,12 +15,14 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
         Page({
             email: GetCachedProfileData().profile.email,
             name: GetCachedProfileData().profile.username,
+            loading: false,
+            profilePicture: GetCachedProfileData().profile.avatar ?? <AdvancedImage | string>{ type: "loading" } as string | AdvancedImage | undefined
         }, (data) => [
             ActionBar("Personal", undefined, {
                 title: "Update", onclick: () => {
                     Validate(PageValid, async () => {
                         await API.user(API.getToken()).setMe.post({
-                            name: data.get("name")?.toString()
+                            name: data.name
                         });
                         await delay(300);
                         await forceRefreshToken();
@@ -32,53 +34,37 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                 .setId("error-message-area"),
             Vertical(
                 Grid(
-                    // IDEA: Move this to a ImageUploadInput with Animations
-                    View<{ path: string; }>(({ state, update }) => Box(
-                        Custom(img(state.path)).addClass("upload-image"),
-                        IconButton("edit")
-                    )
-                        .addClass("image-edit")
-                        .onClick(() => uploadFilesDialog(([ file ]) => {
-                            update({ path: URL.createObjectURL(file) });
+                    Reactive(data, "profilePicture", () => Box(Image(data.profilePicture ?? { type: "loading" }, "Your Avatarimage"), IconButton("edit")).addClass("upload-image").onClick(() => {
+                        uploadFilesDialog(([ file ]) => {
+                            const blobUrl = URL.createObjectURL(file);
+                            data.profilePicture = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage: 0 };
                             setTimeout(() => {
-                                const image = document.querySelector(".upload-image")!;
-                                StreamingUploadHandler(`user/upload`, {
+                                StreamingUploadHandler(`user/set-me/avatar`, {
                                     failure: () => {
-                                        data.delete("loading");
+                                        data.loading = false;
                                         alert("Your Upload has failed. Please try a different file or try again later");
-                                        update({});
+                                        data.profilePicture = GetCachedProfileData().profile.avatar;
                                     },
                                     uploadDone: () => {
-                                        const animation = image.animate([
-                                            { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
-                                            { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
-                                        ], { duration: 100, fill: 'forwards' });
-                                        animation.currentTime = 0;
-                                        animation.pause();
+                                        data.profilePicture = <AdvancedImage>{ type: "waiting-upload", filename: file.name, blobUrl };
                                     },
                                     prepare: () => {
-                                        data.set("loading", "-");
+                                        data.loading = true;
                                     },
                                     backendResponse: async () => {
                                         await forceRefreshToken();
-                                        update({ path: GetCachedProfileData().profile.avatar });
-                                        data.delete("loading");
+                                        data.profilePicture = GetCachedProfileData().profile.avatar;
+                                        data.loading = false;
                                     },
                                     credentials: () => API.getToken(),
                                     onUploadTick: async (percentage) => {
-                                        const animation = image.animate([
-                                            { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
-                                            { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
-                                        ], { duration: 100, fill: 'forwards' });
-                                        animation.currentTime = percentage;
-                                        animation.pause();
-                                        await delay(5);
+                                        data.profilePicture = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage };
+                                        await delay(2);
                                     }
                                 }, file);
                             });
-                        }, allowedImageFormats.join(","))))
-                        .change(({ update }) => update({ path: GetCachedProfileData().profile.avatar }))
-                        .asComponent(),
+                        }, allowedImageFormats.join(","));
+                    })),
                     [
                         { width: 2 },
                         Vertical(
