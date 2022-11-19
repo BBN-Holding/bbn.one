@@ -55,12 +55,11 @@ export const API = {
     user: (token: string) => ({
         mail: {
             validate: {
-                post: (token: string) => {
-                    return fetch(`${API.BASE_URL}user/mail/validate/` + encodeURIComponent("JWT " + token), {
-                        method: "POST",
-                        headers: headers(token),
-                    }).then(x => x.json());
-                }
+                post: (emailToken: string) => fetch(`${API.BASE_URL}user/mail/validate/` + encodeURIComponent("JWT " + emailToken), {
+                    method: "POST",
+                    headers: headers(token),
+                }).then(x => x.text())
+
             },
             resendVerifyEmail: {
                 post: () => {
