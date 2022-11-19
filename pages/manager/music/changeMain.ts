@@ -10,7 +10,6 @@ import { EditViewState } from "./types.ts";
 
 export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({
-        cancelAction: () => { },
         submitAction: () => { },
     }, () => [
         Page({}, _ => [

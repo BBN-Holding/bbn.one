@@ -25,7 +25,10 @@ export function ActionBar(title: string, categories?: { title: string, selected:
                             .onClick(x.onclick) : null
                     ),
                     Spacer()
-                ).setGap("10px") : null
+                ).setGap("10px") : null,
+            PlainText("")
+                .addClass("error-message")
+                .setId("error-message-area")
         ),
         Spacer(),
         action ?
@@ -34,7 +37,7 @@ export function ActionBar(title: string, categories?: { title: string, selected:
                 Button(action.title)
                     .onPromiseClick(async () => { await action.onclick(); }),
                 Spacer()
-            ) : null
+            ) : null,
     )
         .setPadding("5rem 0 0 0")
         .addClass("action-bar")

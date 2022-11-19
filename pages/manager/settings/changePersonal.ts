@@ -5,33 +5,29 @@ import { API } from "../RESTSpec.ts";
 import { delay } from "https://deno.land/std@0.149.0/async/mod.ts";
 import { returnFunction, ViewState } from "./helper.ts";
 import { StreamingUploadHandler, uploadFilesDialog } from "../upload.ts";
-import { Validate } from "../misc/common.ts";
+import { HandleSubmit, setErrorMessage } from "../misc/common.ts";
 
 export function ChangePersonal(update: (data: Partial<ViewState>) => void): WizardComponent {
     return Wizard({
-        cancelAction: () => { },
-        submitAction: () => { },
-    }, ({ PageValid }) => [
+        submitAction: async ([ { data: { data } } ]) => {
+            await API.user(API.getToken()).setMe.post(data);
+            await delay(300);
+            await forceRefreshToken();
+        },
+        buttonArrangement: ({ PageValid, Submit }) => {
+            setErrorMessage();
+            return ActionBar("Personal", undefined, {
+                title: "Update", onclick: HandleSubmit(PageValid, Submit)
+            }, returnFunction(update));
+        },
+        buttonAlignment: "top",
+    }, () => [
         Page({
             email: GetCachedProfileData().profile.email,
             name: GetCachedProfileData().profile.username,
             loading: false,
             profilePicture: GetCachedProfileData().profile.avatar ?? <AdvancedImage | string>{ type: "loading" } as string | AdvancedImage | undefined
         }, (data) => [
-            ActionBar("Personal", undefined, {
-                title: "Update", onclick: () => {
-                    Validate(PageValid, async () => {
-                        await API.user(API.getToken()).setMe.post({
-                            name: data.name
-                        });
-                        await delay(300);
-                        await forceRefreshToken();
-                    });
-                }
-            }, returnFunction(update)),
-            PlainText("")
-                .addClass("error-message", "limited-width")
-                .setId("error-message-area"),
             Vertical(
                 Grid(
                     Reactive(data, "profilePicture", () => Box(Image(data.profilePicture ?? { type: "loading" }, "Your Avatarimage"), IconButton("edit")).addClass("upload-image").onClick(() => {
@@ -71,7 +67,7 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                             TextInput("text", "Name").sync(data, "name"),
                             TextInput("email", "Email")
                                 .setColor(Color.Disabled)
-                                .sync(data, "name")
+                                .sync(data, "email")
                                 .addSuffix(PlainText("Note: Changing Email is currently not supported."))
                         ).setGap("20px")
                     ]
@@ -81,8 +77,7 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                     .setGap("15px")
             ).setGap("20px").addClass("limited-width"),
         ]).setValidator((v) => v.object({
-            email: v.string().min(1),
             name: v.string().min(1)
-        }))
+        }).strip())
     ]);
 }

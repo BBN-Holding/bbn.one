@@ -1,7 +1,7 @@
 import { Box, Button, Custom, DropDownInput, Grid, IconButton, img, Page, PlainText, Spacer, TextInput, View, Wizard } from "webgen/mod.ts";
 import { allowedImageFormats, EditArtists, getSecondary } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
-import { changePage, Validate } from "../misc/common.ts";
+import { changePage, HandleSubmit, setErrorMessage, Validate } from "../misc/common.ts";
 import { API, Drop } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
 import language from "../../../data/language.json" assert { type: "json" };
@@ -14,8 +14,20 @@ import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 
 export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({
-        submitAction: () => { },
-    }, ({ PageValid, PageData, PageID }) => [
+        submitAction: async ([ { data: { data } } ]) => {
+            await API.music(API.getToken())
+                .id(drop._id)
+                .put(data);
+            location.reload(); // Handle this Smarter => Make it a Reload Event.
+        },
+        buttonArrangement: ({ PageValid, Submit }) => {
+            setErrorMessage();
+            return ActionBar("Drop", undefined, {
+                title: "Update", onclick: HandleSubmit(PageValid, Submit)
+            }, [ { title: drop.title || "(no title)", onclick: changePage(update, "main") } ]);
+        },
+        buttonAlignment: "top",
+    }, () => [
         Page({
             title: drop.title,
             release: drop.release,
@@ -26,20 +38,6 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
             compositionCopyright: drop.compositionCopyright,
             soundRecordingCopyright: drop.soundRecordingCopyright
         }, data => [
-            ActionBar("Drop", undefined, {
-                title: "Update", onclick: () => {
-                    Validate(PageValid, async () => {
-                        await API.music(API.getToken())
-                            .id(drop._id)
-                            .put(PageData()[ PageID() ]);
-                        location.reload(); // Handle this Smarter => Make it a Reload Event.
-                    });
-                }
-            }, [ { title: drop.title ?? "(no-title)", onclick: changePage(update, "main") } ]),
-            PlainText("")
-                .addClass("error-message", "limited-width")
-                .setId("error-message-area"),
-
             Grid(
                 // TODO: Refactor this into ImageInput()
                 Grid(
