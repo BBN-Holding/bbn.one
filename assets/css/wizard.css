@@ -44,6 +44,11 @@ nav.music {
     height: 100%;
 }
 
+.drop-area .image-source,
+.drop-area .image-source div {
+    display: contents;
+}
+
 .drop-area img {
     height: 70%;
     border-radius: 15px;

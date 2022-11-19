@@ -2,9 +2,9 @@ import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import secondary from "../../data/secondary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
-import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV } from "webgen/mod.ts";
+import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV, Box, img, Component } from "webgen/mod.ts";
 import { TableData } from "./types.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, MediaQuery, ProfileData, Redirect, RegisterAuthRefresh, syncFromData, Table, UploadTable, getSecondary } from "./helper.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, MediaQuery, ProfileData, Redirect, RegisterAuthRefresh, syncFromData, Table, UploadTable, getSecondary, ReCache } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
 import { API, Drop } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
@@ -13,6 +13,7 @@ import { DeleteFromForm, FormToRecord, RecordToForm } from "./data.ts";
 import { StreamingUploadHandler, uploadFilesDialog } from "./upload.ts";
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 import { addSongs, ImageFrom } from "./music/data.ts";
+import { MusicPageFive, MusicPageFour, MusicPageOne, MusicPageThree, MusicPageTwo } from "./music/validation.ts";
 
 WebGen({
     theme: SupportedThemes.dark,
@@ -47,16 +48,14 @@ View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
 ))
     .change(({ update }) => {
         update({ aboutMe: GetCachedProfileData() });
-        API.music(API.getToken())[ 'id' ](params.get("id")!).get().then(async restoreData => {
-            if (restoreData.artwork) {
-                const blob = await API.music(API.getToken()).id(params.get("id")!).artworkPreview();
-                update({ restoreData: { ...restoreData, [ "artwork-url" ]: URL.createObjectURL(blob) } });
-            }
-            else update({ restoreData });
-        }).catch((e) => {
-            alert(e);
-            setTimeout(() => location.reload(), 1000);
-        });
+        API.music(API.getToken())[ 'id' ](params.get("id")!).get()
+            .then(restoreData => {
+                update({ restoreData });
+            })
+            .catch((e) => {
+                alert(e);
+                setTimeout(() => location.reload(), 1000);
+            });
     })
     .addClass("fullscreen")
     .appendOn(document.body);
@@ -117,7 +116,10 @@ const wizard = (restore?: Drop) => Wizard({
             ).setGap(gapSize),
             Spacer()
         ),
-    ]).setDefaultValues({ upc: restore?.upc }),
+        Spacer(),
+    ])
+        .addValidator(MusicPageOne)
+        .setDefaultValues({ upc: restore?.upc }),
     Page((formData) => [
         Spacer(),
         MediaQuery("(max-width: 450px)", (small) =>
@@ -184,14 +186,7 @@ const wizard = (restore?: Drop) => Wizard({
         artists: JSON.stringify(restore?.artists),
         primaryGenre: restore?.primaryGenre,
         secondaryGenre: restore?.secondaryGenre
-    }).addValidator((e) => e.object({
-        title: e.string(),
-        artists: e.string().or(e.array(e.string())),
-        release: e.string(),
-        language: e.string(),
-        primaryGenre: e.string(),
-        secondaryGenre: e.string()
-    })),
+    }).addValidator(MusicPageTwo),
     Page((formData) => [
         Spacer(),
         Grid(
@@ -211,10 +206,7 @@ const wizard = (restore?: Drop) => Wizard({
     ]).setDefaultValues({
         compositionCopyright: restore?.compositionCopyright,
         soundRecordingCopyright: restore?.soundRecordingCopyright
-    }).addValidator((e) => e.object({
-        compositionCopyright: e.string(),
-        soundRecordingCopyright: e.string()
-    })),
+    }).addValidator(MusicPageThree),
     Page((formData) => [
         Spacer(),
         Center(
@@ -227,11 +219,7 @@ const wizard = (restore?: Drop) => Wizard({
                                 uploadArtwork(formData, file, update);
                             }, allowedImageFormats.join(",")))
                     ),
-                    DropAreaInput(CenterV(
-                        formData.has("artwork-url")
-                            ? ImageFrom(formData, "artwork-url").addClass("upload-image")
-                            : PlainText("Drag & Drop your File here")
-                    ), allowedImageFormats, ([ { file } ]) => {
+                    DropAreaInput(CenterV(ImagePreview(formData)), allowedImageFormats, ([ { file } ]) => {
                         uploadArtwork(formData, file, update);
                     }).addClass("drop-area"),
                     Custom(loadingWheel() as Element as HTMLElement)
@@ -241,11 +229,8 @@ const wizard = (restore?: Drop) => Wizard({
             ).asComponent()
         ),
     ]).setDefaultValues({
-        [ "artwork-url" ]: restore?.[ "artwork-url" ]
-    }).addValidator((thing) => thing.object({
-        loading: thing.void(),
-        [ "artwork-url" ]: thing.string()
-    })),
+        artwork: restore?.artwork
+    }).addValidator(MusicPageFour),
     Page((formData) => [
         Spacer(),
         Horizontal(
@@ -289,10 +274,7 @@ const wizard = (restore?: Drop) => Wizard({
             explicit: x.Explicit ? "true" : "false"
         })))
         : {}
-    ).addValidator((v) => v.object({
-        loading: v.void(),
-        song: v.string().min(1).or(v.string().array().min(1))
-    })),
+    ).addValidator(MusicPageFive),
     Page((formData) => [
         Spacer(),
         Horizontal(
@@ -312,6 +294,24 @@ const wizard = (restore?: Drop) => Wizard({
         comments: restore?.comments
     })
 ]);
+
+function ImagePreview(formData: FormData): Component {
+    if (formData.has("artwork") && !formData.has("artwork-url"))
+        return ReCache("artwork",
+            () => API.music(API.getToken()).id(params.get("id")!).artworkPreview().then(x => URL.createObjectURL(x)),
+            (type, data) => type == "cache" ? LoadingBox() : Custom(img(data))
+        )
+            .addClass("image-source");
+
+    if (formData.has("artwork") || formData.has("loading"))
+        return ImageFrom(formData, "artwork-url").addClass("upload-image");
+
+    return PlainText("Drag & Drop your File here");
+}
+
+function LoadingBox(): Component {
+    return Box(Custom(loadingWheel() as Element as HTMLElement));
+}
 
 function uploadArtwork(formData: FormData, file: File, update: (data: Partial<unknown>) => void) {
     formData.set("artwork-url", URL.createObjectURL(file));
