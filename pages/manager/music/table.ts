@@ -5,8 +5,8 @@ import { ColumEntry } from "../types.ts";
 import primary from "../../../data/primary.json" assert { type: "json"};
 import secondary from "../../../data/secondary.json" assert { type: "json"};
 import language from "../../../data/language.json" assert { type: "json"};
-import { accessibilityDisableTabOnDisabled } from "https://raw.githubusercontent.com/lucsoft/WebGen/1144da3a8dbcfb22253fb5c4bc8b3f92c4f208bf/src/lib/Accessibility.ts";
-import { Drop } from "../RESTSpec.ts";
+import { accessibilityDisableTabOnDisabled } from "webgen/src/lib/Accessibility.ts";
+
 function ProfilePicture(component: Component, name: string) {
     const ele = component.draw();
     ele.style.backgroundColor = stringToColour(name);
