@@ -1,8 +1,8 @@
-import { loadingWheel, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, MaterialIcons, ViewClass } from "webgen/mod.ts";
+import { loadingWheel, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, CenterV, Component, MaterialIcons, ViewClass, MediaQuery } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
-import { GetCachedProfileData, MediaQuery, ProfileData, ReCache, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded, showPreviewImage } from "./helper.ts";
+import { GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded, showPreviewImage } from "./helper.ts";
 import { API, Drop } from "./RESTSpec.ts";
 import { loadSongs } from "./helper.ts";
 import { ViewState } from "./types.ts";

@@ -2,14 +2,14 @@ import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import secondary from "../../data/secondary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
-import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, Input, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV, Box, img, Component } from "webgen/mod.ts";
+import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, TextInput, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV, Box, img, Component, MediaQuery, ReCache, Table } from "webgen/mod.ts";
 import { TableData } from "./types.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, MediaQuery, ProfileData, Redirect, RegisterAuthRefresh, syncFromData, Table, UploadTable, getSecondary, ReCache } from "./helper.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, UploadTable, getSecondary } from "./helper.ts";
 import { TableDef } from "./music/table.ts";
 import { API, Drop } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
 import '../../assets/css/main.css';
-import { DeleteFromForm, FormToRecord, RecordToForm } from "./data.ts";
+import { DeleteFromForm, FormToRecord } from "./data.ts";
 import { StreamingUploadHandler, uploadFilesDialog } from "./upload.ts";
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 import { addSongs, ImageFrom } from "./music/data.ts";
@@ -32,7 +32,6 @@ const gapSize = "15px";
 const inputWidth = "436px";
 
 
-// TODO: Input zu neuen FormComponents umlagern
 View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
     ...DynaNavigation("Music", state.aboutMe),
     state.restoreData == null
@@ -60,27 +59,28 @@ View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
     .addClass("fullscreen")
     .appendOn(document.body);
 
+// TODO: This should be put into the validators
+// const nextAction: async (pages) => {
+//     const single = new FormData();
+//     const list = pages.map(x => Array.from(x.data.entries())).flat();
+//     for (const [ key, value ] of list) {
+//         single.append(key, value);
+//     }
+//     try {
+
+//         await API
+//             .music(API.getToken())
+//             .id(params.get("id")!)
+//             .put(single);
+
+//     } catch (_error) {
+//         //TODO: Move this to a notification
+//         alert("Unexpected Error happend while updating your Drop\nPlease try again later...");
+//     }
+// };
 const wizard = (restore?: Drop) => Wizard({
     cancelAction: "/music",
     buttonArrangement: "space-between",
-    nextAction: async (pages) => {
-        const single = new FormData();
-        const list = pages.map(x => Array.from(x.data.entries())).flat();
-        for (const [ key, value ] of list) {
-            single.append(key, value);
-        }
-        try {
-
-            await API
-                .music(API.getToken())
-                .id(params.get("id")!)
-                .put(single);
-
-        } catch (_error) {
-            //TODO: Move this to a notification
-            alert("Unexpected Error happend while updating your Drop\nPlease try again later...");
-        }
-    },
     submitAction: async () => {
         const single = new FormData();
         single.set("type", <Drop[ "type" ]>"UNDER_REVIEW");
@@ -88,7 +88,9 @@ const wizard = (restore?: Drop) => Wizard({
         location.href = "/music";
     }
 }, ({ Next, PageData }) => [
-    Page((formData) => [
+    Page({
+        upc: restore?.upc
+    }, (formData) => [
         Spacer(),
         MediaQuery(
             "(max-width: 500px)",
@@ -102,10 +104,7 @@ const wizard = (restore?: Drop) => Wizard({
             Spacer(),
             Vertical(
                 Center(PlainText("Do you have an UPC/EAN number?").addClass("title")),
-                Input({
-                    ...syncFromData(formData, "upc"),
-                    placeholder: "UPC/EAN"
-                })
+                TextInput("text", "UPC/EAN").sync(formData, "upc")
                     .setWidth(inputWidth)
                     .addClass("max-width"),
                 Button("No, I don't have one.")
@@ -118,32 +117,24 @@ const wizard = (restore?: Drop) => Wizard({
         ),
         Spacer(),
     ])
-        .addValidator(MusicPageOne)
-        .setDefaultValues({ upc: restore?.upc }),
-    Page((formData) => [
+        .setValidator(MusicPageOne),
+    Page({
+        title: restore?.title,
+        release: restore?.release,
+        language: restore?.language,
+        artists: JSON.stringify(restore?.artists),
+        primaryGenre: restore?.primaryGenre,
+        secondaryGenre: restore?.secondaryGenre
+    }, (formData) => [
         Spacer(),
         MediaQuery("(max-width: 450px)", (small) =>
             Grid(
                 Center(PlainText("Enter your Album details.").addClass("title")),
-                Input({
-                    ...syncFromData(formData, "title"),
-                    placeholder: "Title"
-                }),
+                TextInput("text", "Title").sync(formData, "title"),
                 Grid(
-                    (() => {
-                        // TODO: Remake this hacky input to DateInput()
-                        const input = Input({
-                            value: formData.get("release")?.toString(),
-                            placeholder: "Release Date",
-                            type: "date" as "text"
-                        }).draw();
-                        const rawInput = input.querySelector("input")!;
-                        rawInput.style.paddingRight = "5px";
-                        rawInput.onchange = () => formData.set("release", rawInput.value);
-                        return Custom(input);
-                    })(),
+                    TextInput("date", "Release Date").sync(formData, "release"),
                     DropDownInput("Language", language)
-                        .syncFormData(formData, "language")
+                        .sync(formData, "language")
                         .addClass("justify-content-space")
                 )
                     .setEvenColumns(small ? 1 : 2)
@@ -160,15 +151,15 @@ const wizard = (restore?: Drop) => Wizard({
                 View(({ update }) =>
                     Grid(
                         DropDownInput("Primary Genre", primary)
-                            .syncFormData(formData, "primaryGenre")
+                            .sync(formData, "primaryGenre")
                             .addClass("justify-content-space")
                             .onChange(() => {
                                 formData.delete("secondaryGenre");
                                 update({});
                             }),
-                        DropDownInput("Secondary Genre", getSecondary(secondary, formData) ?? [])
-                            .syncFormData(formData, "secondaryGenre")
-                            .setColor(getSecondary(secondary, formData) ? Color.Grayscaled : Color.Disabled)
+                        DropDownInput("Secondary Genre", getSecondary(secondary, formData.primaryGenre) ?? [])
+                            .sync(formData, "secondaryGenre")
+                            .setColor(getSecondary(secondary, formData.primaryGenre) ? Color.Grayscaled : Color.Disabled)
                             .addClass("justify-content-space"),
                     )
                         .setGap(gapSize)
@@ -179,35 +170,25 @@ const wizard = (restore?: Drop) => Wizard({
                 .addClass("grid-area")
                 .setGap(gapSize)
         ),
-    ]).setDefaultValues({
-        title: restore?.title,
-        release: restore?.release,
-        language: restore?.language,
-        artists: JSON.stringify(restore?.artists),
-        primaryGenre: restore?.primaryGenre,
-        secondaryGenre: restore?.secondaryGenre
-    }).addValidator(MusicPageTwo),
-    Page((formData) => [
+    ]).setValidator(MusicPageTwo),
+    Page({
+        compositionCopyright: restore?.compositionCopyright,
+        soundRecordingCopyright: restore?.soundRecordingCopyright
+    }, (formData) => [
         Spacer(),
         Grid(
             Center(PlainText("Display the Copyright").addClass("title")),
-            Input({
-                placeholder: "Composition Copyright",
-                ...syncFromData(formData, "compositionCopyright")
-            }),
-            Input({
-                placeholder: "Sound Recording Copyright",
-                ...syncFromData(formData, "soundRecordingCopyright")
-            }),
+            TextInput("text", "Composition Copyright").sync(formData, "compositionCopyright"),
+            TextInput("text", "Sound Recording Copyright").sync(formData, "soundRecordingCopyright"),
         )
             .setEvenColumns(1)
             .addClass("grid-area")
             .setGap(gapSize)
-    ]).setDefaultValues({
-        compositionCopyright: restore?.compositionCopyright,
-        soundRecordingCopyright: restore?.soundRecordingCopyright
-    }).addValidator(MusicPageThree),
-    Page((formData) => [
+    ]).setValidator(MusicPageThree),
+    Page({
+        artwork: restore?.artwork,
+        "artwork-url": undefined,
+    }, (formData) => [
         Spacer(),
         Center(
             View(({ update }) =>
@@ -228,10 +209,10 @@ const wizard = (restore?: Drop) => Wizard({
                     .setGap(gapSize)
             ).asComponent()
         ),
-    ]).setDefaultValues({
-        artwork: restore?.artwork
-    }).addValidator(MusicPageFour),
-    Page((formData) => [
+    ]).setValidator(MusicPageFour),
+    Page({
+        song: restore?.song
+    }, (formData) => [
         Spacer(),
         Horizontal(
             Spacer(),
@@ -260,22 +241,10 @@ const wizard = (restore?: Drop) => Wizard({
             ).asComponent(),
             Spacer()
         ),
-    ]).setDefaultValues(restore?.song
-        ? RecordToForm(new FormData(), "song", restore.song.map(x => ({
-            id: x.Id,
-            isrc: x.ISRC,
-            title: x.Title,
-            country: x.Country,
-            primaryGenre: x.PrimaryGenre,
-            secondaryGenre: x.SecondaryGenre,
-            year: x.Year?.toString(),
-            artists: JSON.stringify(x.Artists),
-            file: x.File,
-            explicit: x.Explicit ? "true" : "false"
-        })))
-        : {}
-    ).addValidator(MusicPageFive),
-    Page((formData) => [
+    ]).setValidator(MusicPageFive),
+    Page({
+        comments: restore?.comments
+    }, (formData) => [
         Spacer(),
         Horizontal(
             Spacer(),
@@ -284,15 +253,10 @@ const wizard = (restore?: Drop) => Wizard({
         ),
         Horizontal(
             Spacer(),
-            Input({
-                placeholder: "Comments for Review Team",
-                ...syncFromData(formData, "comments")
-            }),
+            TextInput("text", "Comments for Review Team").sync(formData, "comments"),
             Spacer()
         ),
-    ]).setDefaultValues({
-        comments: restore?.comments
-    })
+    ])
 ]);
 
 function ImagePreview(formData: FormData): Component {

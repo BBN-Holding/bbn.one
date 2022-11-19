@@ -1,4 +1,4 @@
-import { createElement } from "https://raw.githubusercontent.com/lucsoft/WebGen/285feef/mod.ts";
+import { createElement } from "webgen/mod.ts";
 import { API } from "./RESTSpec.ts";
 
 export type StreamingUploadEvents = {

@@ -1,5 +1,4 @@
-import { CenterV, Grid, Icon, PlainText, Spacer } from "webgen/mod.ts";
-import { MediaQuery } from "../helper.ts";
+import { CenterV, Grid, Icon, MediaQuery, PlainText, Spacer } from "webgen/mod.ts";
 
 export function Entry(text: string, subtext?: string, action?: () => void) {
     return MediaQuery("(max-width: 520px)", (small) =>

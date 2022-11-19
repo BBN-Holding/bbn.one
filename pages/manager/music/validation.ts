@@ -1,5 +1,5 @@
 // deno-lint-ignore no-explicit-any
-type Validator = (factory: typeof import("https://deno.land/x/zod@v3.16.0/mod.ts")) => any;
+type Validator = (factory: typeof import("https://deno.land/x/zod@v3.19.1/mod.ts")) => any;
 
 export const MusicPageOne: Validator = (zod) => zod.object({
     upc: zod.string().min(1).refine(x => x.trim()).or(zod.string().optional())

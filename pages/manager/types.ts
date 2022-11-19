@@ -1,4 +1,3 @@
-import { Component } from "webgen/mod.ts";
 import { Drop } from "./RESTSpec.ts";
 
 export type TableData = {
@@ -17,5 +16,3 @@ export type ViewState = {
     reviews: Drop[];
     type: Drop[ "type" ];
 };
-
-export type ColumEntry<Data, Entry = keyof Data> = [ id: string | Entry, size: string, render: (data: Data, index: number) => Component ];

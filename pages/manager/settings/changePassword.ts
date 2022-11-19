@@ -1,5 +1,5 @@
-import { Grid, Input, Page, PlainText, Vertical, Wizard, WizardComponent } from "webgen/mod.ts";
-import { Redirect, syncFromData } from "../helper.ts";
+import { Grid, TextInput, Page, PlainText, Vertical, Wizard, WizardComponent } from "webgen/mod.ts";
+import { Redirect } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { API } from "../RESTSpec.ts";
 import { delay } from "https://deno.land/std@0.149.0/async/mod.ts";
@@ -10,11 +10,14 @@ export function ChangePassword(update: (data: Partial<ViewState>) => void): Wiza
         cancelAction: () => { },
         submitAction: () => { },
     }, ({ PageValid }) => [
-        Page((data) => [
+        Page({
+            newPassword: undefined,
+            verifyNewPassword: undefined
+        }, (data) => [
             ActionBar("Change Password", undefined, {
                 title: "Change", onclick: async () => {
-                    const newLocal = PageValid();
-                    if (newLocal === true) {
+                    const newLocal = await PageValid();
+                    if (newLocal.success === true) {
                         document.querySelector<HTMLElement>("#error-message-area")!.innerText = "";
                         await API.user(API.getToken()).setMe.post({
                             password: data.get("new-password")?.toString()
@@ -35,14 +38,8 @@ export function ChangePassword(update: (data: Partial<ViewState>) => void): Wiza
                     [
                         { width: 2 },
                         Vertical(
-                            Input({
-                                placeholder: "New Password",
-                                ...syncFromData(data, "new-password")
-                            }),
-                            Input({
-                                placeholder: "Verify New Password",
-                                ...syncFromData(data, "verify-new-password")
-                            })
+                            TextInput("password", "New Password").sync(data, "newPassword"),
+                            TextInput("password", "Verify New Password").sync(data, "verifyNewPassword")
                         ).setGap("20px")
                     ]
                 )
@@ -50,11 +47,11 @@ export function ChangePassword(update: (data: Partial<ViewState>) => void): Wiza
                     .addClass("settings-form")
                     .setGap("15px")
             ).setGap("20px"),
-        ]).addValidator((v) => v.object({
-            [ "new-password" ]: v.string({ invalid_type_error: "New password is missing" }).min(1),
-            [ "verify-new-password" ]: v.string({ invalid_type_error: "Verify New password is missing" }).min(1)
+        ]).setValidator((v) => v.object({
+            newPassword: v.string({ invalid_type_error: "New password is missing" }).min(1),
+            verifyNewPassword: v.string({ invalid_type_error: "Verify New password is missing" }).min(1)
         })
-            .refine(val => val[ "new-password" ] == val[ "verify-new-password" ], "Your new password didn't match")
+            .refine(val => val.newPassword == val.verifyNewPassword, "Your new password didn't match")
         )
     ]);
 }

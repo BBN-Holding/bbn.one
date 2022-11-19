@@ -1,5 +1,5 @@
-import { Box, Color, Custom, Grid, IconButton, img, Input, Page, PlainText, Vertical, View, Wizard, WizardComponent } from "webgen/mod.ts";
-import { allowedImageFormats, forceRefreshToken, GetCachedProfileData, syncFromData } from "../helper.ts";
+import { Box, Color, Custom, Grid, IconButton, img, TextInput, Page, PlainText, Vertical, View, Wizard, WizardComponent } from "webgen/mod.ts";
+import { allowedImageFormats, forceRefreshToken, GetCachedProfileData } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { API } from "../RESTSpec.ts";
 import { delay } from "https://deno.land/std@0.149.0/async/mod.ts";
@@ -12,7 +12,10 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
         cancelAction: () => { },
         submitAction: () => { },
     }, ({ PageValid }) => [
-        Page((data) => [
+        Page({
+            email: GetCachedProfileData().profile.email,
+            name: GetCachedProfileData().profile.username,
+        }, (data) => [
             ActionBar("Personal", undefined, {
                 title: "Update", onclick: () => {
                     Validate(PageValid, async () => {
@@ -79,15 +82,11 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                     [
                         { width: 2 },
                         Vertical(
-                            Input({
-                                placeholder: "Name",
-                                ...syncFromData(data, "name")
-                            }),
-                            Input({
-                                placeholder: "Email",
-                                color: Color.Disabled,
-                                ...syncFromData(data, "email")
-                            }).addSuffix(PlainText("Note: Changing Email is currently not supported."))
+                            TextInput("text", "Name").sync(data, "name"),
+                            TextInput("email", "Email")
+                                .setColor(Color.Disabled)
+                                .sync(data, "name")
+                                .addSuffix(PlainText("Note: Changing Email is currently not supported."))
                         ).setGap("20px")
                     ]
                 )
@@ -95,12 +94,9 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                     .addClass("settings-form")
                     .setGap("15px")
             ).setGap("20px").addClass("limited-width"),
-        ]).addValidator((v) => v.object({
+        ]).setValidator((v) => v.object({
             email: v.string().min(1),
             name: v.string().min(1)
-        })).setDefaultValues({
-            email: GetCachedProfileData().profile.email,
-            name: GetCachedProfileData().profile.username,
-        })
+        }))
     ]);
 }

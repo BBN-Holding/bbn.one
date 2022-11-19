@@ -1,5 +1,5 @@
-import { Box, Button, Custom, DropDownInput, Grid, Horizontal, IconButton, img, Input, Page, PlainText, Spacer, View, Wizard } from "webgen/mod.ts";
-import { allowedImageFormats, EditArtists, syncFromData, getSecondary } from "../helper.ts";
+import { Box, Button, Custom, DropDownInput, Grid, IconButton, img, Page, PlainText, Spacer, TextInput, View, Wizard } from "webgen/mod.ts";
+import { allowedImageFormats, EditArtists, getSecondary } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage, Validate } from "../misc/common.ts";
 import { API, Drop } from "../RESTSpec.ts";
@@ -14,10 +14,18 @@ import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 
 export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({
-        cancelAction: () => { },
         submitAction: () => { },
     }, ({ PageValid, PageData, PageID }) => [
-        Page(data => [
+        Page({
+            title: drop.title,
+            release: drop.release,
+            language: drop.language,
+            artists: JSON.stringify(drop.artists),
+            primaryGenre: drop.primaryGenre,
+            secondaryGenre: drop.secondaryGenre,
+            compositionCopyright: drop.compositionCopyright,
+            soundRecordingCopyright: drop.soundRecordingCopyright
+        }, data => [
             ActionBar("Drop", undefined, {
                 title: "Update", onclick: () => {
                     Validate(PageValid, async () => {
@@ -83,25 +91,11 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                 ).setDynamicColumns(2, "12rem"),
                 [
                     { width: 2 },
-                    Input({
-                        placeholder: "Title",
-                        ...syncFromData(data, "title")
-                    })
+                    TextInput("text", "Title").sync(data, "title")
                 ],
-                (() => {
-                    // TODO: Remake this hacky input to DateInput()
-                    const input = Input({
-                        value: data.get("release")?.toString(),
-                        placeholder: "Release Date",
-                        type: "date" as "text"
-                    }).draw();
-                    const rawInput = input.querySelector("input")!;
-                    rawInput.style.paddingRight = "5px";
-                    rawInput.onchange = () => data.set("release", rawInput.value);
-                    return Custom(input);
-                })(),
+                TextInput("date", "Release Date").sync(data, "release"),
                 DropDownInput("Language", language)
-                    .syncFormData(data, "language")
+                    .sync(data, "language")
                     .addClass("justify-content-space"),
                 [
                     { width: 2 },
@@ -117,14 +111,14 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                     View(({ update }) =>
                         Grid(
                             DropDownInput("Primary Genre", primary)
-                                .syncFormData(data, "primaryGenre")
+                                .sync(data, "primaryGenre")
                                 .addClass("justify-content-space")
                                 .onChange(() => {
                                     data.delete("secondaryGenre");
                                     update({});
                                 }),
-                            DropDownInput("Secondary Genre", getSecondary(secondary, data) ?? [])
-                                .syncFormData(data, "secondaryGenre")
+                            DropDownInput("Secondary Genre", getSecondary(secondary, data.primaryGenre) ?? [])
+                                .sync(data, "secondaryGenre")
                                 .addClass("justify-content-space"),
                         )
                             .setEvenColumns(2, "minmax(2rem, 20rem)")
@@ -132,29 +126,14 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                     )
                         .asComponent()
                 ],
-                Input({
-                    placeholder: "Composition Copyright",
-                    ...syncFromData(data, "compositionCopyright")
-                }),
-                Input({
-                    placeholder: "Sound Recording Copyright",
-                    ...syncFromData(data, "soundRecordingCopyright")
-                })
+                TextInput("text", "Composition Copyright").sync(data, "compositionCopyright"),
+                TextInput("text", "Sound Recording Copyright").sync(data, "soundRecordingCopyright")
             )
                 .setEvenColumns(2, "minmax(2rem, 20rem)")
                 .addClass("settings-form")
                 .addClass("limited-width")
                 .setGap("15px")
-        ]).setDefaultValues({
-            title: drop.title,
-            release: drop.release,
-            language: drop.language,
-            artists: JSON.stringify(drop.artists),
-            primaryGenre: drop.primaryGenre,
-            secondaryGenre: drop.secondaryGenre,
-            compositionCopyright: drop.compositionCopyright,
-            soundRecordingCopyright: drop.soundRecordingCopyright
-        }).addValidator((v) => v.object({
+        ]).setValidator((v) => v.object({
             loading: v.void()
         }))
     ]

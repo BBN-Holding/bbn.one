@@ -1,5 +1,5 @@
-import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, Custom, img, CenterV, Component, Icon, ViewClass } from "webgen/mod.ts";
-import { loadSongs, MediaQuery, showPreviewImage } from "../helper.ts";
+import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, CenterV, Component, Icon, ViewClass, MediaQuery } from "webgen/mod.ts";
+import { loadSongs, showPreviewImage } from "../helper.ts";
 import { API, Drop } from "../RESTSpec.ts";
 import { ViewState } from "../types.ts";
 

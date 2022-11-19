@@ -1,4 +1,4 @@
-import { SafeParseError } from "https://deno.land/x/zod@v3.16.0/types.ts";
+import { SafeParseReturnType } from "https://deno.land/x/zod@v3.19.1/types.ts";
 import { SupportedThemes } from "webgen/mod.ts";
 import { Style } from "webgen/src/lib/Style.ts";
 
@@ -15,9 +15,10 @@ export function changePage<TypeT extends { route: string; }>(update: (data: Part
     };
 }
 
-export function Validate(PageValid: () => true | SafeParseError<unknown>, run: () => void | Promise<void>) {
-    const newLocal = PageValid();
-    if (newLocal === true) {
+// deno-lint-ignore no-explicit-any
+export async function Validate(PageValid: () => Promise<SafeParseReturnType<any, any>>, run: () => void | Promise<void>) {
+    const newLocal = await PageValid();
+    if (newLocal.success === true) {
         document.querySelector<HTMLElement>("#error-message-area")!.innerText = "";
         run();
     } else {

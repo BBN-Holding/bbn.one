@@ -1,5 +1,4 @@
-import { Center, PlainText } from "webgen/mod.ts";
-import { MediaQuery } from "../helper.ts";
+import { Center, MediaQuery, PlainText } from "webgen/mod.ts";
 import { Drop } from "../RESTSpec.ts";
 import { ViewState } from "../types.ts";
 

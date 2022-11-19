@@ -1,10 +1,10 @@
-import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, Input, Page, PlainText, Spacer, Vertical, View, WebGen, Box, Component } from "webgen/mod.ts";
+import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, Page, PlainText, Spacer, Vertical, View, WebGen, Box, Component, TextInput } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import heroImage from '../../assets/img/hero-img.png';
 import googleLog from '../../assets/img/googleLogo.svg';
 import { DynaNavigation } from "../../components/nav.ts";
-import { forceRefreshToken, Redirect, syncFromData } from "./helper.ts";
+import { forceRefreshToken, Redirect } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 WebGen({
@@ -29,23 +29,27 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
             (() => {
                 if (state.loading) return Box(Custom(loadingWheel() as Element as HTMLElement), PlainText("Loading...")).addClass("loading", "loader");
                 if (state.resetToken)
-                    return Page((formData) => [
-                        Input({ placeholder: "New Password", type: "password", ...syncFromData(formData, "password") }),
+                    return Page({ password: "" }, (formData) => [
+                        TextInput("password", "New Passoword").sync(formData, "password"),
                         Button("Reset your Password")
                             .setJustify("center")
                             .onPromiseClick(async () => {
                                 try {
                                     await API.user(state.resetToken!).setMe.post({
-                                        password: formData.get("password")?.toString()
+                                        password: formData.password
                                     });
-                                    update({ resetToken: undefined, password: formData.get("password")?.toString() });
+                                    update({ resetToken: undefined, password: formData.password });
                                 } catch (_) {
                                     update({ error: "Failed: Please try again later" });
                                 }
                             }),
                         PlainText(state.resetToken?.startsWith("!") ? "Error: Link is invalid" : "").addClass("error-message")
                     ]).disableAutoSpacerAtBottom().getComponents();
-                return Page((formData) => [
+                return Page({
+                    email: state.email,
+                    name: state.name,
+                    password: state.password
+                }, (formData) => [
                     Button("Sign in with Google")
                         .setMargin("0 0 .8rem")
                         .setJustify("center")
@@ -54,13 +58,13 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                     Horizontal(state.error != undefined ? PlainText(`Error: ${state.error || "Something happend. Please try again later"}.`).addClass("error-message") : null, Spacer()),
                     ...(<{ [ key in NonNullable<typeof state.mode> ]: Component[]; }>{
                         login: [
-                            Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
-                            Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password") }),
+                            TextInput("email", "Email").sync(formData, "email"),
+                            TextInput("password", "Passoword").sync(formData, "password"),
                             Button("Login")
                                 .onPromiseClick(async () => {
                                     const { email, password } = {
-                                        email: formData.get("email")?.toString() ?? "",
-                                        password: formData.get("password")?.toString() ?? "",
+                                        email: formData.name ?? "",
+                                        password: formData.password ?? "",
                                     };
                                     const data = await API.auth.email.post({
                                         email,
@@ -69,7 +73,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                     if (API.isError(data))
                                         update({
                                             error: data.message || "",
-                                            email: formData.get("email")?.toString()
+                                            email: formData.email
                                         });
                                     else
                                         logIn(data, "email").finally(Redirect);
@@ -79,7 +83,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 PlainText("New here?"),
                                 Button("Create a Account")
                                     .setStyle(ButtonStyle.Inline)
-                                    .onClick(() => update({ mode: "register", email: formData.get("email")?.toString(), error: undefined }))
+                                    .onClick(() => update({ mode: "register", email: formData.email, error: undefined }))
                                     .setColor(Color.Colored)
                                     .addClass("link"),
                                 Spacer()
@@ -90,21 +94,21 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 Button("Reset it here")
                                     .setStyle(ButtonStyle.Inline)
                                     .setColor(Color.Colored)
-                                    .onClick(() => update({ mode: state.mode == "login" ? "reset-password" : "login", email: formData.get("email")?.toString(), error: undefined }))
+                                    .onClick(() => update({ mode: state.mode == "login" ? "reset-password" : "login", email: formData.email, error: undefined }))
                                     .addClass("link"),
                                 Spacer()
                             )
                         ],
                         register: [
-                            Input({ placeholder: "Name", type: "text", ...syncFromData(formData, "name") }),
-                            Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
-                            Input({ placeholder: "Password", type: "password", ...syncFromData(formData, "password"), value: state.password }),
+                            TextInput("text", "Name").sync(formData, "name"),
+                            TextInput("email", "Email").sync(formData, "email"),
+                            TextInput("password", "Passoword").sync(formData, "password"),
                             Button("Register")
                                 .onPromiseClick(async () => {
                                     const { name, email, password } = {
-                                        email: formData.get("email")?.toString() ?? "",
-                                        password: formData.get("password")?.toString() ?? "",
-                                        name: formData.get("name")?.toString() ?? ""
+                                        email: formData.email ?? "",
+                                        password: formData.password ?? "",
+                                        name: formData.name ?? ""
                                     };
                                     const data = await API.auth.register.post({
                                         name,
@@ -112,7 +116,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                         password
                                     });
                                     if (API.isError(data))
-                                        update({ error: data.message || "", name: formData.get("name")?.toString() ?? "" });
+                                        update({ error: data.message || "", name: formData.name ?? "" });
                                     else
                                         logIn(data, "email").finally(Redirect);
                                 })
@@ -121,7 +125,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 PlainText("Known here?"),
                                 Button("Sign in")
                                     .setStyle(ButtonStyle.Inline)
-                                    .onClick(() => update({ mode: "login", email: formData.get("email")?.toString(), error: undefined }))
+                                    .onClick(() => update({ mode: "login", email: formData.email, error: undefined }))
                                     .setColor(Color.Colored)
                                     .addClass("link"),
                                 Spacer()
@@ -129,16 +133,16 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 .setMargin("1rem 0 0"),
                         ],
                         "reset-password": [
-                            Input({ placeholder: "Email", type: "email", ...syncFromData(formData, "email") }),
+                            TextInput("email", "Email").sync(formData, "email"),
                             Button("Reset")
                                 .onPromiseClick(async () => {
                                     try {
-                                        if (formData.get("email"))
+                                        if (formData.email)
                                             await API.auth.forgotPassword.post({
-                                                email: formData.get("email")?.toString() ?? ""
+                                                email: formData.email ?? ""
                                             });
                                         else
-                                            update({ error: "Email is missing", email: formData.get("email")?.toString() });
+                                            update({ error: "Email is missing", email: formData.email });
                                     } catch (_) {
                                         update({ error: "Please try again later" });
                                     }
@@ -156,7 +160,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 .setMargin("1rem 0 0"),
                         ]
                     })[ state.mode ?? "login" ],
-                ]).setDefaultValues({ email: state.email, name: state.name, password: state.password }).disableAutoSpacerAtBottom().getComponents();
+                ]).disableAutoSpacerAtBottom().getComponents();
             })()
         ).setGap("11px"),
         Spacer()

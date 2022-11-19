@@ -13,7 +13,7 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
         cancelAction: () => { },
         submitAction: () => { },
     }, () => [
-        Page(_ => [
+        Page({}, _ => [
             Grid(
                 Box(
                     Custom(img(data[ "artwork-url" ])).addClass("upload-image"),
