@@ -7,7 +7,7 @@ export const MusicPageOne: Validator = (zod) => zod.object({
 
 export const MusicPageTwo: Validator = (zod) => zod.object({
     title: zod.string().min(1).refine(x => x.trim()),
-    artists: zod.string().or(zod.array(zod.string())),
+    artists: zod.tuple([ zod.string(), zod.string(), zod.string() ]).array(),
     release: zod.string(),
     language: zod.string(),
     primaryGenre: zod.string(),
@@ -20,11 +20,14 @@ export const MusicPageThree: Validator = (zod) => zod.object({
 });
 
 export const MusicPageFour: Validator = (zod) => zod.object({
-    loading: zod.void(),
+    loading: zod.literal(false, { description: "Upload still in progress" }),
     artwork: zod.string()
 }).strip();
 
 export const MusicPageFive: Validator = (zod) => zod.object({
-    loading: zod.void(),
-    song: zod.string().min(1).or(zod.string().array().min(1))
+    uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }),
+    songs: zod.array(zod.object({
+        title: zod.string(),
+        file: zod.string({ required_error: "a Song is missing its file." })
+    })).min(1)
 });

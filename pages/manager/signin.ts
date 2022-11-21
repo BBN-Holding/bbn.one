@@ -63,7 +63,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                             Button("Login")
                                 .onPromiseClick(async () => {
                                     const { email, password } = {
-                                        email: formData.name ?? "",
+                                        email: formData.email ?? "",
                                         password: formData.password ?? "",
                                     };
                                     const data = await API.auth.email.post({
@@ -177,7 +177,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
         }
         else if (type == "forgot-password" && token) {
             update({ loading: true });
-            API.auth.fromUserInteraction.get(token).then(async x => {
+            API.auth.fromUserInteraction.get("JWT " + token).then(async x => {
                 await logIn(x, "email");
                 update({ resetToken: API.getToken(), loading: false });
             }).catch(() => {

@@ -34,18 +34,16 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                         uploadFilesDialog(([ file ]) => {
                             const blobUrl = URL.createObjectURL(file);
                             data.profilePicture = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage: 0 };
+                            data.loading = true;
                             setTimeout(() => {
                                 StreamingUploadHandler(`user/set-me/avatar`, {
                                     failure: () => {
                                         data.loading = false;
-                                        alert("Your Upload has failed. Please try a different file or try again later");
                                         data.profilePicture = GetCachedProfileData().profile.avatar;
+                                        alert("Your Upload has failed. Please try a different file or try again later");
                                     },
                                     uploadDone: () => {
                                         data.profilePicture = <AdvancedImage>{ type: "waiting-upload", filename: file.name, blobUrl };
-                                    },
-                                    prepare: () => {
-                                        data.loading = true;
                                     },
                                     backendResponse: async () => {
                                         await forceRefreshToken();

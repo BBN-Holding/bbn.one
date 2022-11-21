@@ -1,119 +1,89 @@
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
-import { Component, Custom, img } from "webgen/mod.ts";
+import { AdvancedImage, StateHandler } from "webgen/mod.ts";
 import { API, Drop } from "../RESTSpec.ts";
 import { StreamingUploadHandler } from "../upload.ts";
 
-const lockedLoading = new Set();
-export function addSongsByDrop(drop: Drop, list: File[], formData: FormData, update: (data: Partial<unknown>) => void) {
-    list.map(x => ({ file: x, id: crypto.randomUUID() })).forEach(({ file, id }) => {
-        formData.append("song", id);
-        formData.set("loading", "-");
-
-        lockedLoading.add(id);
+export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[]; songs: Drop[ "songs" ]; }>, drop: Drop, source: File[]) {
+    for (const file of source) {
+        const uploadId = crypto.randomUUID();
+        state.uploadingSongs.push(uploadId);
+        if (!state.songs)
+            state.songs = [];
         const cleanedUpTitle = file.name
             .replaceAll("_", " ")
             .replaceAll("-", " ")
             .replace(/\.[^/.]+$/, "");
+
+        state.songs = [ ...state.songs, {
+            id: uploadId,
+            title: cleanedUpTitle,
+            artists: drop.artists,
+            // TODO: country should be real country
+            country: drop.language,
+            explicit: false,
+            primaryGenre: drop.primaryGenre,
+            secondaryGenre: drop.secondaryGenre,
+            year: new Date().getFullYear(),
+            progress: 0
+        } ];
 
         StreamingUploadHandler(`music/${drop._id}/upload`, {
             failure: () => {
-                formData.set(`song-${id}-error`, "upload-failure");
-                lockedLoading.delete(id);
-                if (lockedLoading.size == 0)
-                    formData.delete("loading");
+                state.uploadingSongs = <StateHandler<string[]>>state.uploadingSongs.filter(x => x != uploadId);
+                if (state.songs)
+                    state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = -1;
+                state.songs = [ ...state.songs ?? [] ];
                 alert("Your Upload has failed. Please try a different file or try again later");
-                update({});
-            },
-            prepare: () => {
-                formData.set(`song-${id}-progress`, "0");
-            },
-            credentials: () => API.getToken(),
-            backendResponse: (fileId) => {
-                formData.set(`song-${id}-file`, fileId);
-                formData.delete(`song-${id}-progress`);
-                lockedLoading.delete(id);
-                if (lockedLoading.size == 0)
-                    formData.delete("loading");
-                update({});
-            },
-            onUploadTick: async (percentage) => {
-                formData.set(`song-${id}-progress`, percentage.toString());
-                await delay(10);
-                update({});
             },
             uploadDone: () => {
-
+                if (state.songs)
+                    state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = 100;
+                state.songs = [ ...state.songs ?? [] ];
+            },
+            credentials: () => API.getToken(),
+            backendResponse: (id) => {
+                if (state.songs) {
+                    state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = undefined;
+                    state.songs[ state.songs.findIndex(x => x.id == uploadId) ].file = id;
+                }
+                state.uploadingSongs = <StateHandler<string[]>>state.uploadingSongs.filter(x => x != uploadId);
+                state.songs = [ ...state.songs ?? [] ];
+            },
+            // deno-lint-ignore require-await
+            onUploadTick: async (percentage) => {
+                if (state.songs)
+                    state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = percentage;
+                state.songs = [ ...state.songs ?? [] ];
             }
         }, file);
-        formData.set(`song-${id}-title`, cleanedUpTitle); // Our AI prediceted name
-        formData.set(`song-${id}-year`, new Date().getFullYear().toString());
-        formData.set(`song-${id}-artists`, JSON.stringify(drop.artists ?? "[]"));
-        if (drop.primaryGenre)
-            formData.set(`song-${id}-primaryGenre`, drop.primaryGenre);
-        if (drop.secondaryGenre)
-            formData.set(`song-${id}-secondaryGenre`, drop.secondaryGenre);
-        if (drop.language)
-            formData.set(`song-${id}-country`, drop.language);
-    });
-    update({});
+    }
 }
-export function addSongs(dropId: string, meta: () => FormData[], list: File[], formData: FormData, update: (data: Partial<unknown>) => void) {
-    list.map(x => ({ file: x, id: crypto.randomUUID() })).forEach(({ file, id }) => {
-        formData.append("song", id);
-        formData.set("loading", "-");
 
-        lockedLoading.add(id);
-        const cleanedUpTitle = file.name
-            .replaceAll("_", " ")
-            .replaceAll("-", " ")
-            .replace(/\.[^/.]+$/, "");
+export function uploadArtwork(state: StateHandler<{ artworkClientData: AdvancedImage | string | undefined; loading: boolean; artwork: string | undefined; }>, file: File) {
+    const params = new URLSearchParams(location.search);
+    const blobUrl = URL.createObjectURL(file);
+    state.artworkClientData = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage: 0 };
+    state.loading = true;
 
-        StreamingUploadHandler(`music/${dropId}/upload`, {
+    setTimeout(() => {
+        StreamingUploadHandler(`music/${params.get("id")!}/upload`, {
             failure: () => {
-                formData.set(`song-${id}-error`, "upload-failure");
-                lockedLoading.delete(id);
-                if (lockedLoading.size == 0)
-                    formData.delete("loading");
+                state.loading = false;
+                state.artworkClientData = undefined;
                 alert("Your Upload has failed. Please try a different file or try again later");
-                update({});
-            },
-            prepare: () => {
-                formData.set(`song-${id}-progress`, "0");
-            },
-            credentials: () => API.getToken(),
-            backendResponse: (fileId) => {
-                formData.set(`song-${id}-file`, fileId);
-                formData.delete(`song-${id}-progress`);
-                lockedLoading.delete(id);
-                if (lockedLoading.size == 0)
-                    formData.delete("loading");
-                update({});
-            },
-            onUploadTick: async (percentage) => {
-                formData.set(`song-${id}-progress`, percentage.toString());
-                await delay(10);
-                update({});
             },
             uploadDone: () => {
-
+                state.artworkClientData = <AdvancedImage>{ type: "waiting-upload", filename: file.name, blobUrl };
+            },
+            credentials: () => API.getToken(),
+            backendResponse: (id) => {
+                state.artworkClientData = blobUrl;
+                state.artwork = id;
+            },
+            onUploadTick: async (percentage) => {
+                state.artworkClientData = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage };
+                await delay(2);
             }
         }, file);
-        formData.set(`song-${id}-title`, cleanedUpTitle); // Our AI prediceted name
-        formData.set(`song-${id}-year`, new Date().getFullYear().toString());
-        const list = meta();
-        applyFromPage(list, formData, 1, "artists", `song-${id}-artists`);
-        applyFromPage(list, formData, 1, "primaryGenre", `song-${id}-primaryGenre`);
-        applyFromPage(list, formData, 1, "secondaryGenre", `song-${id}-secondaryGenre`);
-        applyFromPage(list, formData, 1, "language", `song-${id}-country`);
     });
-    update({});
-}
-
-function applyFromPage(meta: FormData[], current: FormData, index: number, src: string, dest: string) {
-    if (meta[ index ]?.has(src))
-        current.set(dest, meta[ index ].get(src)!.toString());
-}
-
-export function ImageFrom(formData: FormData, key: string): Component {
-    return Custom(img(formData.get(key)! as string));
 }

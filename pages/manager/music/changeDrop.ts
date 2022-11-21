@@ -1,7 +1,7 @@
-import { Box, Button, Custom, DropDownInput, Grid, IconButton, img, Page, PlainText, Spacer, TextInput, View, Wizard } from "webgen/mod.ts";
+import { AdvancedImage, Box, Button, Custom, DropDownInput, Grid, IconButton, Image, img, Page, Reactive, Spacer, TextInput, View, Wizard } from "webgen/mod.ts";
 import { allowedImageFormats, EditArtists, getSecondary } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
-import { changePage, HandleSubmit, setErrorMessage, Validate } from "../misc/common.ts";
+import { changePage, HandleSubmit, setErrorMessage } from "../misc/common.ts";
 import { API, Drop } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
 import language from "../../../data/language.json" assert { type: "json" };
@@ -9,8 +9,7 @@ import primary from "../../../data/primary.json" assert { type: "json" };
 import secondary from "../../../data/secondary.json" assert { type: "json" };
 
 import { uploadFilesDialog } from "../upload.ts";
-import { StreamingUploadHandler } from "../upload.ts";
-import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
+import { uploadArtwork } from "./data.ts";
 
 export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({
@@ -32,60 +31,24 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
             title: drop.title,
             release: drop.release,
             language: drop.language,
-            artists: JSON.stringify(drop.artists),
+            artists: drop.artists,
             primaryGenre: drop.primaryGenre,
             secondaryGenre: drop.secondaryGenre,
             compositionCopyright: drop.compositionCopyright,
-            soundRecordingCopyright: drop.soundRecordingCopyright
+            soundRecordingCopyright: drop.soundRecordingCopyright,
+
+            loading: false,
+            artwork: drop.artwork,
+            artworkClientData: <AdvancedImage | string | undefined>undefined
         }, data => [
             Grid(
-                // TODO: Refactor this into ImageInput()
                 Grid(
-                    View<{ path: string; }>(({ state, update }) => Box(
-                        Custom(img(state.path)).addClass("upload-image"),
-                        IconButton("edit")
+                    Reactive(data, "artwork", () => Box(
+                        Image(data.artwork ?? { type: "loading" }, "Your Avatarimage"), IconButton("edit")
                     )
-                        .addClass("image-edit")
-                        .onClick(() => uploadFilesDialog(([ file ]) => {
-                            data.set("loading", "-");
-                            update({ path: URL.createObjectURL(file) });
-                            setTimeout(() => {
-                                const image = document.querySelector(".upload-image")!;
-                                StreamingUploadHandler(`music/${drop._id}/upload`, {
-                                    failure: () => {
-                                        data.delete("loading");
-                                        alert("Your Upload has failed. Please try a different file or try again later");
-                                        update({});
-                                    },
-                                    prepare: () => {
-                                        const animation = image.animate([
-                                            { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
-                                            { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
-                                        ], { duration: 100, fill: 'forwards' });
-                                        animation.currentTime = 0;
-                                        animation.pause();
-                                    },
-                                    credentials: () => API.getToken(),
-                                    backendResponse: (id) => {
-                                        data.set("artwork", id);
-                                        data.delete("loading");
-                                        update({});
-                                    },
-                                    onUploadTick: async (percentage) => {
-                                        const animation = image.animate([
-                                            { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
-                                            { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
-                                        ], { duration: 100, fill: 'forwards' });
-                                        animation.currentTime = percentage;
-                                        animation.pause();
-                                        await delay(5);
-                                    },
-                                    uploadDone: () => { }
-                                }, file);
-                            });
-                        }, allowedImageFormats.join(","))))
-                        .change(({ update }) => update({ path: drop[ "artwork-url" ] }))
-                        .asComponent(),
+                        .addClass("upload-image")
+                        .onClick(() => uploadFilesDialog(([ file ]) => uploadArtwork(data, file), allowedImageFormats.join(",")))
+                    ),
                 ).setDynamicColumns(2, "12rem"),
                 [
                     { width: 2 },
@@ -100,7 +63,10 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                     // TODO: Make this a nicer component
                     Button("Artists")
                         .onClick(() => {
-                            EditArtists(data.get("artists") ? JSON.parse(data.get("artists")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => data.set("artists", JSON.stringify(x)));
+                            EditArtists(data.artists ?? [ [ "", "", "PRIMARY" ] ]).then((x) => {
+                                data.artists = x;
+                                console.log(data);
+                            });
                         }),
                 ],
                 [ { width: 2, heigth: 2 }, Spacer() ],

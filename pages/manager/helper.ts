@@ -1,6 +1,6 @@
 // This code Will be ported to webgen
 
-import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, img, Page, PlainText, ReCache, Spacer, Table, TextInput, Vertical, View, ViewClass } from "webgen/mod.ts";
+import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, img, Page, PlainText, Reactive, ReCache, Spacer, StateHandler, Table, TextInput, Vertical, ViewClass } from "webgen/mod.ts";
 import { API, ArtistTypes, Drop } from "./RESTSpec.ts";
 import artwork from "../../assets/img/template-artwork.png";
 export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
@@ -133,9 +133,9 @@ export function CenterAndRight(center: Component, right: Component): Component {
 
 // BBN Stuff
 export function getYearList(): string[] {
-    return new Array(8)
+    return new Array(new Date().getFullYear() - 2000 + 1)
         .fill(1)
-        .map((_, i) => (new Date().getFullYear() + 2) - i)
+        .map((_, i) => (new Date().getFullYear()) - i)
         .map((x) => x.toString());
 }
 
@@ -172,37 +172,43 @@ export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: F
     ).setGap("2.5rem").addClass("drop-area-label").draw());
     return Custom(table);
 }
-
-export function EditArtists(list: NonNullable<Drop[ "artists" ]>) {
+const ARTIST_ARRAY = <ArtistTypes[]>[ "PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER" ];
+export function EditArtists(list: [ name: string, img: string, type: ArtistTypes ][]) {
     const form = Page({
-        list
-    }, (data) => [
-        View(({ update }) =>
+        list: list
+    }, (state) => [
+        Reactive(state, "list", () =>
             Vertical(
                 Table([
-                    [ "Type", "10rem", (_, index) => DropDownInput("Type", <ArtistTypes[]>[ "PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER" ]).addClass("justify-content-space").setValue(data.list[ index ][ 2 ]) ],
-                    [ "Name", "auto", (_, index) => TextInput("text", "Name").setValue(data.list[ index ][ 0 ]) ]
-                ], data.list)
+                    [ "Type", "10rem", (_, index) =>
+                        DropDownInput("Type", ARTIST_ARRAY)
+                            .addClass("justify-content-space")
+                            .setValue([ state.list[ index ][ 2 ], ARTIST_ARRAY.indexOf(state.list[ index ][ 2 ]) ])
+                            .onChange((data) => update(state, index, 2, data?.[ 0 ]))
+                    ],
+                    [ "Name", "auto", (_, index) =>
+                        TextInput("text", "Name", "blur")
+                            .setValue(state.list[ index ][ 0 ])
+                            .onChange((data) => update(state, index, 0, data))
+                    ]
+
+                ], state.list)
                     .setDelete((_, index) => {
                         list = list.filter((_, i) => i != index);
-                        update({});
                     }),
                 Horizontal(
                     Spacer(),
                     Button("Add Artist") // TODO: Remove this in the future => switch to ghost rows
                         .onClick(() => {
-                            const id = crypto.randomUUID();
-                            data.append("actor", id);
-                            data.set(`actor-${id}-name`, "");
-                            data.set(`actor-${id}-type`, "PRIMARY");
-                            update({});
+                            // deno-lint-ignore no-explicit-any
+                            state.list = <any>[ ...state.list, [ "", "", "PRIMARY" ] ];
                         })
                 ).setPadding("0 0 3rem 0")
             )
                 .setGap("var(--gap)")
                 .setWidth("clamp(0rem, 100vw, 60vw)")
                 .setMargin("0 -.6rem 0 0")
-        ).asComponent()
+        )
     ]);
     return new Promise<Drop[ "artists" ]>((done) => {
         const dialog = Dialog(() => Box(...form.getComponents()))
@@ -214,11 +220,7 @@ export function EditArtists(list: NonNullable<Drop[ "artists" ]>) {
             })
             .addButton("Save", () => {
                 const data = form.getFormData();
-                done(data.list
-                    .map((i) =>
-                        [ data.get(`actor-${i}-name`), "", data.get(`actor-${i}-type`) ] as
-                        [ name: string, img: string, type: ArtistTypes ]
-                    ));
+                done(data.list);
 
                 return "remove";
             })
@@ -253,4 +255,13 @@ export async function loadSongs(view: ViewClass<{
         view.viewOptions().update({ list, type: "UNSUBMITTED" });
     else
         view.viewOptions().update({ list });
+}
+
+// deno-lint-ignore no-explicit-any
+function update(state: StateHandler<{ list: [ name: string, img: string, type: ArtistTypes ][] | undefined; }>, index: number, key: number, value: any) {
+    if (!state.list)
+        state.list = [];
+    // @ts-ignore errors due to any usage.
+    state.list[ index ][ key ] = value;
+    state.list = [ ...state.list ];
 }

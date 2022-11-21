@@ -18,17 +18,20 @@ export type Drop = {
     compositionCopyright?: string;
     soundRecordingCopyright?: string;
     comments?: string;
-    song?: {
-        Id: string;
-        ISRC?: string;
-        Title?: string;
-        PrimaryGenre?: string;
-        SecondaryGenre?: string;
-        Artists?: [ name: string, img: string, type: ArtistTypes ][];
-        Country?: string;
-        File?: string;
-        Explicit?: boolean;
-        Year?: number;
+    songs?: {
+        id: string;
+        isrc?: string;
+        title?: string;
+        primaryGenre?: string;
+        secondaryGenre?: string;
+        artists?: [ name: string, img: string, type: ArtistTypes ][];
+        country?: string;
+        file?: string;
+        explicit?: boolean;
+        year?: number;
+
+        // Frontend Only
+        progress?: number;
     }[];
 };
 
