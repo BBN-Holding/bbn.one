@@ -86,7 +86,7 @@ const wizard = (restore: Drop) => Wizard({
 }, ({ Next, PageData }) => [
     Page({
         upc: restore.upc
-    }, (formData) => [
+    }, (state) => [
         Spacer(),
         MediaQuery(
             "(max-width: 500px)",
@@ -100,7 +100,7 @@ const wizard = (restore: Drop) => Wizard({
             Spacer(),
             Vertical(
                 Center(PlainText("Do you have an UPC/EAN number?").addClass("title")),
-                TextInput("text", "UPC/EAN").sync(formData, "upc")
+                TextInput("text", "UPC/EAN").sync(state, "upc")
                     .setWidth(inputWidth)
                     .addClass("max-width"),
                 Button("No, I don't have one.")
@@ -121,16 +121,16 @@ const wizard = (restore: Drop) => Wizard({
         artists: restore?.artists,
         primaryGenre: restore?.primaryGenre,
         secondaryGenre: restore?.secondaryGenre
-    }, (formData) => [
+    }, (state) => [
         Spacer(),
         MediaQuery("(max-width: 450px)", (small) =>
             Grid(
                 Center(PlainText("Enter your Album details.").addClass("title")),
-                TextInput("text", "Title").sync(formData, "title"),
+                TextInput("text", "Title").sync(state, "title"),
                 Grid(
-                    TextInput("date", "Release Date").sync(formData, "release"),
+                    TextInput("date", "Release Date").sync(state, "release"),
                     DropDownInput("Language", language)
-                        .sync(formData, "language")
+                        .sync(state, "language")
                         .addClass("justify-content-space")
                 )
                     .setEvenColumns(small ? 1 : 2)
@@ -138,25 +138,25 @@ const wizard = (restore: Drop) => Wizard({
                 // TODO: Make this a nicer component
                 Button("Artists")
                     .onClick(() => {
-                        EditArtists(formData.artists ?? [ [ "", "", "PRIMARY" ] ])
+                        EditArtists(state.artists ?? [ [ "", "", "PRIMARY" ] ])
                             .then((x) => {
                                 console.log(x);
                                 // deno-lint-ignore no-explicit-any
-                                formData.artists = <any>x?.map(x => x.map(x => x.trim()));
-                                console.log(JSON.parse(JSON.stringify(formData)));
+                                state.artists = <any>x?.map(x => x.map(x => x.trim()));
+                                console.log(JSON.parse(JSON.stringify(state)));
                             });
                     }),
                 Center(PlainText("Set your target Audience").addClass("title")),
                 Grid(
                     DropDownInput("Primary Genre", primary)
-                        .sync(formData, "primaryGenre")
+                        .sync(state, "primaryGenre")
                         .addClass("justify-content-space")
                         .onChange(() => {
-                            formData.secondaryGenre = undefined;
+                            state.secondaryGenre = undefined;
                         }),
-                    DropDownInput("Secondary Genre", getSecondary(secondary, formData.primaryGenre) ?? [])
-                        .sync(formData, "secondaryGenre")
-                        .setColor(getSecondary(secondary, formData.primaryGenre) ? Color.Grayscaled : Color.Disabled)
+                    DropDownInput("Secondary Genre", getSecondary(secondary, state.primaryGenre) ?? [])
+                        .sync(state, "secondaryGenre")
+                        .setColor(getSecondary(secondary, state.primaryGenre) ? Color.Grayscaled : Color.Disabled)
                         .addClass("justify-content-space"),
                 )
                     .setGap(gapSize)
@@ -170,12 +170,12 @@ const wizard = (restore: Drop) => Wizard({
     Page({
         compositionCopyright: restore?.compositionCopyright,
         soundRecordingCopyright: restore?.soundRecordingCopyright
-    }, (formData) => [
+    }, (state) => [
         Spacer(),
         Grid(
             Center(PlainText("Display the Copyright").addClass("title")),
-            TextInput("text", "Composition Copyright").sync(formData, "compositionCopyright"),
-            TextInput("text", "Sound Recording Copyright").sync(formData, "soundRecordingCopyright"),
+            TextInput("text", "Composition Copyright").sync(state, "compositionCopyright"),
+            TextInput("text", "Sound Recording Copyright").sync(state, "soundRecordingCopyright"),
         )
             .setEvenColumns(1)
             .addClass("grid-area")
@@ -208,7 +208,7 @@ const wizard = (restore: Drop) => Wizard({
         uploadingSongs: <string[]>[],
         songs: restore?.songs,
         test: 0,
-    }, (formData) => [
+    }, (state) => [
         Spacer(),
         Horizontal(
             Spacer(),
@@ -216,16 +216,16 @@ const wizard = (restore: Drop) => Wizard({
                 CenterAndRight(
                     PlainText("Manage your Music").addClass("title"),
                     Button("Manual Upload")
-                        .onClick(() => uploadFilesDialog((list) => uploadSongToDrop(formData, getDropFromPages(PageData(), restore), list), allowedAudioFormats.join(",")))
+                        .onClick(() => uploadFilesDialog((list) => uploadSongToDrop(state, getDropFromPages(PageData(), restore), list), allowedAudioFormats.join(",")))
                 ),
-                ManageSongs(formData),
+                ManageSongs(state),
             ).setGap(gapSize),
             Spacer()
         ),
     ]).setValidator(MusicPageFive),
     Page({
         comments: restore?.comments
-    }, (formData) => [
+    }, (state) => [
         Spacer(),
         Horizontal(
             Spacer(),
@@ -234,7 +234,7 @@ const wizard = (restore: Drop) => Wizard({
         ),
         Horizontal(
             Spacer(),
-            TextInput("text", "Comments for Review Team").sync(formData, "comments"),
+            TextInput("text", "Comments for Review Team").sync(state, "comments"),
             Spacer()
         ),
     ])

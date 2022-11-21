@@ -29,16 +29,16 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
             (() => {
                 if (state.loading) return Box(Custom(loadingWheel() as Element as HTMLElement), PlainText("Loading...")).addClass("loading", "loader");
                 if (state.resetToken)
-                    return Page({ password: "" }, (formData) => [
-                        TextInput("password", "New Passoword").sync(formData, "password"),
+                    return Page({ password: "" }, (state) => [
+                        TextInput("password", "New Passoword").sync(state, "password"),
                         Button("Reset your Password")
                             .setJustify("center")
                             .onPromiseClick(async () => {
                                 try {
                                     await API.user(state.resetToken!).setMe.post({
-                                        password: formData.password
+                                        password: state.password
                                     });
-                                    update({ resetToken: undefined, password: formData.password });
+                                    update({ resetToken: undefined, password: state.password });
                                 } catch (_) {
                                     update({ error: "Failed: Please try again later" });
                                 }
@@ -49,7 +49,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                     email: state.email,
                     name: state.name,
                     password: state.password
-                }, (formData) => [
+                }, (state) => [
                     Button("Sign in with Google")
                         .setMargin("0 0 .8rem")
                         .setJustify("center")
@@ -58,13 +58,13 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                     Horizontal(state.error != undefined ? PlainText(`Error: ${state.error || "Something happend. Please try again later"}.`).addClass("error-message") : null, Spacer()),
                     ...(<{ [ key in NonNullable<typeof state.mode> ]: Component[]; }>{
                         login: [
-                            TextInput("email", "Email").sync(formData, "email"),
-                            TextInput("password", "Passoword").sync(formData, "password"),
+                            TextInput("email", "Email").sync(state, "email"),
+                            TextInput("password", "Passoword").sync(state, "password"),
                             Button("Login")
                                 .onPromiseClick(async () => {
                                     const { email, password } = {
-                                        email: formData.email ?? "",
-                                        password: formData.password ?? "",
+                                        email: state.email ?? "",
+                                        password: state.password ?? "",
                                     };
                                     const data = await API.auth.email.post({
                                         email,
@@ -73,7 +73,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                     if (API.isError(data))
                                         update({
                                             error: data.message || "",
-                                            email: formData.email
+                                            email: state.email
                                         });
                                     else
                                         logIn(data, "email").finally(Redirect);
@@ -83,7 +83,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 PlainText("New here?"),
                                 Button("Create a Account")
                                     .setStyle(ButtonStyle.Inline)
-                                    .onClick(() => update({ mode: "register", email: formData.email, error: undefined }))
+                                    .onClick(() => update({ mode: "register", email: state.email, error: undefined }))
                                     .setColor(Color.Colored)
                                     .addClass("link"),
                                 Spacer()
@@ -94,21 +94,21 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 Button("Reset it here")
                                     .setStyle(ButtonStyle.Inline)
                                     .setColor(Color.Colored)
-                                    .onClick(() => update({ mode: state.mode == "login" ? "reset-password" : "login", email: formData.email, error: undefined }))
+                                    .onClick(() => update({ mode: state.mode == "login" ? "reset-password" : "login", email: state.email, error: undefined }))
                                     .addClass("link"),
                                 Spacer()
                             )
                         ],
                         register: [
-                            TextInput("text", "Name").sync(formData, "name"),
-                            TextInput("email", "Email").sync(formData, "email"),
-                            TextInput("password", "Passoword").sync(formData, "password"),
+                            TextInput("text", "Name").sync(state, "name"),
+                            TextInput("email", "Email").sync(state, "email"),
+                            TextInput("password", "Passoword").sync(state, "password"),
                             Button("Register")
                                 .onPromiseClick(async () => {
                                     const { name, email, password } = {
-                                        email: formData.email ?? "",
-                                        password: formData.password ?? "",
-                                        name: formData.name ?? ""
+                                        email: state.email ?? "",
+                                        password: state.password ?? "",
+                                        name: state.name ?? ""
                                     };
                                     const data = await API.auth.register.post({
                                         name,
@@ -116,7 +116,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                         password
                                     });
                                     if (API.isError(data))
-                                        update({ error: data.message || "", name: formData.name ?? "" });
+                                        update({ error: data.message || "", name: state.name ?? "" });
                                     else
                                         logIn(data, "email").finally(Redirect);
                                 })
@@ -125,7 +125,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 PlainText("Known here?"),
                                 Button("Sign in")
                                     .setStyle(ButtonStyle.Inline)
-                                    .onClick(() => update({ mode: "login", email: formData.email, error: undefined }))
+                                    .onClick(() => update({ mode: "login", email: state.email, error: undefined }))
                                     .setColor(Color.Colored)
                                     .addClass("link"),
                                 Spacer()
@@ -133,16 +133,16 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                 .setMargin("1rem 0 0"),
                         ],
                         "reset-password": [
-                            TextInput("email", "Email").sync(formData, "email"),
+                            TextInput("email", "Email").sync(state, "email"),
                             Button("Reset")
                                 .onPromiseClick(async () => {
                                     try {
-                                        if (formData.email)
+                                        if (state.email)
                                             await API.auth.forgotPassword.post({
-                                                email: formData.email ?? ""
+                                                email: state.email ?? ""
                                             });
                                         else
-                                            update({ error: "Email is missing", email: formData.email });
+                                            update({ error: "Email is missing", email: state.email });
                                     } catch (_) {
                                         update({ error: "Please try again later" });
                                     }
