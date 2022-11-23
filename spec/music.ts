@@ -68,13 +68,32 @@ export const drop = pageOne
     .merge(pageFour)
     .merge(pageFive);
 
-export const serverDrop = drop.extend({
+export const databaseRequirements = {
     _id: zod.string().refine(x => ObjectId.isValid(x)).transform(x => new ObjectId(x)),
     user: zod.string().refine(x => ObjectId.isValid(x)).transform(x => new ObjectId(x)),
-    type: zod.nativeEnum(DropType),
     loading: zod.void(),
     uploadingSongs: zod.void(),
+};
+export const databaseDrop = drop.partial().extend({
+    ...databaseRequirements,
+    type: zod.literal(DropType.Unsubmitted),
+    songs: song.extend({
+        file: zod.string().refine(x => ObjectId.isValid(x)).transform(x => new ObjectId(x))
+    }).array().min(1).optional()
+}).or(drop.extend({
+    ...databaseRequirements,
+    type: zod.union([
+        zod.literal(DropType.Private),
+        zod.literal(DropType.Published),
+        zod.literal(DropType.ReviewDeclined),
+        zod.literal(DropType.UnderReview),
+    ]),
     songs: song.extend({
         file: zod.string().refine(x => ObjectId.isValid(x)).transform(x => new ObjectId(x))
     }).array().min(1)
-});
+}));
+
+export type DatabaseDrop = zod.infer<typeof databaseDrop>;
+export type Drop = zod.infer<typeof drop>;
+export type Artist = zod.infer<typeof artist>;
+export type Song = zod.infer<typeof song>;
