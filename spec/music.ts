@@ -74,24 +74,24 @@ export const databaseRequirements = {
     loading: zod.void(),
     uploadingSongs: zod.void(),
 };
-export const databaseDrop = drop.partial().extend({
-    ...databaseRequirements,
-    type: zod.literal(DropType.Unsubmitted),
-    songs: song.extend({
-        file: zod.string().refine(x => ObjectId.isValid(x)).transform(x => new ObjectId(x))
-    }).array().min(1).optional()
-}).or(drop.extend({
-    ...databaseRequirements,
-    type: zod.union([
-        zod.literal(DropType.Private),
-        zod.literal(DropType.Published),
-        zod.literal(DropType.ReviewDeclined),
-        zod.literal(DropType.UnderReview),
-    ]),
-    songs: song.extend({
-        file: zod.string().refine(x => ObjectId.isValid(x)).transform(x => new ObjectId(x))
-    }).array().min(1)
-}));
+
+export const databaseDrop = drop
+    .partial()
+    .extend(databaseRequirements)
+    .extend({
+        type: zod.literal(DropType.Unsubmitted),
+    })
+    .or(drop
+        .extend(databaseRequirements)
+        .extend({
+            type: zod.union([
+                zod.literal(DropType.Private),
+                zod.literal(DropType.Published),
+                zod.literal(DropType.ReviewDeclined),
+                zod.literal(DropType.UnderReview),
+            ])
+        })
+    );
 
 export type DatabaseDrop = zod.infer<typeof databaseDrop>;
 export type Drop = zod.infer<typeof drop>;
