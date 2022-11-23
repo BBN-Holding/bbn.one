@@ -8,7 +8,7 @@ import { API, Drop } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
 import '../../assets/css/main.css';
 import { uploadFilesDialog } from "./upload.ts";
-import { MusicPageFive, MusicPageFour, MusicPageOne, MusicPageThree, MusicPageTwo } from "./music/validation.ts";
+import { MusicPageFive, MusicPageFour, MusicPageOne, MusicPageThree, MusicPageTwo } from "../../spec/music.ts";
 import { ManageSongs } from "./music/table.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
 
@@ -83,6 +83,10 @@ const wizard = (restore: Drop) => Wizard({
         await API.music(API.getToken()).id(params.get("id")!).put(single);
         location.href = "/music";
     },
+    onNextPage: async ({ ResponseData }) => {
+        const data = await ResponseData();
+
+    }
 }, ({ Next, PageData }) => [
     Page({
         upc: restore.upc
@@ -113,7 +117,7 @@ const wizard = (restore: Drop) => Wizard({
         ),
         Spacer(),
     ])
-        .setValidator(MusicPageOne),
+        .setValidator(() => MusicPageOne),
     Page({
         title: restore?.title,
         release: restore?.release,
@@ -166,7 +170,7 @@ const wizard = (restore: Drop) => Wizard({
                 .addClass("grid-area")
                 .setGap(gapSize)
         ),
-    ]).setValidator(MusicPageTwo),
+    ]).setValidator(() => MusicPageTwo),
     Page({
         compositionCopyright: restore?.compositionCopyright,
         soundRecordingCopyright: restore?.soundRecordingCopyright
@@ -180,7 +184,7 @@ const wizard = (restore: Drop) => Wizard({
             .setEvenColumns(1)
             .addClass("grid-area")
             .setGap(gapSize)
-    ]).setValidator(MusicPageThree),
+    ]).setValidator(() => MusicPageThree),
     Page({
         artwork: restore?.artwork,
         artworkClientData: <AdvancedImage | string | undefined>(restore?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music(API.getToken()).id(restore._id).artworkPreview() } : undefined),
@@ -203,7 +207,7 @@ const wizard = (restore: Drop) => Wizard({
                 ).addClass("drop-area")
             ).setGap(gapSize))
         ),
-    ]).setValidator(MusicPageFour),
+    ]).setValidator(() => MusicPageFour),
     Page({
         uploadingSongs: <string[]>[],
         songs: restore?.songs,
@@ -222,7 +226,7 @@ const wizard = (restore: Drop) => Wizard({
             ).setGap(gapSize),
             Spacer()
         ),
-    ]).setValidator(MusicPageFive),
+    ]).setValidator(() => MusicPageFive),
     Page({
         comments: restore?.comments
     }, (state) => [
