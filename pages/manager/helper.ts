@@ -1,8 +1,9 @@
 // This code Will be ported to webgen
 
-import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, img, Page, PlainText, Reactive, ReCache, Spacer, StateHandler, Table, TextInput, Vertical, ViewClass } from "webgen/mod.ts";
-import { API, ArtistTypes, Drop } from "./RESTSpec.ts";
+import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, ReCache, Spacer, StateHandler, Table, TextInput, Vertical, ViewClass } from "webgen/mod.ts";
+import { API } from "./RESTSpec.ts";
 import artwork from "../../assets/img/template-artwork.png";
+import { Artist, ArtistTypes, Drop, DropType } from "../../spec/music.ts";
 export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
@@ -17,7 +18,6 @@ export type ProfileData = {
         provider: "google" | "apple" | "github" | "microsoft" | string,
         secret: string;
     };
-    events?: { type: "auth", date: number, ip: string, source?: { type: "browser", }; }[];
     profile: {
         email: string;
         verified?: {
@@ -173,7 +173,7 @@ export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: F
     return Custom(table);
 }
 const ARTIST_ARRAY = <ArtistTypes[]>[ "PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER" ];
-export function EditArtists(list: [ name: string, img: string, type: ArtistTypes ][]) {
+export function EditArtists(list: Artist[]) {
     const form = Page({
         list: list
     }, (state) => [
@@ -228,17 +228,12 @@ export function EditArtists(list: [ name: string, img: string, type: ArtistTypes
     });
 }
 export function showPreviewImage(x: Drop) {
-    return ReCache(x._id,
-        () => loadImage(x),
-        (type, data) => type == "cache"
-            ? Custom(img(data || artwork))
-            : Custom(img(data || artwork))
-    );
+    return ReCache("image-preview-" + x._id, () => Promise.resolve(), (type) => type == "loaded" && x.artwork ? Image({ type: "direct", source: async () => await loadImage(x) ?? artwork }, "A Song Artwork") : Image(artwork, "A Placeholder Artwork.")).addClass("image-preview");
 }
+
 export async function loadImage(x: Drop) {
     if (!x.artwork) return undefined;
-    const image = await API.music(API.getToken()).id(x._id).artworkPreview();
-    return URL.createObjectURL(image);
+    return await API.music(API.getToken()).id(x._id).artworkPreview();
 }
 export async function loadSongs(view: ViewClass<{
     list: Drop[];
@@ -252,7 +247,7 @@ export async function loadSongs(view: ViewClass<{
     const list = await API.music(API.getToken()).list.get();
     // Only do it when its the first time
     if (view.viewOptions().state.list == undefined && list.find(x => x.type == "UNSUBMITTED"))
-        view.viewOptions().update({ list, type: "UNSUBMITTED" });
+        view.viewOptions().update({ list, type: DropType.Unsubmitted });
     else
         view.viewOptions().update({ list });
 }

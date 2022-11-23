@@ -1,5 +1,5 @@
 {
     "imports": {
-        "webgen/": "../WebGen/"
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/0d5af45/"
     }
 }

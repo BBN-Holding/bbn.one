@@ -13,10 +13,6 @@
     color: rgb(255 255 255 / 80%);
 }
 
-.list-entry img {
-    display: block;
-}
-
 .under-review {
     background-color: #BCBCBC;
     color: rgba(0, 0, 0, 0.8);
@@ -45,12 +41,12 @@
         gap: 18px !important;
     }
 
-    .list-entry img {
+    .list-entry .image-preview .wimage {
         height: 75px;
     }
 }
 
-.small-preview img {
+.small-preview .image-preview .wimage {
     height: 2.2rem;
     border-radius: 3px;
     margin: 0 0.4rem 0 0;

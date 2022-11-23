@@ -1,5 +1,4 @@
 import * as zod from "https://deno.land/x/zod@v3.19.1/mod.ts";
-import { ObjectId } from "https://deno.land/x/web_bson@v0.2.5/src/objectid.ts";
 
 export enum DropType {
     Published = 'PUBLISHED',
@@ -35,7 +34,7 @@ export const song = zod.object({
 });
 
 export const pageOne = zod.object({
-    upc: zod.string().min(1).transform(x => x.trim() || undefined).or(zod.any().transform(_ => undefined))
+    upc: zod.string().min(1).transform(x => x.trim() || undefined).optional()
 });
 
 export const pageTwo = zod.object({
@@ -48,42 +47,54 @@ export const pageTwo = zod.object({
 });
 
 export const pageThree = zod.object({
-    compositionCopyright: zod.string().min(1).refine(x => x.trim()),
-    soundRecordingCopyright: zod.string().min(1).refine(x => x.trim())
+    compositionCopyright: zod.string().min(1).refine(x => x.trim()).transform(x => x.trim()),
+    soundRecordingCopyright: zod.string().min(1).refine(x => x.trim()).transform(x => x.trim())
 });
 
 export const pageFour = zod.object({
-    loading: zod.literal(false, { description: "Upload still in progress" }),
+    loading: zod.literal(false, { description: "Upload still in progress" }).transform(_ => undefined),
     artwork: zod.string()
-}).strip();
+});
 
 export const pageFive = zod.object({
-    uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }),
+    uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }).transform(_ => undefined),
     songs: song.array().min(1)
 });
 
-export const drop = pageOne
+export const pageSix = zod.object({
+    comments: zod.string().optional()
+});
+
+export const pureDrop = pageOne
     .merge(pageTwo)
     .merge(pageThree)
     .merge(pageFour)
-    .merge(pageFive);
+    .merge(pageFive)
+    .merge(pageSix);
 
-export const databaseRequirements = {
-    _id: zod.string().refine(x => ObjectId.isValid(x)).transform(x => new ObjectId(x)),
-    user: zod.string().refine(x => ObjectId.isValid(x)).transform(x => new ObjectId(x)),
-    loading: zod.void(),
-    uploadingSongs: zod.void(),
+
+export const Requirements = {
+    posting: {
+        loading: zod.void(),
+        uploadingSongs: zod.void(),
+    },
+    frontend: {
+        _id: zod.string(),
+        user: zod.string()
+    }
 };
 
-export const databaseDrop = drop
+export const drop = pureDrop
     .partial()
-    .extend(databaseRequirements)
     .extend({
+        ...Requirements.posting,
+        ...Requirements.frontend,
         type: zod.literal(DropType.Unsubmitted),
     })
-    .or(drop
-        .extend(databaseRequirements)
+    .or(pureDrop
         .extend({
+            ...Requirements.posting,
+            ...Requirements.frontend,
             type: zod.union([
                 zod.literal(DropType.Private),
                 zod.literal(DropType.Published),
@@ -93,7 +104,7 @@ export const databaseDrop = drop
         })
     );
 
-export type DatabaseDrop = zod.infer<typeof databaseDrop>;
 export type Drop = zod.infer<typeof drop>;
+export type PureDrop = zod.infer<typeof pureDrop>;
 export type Artist = zod.infer<typeof artist>;
 export type Song = zod.infer<typeof song>;

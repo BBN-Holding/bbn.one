@@ -4,13 +4,13 @@ import secondary from "../../data/secondary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, TextInput, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV, Box, MediaQuery, Image, AdvancedImage, Reactive, StateHandler } from "webgen/mod.ts";
 import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, getSecondary } from "./helper.ts";
-import { API, Drop } from "./RESTSpec.ts";
+import { API } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
 import '../../assets/css/main.css';
 import { uploadFilesDialog } from "./upload.ts";
-import * as musicSpec from "../../spec/music.ts";
 import { ManageSongs } from "./music/table.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
+import { ArtistTypes, Drop, DropType, pageFive, pageFour, pageOne, pageThree, pageTwo } from "../../spec/music.ts";
 
 WebGen({
     theme: SupportedThemes.dark,
@@ -24,9 +24,9 @@ if (!params.has("id")) {
     alert("ID is missing");
     location.href = "/music";
 }
+const dropId = params.get("id")!;
 const gapSize = "15px";
 const inputWidth = "436px";
-
 
 View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
     ...DynaNavigation("Music", state.aboutMe),
@@ -43,7 +43,7 @@ View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
 ))
     .change(({ update }) => {
         update({ aboutMe: GetCachedProfileData() });
-        API.music(API.getToken())[ 'id' ](params.get("id")!).get()
+        API.music(API.getToken()).id(dropId).get()
             .then(restoreData => {
                 update({ restoreData });
             })
@@ -55,37 +55,34 @@ View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
     .addClass("fullscreen")
     .appendOn(document.body);
 
-// TODO: This should be put into the validators
-// const nextAction: async (pages) => {
-//     const single = new FormData();
-//     const list = pages.map(x => Array.from(x.data.entries())).flat();
-//     for (const [ key, value ] of list) {
-//         single.append(key, value);
-//     }
-//     try {
-
-//         await API
-//             .music(API.getToken())
-//             .id(params.get("id")!)
-//             .put(single);
-
-//     } catch (_error) {
-//         //TODO: Move this to a notification
-//         alert("Unexpected Error happend while updating your Drop\nPlease try again later...");
-//     }
-// };
 const wizard = (restore: Drop) => Wizard({
     cancelAction: "/music",
     buttonArrangement: "space-between",
-    submitAction: async () => {
-        const single = new FormData();
-        single.set("type", <Drop[ "type" ]>"UNDER_REVIEW");
-        await API.music(API.getToken()).id(params.get("id")!).put(single);
-        location.href = "/music";
+    submitAction: async (data) => {
+        try {
+            let obj = {};
+            data.map(x => x.data.data).forEach(x => obj = { ...obj, ...x });
+
+            // deno-lint-ignore no-explicit-any
+            await API.music(API.getToken()).id(dropId).post(<any>obj);
+
+            await API.music(API.getToken()).id(dropId).type.post(DropType.UnderReview);
+            location.href = "/music";
+        } catch (_) {
+            alert("Unexpected Error happend while updating your Drop\nPlease try again later...");
+        }
     },
     onNextPage: async ({ ResponseData }) => {
-        const data = await ResponseData();
-
+        const _data = await ResponseData();
+        let obj = {};
+        _data.map(x => x.success == true ? x.data : ({})).forEach(x => obj = { ...obj, ...x });
+        console.log(obj);
+        try {
+            // deno-lint-ignore no-explicit-any
+            await API.music(API.getToken()).id(dropId).post(<any>obj);
+        } catch (_) {
+            alert("Unexpected Error happend while updating your Drop\nPlease try again later...");
+        }
     }
 }, ({ Next, PageData }) => [
     Page({
@@ -117,7 +114,7 @@ const wizard = (restore: Drop) => Wizard({
         ),
         Spacer(),
     ])
-        .setValidator(() => musicSpec.pageOne),
+        .setValidator(() => pageOne),
     Page({
         title: restore?.title,
         release: restore?.release,
@@ -132,7 +129,7 @@ const wizard = (restore: Drop) => Wizard({
                 Center(PlainText("Enter your Album details.").addClass("title")),
                 TextInput("text", "Title").sync(state, "title"),
                 Grid(
-                    TextInput("date", "Release Date").sync(state, "release"),
+                    TextInput("date", "Release Date", "live").sync(state, "release"),
                     DropDownInput("Language", language)
                         .sync(state, "language")
                         .addClass("justify-content-space")
@@ -142,7 +139,7 @@ const wizard = (restore: Drop) => Wizard({
                 // TODO: Make this a nicer component
                 Button("Artists")
                     .onClick(() => {
-                        EditArtists(state.artists ?? [ [ "", "", "PRIMARY" ] ])
+                        EditArtists(state.artists ?? [ [ "", "", ArtistTypes.Primary ] ])
                             .then((x) => {
                                 console.log(x);
                                 // deno-lint-ignore no-explicit-any
@@ -158,10 +155,11 @@ const wizard = (restore: Drop) => Wizard({
                         .onChange(() => {
                             state.secondaryGenre = undefined;
                         }),
-                    DropDownInput("Secondary Genre", getSecondary(secondary, state.primaryGenre) ?? [])
+                    Reactive(state, "primaryGenre", () => DropDownInput("Secondary Genre", getSecondary(secondary, state.primaryGenre) ?? [])
                         .sync(state, "secondaryGenre")
                         .setColor(getSecondary(secondary, state.primaryGenre) ? Color.Grayscaled : Color.Disabled)
-                        .addClass("justify-content-space"),
+                        .addClass("justify-content-space", "border-box")
+                        .setWidth("100%")),
                 )
                     .setGap(gapSize)
                     .setEvenColumns(small ? 1 : 2),
@@ -170,7 +168,7 @@ const wizard = (restore: Drop) => Wizard({
                 .addClass("grid-area")
                 .setGap(gapSize)
         ),
-    ]).setValidator(() => musicSpec.pageTwo),
+    ]).setValidator(() => pageTwo),
     Page({
         compositionCopyright: restore?.compositionCopyright,
         soundRecordingCopyright: restore?.soundRecordingCopyright
@@ -184,7 +182,7 @@ const wizard = (restore: Drop) => Wizard({
             .setEvenColumns(1)
             .addClass("grid-area")
             .setGap(gapSize)
-    ]).setValidator(() => musicSpec.pageThree),
+    ]).setValidator(() => pageThree),
     Page({
         artwork: restore?.artwork,
         artworkClientData: <AdvancedImage | string | undefined>(restore?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music(API.getToken()).id(restore._id).artworkPreview() } : undefined),
@@ -207,11 +205,10 @@ const wizard = (restore: Drop) => Wizard({
                 ).addClass("drop-area")
             ).setGap(gapSize))
         ),
-    ]).setValidator(() => musicSpec.pageFour),
+    ]).setValidator(() => pageFour),
     Page({
         uploadingSongs: <string[]>[],
-        songs: restore?.songs,
-        test: 0,
+        songs: restore?.songs ?? []
     }, (state) => [
         Spacer(),
         Horizontal(
@@ -226,7 +223,7 @@ const wizard = (restore: Drop) => Wizard({
             ).setGap(gapSize),
             Spacer()
         ),
-    ]).setValidator(() => musicSpec.pageFive),
+    ]).setValidator(() => pageFive),
     Page({
         comments: restore?.comments
     }, (state) => [

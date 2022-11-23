@@ -79,6 +79,7 @@ export function uploadArtwork(state: StateHandler<{ artworkClientData: AdvancedI
             backendResponse: (id) => {
                 state.artworkClientData = blobUrl;
                 state.artwork = id;
+                state.loading = false;
             },
             onUploadTick: async (percentage) => {
                 state.artworkClientData = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage };
