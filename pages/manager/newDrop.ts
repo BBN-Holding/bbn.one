@@ -8,7 +8,7 @@ import { API, Drop } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
 import '../../assets/css/main.css';
 import { uploadFilesDialog } from "./upload.ts";
-import { MusicPageFive, MusicPageFour, MusicPageOne, MusicPageThree, MusicPageTwo } from "../../spec/music.ts";
+import * as musicSpec from "../../spec/music.ts";
 import { ManageSongs } from "./music/table.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
 
@@ -117,7 +117,7 @@ const wizard = (restore: Drop) => Wizard({
         ),
         Spacer(),
     ])
-        .setValidator(() => MusicPageOne),
+        .setValidator(() => musicSpec.pageOne),
     Page({
         title: restore?.title,
         release: restore?.release,
@@ -170,7 +170,7 @@ const wizard = (restore: Drop) => Wizard({
                 .addClass("grid-area")
                 .setGap(gapSize)
         ),
-    ]).setValidator(() => MusicPageTwo),
+    ]).setValidator(() => musicSpec.pageTwo),
     Page({
         compositionCopyright: restore?.compositionCopyright,
         soundRecordingCopyright: restore?.soundRecordingCopyright
@@ -184,7 +184,7 @@ const wizard = (restore: Drop) => Wizard({
             .setEvenColumns(1)
             .addClass("grid-area")
             .setGap(gapSize)
-    ]).setValidator(() => MusicPageThree),
+    ]).setValidator(() => musicSpec.pageThree),
     Page({
         artwork: restore?.artwork,
         artworkClientData: <AdvancedImage | string | undefined>(restore?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music(API.getToken()).id(restore._id).artworkPreview() } : undefined),
@@ -207,7 +207,7 @@ const wizard = (restore: Drop) => Wizard({
                 ).addClass("drop-area")
             ).setGap(gapSize))
         ),
-    ]).setValidator(() => MusicPageFour),
+    ]).setValidator(() => musicSpec.pageFour),
     Page({
         uploadingSongs: <string[]>[],
         songs: restore?.songs,
@@ -226,7 +226,7 @@ const wizard = (restore: Drop) => Wizard({
             ).setGap(gapSize),
             Spacer()
         ),
-    ]).setValidator(() => MusicPageFive),
+    ]).setValidator(() => musicSpec.pageFive),
     Page({
         comments: restore?.comments
     }, (state) => [
