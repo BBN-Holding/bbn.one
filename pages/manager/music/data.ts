@@ -54,7 +54,7 @@ export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[];
             // deno-lint-ignore require-await
             onUploadTick: async (percentage) => {
                 if (state.songs)
-                    state.songs[ state.songs.findIndex(x => x.id == uploadId) ].loading = percentage;
+                    state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = percentage;
                 state.songs = [ ...state.songs ?? [] ];
             }
         }, file);
