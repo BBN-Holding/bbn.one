@@ -204,10 +204,14 @@ cardlist {
     background-color: rgba(255, 255, 255, 0.07);
 }
 
-.list-entry .image-preview .wimage {
-    height: 109px;
+.image-preview .wimage {
     aspect-ratio: 1 / 1;
     border-radius: 10px;
+    height: 100%;
+}
+
+.list-entry .image-preview .wimage {
+    height: 109px;
 }
 
 .meta-data {

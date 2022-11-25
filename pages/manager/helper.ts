@@ -260,3 +260,10 @@ function update(state: StateHandler<{ list: [ name: string, img: string, type: A
     state.list[ index ][ key ] = value;
     state.list = [ ...state.list ];
 }
+
+export function getDropFromPages(data: StateHandler<any>[], restore: Drop): Drop {
+    return <Drop>{
+        ...restore,
+        ...data
+    };
+}

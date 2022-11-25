@@ -1,22 +1,27 @@
-import { AdvancedImage, Box, Button, Custom, DropDownInput, Grid, IconButton, Image, img, Page, Reactive, Spacer, TextInput, View, Wizard } from "webgen/mod.ts";
+import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, Page, Reactive, Spacer, TextInput, Wizard } from "webgen/mod.ts";
 import { allowedImageFormats, EditArtists, getSecondary } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage, HandleSubmit, setErrorMessage } from "../misc/common.ts";
-import { API, Drop } from "../RESTSpec.ts";
+import { API } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
 import secondary from "../../../data/secondary.json" assert { type: "json" };
-
+import artwork from "../../../assets/img/template-artwork.png";
 import { uploadFilesDialog } from "../upload.ts";
 import { uploadArtwork } from "./data.ts";
+import { ArtistTypes, Drop, pureDrop } from "../../../spec/music.ts";
 
 export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({
-        submitAction: async ([ { data: { data } } ]) => {
-            await API.music(API.getToken())
-                .id(drop._id)
-                .put(data);
+        submitAction: async (data) => {
+            let obj = structuredClone(drop);
+            // @ts-ignore fuck typings
+            data.map(x => x.data.data).forEach(x => obj = { ...obj, ...x });
+
+            // deno-lint-ignore no-explicit-any
+            await API.music(API.getToken()).id(drop._id).post(<any>obj);
+
             location.reload(); // Handle this Smarter => Make it a Reload Event.
         },
         buttonArrangement: ({ PageValid, Submit }) => {
@@ -39,16 +44,21 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
 
             loading: false,
             artwork: drop.artwork,
-            artworkClientData: <AdvancedImage | string | undefined>undefined
+            artworkClientData: <AdvancedImage | string | undefined>(drop?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music(API.getToken()).id(drop._id).artworkPreview() } : undefined),
+
+            uploadingSongs: [],
+            songs: drop.songs
         }, data => [
             Grid(
                 Grid(
-                    Reactive(data, "artwork", () => Box(
-                        Image(data.artwork ?? { type: "loading" }, "Your Avatarimage"), IconButton("edit")
-                    )
-                        .addClass("upload-image")
-                        .onClick(() => uploadFilesDialog(([ file ]) => uploadArtwork(data, file), allowedImageFormats.join(",")))
-                    ),
+                    Reactive(data, "artworkClientData", () => DropAreaInput(
+                        Box(data.artworkClientData ? Image(data.artworkClientData, "A Music Album Artwork.") : Image(artwork, "A Default Alubm Artwork."), IconButton("edit"))
+                            .addClass("upload-image"),
+                        allowedImageFormats,
+                        ([ { file } ]) => uploadArtwork(data, file)
+                    ).onClick(() => uploadFilesDialog(([ file ]) => {
+                        uploadArtwork(data, file);
+                    }, allowedImageFormats.join(",")))),
                 ).setDynamicColumns(2, "12rem"),
                 [
                     { width: 2 },
@@ -63,7 +73,7 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                     // TODO: Make this a nicer component
                     Button("Artists")
                         .onClick(() => {
-                            EditArtists(data.artists ?? [ [ "", "", "PRIMARY" ] ]).then((x) => {
+                            EditArtists(data.artists ?? [ [ "", "", ArtistTypes.Primary ] ]).then((x) => {
                                 data.artists = x;
                                 console.log(data);
                             });
@@ -72,23 +82,21 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                 [ { width: 2, heigth: 2 }, Spacer() ],
                 [
                     { width: 2 },
-                    View(({ update }) =>
-                        Grid(
-                            DropDownInput("Primary Genre", primary)
-                                .sync(data, "primaryGenre")
-                                .addClass("justify-content-space")
-                                .onChange(() => {
-                                    data.delete("secondaryGenre");
-                                    update({});
-                                }),
-                            DropDownInput("Secondary Genre", getSecondary(secondary, data.primaryGenre) ?? [])
-                                .sync(data, "secondaryGenre")
-                                .addClass("justify-content-space"),
-                        )
-                            .setEvenColumns(2, "minmax(2rem, 20rem)")
-                            .setGap("15px")
+                    Grid(
+                        DropDownInput("Primary Genre", primary)
+                            .sync(data, "primaryGenre")
+                            .addClass("justify-content-space")
+                            .onChange(() => {
+                                data.secondaryGenre = undefined;
+                            }),
+                        Reactive(data, "primaryGenre", () => DropDownInput("Secondary Genre", getSecondary(secondary, data.primaryGenre) ?? [])
+                            .sync(data, "secondaryGenre")
+                            .addClass("justify-content-space", "border-box")
+                            .setWidth("100%")
+                        ),
                     )
-                        .asComponent()
+                        .setEvenColumns(2, "minmax(2rem, 20rem)")
+                        .setGap("15px")
                 ],
                 TextInput("text", "Composition Copyright").sync(data, "compositionCopyright"),
                 TextInput("text", "Sound Recording Copyright").sync(data, "soundRecordingCopyright")
@@ -97,9 +105,7 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                 .addClass("settings-form")
                 .addClass("limited-width")
                 .setGap("15px")
-        ]).setValidator((v) => v.object({
-            loading: v.void()
-        }))
+        ]).setValidator(() => pureDrop)
     ]
     );
 }

@@ -1,16 +1,23 @@
-import { Page, Wizard } from "webgen/mod.ts";
+import { Button, Grid, Horizontal, Page, Spacer, Wizard } from "webgen/mod.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage, HandleSubmit, setErrorMessage } from "../misc/common.ts";
-import { API, Drop } from "../RESTSpec.ts";
+import { API } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
 import { ManageSongs } from "./table.ts";
+import { Drop, pageFive } from "../../../spec/music.ts";
+import { uploadFilesDialog } from "../upload.ts";
+import { uploadSongToDrop } from "./data.ts";
+import { allowedAudioFormats, getDropFromPages } from "../helper.ts";
 
 export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({
-        submitAction: async ([ { data: { data } } ]) => {
-            await API.music(API.getToken())
-                .id(drop._id)
-                .put(data);
+        submitAction: async (data) => {
+            let obj = structuredClone(drop);
+            data.map(x => x.data.data).forEach(x => obj = { ...obj, ...x });
+
+            // deno-lint-ignore no-explicit-any
+            await API.music(API.getToken()).id(drop._id).post(<any>obj);
+
             location.reload(); // Handle this Smarter => Make it a Reload Event.
         },
         buttonArrangement: ({ PageValid, Submit }) => {
@@ -20,15 +27,22 @@ export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) =
             }, [ { title: drop.title || "(no title)", onclick: changePage(update, "main") } ]);
         },
         buttonAlignment: "top",
-    }, () => [
+    }, ({ PageData }) => [
         Page({
+            uploadingSongs: <string[]>[],
             songs: drop.songs
         }, data => [
-            ManageSongs(data)
-        ]).setValidator((v) => v.object({
-            loading: v.void(),
-            song: v.string().or(v.array(v.string()))
-        }))
+            Grid(
+                ManageSongs(data),
+                Horizontal(
+                    Spacer(),
+                    Button("Add a new Song")
+                        .onClick(() => uploadFilesDialog((list) => uploadSongToDrop(data, getDropFromPages(PageData(), drop), list), allowedAudioFormats.join(",")))
+                )
+            )
+                .setGap("15px")
+                .addClass("limited-width")
+        ]).setValidator(() => pageFive)
     ]
     );
 }

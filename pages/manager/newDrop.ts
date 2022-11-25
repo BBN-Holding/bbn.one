@@ -3,7 +3,7 @@ import primary from "../../data/primary.json" assert { type: "json"};
 import secondary from "../../data/secondary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, TextInput, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV, Box, MediaQuery, Image, AdvancedImage, Reactive, StateHandler } from "webgen/mod.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, getSecondary } from "./helper.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, getSecondary, getDropFromPages } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
 import '../../assets/css/main.css';
@@ -240,10 +240,3 @@ const wizard = (restore: Drop) => Wizard({
         ),
     ])
 ]);
-
-function getDropFromPages(data: StateHandler<any>[], restore: Drop): Drop {
-    return <Drop>{
-        ...restore,
-        ...data
-    };
-}

@@ -1,5 +1,5 @@
 import { Center, MediaQuery, PlainText } from "webgen/mod.ts";
-import { Drop } from "../RESTSpec.ts";
+import { DropType } from "../../../spec/music.ts";
 import { ViewState } from "../types.ts";
 
 export function ExplainerText(state: Partial<ViewState>) {
@@ -17,7 +17,7 @@ export function ExplainerText(state: Partial<ViewState>) {
         : null;
 }
 
-function EnumToDisplay(state?: Drop[ "type" ]) {
+function EnumToDisplay(state?: DropType) {
     switch (state) {
         case "PRIVATE": return "unpublished";
         case "PUBLISHED": return "published";
@@ -25,12 +25,12 @@ function EnumToDisplay(state?: Drop[ "type" ]) {
     }
 }
 
-export function DropTypeToText(state?: Drop[ "type" ]) {
-    switch (state) {
-        case "PRIVATE": return "Unpublished";
-        case "PUBLISHED": return "Published";
-        case "UNDER_REVIEW": return "Under Review";
-        case "UNSUBMITTED": return "Draft";
-        default: return "";
-    }
+export function DropTypeToText(type?: DropType) {
+    return (<Record<DropType, string>>{
+        "PRIVATE": "Private",
+        "PUBLISHED": "Published",
+        "UNDER_REVIEW": "Under Review",
+        "UNSUBMITTED": "Draft",
+        "REVIEW_DECLINED": "Rejected"
+    })[ type ?? DropType.Unsubmitted ] ?? "";
 }
