@@ -1,9 +1,9 @@
 import { Box, ButtonStyle, Checkbox, Component, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, StateHandler, Table, View } from "webgen/mod.ts";
 import { EditArtists, getSecondary, getYearList, stringToColour } from "../helper.ts";
-import { Drop } from "../RESTSpec.ts";
 import primary from "../../../data/primary.json" assert { type: "json"};
 import secondary from "../../../data/secondary.json" assert { type: "json"};
 import language from "../../../data/language.json" assert { type: "json"};
+import { Drop } from "../../../spec/music.ts";
 
 function Progress(progress: number) {
     return Box(

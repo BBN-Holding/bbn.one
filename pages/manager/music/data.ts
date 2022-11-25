@@ -1,6 +1,7 @@
 import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
 import { AdvancedImage, StateHandler } from "webgen/mod.ts";
-import { API, Drop } from "../RESTSpec.ts";
+import { Drop } from "../../../spec/music.ts";
+import { API } from "../RESTSpec.ts";
 import { StreamingUploadHandler } from "../upload.ts";
 
 export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[]; songs: Drop[ "songs" ]; }>, drop: Drop, source: File[]) {
@@ -17,14 +18,15 @@ export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[];
         state.songs = [ ...state.songs, {
             id: uploadId,
             title: cleanedUpTitle,
-            artists: drop.artists,
+            artists: drop.artists ?? [],
             // TODO: country should be real country
-            country: drop.language,
+            country: drop.language!,
             explicit: false,
-            primaryGenre: drop.primaryGenre,
-            secondaryGenre: drop.secondaryGenre,
+            primaryGenre: drop.primaryGenre!,
+            secondaryGenre: drop.secondaryGenre!,
             year: new Date().getFullYear(),
-            progress: 0
+            progress: 0,
+            file: undefined!
         } ];
 
         StreamingUploadHandler(`music/${drop._id}/upload`, {
@@ -52,7 +54,7 @@ export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[];
             // deno-lint-ignore require-await
             onUploadTick: async (percentage) => {
                 if (state.songs)
-                    state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = percentage;
+                    state.songs[ state.songs.findIndex(x => x.id == uploadId) ].loading = percentage;
                 state.songs = [ ...state.songs ?? [] ];
             }
         }, file);

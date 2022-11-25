@@ -31,6 +31,7 @@ export const song = zod.object({
     year: zod.number(),
     explicit: zod.boolean(),
     file: zod.string({ required_error: "a Song is missing its file." }),
+    progress: zod.number().optional().transform(x => <typeof x>undefined)
 });
 
 export const pageOne = zod.object({
