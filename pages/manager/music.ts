@@ -1,15 +1,16 @@
-import { loadingWheel, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, img, CenterV, Component, MaterialIcons, ViewClass } from "webgen/mod.ts";
+import { loadingWheel, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, CenterV, Component, MaterialIcons, ViewClass, MediaQuery } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
-import { GetCachedProfileData, MediaQuery, ProfileData, ReCache, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded, showPreviewImage } from "./helper.ts";
-import { API, Drop } from "./RESTSpec.ts";
+import { GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded, showPreviewImage } from "./helper.ts";
+import { API } from "./RESTSpec.ts";
 import { loadSongs } from "./helper.ts";
 import { ViewState } from "./types.ts";
 import { ReviewPanel } from "./admin/reviews.ts";
 import { ExplainerText } from "./music/text.ts";
 import { ActionBar } from "./misc/actionbar.ts";
 import { changeThemeColor } from "./misc/common.ts";
+import { Drop, DropType } from "../../spec/music.ts";
 WebGen({
     icon: new MaterialIcons(),
     events: {
@@ -22,25 +23,25 @@ await RegisterAuthRefresh();
 const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(
     ActionBar(`Hi ${GetCachedProfileData().profile.username}! 👋`, [
         {
-            title: `Published ${getListCount([ "PUBLISHED" ], state)}`,
-            selected: state.type == "PUBLISHED",
-            onclick: () => update({ type: "PUBLISHED" })
+            title: `Published ${getListCount([ DropType.Published ], state)}`,
+            selected: state.type == DropType.Published,
+            onclick: () => update({ type: DropType.Published })
         },
         {
-            title: `Unpublished ${getListCount([ "UNDER_REVIEW", "PRIVATE", "REVIEW_DECLINED" ], state)}`,
-            selected: state.type == "PRIVATE",
-            onclick: () => update({ type: "PRIVATE" })
+            title: `Unpublished ${getListCount([ DropType.UnderReview, DropType.Private, DropType.ReviewDeclined ], state)}`,
+            selected: state.type == DropType.Private,
+            onclick: () => update({ type: DropType.Private })
         },
         {
-            title: `Drafts ${getListCount([ "UNSUBMITTED" ], state)}`,
-            selected: state.type == "UNSUBMITTED",
-            onclick: () => update({ type: "UNSUBMITTED" }),
-            hide: !state.list?.find(x => x.type == "UNSUBMITTED")
+            title: `Drafts ${getListCount([ DropType.Unsubmitted ], state)}`,
+            selected: state.type == DropType.Unsubmitted,
+            onclick: () => update({ type: DropType.Unsubmitted }),
+            hide: !state.list?.find(x => x.type == DropType.Unsubmitted)
         },
         {
             title: `Reviews (${state.reviews?.length})`,
-            selected: state.type == "UNDER_REVIEW",
-            onclick: () => update({ type: "UNDER_REVIEW" }),
+            selected: state.type == DropType.UnderReview,
+            onclick: () => update({ type: DropType.UnderReview }),
             hide: !(state.reviews && state.reviews?.length != 0)
         }
     ],
@@ -55,22 +56,22 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
     Box((() => {
         if (!state.list)
             return Custom(loadingWheel() as Element as HTMLElement);
-        if (state.reviews && state.reviews.length != 0 && state.type == "UNDER_REVIEW")
+        if (state.reviews && state.reviews.length != 0 && state.type == DropType.UnderReview)
             return ReviewPanel(() => view, state);
         return Vertical(
             CategoryRender(
                 state.list
-                    .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
-                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" || x.type == "REVIEW_DECLINED" : true)
-                    .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
+                    .filter(x => state.type == DropType.Published ? x.type == DropType.Published : true)
+                    .filter(x => state.type == DropType.Private ? x.type == DropType.Private || x.type == DropType.UnderReview || x.type == DropType.ReviewDeclined : true)
+                    .filter(x => state.type == DropType.Unsubmitted ? x.type == DropType.Unsubmitted : true)
                     .filter((_, i) => i == 0),
                 "Latest Drop"
             ),
             CategoryRender(
                 state.list
-                    .filter(x => state.type == "PUBLISHED" ? x.type == "PUBLISHED" : true)
-                    .filter(x => state.type == "PRIVATE" ? x.type == "PRIVATE" || x.type == "UNDER_REVIEW" || x.type == "REVIEW_DECLINED" : true)
-                    .filter(x => state.type == "UNSUBMITTED" ? x.type == "UNSUBMITTED" : true)
+                    .filter(x => state.type == DropType.Published ? x.type == DropType.Published : true)
+                    .filter(x => state.type == DropType.Private ? x.type == DropType.Private || x.type == DropType.UnderReview || x.type == DropType.ReviewDeclined : true)
+                    .filter(x => state.type == DropType.Unsubmitted ? x.type == DropType.Unsubmitted : true)
                     .filter((_, i) => i > 0),
                 "History"
             ),
@@ -80,7 +81,7 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
     })()).addClass("loading"),
 ))
     .change(({ update }) => {
-        update({ type: "PUBLISHED" });
+        update({ type: DropType.Published });
     });
 
 View(() => Vertical(...DynaNavigation("Music"), view.asComponent())).appendOn(document.body);
@@ -124,16 +125,16 @@ function DropEntry(x: Drop, matches: boolean): Component {
                 .setFont(matches ? 0.8 : 1, 700)
         ),
         Spacer(),
-        x.type == "UNDER_REVIEW"
+        x.type == DropType.UnderReview
             ? CenterV(PlainText("Under Review")
                 .addClass("entry-subtitle", "under-review"))
             : null,
-        x.type == "REVIEW_DECLINED"
+        x.type == DropType.ReviewDeclined
             ? CenterV(PlainText("Declined")
                 .addClass("entry-subtitle", "under-review"))
             : null
     )
         .setGap("40px")
         .addClass("list-entry", "action", "limited-width")
-        .onClick(() => x.type === "UNSUBMITTED" ? location.href = "/music/new-drop?id=" + x._id : location.href = "/music/edit?id=" + x._id);
+        .onClick(() => x.type === DropType.Unsubmitted ? location.href = "/music/new-drop?id=" + x._id : location.href = "/music/edit?id=" + x._id);
 }

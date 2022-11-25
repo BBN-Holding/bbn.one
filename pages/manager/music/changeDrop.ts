@@ -1,162 +1,111 @@
-import { Box, Button, Custom, DropDownInput, Grid, Horizontal, IconButton, img, Input, Page, PlainText, Spacer, View, Wizard } from "webgen/mod.ts";
-import { allowedImageFormats, EditArtists, syncFromData, getSecondary } from "../helper.ts";
+import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, Page, Reactive, Spacer, TextInput, Wizard } from "webgen/mod.ts";
+import { allowedImageFormats, EditArtists, getSecondary } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
-import { changePage, Validate } from "../misc/common.ts";
-import { API, Drop } from "../RESTSpec.ts";
+import { changePage, HandleSubmit, setErrorMessage } from "../misc/common.ts";
+import { API } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
 import secondary from "../../../data/secondary.json" assert { type: "json" };
-
+import artwork from "../../../assets/img/template-artwork.png";
 import { uploadFilesDialog } from "../upload.ts";
-import { StreamingUploadHandler } from "../upload.ts";
-import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
+import { uploadArtwork } from "./data.ts";
+import { ArtistTypes, Drop, pureDrop } from "../../../spec/music.ts";
 
 export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({
-        cancelAction: () => { },
-        submitAction: () => { },
-    }, ({ PageValid, PageData, PageID }) => [
-        Page(data => [
-            ActionBar("Drop", undefined, {
-                title: "Update", onclick: () => {
-                    Validate(PageValid, async () => {
-                        await API.music(API.getToken())
-                            .id(drop._id)
-                            .put(PageData()[ PageID() ]);
-                        location.reload(); // Handle this Smarter => Make it a Reload Event.
-                    });
-                }
-            }, [ { title: drop.title ?? "(no-title)", onclick: changePage(update, "main") } ]),
-            PlainText("")
-                .addClass("error-message", "limited-width")
-                .setId("error-message-area"),
+        submitAction: async (data) => {
+            let obj = structuredClone(drop);
+            // @ts-ignore fuck typings
+            data.map(x => x.data.data).forEach(x => obj = { ...obj, ...x });
 
+            // deno-lint-ignore no-explicit-any
+            await API.music(API.getToken()).id(drop._id).post(<any>obj);
+
+            location.reload(); // Handle this Smarter => Make it a Reload Event.
+        },
+        buttonArrangement: ({ PageValid, Submit }) => {
+            setErrorMessage();
+            return ActionBar("Drop", undefined, {
+                title: "Update", onclick: HandleSubmit(PageValid, Submit)
+            }, [ { title: drop.title || "(no title)", onclick: changePage(update, "main") } ]);
+        },
+        buttonAlignment: "top",
+    }, () => [
+        Page({
+            title: drop.title,
+            release: drop.release,
+            language: drop.language,
+            artists: drop.artists,
+            primaryGenre: drop.primaryGenre,
+            secondaryGenre: drop.secondaryGenre,
+            compositionCopyright: drop.compositionCopyright,
+            soundRecordingCopyright: drop.soundRecordingCopyright,
+
+            loading: false,
+            artwork: drop.artwork,
+            artworkClientData: <AdvancedImage | string | undefined>(drop?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music(API.getToken()).id(drop._id).artworkPreview() } : undefined),
+
+            uploadingSongs: [],
+            songs: drop.songs
+        }, data => [
             Grid(
-                // TODO: Refactor this into ImageInput()
                 Grid(
-                    View<{ path: string; }>(({ state, update }) => Box(
-                        Custom(img(state.path)).addClass("upload-image"),
-                        IconButton("edit")
-                    )
-                        .addClass("image-edit")
-                        .onClick(() => uploadFilesDialog(([ file ]) => {
-                            data.set("loading", "-");
-                            update({ path: URL.createObjectURL(file) });
-                            setTimeout(() => {
-                                const image = document.querySelector(".upload-image")!;
-                                StreamingUploadHandler(`music/${drop._id}/upload`, {
-                                    failure: () => {
-                                        data.delete("loading");
-                                        alert("Your Upload has failed. Please try a different file or try again later");
-                                        update({});
-                                    },
-                                    prepare: () => {
-                                        const animation = image.animate([
-                                            { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
-                                            { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
-                                        ], { duration: 100, fill: 'forwards' });
-                                        animation.currentTime = 0;
-                                        animation.pause();
-                                    },
-                                    credentials: () => API.getToken(),
-                                    backendResponse: (id) => {
-                                        data.set("artwork", id);
-                                        data.delete("loading");
-                                        update({});
-                                    },
-                                    onUploadTick: async (percentage) => {
-                                        const animation = image.animate([
-                                            { filter: "grayscale(1) blur(23px)", transform: "scale(0.6)" },
-                                            { filter: "grayscale(0) blur(0px)", transform: "scale(1)" },
-                                        ], { duration: 100, fill: 'forwards' });
-                                        animation.currentTime = percentage;
-                                        animation.pause();
-                                        await delay(5);
-                                    },
-                                    uploadDone: () => { }
-                                }, file);
-                            });
-                        }, allowedImageFormats.join(","))))
-                        .change(({ update }) => update({ path: drop[ "artwork-url" ] }))
-                        .asComponent(),
+                    Reactive(data, "artworkClientData", () => DropAreaInput(
+                        Box(data.artworkClientData ? Image(data.artworkClientData, "A Music Album Artwork.") : Image(artwork, "A Default Alubm Artwork."), IconButton("edit"))
+                            .addClass("upload-image"),
+                        allowedImageFormats,
+                        ([ { file } ]) => uploadArtwork(data, file)
+                    ).onClick(() => uploadFilesDialog(([ file ]) => {
+                        uploadArtwork(data, file);
+                    }, allowedImageFormats.join(",")))),
                 ).setDynamicColumns(2, "12rem"),
                 [
                     { width: 2 },
-                    Input({
-                        placeholder: "Title",
-                        ...syncFromData(data, "title")
-                    })
+                    TextInput("text", "Title").sync(data, "title")
                 ],
-                (() => {
-                    // TODO: Remake this hacky input to DateInput()
-                    const input = Input({
-                        value: data.get("release")?.toString(),
-                        placeholder: "Release Date",
-                        type: "date" as "text"
-                    }).draw();
-                    const rawInput = input.querySelector("input")!;
-                    rawInput.style.paddingRight = "5px";
-                    rawInput.onchange = () => data.set("release", rawInput.value);
-                    return Custom(input);
-                })(),
+                TextInput("date", "Release Date").sync(data, "release"),
                 DropDownInput("Language", language)
-                    .syncFormData(data, "language")
+                    .sync(data, "language")
                     .addClass("justify-content-space"),
                 [
                     { width: 2 },
                     // TODO: Make this a nicer component
                     Button("Artists")
                         .onClick(() => {
-                            EditArtists(data.get("artists") ? JSON.parse(data.get("artists")!.toString()) : [ [ "", "", "PRIMARY" ] ]).then((x) => data.set("artists", JSON.stringify(x)));
+                            EditArtists(data.artists ?? [ [ "", "", ArtistTypes.Primary ] ]).then((x) => {
+                                data.artists = x;
+                                console.log(data);
+                            });
                         }),
                 ],
                 [ { width: 2, heigth: 2 }, Spacer() ],
                 [
                     { width: 2 },
-                    View(({ update }) =>
-                        Grid(
-                            DropDownInput("Primary Genre", primary)
-                                .syncFormData(data, "primaryGenre")
-                                .addClass("justify-content-space")
-                                .onChange(() => {
-                                    data.delete("secondaryGenre");
-                                    update({});
-                                }),
-                            DropDownInput("Secondary Genre", getSecondary(secondary, data) ?? [])
-                                .syncFormData(data, "secondaryGenre")
-                                .addClass("justify-content-space"),
-                        )
-                            .setEvenColumns(2, "minmax(2rem, 20rem)")
-                            .setGap("15px")
+                    Grid(
+                        DropDownInput("Primary Genre", primary)
+                            .sync(data, "primaryGenre")
+                            .addClass("justify-content-space")
+                            .onChange(() => {
+                                data.secondaryGenre = undefined;
+                            }),
+                        Reactive(data, "primaryGenre", () => DropDownInput("Secondary Genre", getSecondary(secondary, data.primaryGenre) ?? [])
+                            .sync(data, "secondaryGenre")
+                            .addClass("justify-content-space", "border-box")
+                            .setWidth("100%")
+                        ),
                     )
-                        .asComponent()
+                        .setEvenColumns(2, "minmax(2rem, 20rem)")
+                        .setGap("15px")
                 ],
-                Input({
-                    placeholder: "Composition Copyright",
-                    ...syncFromData(data, "compositionCopyright")
-                }),
-                Input({
-                    placeholder: "Sound Recording Copyright",
-                    ...syncFromData(data, "soundRecordingCopyright")
-                })
+                TextInput("text", "Composition Copyright").sync(data, "compositionCopyright"),
+                TextInput("text", "Sound Recording Copyright").sync(data, "soundRecordingCopyright")
             )
                 .setEvenColumns(2, "minmax(2rem, 20rem)")
                 .addClass("settings-form")
                 .addClass("limited-width")
                 .setGap("15px")
-        ]).setDefaultValues({
-            title: drop.title,
-            release: drop.release,
-            language: drop.language,
-            artists: JSON.stringify(drop.artists),
-            primaryGenre: drop.primaryGenre,
-            secondaryGenre: drop.secondaryGenre,
-            compositionCopyright: drop.compositionCopyright,
-            soundRecordingCopyright: drop.soundRecordingCopyright
-        }).addValidator((v) => v.object({
-            loading: v.void()
-        }))
+        ]).setValidator(() => pureDrop)
     ]
     );
 }

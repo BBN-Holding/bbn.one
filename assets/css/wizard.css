@@ -49,19 +49,21 @@ nav.music {
     display: contents;
 }
 
-.drop-area img {
-    height: 70%;
-    border-radius: 15px;
-}
-
 .drop-area.hover {
     background: rgb(255 255 255 / 15%);
+}
+
+.drop-area .wimage {
+    max-height: 60%;
+    aspect-ratio: 1 / 1;
+    height: 100%;
 }
 
 .inverted-class {
     width: calc(100vw - 32px);
     max-width: 50rem;
     max-height: 25rem;
+    overflow: auto;
     height: 100vh;
     box-sizing: border-box;
 }

@@ -1,24 +1,21 @@
-import { Box, Custom, Grid, Horizontal, img, Page, PlainText, Spacer, Vertical, Wizard } from "webgen/mod.ts";
-import { GetCachedProfileData } from "../helper.ts";
+import { Box, Custom, Grid, Horizontal, Image, img, Page, PlainText, Spacer, Vertical, Wizard } from "webgen/mod.ts";
+import { Drop, DropType } from "../../../spec/music.ts";
+import { GetCachedProfileData, loadImage, showPreviewImage } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage } from "../misc/common.ts";
 import { DownloadDrop } from "../misc/drop.ts";
 import { Entry } from "../misc/Entry.ts";
-import { API, Drop } from "../RESTSpec.ts";
+import { API } from "../RESTSpec.ts";
 import { DropTypeToText } from "./text.ts";
 import { EditViewState } from "./types.ts";
 
 export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({
-        cancelAction: () => { },
         submitAction: () => { },
     }, () => [
-        Page(_ => [
+        Page({}, _ => [
             Grid(
-                Box(
-                    Custom(img(data[ "artwork-url" ])).addClass("upload-image"),
-                )
-                    .addClass("image-edit", "small"),
+                showPreviewImage(data)
             )
                 .setEvenColumns(1, "10rem")
                 .addClass("limited-width")
@@ -40,24 +37,18 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
 
                 !Permissions.canCancelReview(data) ? null :
                     Entry("Cancel Review", "Need to change Something? Cancel it now", async () => {
-                        const form = new FormData();
-                        form.set("type", <Drop[ "type" ]>"PRIVATE");
-                        await API.music(API.getToken()).id(data._id).put(form);
+                        await API.music(API.getToken()).id(data._id).type.post(DropType.Private);
                         location.reload();
                     }),
                 !Permissions.canSubmit(data) ? null :
                     Entry("Publish", "Submit your Drop for Approval", async () => {
-                        const form = new FormData();
-                        form.set("type", <Drop[ "type" ]>"UNDER_REVIEW");
-                        await API.music(API.getToken()).id(data._id).put(form);
+                        await API.music(API.getToken()).id(data._id).type.post(DropType.UnderReview);
                         location.reload();
                     }),
 
                 !Permissions.canTakedown(data) ? null :
                     Entry("Takedown", "Completely Takedown your Drop", async () => {
-                        const form = new FormData();
-                        form.set("type", <Drop[ "type" ]>"PRIVATE");
-                        await API.music(API.getToken()).id(data._id).put(form);
+                        await API.music(API.getToken()).id(data._id).type.post(DropType.Private);
                         location.reload();
                     }).addClass("entry-alert"),
 

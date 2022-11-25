@@ -1,36 +1,6 @@
 // deno-lint-ignore-file no-unused-vars
 import { assert } from "https://deno.land/std@0.140.0/testing/asserts.ts";
-export type ArtistTypes = "PRIMARY" | "FEATURING" | "SONGWRITER" | "PRODUCER";
-
-export type Drop = {
-    _id: string;
-    user: string;
-    type: 'PUBLISHED' | 'PRIVATE' | 'UNDER_REVIEW' | 'UNSUBMITTED' | 'REVIEW_DECLINED';
-    title?: string;
-    upc?: string;
-    artists?: [ name: string, img: string, type: ArtistTypes ][];
-    language?: string;
-    primaryGenre?: string;
-    secondaryGenre?: string;
-    release?: string;
-    artwork?: string;
-    [ "artwork-url" ]?: string;
-    compositionCopyright?: string;
-    soundRecordingCopyright?: string;
-    comments?: string;
-    song?: {
-        Id: string;
-        ISRC?: string;
-        Title?: string;
-        PrimaryGenre?: string;
-        SecondaryGenre?: string;
-        Artists?: [ name: string, img: string, type: ArtistTypes ][];
-        Country?: string;
-        File?: string;
-        Explicit?: boolean;
-        Year?: number;
-    }[];
-};
+import { Drop, DropType } from "../../spec/music.ts";
 
 export type ErrorObject = {
     error: true,
@@ -187,10 +157,19 @@ export const API = {
             return data.id as string;
         },
         id: (id: string) => ({
-            put: async (data: FormData) => {
+            type: {
+                post: (type: DropType) => {
+                    return fetch(`${API.BASE_URL}music/${id}/type/${type}`, {
+                        method: "POST",
+                        headers: headers(token)
+                    }).then(x => x.text());
+                },
+            },
+            post: async (data: Drop) => {
+                console.log(data);
                 const fetchData = await fetch(`${API.BASE_URL}music/${id}`, {
-                    method: "PUT",
-                    body: data,
+                    method: "POST",
+                    body: JSON.stringify(data),
                     headers: headers(token)
                 });
                 await fetchData.text();

@@ -1,68 +1,48 @@
-import { Button, Horizontal, Page, PlainText, Spacer, Vertical, View, Wizard } from "webgen/mod.ts";
-import { allowedAudioFormats, Table, UploadTable } from "../helper.ts";
+import { Button, Grid, Horizontal, Page, Spacer, Wizard } from "webgen/mod.ts";
 import { ActionBar } from "../misc/actionbar.ts";
-import { changePage, Validate } from "../misc/common.ts";
-import { API, Drop } from "../RESTSpec.ts";
+import { changePage, HandleSubmit, setErrorMessage } from "../misc/common.ts";
+import { API } from "../RESTSpec.ts";
 import { EditViewState } from "./types.ts";
-import { DeleteFromForm, FormToRecord, RecordToForm } from "../data.ts";
-import { TableData } from "../types.ts";
-import { TableDef } from "./table.ts";
+import { ManageSongs } from "./table.ts";
+import { Drop, pageFive } from "../../../spec/music.ts";
 import { uploadFilesDialog } from "../upload.ts";
-import { addSongsByDrop } from "./data.ts";
+import { uploadSongToDrop } from "./data.ts";
+import { allowedAudioFormats, getDropFromPages } from "../helper.ts";
 
 export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({
-        cancelAction: () => { },
-        submitAction: () => { },
-    }, ({ PageValid, PageData, PageID }) => [
-        Page(data => [
-            ActionBar("Songs", undefined, {
-                title: "Update", onclick: () => {
-                    Validate(PageValid, async () => {
-                        await API.music(API.getToken())
-                            .id(drop._id)
-                            .put(PageData()[ PageID() ]);
-                        location.reload(); // Handle this Smarter => Make it a Reload Event.
-                    });
-                }
-            }, [ { title: drop.title ?? "(no-title)", onclick: changePage(update, "main") } ]),
-            PlainText("")
-                .addClass("error-message", "limited-width")
-                .setId("error-message-area"),
-            View(({ update }) => Vertical(
-                data.getAll("song").filter(x => x).length ?
-                    Table<TableData>(
-                        TableDef(data, update),
-                        FormToRecord(data, "song", [])
-                            .map(x => ({ Id: x.id }))
-                    )
-                        .setDelete(({ Id }) => {
-                            DeleteFromForm(data, "song", (x) => x != Id);
-                            update({});
-                        })
-                        .addClass("limited-width", "light-mode")
-                    : UploadTable(TableDef(data, update), (list) => addSongsByDrop(drop, list, data, update))
-                        .addClass("limited-width", "light-mode"),
+        submitAction: async (data) => {
+            let obj = structuredClone(drop);
+            data.map(x => x.data.data).forEach(x => obj = { ...obj, ...x });
+
+            // deno-lint-ignore no-explicit-any
+            await API.music(API.getToken()).id(drop._id).post(<any>obj);
+
+            location.reload(); // Handle this Smarter => Make it a Reload Event.
+        },
+        buttonArrangement: ({ PageValid, Submit }) => {
+            setErrorMessage();
+            return ActionBar("Songs", undefined, {
+                title: "Update", onclick: HandleSubmit(PageValid, Submit)
+            }, [ { title: drop.title || "(no title)", onclick: changePage(update, "main") } ]);
+        },
+        buttonAlignment: "top",
+    }, ({ PageData }) => [
+        Page({
+            uploadingSongs: <string[]>[],
+            songs: drop.songs
+        }, data => [
+            Grid(
+                ManageSongs(data),
                 Horizontal(
                     Spacer(),
-                    Button("Manual Upload")
-                        .onClick(() => uploadFilesDialog((list) => addSongsByDrop(drop, list, data, update), allowedAudioFormats.join(",")))
-                ).addClass("limited-width").setMargin("1rem auto 0")
-            )).asComponent()
-        ]).setDefaultValues(RecordToForm(new FormData(), "song", drop.song?.map(x => ({
-            id: x.Id,
-            title: x.Title,
-            country: x.Country,
-            primaryGenre: x.PrimaryGenre,
-            secondaryGenre: x.SecondaryGenre,
-            year: x.Year?.toString(),
-            artists: JSON.stringify(x.Artists),
-            file: x.File,
-            explicit: x.Explicit ? "true" : "false"
-        })) ?? [])).addValidator((v) => v.object({
-            loading: v.void(),
-            song: v.string().or(v.array(v.string()))
-        }))
+                    Button("Add a new Song")
+                        .onClick(() => uploadFilesDialog((list) => uploadSongToDrop(data, getDropFromPages(PageData(), drop), list), allowedAudioFormats.join(",")))
+                )
+            )
+                .setGap("15px")
+                .addClass("limited-width")
+        ]).setValidator(() => pageFive)
     ]
     );
 }

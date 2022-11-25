@@ -1,15 +1,16 @@
-import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, Custom, img, CenterV, Component, Icon, ViewClass } from "webgen/mod.ts";
-import { loadSongs, MediaQuery, showPreviewImage } from "../helper.ts";
-import { API, Drop } from "../RESTSpec.ts";
+import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, CenterV, Component, Icon, ViewClass, MediaQuery } from "webgen/mod.ts";
+import { Drop, DropType } from "../../../spec/music.ts";
+import { loadSongs, showPreviewImage } from "../helper.ts";
+import { API } from "../RESTSpec.ts";
 import { ViewState } from "../types.ts";
 
 export function ReviewPanel(view: () => ViewClass<ViewState>, state: Partial<ViewState>): Component {
     return Vertical(
-        (state.reviews?.find(x => x.type == "UNDER_REVIEW")) ? [
+        (state.reviews?.find(x => x.type == DropType.UnderReview)) ? [
             PlainText("Reviews")
                 .addClass("list-title")
                 .addClass("limited-width"),
-            Vertical(...state.reviews!.filter(x => x.type == "UNDER_REVIEW").map(x => RenderEntry(x, view))).setGap("1rem"),
+            Vertical(...state.reviews!.filter(x => x.type == DropType.UnderReview).map(x => RenderEntry(x, view))).setGap("1rem"),
         ] : [ PlainText("No Reviews")
             .addClass("list-title")
             .addClass("limited-width") ],
@@ -17,19 +18,25 @@ export function ReviewPanel(view: () => ViewClass<ViewState>, state: Partial<Vie
         PlainText("Published")
             .addClass("list-title")
             .addClass("limited-width"),
-        ...state.reviews!.filter(x => x.type == "PUBLISHED").map(x =>
+        ...state.reviews!.filter(x => x.type == DropType.Published).map(x =>
             RenderEntry(x, view)
         ),
         PlainText("Private")
             .addClass("list-title")
             .addClass("limited-width"),
-        ...state.reviews!.filter(x => x.type == "PRIVATE").map(x =>
+        ...state.reviews!.filter(x => x.type == DropType.Private).map(x =>
+            RenderEntry(x, view)
+        ),
+        PlainText("Rejected")
+            .addClass("list-title")
+            .addClass("limited-width"),
+        ...state.reviews!.filter(x => x.type == DropType.ReviewDeclined).map(x =>
             RenderEntry(x, view)
         ),
         PlainText("Drafts")
             .addClass("list-title")
             .addClass("limited-width"),
-        ...state.reviews!.filter(x => x.type == "UNSUBMITTED").map(x =>
+        ...state.reviews!.filter(x => x.type == DropType.Unsubmitted).map(x =>
             RenderEntry(x, view)
         )
     )
@@ -101,9 +108,7 @@ function ReviewActions(x: Drop, view: ViewClass<ViewState>) {
                 .setColor(Color.Colored)
                 .addClass("tag")
                 .onPromiseClick(async () => {
-                    const form = new FormData();
-                    form.set("type", "REVIEW_DECLINED");
-                    await API.music(API.getToken()).id(x._id).put(form);
+                    await API.music(API.getToken()).id(x._id).type.post(DropType.ReviewDeclined);
                     await loadSongs(view);
                 })
         ),
@@ -113,9 +118,7 @@ function ReviewActions(x: Drop, view: ViewClass<ViewState>) {
                 .setColor(Color.Colored)
                 .addClass("tag")
                 .onPromiseClick(async () => {
-                    const form = new FormData();
-                    form.set("type", "PUBLISHED");
-                    await API.music(API.getToken()).id(x._id).put(form);
+                    await API.music(API.getToken()).id(x._id).type.post(DropType.Published);
                     await loadSongs(view);
                 })
         )

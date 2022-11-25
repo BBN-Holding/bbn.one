@@ -1,9 +1,8 @@
-import { createElement } from "https://raw.githubusercontent.com/lucsoft/WebGen/285feef/mod.ts";
+import { createElement } from "webgen/mod.ts";
 import { API } from "./RESTSpec.ts";
 
 export type StreamingUploadEvents = {
     credentials: () => string,
-    prepare: () => void,
     onUploadTick: (percentage: number) => Promise<void>,
     uploadDone: () => void,
     backendResponse: (id: string) => void;
@@ -21,7 +20,6 @@ export function uploadFilesDialog(onData: (files: File[]) => void, accept: strin
 }
 export function StreamingUploadHandler(path: string, events: StreamingUploadEvents, file: File) {
     try {
-        events.prepare();
         const ws = new WebSocket(`${API.BASE_URL.replace("https", "wss").replace("http", "ws")}${path}`);
         let bytesUploaded = 0;
         const stream = file
