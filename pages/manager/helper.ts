@@ -194,7 +194,7 @@ export function EditArtists(list: Artist[]) {
 
                 ], state.list)
                     .setDelete((_, index) => {
-                        list = list.filter((_, i) => i != index);
+                        state.list = <typeof state.list>state.list.filter((_, i) => i != index);
                     }),
                 Horizontal(
                     Spacer(),
