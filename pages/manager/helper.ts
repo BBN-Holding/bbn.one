@@ -78,9 +78,6 @@ function checkIfRefreshTokenIsValid() {
     }
 }
 export function logOut() {
-    console.log(localStorage);
-    console.trace();
-    alert("logout");
     if (location.pathname.startsWith("/signin")) return;
     localStorage.clear();
     location.href = "/signin";
