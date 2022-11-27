@@ -52,6 +52,9 @@ function b64DecodeUnicode(value: string) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
 }
+function rawAccessToken() {
+    return JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ]));
+}
 
 /**
  * @deprecated
@@ -60,9 +63,7 @@ export function GetCachedProfileData(): ProfileData {
     try {
         return JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ])).user;
     } catch (_) {
-        // Same invalid state. (This is all need for the new migration to the new HmSYS Tokens)
-        localStorage.clear();
-        throw new Error("Invalid State. Relogin is forced.");
+        logOut();
     }
 }
 
@@ -76,8 +77,18 @@ function checkIfRefreshTokenIsValid() {
         return;
     }
 }
-export async function renewAccessTokenIfNeeded(exp?: number) {
-    if (!exp) return;
+export function logOut() {
+    console.log(localStorage);
+    console.trace();
+    alert("logout");
+    if (location.pathname.startsWith("/signin")) return;
+    localStorage.clear();
+    location.href = "/signin";
+}
+export async function renewAccessTokenIfNeeded() {
+    const { exp } = rawAccessToken();
+    if (!localStorage.getItem("type")) return;
+    if (!exp) return logOut();
     // We should renew the token 30s before it expires
     if (isExpired(exp)) {
         await forceRefreshToken();
@@ -101,13 +112,11 @@ export function isExpired(exp: number) {
 
 export async function RegisterAuthRefresh() {
     try {
-        const { exp } = GetCachedProfileData();
         checkIfRefreshTokenIsValid();
-        await renewAccessTokenIfNeeded(exp);
-        setInterval(() => renewAccessTokenIfNeeded(GetCachedProfileData().exp), 1000);
+        await renewAccessTokenIfNeeded();
+        setInterval(() => renewAccessTokenIfNeeded(), 1000);
     } catch (_) {
-        localStorage.clear();
-        location.href = "/signin";
+        console.error(_);
     }
 }
 export function Redirect() {

@@ -197,6 +197,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
     .appendOn(document.body);
 
 async function logIn(data: { token: string; }, mode: "email" | "0auth") {
+    localStorage.removeItem("type");
     const access = await API.auth.refreshAccessToken.post({ refreshToken: data.token });
     localStorage[ "access-token" ] = access.token;
     localStorage[ "refresh-token" ] = data!.token;
