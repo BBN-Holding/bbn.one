@@ -72,7 +72,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                     });
                                     if (API.isError(rsp))
                                         update({
-                                            error: data.message || "",
+                                            error: rsp.message || "",
                                             email: data.email
                                         });
                                     else
@@ -116,7 +116,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                                         password
                                     });
                                     if (API.isError(rsp))
-                                        update({ error: rsp.message || "", name: rsp.name ?? "" });
+                                        update({ error: rsp.message || "", name: data.name ?? "" });
                                     else
                                         logIn(rsp, "email").finally(Redirect);
                                 })
