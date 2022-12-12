@@ -282,3 +282,12 @@ cardlist {
     border-radius: 100%;
     padding: 1px 0 2px 1px;
 }
+
+.error-message {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.7rem;
+}
+
+.error-message.hidden-message {
+    display: none;
+}

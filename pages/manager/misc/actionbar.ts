@@ -27,7 +27,7 @@ export function ActionBar(title: string, categories?: { title: string, selected:
                     Spacer()
                 ).setGap("10px") : null,
             PlainText("")
-                .addClass("error-message")
+                .addClass("error-message", "hidden-message")
                 .setId("error-message-area")
         ),
         Spacer(),

@@ -17,7 +17,7 @@ export enum ArtistTypes {
     Producer = "PRODUCER"
 }
 export const artist = zod.tuple([
-    zod.string().transform(x => x.trim()),
+    userString,
     zod.string(),
     zod.nativeEnum(ArtistTypes)
 ]);

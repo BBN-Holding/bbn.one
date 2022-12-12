@@ -93,13 +93,6 @@ span.title {
     display: contents;
 }
 
-.wizard-box .footer .error-message {
-    background-color: rgb(46, 0, 0);
-    font-weight: bold;
-    padding: 0.6rem 0.8rem;
-    border-radius: 8px;
-}
-
 .max-width {
     max-width: calc(100vw - 2rem);
 }

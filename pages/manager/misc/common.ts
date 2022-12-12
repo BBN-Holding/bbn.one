@@ -20,6 +20,8 @@ export function setErrorMessage(rsp?: SafeParseReturnType<any, any>) {
     const err = document.querySelector<HTMLElement>("#error-message-area");
     if (!err) return;
     err.style.margin = !hideError ? "-0.8rem 0 1rem" : "0";
+    if (hideError) err.classList.add("hidden-message");
+    else err.classList.remove("hidden-message");
     err.innerText = hideError ? "" : rsp.error.errors.map(x => x.message).join("\n");
 }
 
