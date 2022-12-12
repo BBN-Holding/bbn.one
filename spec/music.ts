@@ -1,5 +1,7 @@
 import * as zod from "https://deno.land/x/zod@v3.19.1/mod.ts";
 
+export const userString = zod.string().min(1).refine(x => x.trim()).transform(x => x.trim());
+
 export enum DropType {
     Published = 'PUBLISHED',
     Private = 'PRIVATE',
@@ -23,7 +25,7 @@ export const artist = zod.tuple([
 export const song = zod.object({
     id: zod.string(),
     isrc: zod.string().optional(),
-    title: zod.string().min(1).transform(x => x.trim()),
+    title: userString,
     artists: artist.array().min(1),
     primaryGenre: zod.string(),
     secondaryGenre: zod.string(),
@@ -39,7 +41,7 @@ export const pageOne = zod.object({
 });
 
 export const pageTwo = zod.object({
-    title: zod.string().min(1).refine(x => x.trim()),
+    title: userString,
     artists: artist.array().min(1),
     release: zod.string(),
     language: zod.string(),
@@ -48,8 +50,8 @@ export const pageTwo = zod.object({
 });
 
 export const pageThree = zod.object({
-    compositionCopyright: zod.string().min(1).refine(x => x.trim()).transform(x => x.trim()),
-    soundRecordingCopyright: zod.string().min(1).refine(x => x.trim()).transform(x => x.trim())
+    compositionCopyright: userString,
+    soundRecordingCopyright: userString
 });
 
 export const pageFour = zod.object({
@@ -63,7 +65,7 @@ export const pageFive = zod.object({
 });
 
 export const pageSix = zod.object({
-    comments: zod.string().optional()
+    comments: userString.optional()
 });
 
 export const pureDrop = pageOne
