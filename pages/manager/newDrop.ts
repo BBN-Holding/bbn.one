@@ -170,8 +170,8 @@ const wizard = (restore: Drop) => Wizard({
         ),
     ]).setValidator(() => pageTwo),
     Page({
-        compositionCopyright: restore?.compositionCopyright,
-        soundRecordingCopyright: restore?.soundRecordingCopyright
+        compositionCopyright: restore?.compositionCopyright ?? "BBN Music (via bbn.one)",
+        soundRecordingCopyright: restore?.soundRecordingCopyright ?? "BBN Music (via bbn.one)"
     }, (state) => [
         Spacer(),
         Grid(
