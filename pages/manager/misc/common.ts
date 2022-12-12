@@ -1,5 +1,5 @@
 import { SafeParseReturnType } from "https://deno.land/x/zod@v3.19.1/types.ts";
-import { SupportedThemes } from "webgen/mod.ts";
+import { getErrorMessage, SupportedThemes } from "webgen/mod.ts";
 import { Style } from "webgen/src/lib/Style.ts";
 
 export function changeThemeColor(): ((data: SupportedThemes, options: Style) => void) | undefined {
@@ -22,7 +22,7 @@ export function setErrorMessage(rsp?: SafeParseReturnType<any, any>) {
     err.style.margin = !hideError ? "-0.8rem 0 1rem" : "0";
     if (hideError) err.classList.add("hidden-message");
     else err.classList.remove("hidden-message");
-    err.innerText = hideError ? "" : rsp.error.errors.map(x => x.message).join("\n");
+    err.innerText = getErrorMessage({ isValid: rsp });
 }
 
 export function HandleSubmit(PageValid: () => Promise<SafeParseReturnType<any, any>>, Submit: () => Promise<void>): () => void | Promise<void> {
