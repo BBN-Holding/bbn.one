@@ -4,7 +4,7 @@ import bbnMusicLogo from '../assets/img/bbnMusicBig.svg';
 import '../assets/css/components/nav.css';
 import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, MaterialIcons, PlainText, Spacer, Vertical } from "webgen/mod.ts";
 import { IsLoggedIn, stringToColour } from "../pages/manager/helper.ts";
-import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
+import { delay } from "https://deno.land/std@0.167.0/async/delay.ts";
 import { API } from "../pages/manager/RESTSpec.ts";
 new MaterialIcons();
 const Nav = (component: Component) => {

@@ -2,7 +2,7 @@ import { Box, Color, Grid, IconButton, TextInput, Page, PlainText, Vertical, Wiz
 import { allowedImageFormats, forceRefreshToken, GetCachedProfileData } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { API } from "../RESTSpec.ts";
-import { delay } from "https://deno.land/std@0.149.0/async/mod.ts";
+import { delay } from "https://deno.land/std@0.167.0/async/mod.ts";
 import { returnFunction, ViewState } from "./helper.ts";
 import { StreamingUploadHandler, uploadFilesDialog } from "../upload.ts";
 import { HandleSubmit, setErrorMessage } from "../misc/common.ts";

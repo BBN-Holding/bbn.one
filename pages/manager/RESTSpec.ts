@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-unused-vars
-import { assert } from "https://deno.land/std@0.140.0/testing/asserts.ts";
+import { assert } from "https://deno.land/std@0.167.0/testing/asserts.ts";
 import { Drop, DropType } from "../../spec/music.ts";
 
 export type ErrorObject = {

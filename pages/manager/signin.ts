@@ -6,7 +6,7 @@ import googleLog from '../../assets/img/googleLogo.svg';
 import { DynaNavigation } from "../../components/nav.ts";
 import { forceRefreshToken, Redirect } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
-import { delay } from "https://deno.land/std@0.140.0/async/delay.ts";
+import { delay } from "https://deno.land/std@0.167.0/async/delay.ts";
 WebGen({
 });
 const para = new URLSearchParams(location.search);
