@@ -41,7 +41,7 @@
         }
     },
     {
-        "iconId": "team5",
+        "iconId": "team12",
         "name": "Lucas Jank",
         "title": "Chief Design Officer",
         "links": {
@@ -102,14 +102,6 @@
         "title": "Head of Sales and Marketing",
         "links": {
             "email": "mailto:tamara.coco@bbn.one"
-        }
-    },
-    {
-        "iconId": "team12",
-        "name": "Mathew Kroas",
-        "title": "General Counsel",
-        "links": {
-            "email": "mailto:mathew.kroas@bbn.one"
         }
     },
     {
