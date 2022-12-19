@@ -88,7 +88,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLog
                 [
                     [ "Home", "/#" ],
                     [ "Services", "/#services" ],
-                    [ "Team", "/#team" ],
+                    // [ "Team", "/#team" ],
                     [ "FAQ", "/#faq" ],
                     [ "News", "https://blog.bbn.one" ]
                 ].map(([ text, link ]) =>
