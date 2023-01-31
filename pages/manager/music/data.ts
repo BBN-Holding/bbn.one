@@ -1,21 +1,22 @@
 import { delay } from "https://deno.land/std@0.167.0/async/delay.ts";
-import { AdvancedImage, StateHandler } from "webgen/mod.ts";
+import { AdvancedImage, State, StateHandler } from "webgen/mod.ts";
 import { Drop } from "../../../spec/music.ts";
 import { API } from "../RESTSpec.ts";
 import { StreamingUploadHandler } from "../upload.ts";
+
 
 export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[]; songs: Drop[ "songs" ]; }>, drop: Drop, source: File[]) {
     for (const file of source) {
         const uploadId = crypto.randomUUID();
         state.uploadingSongs.push(uploadId);
         if (!state.songs)
-            state.songs = [];
+            state.songs = State([]);
         const cleanedUpTitle = file.name
             .replaceAll("_", " ")
             .replaceAll("-", " ")
             .replace(/\.[^/.]+$/, "");
 
-        state.songs = [ ...state.songs, {
+        state.songs = State([ ...state.songs, {
             id: uploadId,
             title: cleanedUpTitle,
             artists: drop.artists ?? [],
@@ -27,20 +28,20 @@ export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[];
             year: new Date().getFullYear(),
             progress: 0,
             file: undefined!
-        } ];
+        } ]);
 
         StreamingUploadHandler(`music/${drop._id}/upload`, {
             failure: () => {
                 state.uploadingSongs = <StateHandler<string[]>>state.uploadingSongs.filter(x => x != uploadId);
                 if (state.songs)
                     state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = -1;
-                state.songs = [ ...state.songs ?? [] ];
+                state.songs = State([ ...state.songs ?? [] ]);
                 alert("Your Upload has failed. Please try a different file or try again later");
             },
             uploadDone: () => {
                 if (state.songs)
                     state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = 100;
-                state.songs = [ ...state.songs ?? [] ];
+                state.songs = State([ ...state.songs ?? [] ]);
             },
             credentials: () => API.getToken(),
             backendResponse: (id) => {
@@ -49,13 +50,13 @@ export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[];
                     state.songs[ state.songs.findIndex(x => x.id == uploadId) ].file = id;
                 }
                 state.uploadingSongs = <StateHandler<string[]>>state.uploadingSongs.filter(x => x != uploadId);
-                state.songs = [ ...state.songs ?? [] ];
+                state.songs = State([ ...state.songs ?? [] ]);
             },
             // deno-lint-ignore require-await
             onUploadTick: async (percentage) => {
                 if (state.songs)
                     state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = percentage;
-                state.songs = [ ...state.songs ?? [] ];
+                state.songs = State([ ...state.songs ?? [] ]);
             }
         }, file);
     }

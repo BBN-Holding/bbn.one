@@ -1,6 +1,6 @@
-import { Box, Custom, Grid, Horizontal, Image, img, Page, PlainText, Spacer, Vertical, Wizard } from "webgen/mod.ts";
+import { Grid, Horizontal, Page, PlainText, Spacer, Vertical, Wizard } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
-import { GetCachedProfileData, loadImage, showPreviewImage } from "../helper.ts";
+import { GetCachedProfileData, showPreviewImage } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage } from "../misc/common.ts";
 import { DownloadDrop } from "../misc/drop.ts";

@@ -1,4 +1,4 @@
-import { Box, ButtonStyle, Checkbox, Component, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, StateHandler, Table, View } from "webgen/mod.ts";
+import { Box, ButtonStyle, Checkbox, Component, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, State, StateHandler, Table, View } from "webgen/mod.ts";
 import { EditArtists, getSecondary, getYearList, stringToColour } from "../helper.ts";
 import primary from "../../../data/primary.json" assert { type: "json"};
 import secondary from "../../../data/secondary.json" assert { type: "json"};
@@ -77,7 +77,7 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
                     .addClass("low-level")
             ]
         ], state.songs ?? []).setDelete((_, i) => {
-            state.songs = state.songs?.filter((_, index) => index != i);
+            state.songs = state.songs?.filter((_, index) => index != i) as typeof state.songs;
         }).addClass("inverted-class", "light-mode")
     );
     state.$on("songs", () => {
@@ -89,8 +89,8 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
 // deno-lint-ignore no-explicit-any
 function update(state: StateHandler<{ songs: Drop[ "songs" ]; }>, index: number, key: keyof NonNullable<Drop[ "songs" ]>[ 0 ], value: any) {
     if (!state.songs)
-        state.songs = [];
+        state.songs = State([]);
     // @ts-ignore errors due to any usage.
     state.songs[ index ][ key ] = value;
-    state.songs = [ ...state.songs ];
+    state.songs = State([ ...state.songs ]);
 }

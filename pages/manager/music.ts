@@ -85,7 +85,7 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
     });
 
 View(() => Vertical(...DynaNavigation("Music"), view.asComponent())).appendOn(document.body);
-renewAccessTokenIfNeeded(GetCachedProfileData().exp).then(() => loadSongs(view));
+renewAccessTokenIfNeeded().then(() => loadSongs(view));
 
 function getListCount(list: Drop[ "type" ][], state: Partial<{ list: Drop[]; type: Drop[ "type" ]; aboutMe: ProfileData; }>) {
     const length = state.list?.filter(x => list.includes(x.type)).length;

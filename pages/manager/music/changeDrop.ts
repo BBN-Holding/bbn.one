@@ -1,4 +1,4 @@
-import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, Page, Reactive, Spacer, TextInput, Wizard } from "webgen/mod.ts";
+import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, Page, Reactive, Spacer, State, TextInput, Wizard } from "webgen/mod.ts";
 import { allowedImageFormats, EditArtists, getSecondary } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage, HandleSubmit, setErrorMessage } from "../misc/common.ts";
@@ -74,7 +74,7 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                     Button("Artists")
                         .onClick(() => {
                             EditArtists(data.artists ?? [ [ "", "", ArtistTypes.Primary ] ]).then((x) => {
-                                data.artists = x;
+                                data.artists = State(x);
                                 console.log(data);
                             });
                         }),
@@ -87,7 +87,7 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                             .sync(data, "primaryGenre")
                             .addClass("justify-content-space")
                             .onChange(() => {
-                                data.secondaryGenre = undefined;
+                                data.secondaryGenre = undefined!;
                             }),
                         Reactive(data, "primaryGenre", () => DropDownInput("Secondary Genre", getSecondary(secondary, data.primaryGenre) ?? [])
                             .sync(data, "secondaryGenre")

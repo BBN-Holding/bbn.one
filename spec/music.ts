@@ -16,6 +16,7 @@ export enum ArtistTypes {
     Songwriter = "SONGWRITER",
     Producer = "PRODUCER"
 }
+
 export const artist = zod.tuple([
     userString,
     zod.string(),
@@ -75,37 +76,12 @@ export const pureDrop = pageOne
     .merge(pageFive)
     .merge(pageSix);
 
-
-export const Requirements = {
-    posting: {
-        loading: zod.void(),
-        uploadingSongs: zod.void(),
-    },
-    frontend: {
-        _id: zod.string(),
-        user: zod.string()
-    }
-};
-
 export const drop = pureDrop
-    .partial()
-    .extend({
-        ...Requirements.posting,
-        ...Requirements.frontend,
-        type: zod.literal(DropType.Unsubmitted),
-    })
-    .or(pureDrop
-        .extend({
-            ...Requirements.posting,
-            ...Requirements.frontend,
-            type: zod.union([
-                zod.literal(DropType.Private),
-                zod.literal(DropType.Published),
-                zod.literal(DropType.ReviewDeclined),
-                zod.literal(DropType.UnderReview),
-            ])
-        })
-    );
+    .merge(zod.object({
+        _id: zod.string(),
+        user: zod.string(),
+        type: zod.nativeEnum(DropType).optional()
+    }));
 
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;

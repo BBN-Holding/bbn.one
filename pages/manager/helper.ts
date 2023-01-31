@@ -42,6 +42,7 @@ export function IsLoggedIn(): ProfileData | null {
     }
 }
 
+
 export function getSecondary(secondary: Record<string, string[]>, primaryGenre?: string): string[] | null {
     return primaryGenre ? secondary[ primaryGenre ] : null;
 }
@@ -64,6 +65,7 @@ export function GetCachedProfileData(): ProfileData {
         return JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ])).user;
     } catch (_) {
         logOut();
+        throw _;
     }
 }
 
@@ -267,7 +269,7 @@ function update(state: StateHandler<{ list: [ name: string, img: string, type: A
     state.list = [ ...state.list ];
 }
 
-export function getDropFromPages(data: StateHandler<any>[], restore: Drop): Drop {
+export function getDropFromPages(data: StateHandler<any>[], restore?: Drop): Drop {
     return <Drop>{
         ...restore,
         ...data

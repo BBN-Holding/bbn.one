@@ -2,7 +2,7 @@ import { DynaNavigation } from "../../components/nav.ts";
 import primary from "../../data/primary.json" assert { type: "json"};
 import secondary from "../../data/secondary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
-import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, TextInput, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV, Box, MediaQuery, Image, AdvancedImage, Reactive, StateHandler } from "webgen/mod.ts";
+import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, TextInput, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV, Box, MediaQuery, Image, AdvancedImage, Reactive } from "webgen/mod.ts";
 import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, getSecondary, getDropFromPages } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
@@ -55,7 +55,7 @@ View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
     .addClass("fullscreen")
     .appendOn(document.body);
 
-const wizard = (restore: Drop) => Wizard({
+const wizard = (restore?: Drop) => Wizard({
     cancelAction: "/music",
     buttonArrangement: "space-between",
     submitAction: async (data) => {
@@ -86,7 +86,7 @@ const wizard = (restore: Drop) => Wizard({
     }
 }, ({ Next, PageData }) => [
     Page({
-        upc: restore.upc
+        upc: restore?.upc
     }, (state) => [
         Spacer(),
         MediaQuery(

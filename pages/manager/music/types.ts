@@ -1,4 +1,4 @@
-import { Drop } from "../RESTSpec.ts";
+import { Drop } from "../../../spec/music.ts";
 
 export type EditViewState = {
     data: Drop,
