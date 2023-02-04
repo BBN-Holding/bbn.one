@@ -1,5 +1,7 @@
 {
-    "importMap": "./import-map.json",
+    "imports": {
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/8907d18/"
+    },
     "compilerOptions": {
         "lib": [
             "dom",
