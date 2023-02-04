@@ -10,6 +10,11 @@ export enum DropType {
     ReviewDeclined = "REVIEW_DECLINED"
 }
 
+export enum DataHints {
+    InvalidData = "INVALID_DATA",
+    DeadLinks = "DEAD_LINKS"
+}
+
 export enum ArtistTypes {
     Primary = "PRIMARY",
     Featuring = "FEATURING",
@@ -25,6 +30,7 @@ export const artist = zod.tuple([
 
 export const song = zod.object({
     id: zod.string(),
+    dataHints: zod.nativeEnum(DataHints).optional(),
     isrc: zod.string().optional(),
     title: userString,
     artists: artist.array().min(1),
@@ -80,6 +86,7 @@ export const drop = pureDrop
     .merge(zod.object({
         _id: zod.string(),
         user: zod.string(),
+        dataHints: zod.nativeEnum(DataHints).optional(),
         type: zod.nativeEnum(DropType).optional()
     }));
 
