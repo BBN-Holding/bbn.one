@@ -22,6 +22,12 @@ export enum ArtistTypes {
     Producer = "PRODUCER"
 }
 
+export enum ReviewResponse {
+    "APPROVED",
+    "DECLINE_COPYRIGHT",
+    "DECLINE_MALICIOUS_ACTIVITY"
+}
+
 export const artist = zod.tuple([
     userString,
     zod.string(),
@@ -85,9 +91,11 @@ export const pureDrop = pageOne
 export const drop = pureDrop
     .merge(zod.object({
         _id: zod.string(),
+        lastChanged: zod.number().describe("unix timestamp").optional(),
         user: zod.string(),
         dataHints: zod.nativeEnum(DataHints).optional(),
-        type: zod.nativeEnum(DropType).optional()
+        type: zod.nativeEnum(DropType).optional(),
+        reviewResponse: zod.nativeEnum(ReviewResponse).optional()
     }));
 
 export type Drop = zod.infer<typeof drop>;
