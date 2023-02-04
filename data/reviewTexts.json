@@ -1,0 +1,23 @@
+{
+    "APPROVED": {
+        "header": "{{dropTitle}} Approved!",
+        "title": "Drop Approved!",
+        "content": [
+            "Your drop {{dropTitle}} has successfully gone through our content review process.",
+            "",
+            "We are now in the process of delivering your drop to our partners. If you need to contact us regarding this release, [please reach out to us.](mailto:support@bbn.one)"
+        ]
+    },
+    "REJECTED": {
+        "header": "Issue with drop: (drop name) [IMPORTANT - Your action required]",
+        "title": "Your action is needed.",
+        "content": [
+            "Your release: drop name (drop id), has been flagged by our moderation team and requires your attention for the following reason(s):",
+            {
+                "DECLINE_COPYRIGHT": "Our systems have detected that your release, or elements of your release, are under copyright. You must own 100% of the legal rights to the music that you're distributing. This includes samples of all types including high profile remixes. As your release has been detected as copyright infringing, your release has been disapproved. If you wish to dispute this decision or have documentation to proceed with the upload, please email support@bbn.one. We're sorry for any inconvenience that this may cause.",
+                "DECLINE_MALICIOUS_ACTIVITY": "LOL wtf"
+            },
+            "If you have any problems regarding this release please do not hesitate to contact our team at moderation@bb.one. Make sure to include your username and the id/name of the drop you are querying."
+        ]
+    }
+}
