@@ -190,8 +190,8 @@ export function EditArtists(list: Artist[]) {
                 Table([
                     [ "Type", "10rem", (_, index) =>
                         DropDownInput("Type", ARTIST_ARRAY)
-                            .setValue([ state.list[ index ][ 2 ], ARTIST_ARRAY.indexOf(state.list[ index ][ 2 ]) ])
-                            .onChange((data) => update(state, index, 2, data?.[ 0 ]))
+                            .setValue(state.list[ index ][ 2 ])
+                            .onChange((data) => update(state, index, 2, data))
                     ],
                     [ "Name", "auto", (_, index) =>
                         TextInput("text", "Name", "blur")
