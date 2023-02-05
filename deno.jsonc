@@ -1,6 +1,6 @@
 {
     "imports": {
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/8907d18/"
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/e8499a2/"
     },
     "compilerOptions": {
         "lib": [

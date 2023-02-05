@@ -115,6 +115,12 @@ cardlist {
     padding: 0 1rem;
 }
 
+.service-box {
+    display: block;
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
 .services,
 .scoped-size {
     margin: 0 auto;
