@@ -249,14 +249,9 @@ cardlist {
     justify-content: center;
 }
 
-.justify-content-space {
-    justify-content: space-between;
-}
-
 .justify-content-center {
     justify-content: center;
 }
-
 
 .wbutton ul {
     max-height: 14rem;

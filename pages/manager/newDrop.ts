@@ -132,7 +132,6 @@ const wizard = (restore?: Drop) => Wizard({
                     TextInput("date", "Release Date", "live").sync(state, "release"),
                     DropDownInput("Language", language)
                         .sync(state, "language")
-                        .addClass("justify-content-space")
                 )
                     .setEvenColumns(small ? 1 : 2)
                     .setGap(gapSize),
@@ -151,15 +150,16 @@ const wizard = (restore?: Drop) => Wizard({
                 Grid(
                     DropDownInput("Primary Genre", primary)
                         .sync(state, "primaryGenre")
-                        .addClass("justify-content-space")
                         .onChange(() => {
                             state.secondaryGenre = undefined;
                         }),
-                    Reactive(state, "primaryGenre", () => DropDownInput("Secondary Genre", getSecondary(secondary, state.primaryGenre) ?? [])
-                        .sync(state, "secondaryGenre")
-                        .setColor(getSecondary(secondary, state.primaryGenre) ? Color.Grayscaled : Color.Disabled)
-                        .addClass("justify-content-space", "border-box")
-                        .setWidth("100%")),
+                    Reactive(state, "primaryGenre", () =>
+                        DropDownInput("Secondary Genre", getSecondary(secondary, state.primaryGenre) ?? [])
+                            .sync(state, "secondaryGenre")
+                            .setColor(getSecondary(secondary, state.primaryGenre) ? Color.Grayscaled : Color.Disabled)
+                            .addClass("border-box")
+                            .setWidth("100%")
+                    ),
                 )
                     .setGap(gapSize)
                     .setEvenColumns(small ? 1 : 2),

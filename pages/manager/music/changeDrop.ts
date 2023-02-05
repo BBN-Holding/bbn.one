@@ -66,8 +66,7 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                 ],
                 TextInput("date", "Release Date").sync(data, "release"),
                 DropDownInput("Language", language)
-                    .sync(data, "language")
-                    .addClass("justify-content-space"),
+                    .sync(data, "language"),
                 [
                     { width: 2 },
                     // TODO: Make this a nicer component
@@ -85,13 +84,12 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                     Grid(
                         DropDownInput("Primary Genre", primary)
                             .sync(data, "primaryGenre")
-                            .addClass("justify-content-space")
                             .onChange(() => {
                                 data.secondaryGenre = undefined!;
                             }),
                         Reactive(data, "primaryGenre", () => DropDownInput("Secondary Genre", getSecondary(secondary, data.primaryGenre) ?? [])
                             .sync(data, "secondaryGenre")
-                            .addClass("justify-content-space", "border-box")
+                            .addClass("border-box")
                             .setWidth("100%")
                         ),
                     )

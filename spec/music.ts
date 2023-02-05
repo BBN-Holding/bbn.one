@@ -1,4 +1,4 @@
-import * as zod from "https://deno.land/x/zod@v3.19.1/mod.ts";
+import * as zod from "https://deno.land/x/zod@v3.20.2/mod.ts";
 
 export const userString = zod.string().min(1).refine(x => x.trim()).transform(x => x.trim());
 

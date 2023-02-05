@@ -190,7 +190,6 @@ export function EditArtists(list: Artist[]) {
                 Table([
                     [ "Type", "10rem", (_, index) =>
                         DropDownInput("Type", ARTIST_ARRAY)
-                            .addClass("justify-content-space")
                             .setValue([ state.list[ index ][ 2 ], ARTIST_ARRAY.indexOf(state.list[ index ][ 2 ]) ])
                             .onChange((data) => update(state, index, 2, data?.[ 0 ]))
                     ],
