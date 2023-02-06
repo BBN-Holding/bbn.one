@@ -160,6 +160,19 @@ export function stringToColour(str: string) {
     return colour;
 }
 
+const a = document.createElement('a');
+document.body.appendChild(a);
+a.setAttribute('style', 'display: none');
+
+export function saveBlob(blob: Blob, fileName: string) {
+    const url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+
+
 export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: File[]) => void) {
     const table = Table(_columns, []).draw();
     table.ondragleave = (ev) => {
@@ -234,8 +247,8 @@ export function EditArtists(list: Artist[]) {
             .open();
     });
 }
-export function showPreviewImage(x: Drop) {
-    return ReCache("image-preview-" + x._id, () => Promise.resolve(), (type) => type == "loaded" && x.artwork ? Image({ type: "direct", source: async () => await loadImage(x) ?? artwork }, "A Song Artwork") : Image(artwork, "A Placeholder Artwork.")).addClass("image-preview");
+export function showPreviewImage(x: Drop, big = false) {
+    return ReCache("image-preview-" + x._id + big, () => Promise.resolve(), (type) => type == "loaded" && x.artwork ? Image({ type: "direct", source: async () => await loadImage(x) ?? artwork }, "A Song Artwork") : Image(artwork, "A Placeholder Artwork.")).addClass("image-preview");
 }
 
 export async function loadImage(x: Drop) {

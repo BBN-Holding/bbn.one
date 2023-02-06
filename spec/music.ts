@@ -23,9 +23,9 @@ export enum ArtistTypes {
 }
 
 export enum ReviewResponse {
-    "APPROVED",
-    "DECLINE_COPYRIGHT",
-    "DECLINE_MALICIOUS_ACTIVITY"
+    Approved = "APPROVED",
+    DeclineCopyright = "DECLINE_COPYRIGHT",
+    DeclineMaliciousActivity = "DECLINE_MALICIOUS_ACTIVITY"
 }
 
 export const artist = zod.tuple([

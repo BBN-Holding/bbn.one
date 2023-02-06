@@ -52,7 +52,7 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
             Grid(
                 Grid(
                     Reactive(data, "artworkClientData", () => DropAreaInput(
-                        Box(data.artworkClientData ? Image(data.artworkClientData, "A Music Album Artwork.") : Image(artwork, "A Default Alubm Artwork."), IconButton("edit"))
+                        Box(data.artworkClientData ? Image(data.artworkClientData, "A Music Album Artwork.") : Image(artwork, "A Default Alubm Artwork."), IconButton("edit", "edit icon"))
                             .addClass("upload-image"),
                         allowedImageFormats,
                         ([ { file } ]) => uploadArtwork(data, file)

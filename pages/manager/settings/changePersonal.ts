@@ -30,7 +30,7 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
         }, (data) => [
             Vertical(
                 Grid(
-                    Reactive(data, "profilePicture", () => Box(Image(data.profilePicture ?? { type: "loading" }, "Your Avatarimage"), IconButton("edit")).addClass("upload-image").onClick(() => {
+                    Reactive(data, "profilePicture", () => Box(Image(data.profilePicture ?? { type: "loading" }, "Your Avatarimage"), IconButton("edit", "edit-icon")).addClass("upload-image").onClick(() => {
                         uploadFilesDialog(([ file ]) => {
                             const blobUrl = URL.createObjectURL(file);
                             data.profilePicture = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage: 0 };

@@ -1,8 +1,8 @@
 import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, CenterV, Component, Icon, ViewClass, MediaQuery } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { loadSongs, showPreviewImage } from "../helper.ts";
-import { API } from "../RESTSpec.ts";
 import { ViewState } from "../types.ts";
+import { ReviewDialog } from "./dialog.ts";
 
 export function ReviewPanel(view: () => ViewClass<ViewState>, state: Partial<ViewState>): Component {
     return Vertical(
@@ -103,24 +103,16 @@ function RenderEntry(x: Drop, view: () => ViewClass<ViewState>) {
 function ReviewActions(x: Drop, view: ViewClass<ViewState>) {
     return x.type == "UNDER_REVIEW" ? [
         CenterV(
-            Button(Icon("block"))
+            Button(Icon("done_all"))
                 .setStyle(ButtonStyle.Inline)
                 .setColor(Color.Colored)
                 .addClass("tag")
-                .onPromiseClick(async () => {
-                    await API.music(API.getToken()).id(x._id).type.post(DropType.ReviewDeclined);
-                    await loadSongs(view);
+                .onClick(() => {
+                    ReviewDialog.open().viewOptions().update({
+                        drop: x
+                    });
+                    ReviewDialog.onClose(async () => await loadSongs(view));
                 })
         ),
-        CenterV(
-            Button(Icon("task_alt"))
-                .setStyle(ButtonStyle.Inline)
-                .setColor(Color.Colored)
-                .addClass("tag")
-                .onPromiseClick(async () => {
-                    await API.music(API.getToken()).id(x._id).type.post(DropType.Published);
-                    await loadSongs(view);
-                })
-        )
     ] : [];
 }

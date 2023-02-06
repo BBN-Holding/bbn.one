@@ -193,6 +193,12 @@ export const API = {
                     headers: headers(token)
                 }).then(x => x.blob());
             },
+            artworkStore3k: async () => {
+                return await fetch(`${API.BASE_URL}music/${id}/artwork-store3k`, {
+                    method: "GET",
+                    headers: headers(token)
+                }).then(x => x.blob());
+            },
             get: async () => {
                 return (await fetch(`${API.BASE_URL}music/${id}`, {
                     method: "GET",

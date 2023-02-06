@@ -42,23 +42,23 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
             ],
             [ "Year", "max-content", ({ year }, index) =>
                 DropDownInput("Year", getYearList())
-                    .setValue([ `${year}`, getYearList().indexOf(`${year}`) ])
-                    .onChange((data) => update(state, index, "year", data?.[ 0 ] ? parseInt(data?.[ 0 ]) : undefined))
+                    .setValue(year)
+                    .onChange((data) => update(state, index, "year", data ? parseInt(data) : undefined))
                     .setStyle(ButtonStyle.Inline)
                     .addClass("low-level")
             ],
             [ "Country", "max-content", (row, index) =>
                 DropDownInput("Country", language)
-                    .setValue([ `${row.country}`, language.indexOf(`${row.country}`) ])
-                    .onChange((data) => update(state, index, "country", data?.[ 0 ]))
+                    .setValue(row.country)
+                    .onChange((data) => update(state, index, "country", data))
                     .setStyle(ButtonStyle.Inline)
                     .addClass("low-level")
             ],
             [ "Primary Genre", "max-content", ({ primaryGenre }, index) =>
                 DropDownInput("Primary Genre", primary)
-                    .setValue([ `${primaryGenre}`, primary.indexOf(`${primaryGenre}`) ])
+                    .setValue(primaryGenre)
                     .onChange((data) => {
-                        update(state, index, "primaryGenre", data?.[ 0 ]);
+                        update(state, index, "primaryGenre", data);
                         update(state, index, "secondaryGenre", undefined);
                     })
                     .setStyle(ButtonStyle.Inline)
@@ -66,8 +66,8 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
             ],
             [ "Secondary Genre", "max-content", ({ primaryGenre, secondaryGenre }, index) =>
                 DropDownInput("Secondary Genre", getSecondary(secondary, primaryGenre) ?? [])
-                    .setValue(secondaryGenre ? [ `${secondaryGenre}`, (getSecondary(secondary, primaryGenre) ?? []).indexOf(`${secondaryGenre}`) ] : undefined)
-                    .onChange((data) => update(state, index, "secondaryGenre", data?.[ 0 ]))
+                    .setValue(secondaryGenre ? secondaryGenre : undefined)
+                    .onChange((data) => update(state, index, "secondaryGenre", data))
                     .setStyle(ButtonStyle.Inline)
                     .addClass("low-level")
             ],
