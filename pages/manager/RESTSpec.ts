@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-unused-vars
 import { assert } from "https://deno.land/std@0.167.0/testing/asserts.ts";
+import "https://unpkg.com/construct-style-sheets-polyfill@3.1.0/dist/adoptedStyleSheets.js";
 import { Drop, DropType } from "../../spec/music.ts";
 
 export type ErrorObject = {

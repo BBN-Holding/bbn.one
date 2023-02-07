@@ -1,3 +1,4 @@
+import '../polyfills.ts';
 import bbnLogo from '../assets/img/bbnBig.svg';
 import bbnMusicLogo from '../assets/img/bbnMusicBig.svg';
 

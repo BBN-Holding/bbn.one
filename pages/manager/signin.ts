@@ -1,3 +1,4 @@
+import '../../polyfills.ts';
 import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, Page, PlainText, Spacer, Vertical, View, WebGen, Box, Component, TextInput } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';

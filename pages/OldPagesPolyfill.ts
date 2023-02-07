@@ -1,3 +1,4 @@
+import '../polyfills.ts';
 import { WebGen } from "webgen/mod.ts";
 
 const style = document.body.style;

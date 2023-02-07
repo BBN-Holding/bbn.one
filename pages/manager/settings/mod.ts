@@ -1,3 +1,4 @@
+import '../../../polyfills.ts';
 import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
 import { Redirect, RegisterAuthRefresh } from "../helper.ts";
 import '../../../assets/css/main.css';

@@ -1,3 +1,4 @@
+import '../polyfills.ts';
 import { Vertical, View, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../components/nav.ts";
 import { renderTeam } from "../components/team.ts";
