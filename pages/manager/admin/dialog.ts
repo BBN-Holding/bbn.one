@@ -76,6 +76,7 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                     } else if (data.review == "DECLINE") {
                         await API.music(API.getToken()).id(state.drop!._id).type.post(DropType.ReviewDeclined);
                     }
+                    ReviewDialog.close();
                 },
                 // deno-lint-ignore require-await
                 onNextPage: async ({ PageData, PageID, Next }) => {
