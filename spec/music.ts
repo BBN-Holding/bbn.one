@@ -4,6 +4,7 @@ export const userString = zod.string().min(1).refine(x => x.trim()).transform(x 
 
 export enum DropType {
     Published = 'PUBLISHED',
+    Publishing = 'PUBLISHING',
     Private = 'PRIVATE',
     UnderReview = 'UNDER_REVIEW',
     Unsubmitted = 'UNSUBMITTED',
