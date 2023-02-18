@@ -1,4 +1,3 @@
-import '../../../polyfills.ts';
 import { Center, CenterV, Custom, loadingWheel, MaterialIcons, Spacer, Vertical, View, WebGen } from "webgen/mod.ts";
 import { Redirect, RegisterAuthRefresh } from "../helper.ts";
 import { changeThemeColor } from "../misc/common.ts";

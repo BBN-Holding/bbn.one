@@ -1,4 +1,3 @@
-import '../../polyfills.ts';
 import { loadingWheel, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Custom, Box, CenterV, Component, MaterialIcons, ViewClass, MediaQuery } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';

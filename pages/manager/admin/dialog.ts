@@ -72,7 +72,7 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                 },
                 submitAction: async ([ { data: { data } } ]) => {
                     if (data.review == "APPROVED") {
-                        await API.music(API.getToken()).id(state.drop!._id).type.post(DropType.Published);
+                        await API.music(API.getToken()).id(state.drop!._id).type.post(DropType.Publishing);
                     } else if (data.review == "DECLINE") {
                         await API.music(API.getToken()).id(state.drop!._id).type.post(DropType.ReviewDeclined);
                     }

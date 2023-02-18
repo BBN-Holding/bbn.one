@@ -1,4 +1,3 @@
-import '../../polyfills.ts';
 import { Card, Custom, Grid, Horizontal, img, MaterialIcons, PlainText, Spacer, Vertical, View, WebGen, createElement } from "webgen/mod.ts";
 import { renderOpener } from "./components/opener.ts";
 import '../../assets/css/main.css';

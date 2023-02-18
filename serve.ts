@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/x/esbuild_serve@1.0.1/mod.ts";
+import { serve } from "https://deno.land/x/esbuild_serve@1.2.2/mod.ts";
 
 serve({
     port: 6969,
@@ -24,5 +24,8 @@ serve({
         "music/new-drop": "./pages/manager/newDrop.ts",
         "music/edit": "./pages/manager/music/edit.ts",
         "settings": "./pages/manager/settings/mod.ts"
-    }
+    },
+    poylfills: [
+        "https://unpkg.com/construct-style-sheets-polyfill@3.1.0"
+    ]
 });
