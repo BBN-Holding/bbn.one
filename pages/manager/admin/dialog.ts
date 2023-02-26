@@ -3,7 +3,7 @@ import { Drop, DropType, ReviewResponse } from "../../../spec/music.ts";
 import { saveBlob, showPreviewImage } from "../helper.ts";
 import reviewTexts from "../../../data/reviewTexts.json" assert { type: "json" };
 import { API } from "../RESTSpec.ts";
-import { clientRender, render } from "./email.ts";
+import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
 function css(data: TemplateStringsArray, ...expr: string[]) {
     const merge = data.map((x, i) => x + (expr[ i ] || ''));
 
@@ -71,12 +71,16 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                 cancelAction: () => {
                     ReviewDialog.close();
                 },
-                submitAction: async ([ { data: { data } } ]) => {
-                    if (data.review == "APPROVED") {
-                        await API.music(API.getToken()).id(state.drop!._id).type.post(DropType.Publishing);
-                    } else if (data.review == "DECLINE") {
-                        await API.music(API.getToken()).id(state.drop!._id).type.post(DropType.ReviewDeclined);
-                    }
+                submitAction: async ([ { data: { data: { review } } }, { data: { data: { respones, allowEdits } } }, { data: { data: { responseText } } } ]) => {
+                    const reason = <ReviewResponse[]>respones;
+
+                    await API.music(API.getToken()).id(state.drop!._id).review.post({
+                        title: dropPatternMatching(reviewTexts[ review == "DECLINE" ? "REJECTED" : "APPROVED" ].header, state.drop!),
+                        reason: reason,
+                        body: rawTemplate(dropPatternMatching(responseText, state.drop!)),
+                        allowEdits
+                    });
+
                     ReviewDialog.close();
                 },
                 // deno-lint-ignore require-await
@@ -127,7 +131,8 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                     review: val.any().refine(x => reviewActions.includes(x), "Missing Review Feedback.")
                 })),
                 Page({
-                    respones: [] as ReviewResponse[]
+                    respones: [] as ReviewResponse[],
+                    allowEdits: false
                 }, (data) => [
                     Box(
                         PlainText("Choose Rejection Reasons"),
@@ -142,8 +147,22 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                                     .setGap("0.5rem")
                                     .setAlign("center")
                             ),
+
+                        PlainText("Choose Rejection Method"),
+                        Horizontal(
+                            Checkbox(data.allowEdits).onClick(() => data.allowEdits = !data.allowEdits),
+                            PlainText("Allow Edits (not Refuse)"),
+                            Spacer()
+                        )
+                            .setMargin("0.5rem 0")
+                            .setGap("0.5rem")
+                            .setAlign("center"),
+
                     )
-                ]),
+                ]).setValidator((val) => val.object({
+                    respones: val.string().array().min(1),
+                    allowEdits: val.boolean()
+                })),
                 Page({
                     responseText: "Hello World!\n\n\nWow What a view!",
                 }, (data) => [
@@ -154,6 +173,7 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                             const ele = createElement("textarea");
                             ele.rows = 10;
                             ele.value = data.responseText;
+                            ele.style.resize = "vertical";
                             ele.oninput = () => {
                                 data.responseText = ele.value;
                             };
@@ -163,10 +183,9 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                         .addClass("winput", "grayscaled", "has-value", "textarea")
                         .setMargin("0 0 .5rem"),
                     PlainText("Preview").setMargin("0 0 0.5rem"),
-                    Reactive(data, "responseText", () => clientRender(data.responseText, state.drop!))
-                    ,
+                    Reactive(data, "responseText", () => clientRender(dropPatternMatching(data.responseText, state.drop!))),
                 ]).setValidator((v) => v.object({
-                    responseText: v.string().refine(x => render(x).errors.length == 0, { message: "Invalid MJML" })
+                    responseText: v.string().refine(x => render(dropPatternMatching(x, state.drop!)).errors.length == 0, { message: "Invalid MJML" })
                 })),
                 Page({
 

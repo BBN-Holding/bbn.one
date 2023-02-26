@@ -158,11 +158,21 @@ export const API = {
             return data.id as string;
         },
         id: (id: string) => ({
+            review: {
+                post: (data: { title: string, reason: string[], body: string; allowEdits?: boolean; }) => {
+                    return fetch(`${API.BASE_URL}music/${id}/review`, {
+                        method: "POST",
+                        headers: headers(token),
+                        body: data ? JSON.stringify(data) : null
+                    }).then(x => x.text());
+                },
+            },
             type: {
-                post: (type: DropType) => {
+                post: (type: DropType, data?: { title: string, reason: string[], body: string; }) => {
                     return fetch(`${API.BASE_URL}music/${id}/type/${type}`, {
                         method: "POST",
-                        headers: headers(token)
+                        headers: headers(token),
+                        body: data ? JSON.stringify(data) : null
                     }).then(x => x.text());
                 },
             },
