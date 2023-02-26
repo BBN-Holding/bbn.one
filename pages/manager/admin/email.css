@@ -1,0 +1,10 @@
+.emailPreview {
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 5px;
+    background: #f6f6f6;
+    height: 45vh;
+    width: calc(100vw - calc(var(--gap) * 3));
+    max-width: 50rem;
+}

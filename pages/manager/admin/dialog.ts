@@ -3,6 +3,7 @@ import { Drop, DropType, ReviewResponse } from "../../../spec/music.ts";
 import { saveBlob, showPreviewImage } from "../helper.ts";
 import reviewTexts from "../../../data/reviewTexts.json" assert { type: "json" };
 import { API } from "../RESTSpec.ts";
+import { clientRender, render } from "./email.ts";
 function css(data: TemplateStringsArray, ...expr: string[]) {
     const merge = data.map((x, i) => x + (expr[ i ] || ''));
 
@@ -59,7 +60,7 @@ const reviewResponse = [
     "Malicious Activity"
 ];
 
-const rejectReasons = [ ReviewResponse.DeclineCopyright, ReviewResponse.DeclineMaliciousActivity ];
+const rejectReasons = [ ReviewResponse.DeclineCopyright ];
 export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
     Box(
         !state.drop
@@ -91,16 +92,11 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                         }
                     } else if (current == 1) {
                         if (reviewPick == "APPROVED") return;
-                        const list = [];
-
-                        for (const iterator of data[ 1 ].respones as Array<keyof typeof reviewTexts.REJECTED.reasonMap>) {
-                            console.log(reviewTexts.REJECTED.reasonMap, iterator);
-                            list.push("- " + reviewTexts.REJECTED.reasonMap[ iterator ]);
-                        }
-
-                        data[ 2 ].responseText = reviewTexts.REJECTED.content
-                            .join("\n")
-                            .replace("{{REASON}}", list.join("\n"));
+                        data[ 2 ].responseText = reviewTexts.REJECTED.content.join("\n")
+                            .replace("{{REASON}}", (data[ 1 ].respones as Array<keyof typeof reviewTexts.REJECTED.reasonMap>)
+                                .map(x => reviewTexts.REJECTED.reasonMap[ x ])
+                                .filter(x => x)
+                                .join(""));
                     }
 
                 }
@@ -146,8 +142,7 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                                     .setGap("0.5rem")
                                     .setAlign("center")
                             ),
-                    ),
-                    Reactive(data, "respones", () => PlainText(("Selected: " + data.respones.join(", ")).toUpperCase()).setFont(0.7, 700)),
+                    )
                 ]),
                 Page({
                     responseText: "Hello World!\n\n\nWow What a view!",
@@ -163,12 +158,16 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                                 data.responseText = ele.value;
                             };
                             return ele;
-                        })())
+                        })()),
                     )
                         .addClass("winput", "grayscaled", "has-value", "textarea")
-                        .setMargin("0 0 1rem")
+                        .setMargin("0 0 .5rem"),
+                    PlainText("Preview").setMargin("0 0 0.5rem"),
+                    Reactive(data, "responseText", () => clientRender(data.responseText, state.drop!))
                     ,
-                ]),
+                ]).setValidator((v) => v.object({
+                    responseText: v.string().refine(x => render(x).errors.length == 0, { message: "Invalid MJML" })
+                })),
                 Page({
 
                 }, () => [
@@ -189,7 +188,6 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                 ])
             ]),
     )
-        .setWidth("min(89vw, 35rem)")
         .setMargin("0 0 var(--gap)")
 )
     .setTitle("Finish up that Drop!");
