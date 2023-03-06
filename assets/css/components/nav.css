@@ -130,22 +130,24 @@ nav.email-banner a {
 
 .drop-over {
     position: absolute;
-    left: 0;
-    top: 0;
-    background: #212121;
-    border-radius: 0.3rem;
+    left:0;
+    top: 0px;;
+    background: #171717;
+    border-radius: 0.5rem;
     padding: .4rem .8rem;
     transform: scale(0.5) translate(-30%, -200%);
     opacity: 0.1;
     width: 100%;
     max-width: 15rem;
     transition: opacity 100ms ease;
-    outline: none;
+    outline: 1px solid #00000;
+    
 }
 
 .drop-over:focus,
 .drop-over:focus-within,
 .drop-over.open {
+    top: 2.5rem;
     opacity: 1;
     display: block;
     transform: scale(1) translate(0, 0);
