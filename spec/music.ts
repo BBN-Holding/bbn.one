@@ -1,5 +1,6 @@
 import * as zod from "https://deno.land/x/zod@v3.20.2/mod.ts";
 
+const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
 export const userString = zod.string().min(1).refine(x => x.trim()).transform(x => x.trim());
 
 export enum DropType {
@@ -57,7 +58,7 @@ export const pageOne = zod.object({
 export const pageTwo = zod.object({
     title: userString,
     artists: artist.array().min(1),
-    release: zod.string(),
+    release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
     language: zod.string(),
     primaryGenre: zod.string(),
     secondaryGenre: zod.string()
