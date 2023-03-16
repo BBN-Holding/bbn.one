@@ -57,6 +57,18 @@ function rawAccessToken() {
     return JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ]));
 }
 
+/**
+ * @deprecated
+ */
+export function GetCachedProfileData(): ProfileData {
+    try {
+        return JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ])).user;
+    } catch (_) {
+        logOut();
+        throw _;
+    }
+}
+
 function checkIfRefreshTokenIsValid() {
     const token = localStorage[ "refresh-token" ];
     if (!token) return;
