@@ -1,5 +1,5 @@
 import { Dialog, DropDownInput, Page, Vertical, Wizard, Image, Box, Horizontal, Spacer, PlainText, Custom, createElement, Checkbox, Reactive, Button } from "webgen/mod.ts";
-import { Drop, DropType, ReviewResponse } from "../../../spec/music.ts";
+import { Drop, ReviewResponse } from "../../../spec/music.ts";
 import { saveBlob, showPreviewImage } from "../helper.ts";
 import reviewTexts from "../../../data/reviewTexts.json" assert { type: "json" };
 import { API } from "../RESTSpec.ts";
@@ -71,14 +71,14 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                 cancelAction: () => {
                     ReviewDialog.close();
                 },
-                submitAction: async ([ { data: { data: { review } } }, { data: { data: { respones, allowEdits } } }, { data: { data: { responseText } } } ]) => {
+                submitAction: async ([ { data: { data: { review } } }, { data: { data: { respones, denyEdits } } }, { data: { data: { responseText } } } ]) => {
                     const reason = <ReviewResponse[]>respones;
 
                     await API.music(API.getToken()).id(state.drop!._id).review.post({
                         title: dropPatternMatching(reviewTexts[ review == "DECLINE" ? "REJECTED" : "APPROVED" ].header, state.drop!),
                         reason: reason,
                         body: rawTemplate(dropPatternMatching(responseText, state.drop!)),
-                        allowEdits
+                        denyEdits
                     });
 
                     ReviewDialog.close();
@@ -132,7 +132,7 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                 })),
                 Page({
                     respones: [] as ReviewResponse[],
-                    allowEdits: false
+                    denyEdits: false
                 }, (data) => [
                     Box(
                         PlainText("Choose Rejection Reasons"),
@@ -150,8 +150,8 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
 
                         PlainText("Choose Rejection Method"),
                         Horizontal(
-                            Checkbox(data.allowEdits).onClick(() => data.allowEdits = !data.allowEdits),
-                            PlainText("Allow Edits (not Refuse)"),
+                            Checkbox(data.denyEdits).onClick(() => data.denyEdits = !data.denyEdits),
+                            PlainText("Reject (Deny Edits)"),
                             Spacer()
                         )
                             .setMargin("0.5rem 0")
@@ -161,7 +161,7 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                     )
                 ]).setValidator((val) => val.object({
                     respones: val.string().array().min(1),
-                    allowEdits: val.boolean()
+                    denyEdits: val.boolean()
                 })),
                 Page({
                     responseText: "Hello World!\n\n\nWow What a view!",
@@ -196,7 +196,7 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                         Horizontal(
                             Button("Download Store3k Image")
                                 .onPromiseClick(async () => {
-                                    saveBlob(await API.music(API.getToken()).id(state.drop!._id).artworkStore3k(), "store3k.jpg");
+                                    saveBlob(await API.music(API.getToken()).id(state.drop!._id).artworkStore3k(), state.drop!.title + ".jpg");
                                 }),
                             Spacer()
                         )

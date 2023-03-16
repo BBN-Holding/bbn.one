@@ -159,7 +159,7 @@ export const API = {
         },
         id: (id: string) => ({
             review: {
-                post: (data: { title: string, reason: string[], body: string; allowEdits?: boolean; }) => {
+                post: (data: { title: string, reason: string[], body: string; denyEdits?: boolean; }) => {
                     return fetch(`${API.BASE_URL}music/${id}/review`, {
                         method: "POST",
                         headers: headers(token),
