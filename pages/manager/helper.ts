@@ -32,6 +32,7 @@ export type ProfileData = {
     groups: string[];
     exp: number;
 };
+
 export function IsLoggedIn(): ProfileData | null {
     try {
         return localStorage[ "access-token" ] ? JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ]?.split(".")[ 1 ])).user : null;
@@ -41,7 +42,6 @@ export function IsLoggedIn(): ProfileData | null {
         return null;
     }
 }
-
 
 export function getSecondary(secondary: Record<string, string[]>, primaryGenre?: string): string[] | null {
     return primaryGenre ? secondary[ primaryGenre ] : null;
@@ -281,7 +281,7 @@ export async function loadSongs(view: ViewClass<{
     reviews: Drop[];
     type: Drop[ "type" ];
 }>) {
-    if (API.permission.canReview(GetCachedProfileData().groups)) {
+    if (API.permission.canReview(IsLoggedIn() ? IsLoggedIn()!.groups : [])) {
         const list = await API.music(API.getToken()).reviews.get();
         view.viewOptions().update({ reviews: list });
     }
