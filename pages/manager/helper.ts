@@ -1,6 +1,6 @@
 // This code Will be ported to webgen
 
-import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, ReCache, Spacer, StateHandler, Table, TextInput, Vertical, ViewClass } from "webgen/mod.ts";
+import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, ReCache, Spacer, State, StateHandler, Table, TextInput, Vertical, ViewClass } from "webgen/mod.ts";
 import { API } from "./RESTSpec.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { Artist, ArtistTypes, Drop, DropType } from "../../spec/music.ts";
@@ -69,6 +69,26 @@ export function GetCachedProfileData(): ProfileData {
     }
 }
 
+export const activeUser = State({
+    email: <string | undefined>"--",
+    username: <string | undefined>"--",
+    avatar: <string | undefined>undefined
+});
+
+
+export function updateActiveUserData() {
+    try {
+        if (!localStorage.getItem("access-token")) return;
+        const user = JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ])).user as ProfileData;
+        activeUser.username = user.profile.username;
+        activeUser.email = user.profile.email;
+        activeUser.avatar = user.profile.avatar;
+    } catch (_) {
+        // Session should be invalid
+        logOut();
+    }
+}
+
 function checkIfRefreshTokenIsValid() {
     const token = localStorage[ "refresh-token" ];
     if (!token) return;
@@ -111,6 +131,7 @@ export function isExpired(exp: number) {
 
 export async function RegisterAuthRefresh() {
     try {
+        updateActiveUserData();
         checkIfRefreshTokenIsValid();
         await renewAccessTokenIfNeeded();
         setInterval(() => renewAccessTokenIfNeeded(), 1000);

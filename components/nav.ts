@@ -1,5 +1,6 @@
 import bbnLogo from '../assets/img/bbnBig.svg';
 import bbnMusicLogo from '../assets/img/bbnMusicBig.svg';
+import bbnHostingLogo from '../assets/img/bbnHosting.svg';
 
 import '../assets/css/components/nav.css';
 import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, MaterialIcons, PlainText, Spacer, Vertical } from "webgen/mod.ts";
@@ -53,7 +54,7 @@ const dropOver = Box(
 ).addClass("drop-over").setId("drop-over").draw();
 dropOver.onblur = () => dropOver.classList.remove("open");
 dropOver.tabIndex = 0;
-export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLoggedIn()) {
+export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting", user = IsLoggedIn()) {
     return [
         user && user.profile.verified?.email != true ? Nav(Horizontal(
             CenterV(
@@ -73,7 +74,15 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings", user = IsLog
                 Vertical(
                     Icon("apps"),
                     Vertical(
-                        Custom(img(type == "Music" ? bbnMusicLogo : bbnLogo)),
+                        Custom(img(
+                            (() => {
+                                if (type == "Music")
+                                    return bbnMusicLogo;
+                                if (type == "Hosting")
+                                    return bbnHostingLogo;
+                                return bbnLogo;
+                            })()
+                        )),
                     ),
                 )
                     .setGap(".5rem")

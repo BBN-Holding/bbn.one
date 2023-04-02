@@ -19,6 +19,10 @@ nav.music {
     background: linear-gradient(166deg, #F19D2D 6.59%, #DB5721 101.73%);
 }
 
+nav.hosting {
+    background: linear-gradient(184.32deg, #28A9F1 -11.55%, #5495E1 86.12%);
+}
+
 @media (max-width: 800px) {
     nav.music {
         background: linear-gradient(166deg, #F19D2D 6.59%, #db7621 101.73%);

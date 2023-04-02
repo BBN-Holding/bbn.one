@@ -1,6 +1,14 @@
 import { Box, Button, ButtonStyle, Color, Horizontal, Icon, PlainText, Spacer, Vertical } from "webgen/mod.ts";
 
-export function ActionBar(title: string, categories?: { title: string, selected: boolean, onclick: () => void, hide?: boolean; }[], action?: { title: string, onclick: () => Promise<void> | void; }, history?: { title: string, onclick: () => Promise<void> | void; }[]) {
+export type Link = {
+    title: string;
+    onclick: () => Promise<void> | void;
+};
+
+export function ActionBar(title: string,
+    categories?: { title: string, selected: boolean, onclick: () => void, hide?: boolean; }[],
+    action?: Link,
+    history?: Link[]) {
     return Horizontal(
         Vertical(
             Horizontal(

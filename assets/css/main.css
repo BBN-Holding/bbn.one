@@ -220,6 +220,15 @@ cardlist {
     height: 109px;
 }
 
+.list-entry .action-item {
+    display: contents;
+}
+
+.list-entry .action-item .loading {
+    position: relative;
+    width: 1.5rem;
+}
+
 .meta-data {
     min-height: 54px;
 }

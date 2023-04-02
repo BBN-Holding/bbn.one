@@ -1,0 +1,17 @@
+:root {
+    --bbn-secondary: hsl(201, 88%, 55%);
+}
+
+.tag {
+    --background-color-h: 201 !important;
+    --background-color-s: 88% !important;
+    --background-color-l: 55% !important;
+}
+
+.gray-color {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.center-content {
+    justify-content: center;
+}

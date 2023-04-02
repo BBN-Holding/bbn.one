@@ -1,0 +1,21 @@
+.title-server {
+    line-height: 15px;
+    padding-top: 8px;
+}
+
+.icon-buttons-list .wiconbutton {
+    background-color: transparent;
+    color: hsla(var(--background-color-h), var(--background-color-s), var(--background-color-l));
+    transition: background-color 250ms var(--jump-ani);
+    padding: .4rem;
+    border-radius: 10px;
+}
+
+.icon-buttons-list .wiconbutton .webgen-icon {
+    font-size: 2rem;
+}
+
+.icon-buttons-list .wiconbutton:is(:hover, :focus) {
+    box-shadow: none;
+    background-color: hsla(var(--background-color-h), var(--background-color-s), var(--background-color-l), 25%);
+}

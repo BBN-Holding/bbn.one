@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/x/esbuild_serve@1.2.2/mod.ts";
+import { serve } from "https://raw.githubusercontent.com/lucsoft/esbuild_serve/65e25fe/mod.ts";
 
 serve({
     port: 6969,
@@ -20,9 +20,14 @@ serve({
         "p/leadership": "./pages/leadership.ts",
         "signin": "./pages/manager/signin.ts",
         "signin-google": "./pages/manager/misc/redirect.ts",
+
         "music": "./pages/manager/music.ts",
         "music/new-drop": "./pages/manager/newDrop.ts",
         "music/edit": "./pages/manager/music/edit.ts",
+
+        "hosting": "./pages/hosting/minecraft.ts",
+        "hosting/create": "./pages/hosting/create.ts",
+
         "settings": "./pages/manager/settings/mod.ts"
     },
     poylfills: [
