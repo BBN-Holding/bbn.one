@@ -15,3 +15,10 @@
 .center-content {
     justify-content: center;
 }
+
+.wizard-colors {
+    --color-grayscaled-hue: 0deg;
+    --color-grayscaled-saturation: 0%;
+    --color-grayscaled-lightness: 10%;
+    --color-grayscaled-font: white;
+}

@@ -1,5 +1,4 @@
-import { Box, Component, MaterialIcons, State, Vertical, View, ViewClass, WebGen } from "webgen/mod.ts";
-
+import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
 import { Redirect, RegisterAuthRefresh, activeUser } from "../manager/helper.ts";
 import { ActionBar } from "../manager/misc/actionbar.ts";
 import { detailsView } from "./features/details.ts";
@@ -8,6 +7,7 @@ import { serverView } from "./features/server.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/hosting.css';
+
 WebGen({
     icon: new MaterialIcons()
 });

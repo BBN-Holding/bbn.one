@@ -1,7 +1,8 @@
-import { Box, Card, Center, Grid, Horizontal, PlainText, Reactive, Spacer, Vertical } from "https://raw.githubusercontent.com/lucsoft/WebGen/3f922fc/mod.ts";
+import { Card, Grid, PlainText, Reactive } from "webgen/mod.ts";
 import { data } from "../data.ts";
 import './details.css';
 import { format } from "https://deno.land/std@0.182.0/fmt/bytes.ts";
+
 export const detailsView = Reactive(data, "meta", () => Grid(
     Card(
         Grid(

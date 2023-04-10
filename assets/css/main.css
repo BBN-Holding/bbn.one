@@ -276,3 +276,29 @@ cardlist {
 .same-height {
     line-height: 1;
 }
+
+/**
+ * Safari Hack: Custom Style for sliders.
+ * Why? Chromes Firefox and Edge have now usable sliders! Except Safari. so yeah fuck it.
+ */
+@supports (-webkit-appearance: -apple-pay-button) {
+    .wslider {
+        -webkit-appearance: none;
+        background: transparent;
+        height: 16px;
+    }
+
+    .wslider::-webkit-slider-runnable-track {
+        position: relative;
+        width: 100%;
+        background: rgb(190, 190, 190);
+        height: 8px;
+        border-radius: 10px;
+    }
+
+    .wslider::-webkit-slider-thumb {
+        margin-top: -5px;
+        color: blue;
+
+    }
+}

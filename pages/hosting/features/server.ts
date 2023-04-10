@@ -1,4 +1,4 @@
-import { Card, CenterV, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, Spacer, Vertical } from "https://raw.githubusercontent.com/lucsoft/WebGen/3f922fc/mod.ts";
+import { Box, Card, CenterV, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, Spacer, Vertical } from "webgen/mod.ts";
 import { data } from "../data.ts";
 import './server.css';
 
@@ -12,7 +12,7 @@ export const serverView = Reactive(data, "servers", () => Grid(
                 .addClass("title-server"),
             PlainText(`${server.server} @ ${server.location}`)
                 .setFont(1, 700)
-                .addClass("gray-color")
+                .addClass("gray-color", "same-height")
         ).setGap("17px"),
         Spacer(),
         CenterV(Horizontal(
@@ -30,7 +30,7 @@ export const serverView = Reactive(data, "servers", () => Grid(
 ));
 
 function deleteServer(serverId: string) {
-    Dialog(() => PlainText("Deleting this Server, will result in data loss.\nAfter this point there is no going back.").setMargin("0 0 1rem"))
+    Dialog(() => Box(PlainText("Deleting this Server, will result in data loss.\nAfter this point there is no going back.")).setMargin("0 0 1.5rem"))
         .setTitle("Are you sure?")
         .addButton("Cancel", "remove")
         .addButton("Delete", () => {
