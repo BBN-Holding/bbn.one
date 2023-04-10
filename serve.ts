@@ -20,6 +20,8 @@ serve({
         "p/leadership": "./pages/leadership.ts",
         "signin": "./pages/manager/signin.ts",
         "signin-google": "./pages/manager/misc/redirect.ts",
+        "signin-discord": "./pages/manager/misc/redirect.ts",
+
 
         "music": "./pages/manager/music.ts",
         "music/new-drop": "./pages/manager/newDrop.ts",

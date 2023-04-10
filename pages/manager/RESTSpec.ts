@@ -14,7 +14,7 @@ export type ErrorObject = {
 };
 export const API = {
     getToken: () => localStorage[ "access-token" ],
-    BASE_URL: location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "https://bbn.one/api/@bbn/",
+    BASE_URL: location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/",
     // deno-lint-ignore no-explicit-any
     isError: (data: any): data is ErrorObject => typeof data === "object" && data.error,
     permission: {
@@ -63,7 +63,8 @@ export const API = {
         }
     }),
     auth: {
-        fromUserInteractionLink: () => `${API.BASE_URL}auth/google-redirect?redirect=${location.href}&type=google-auth`,
+        fromUserInteractionLinkGoogle: () => `${API.BASE_URL}auth/google-redirect?redirect=${location.href}&type=google-auth`,
+        fromUserInteractionLinkDiscord: () => `${API.BASE_URL}auth/discord-redirect?redirect=${location.href}&type=discord-auth`,
         refreshAccessToken: {
             post: async ({ refreshToken }: { refreshToken: string; }) => {
                 return await fetch(`${API.BASE_URL}auth/refresh-access-token`, {
@@ -78,6 +79,14 @@ export const API = {
             post: async ({ code, state }: { code: string, state: string; }) => {
                 const param = new URLSearchParams({ code, state });
                 return await fetch(`${API.BASE_URL}auth/google?${param.toString()}`, {
+                    method: "POST"
+                }).then(x => x.json()) as { token: string; };
+            }
+        },
+        discord: {
+            post: async ({ code, state }: { code: string, state: string; }) => {
+                const param = new URLSearchParams({ code, state });
+                return await fetch(`${API.BASE_URL}auth/discord?${param.toString()}`, {
                     method: "POST"
                 }).then(x => x.json()) as { token: string; };
             }
