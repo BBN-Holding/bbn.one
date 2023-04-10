@@ -42,7 +42,7 @@ View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
         : wizard(state.restoreData).addClass("wizard-box")
 ))
     .change(({ update }) => {
-        update({ aboutMe: IsLoggedIn() ? });
+        update({ aboutMe: IsLoggedIn() ?? undefined });
         API.music(API.getToken()).id(dropId).get()
             .then(restoreData => {
                 update({ restoreData });
