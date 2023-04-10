@@ -1,7 +1,7 @@
 // @deno-types="https://cdn.jsdelivr.net/npm/@types/mjml-core@4.7.0/index.d.ts"
 import mjml from "https://cdn.jsdelivr.net/npm/mjml-browser@4.13.0/+esm";
 import { Box, createElement, Custom, PlainText, Vertical } from "webgen/mod.ts";
-import { Drop } from "../../../spec/music.ts";
+import { Drop } from "../../spec/music.ts";
 import './email.css';
 
 export const rawTemplate = (data: string) => `

@@ -4,6 +4,7 @@ import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Hori
 import { API } from "./RESTSpec.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { Artist, ArtistTypes, Drop, DropType } from "../../spec/music.ts";
+import { ViewState } from "./types.ts";
 export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
@@ -58,7 +59,7 @@ function rawAccessToken() {
 }
 
 /**
- * @deprecated
+ * @deprecated Use IsLoggedIn instead
  */
 export function GetCachedProfileData(): ProfileData {
     try {
@@ -276,21 +277,9 @@ export async function loadImage(x: Drop) {
     if (!x.artwork) return undefined;
     return await API.music(API.getToken()).id(x._id).artworkPreview();
 }
-export async function loadSongs(view: ViewClass<{
-    list: Drop[];
-    reviews: Drop[];
-    type: Drop[ "type" ];
-}>) {
-    if (API.permission.canReview(IsLoggedIn() ? IsLoggedIn()!.groups : [])) {
-        const list = await API.music(API.getToken()).reviews.get();
-        view.viewOptions().update({ reviews: list });
-    }
+export async function loadDrops(view: ViewClass<ViewState>) {
     const list = await API.music(API.getToken()).list.get();
-    // Only do it when its the first time
-    if (view.viewOptions().state.list == undefined && list.find(x => x.type == "UNSUBMITTED"))
-        view.viewOptions().update({ list, type: DropType.Unsubmitted });
-    else
-        view.viewOptions().update({ list });
+    view.viewOptions().update({ list });
 }
 
 // deno-lint-ignore no-explicit-any

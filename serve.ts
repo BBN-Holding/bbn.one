@@ -28,7 +28,9 @@ serve({
         "hosting": "./pages/hosting/minecraft.ts",
         "hosting/create": "./pages/hosting/create.ts",
 
-        "settings": "./pages/manager/settings/mod.ts"
+        "settings": "./pages/manager/settings/mod.ts",
+
+        "admin": "./pages/admin/admin.ts",
     },
     poylfills: [
         "https://unpkg.com/construct-style-sheets-polyfill@3.1.0"

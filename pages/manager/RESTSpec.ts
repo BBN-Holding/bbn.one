@@ -2,6 +2,7 @@
 import { assert } from "https://deno.land/std@0.167.0/testing/asserts.ts";
 import "https://unpkg.com/construct-style-sheets-polyfill@3.1.0/dist/adoptedStyleSheets.js";
 import { Drop, DropType } from "../../spec/music.ts";
+import { ProfileData } from "./helper.ts";
 
 export type ErrorObject = {
     error: true,
@@ -13,7 +14,7 @@ export type ErrorObject = {
 };
 export const API = {
     getToken: () => localStorage[ "access-token" ],
-    BASE_URL: location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/",
+    BASE_URL: location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "https://bbn.one/api/@bbn/",
     // deno-lint-ignore no-explicit-any
     isError: (data: any): data is ErrorObject => typeof data === "object" && data.error,
     permission: {
@@ -21,7 +22,8 @@ export const API = {
             admin: "6293b146d55350d24e6da542",
             reviewer: "6293bb4fd55350d24e6da550",
         },
-        canReview: (x: string[]) => x.find(x => API.permission.consts.admin == x || API.permission.consts.reviewer == x)
+        isReviewer: (x: ProfileData | null) => (x?.groups ?? []).find(x => API.permission.consts.admin == x || API.permission.consts.reviewer == x),
+        isAdmin: (x: ProfileData | null) => (x?.groups ?? []).find(x => API.permission.consts.admin == x),
     },
     user: (token: string) => ({
         mail: {
@@ -49,6 +51,14 @@ export const API = {
                     body: JSON.stringify(para)
                 }).then(x => x.text());
                 return data;
+            }
+        },
+        list: {
+            get: async () => {
+                const data = await fetch(`${API.BASE_URL}user/users`, {
+                    headers: headers(token)
+                }).then(x => x.json());
+                return data.users;
             }
         }
     }),

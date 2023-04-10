@@ -1,5 +1,4 @@
-import { Box, Component, MaterialIcons, State, Vertical, View, ViewClass, WebGen } from "webgen/mod.ts";
-
+import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
 import { Redirect, RegisterAuthRefresh, activeUser } from "../manager/helper.ts";
 import { ActionBar } from "../manager/misc/actionbar.ts";
 import { detailsView } from "./features/details.ts";
