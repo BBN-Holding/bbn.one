@@ -2,7 +2,8 @@ import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, Page
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import heroImage from '../../assets/img/hero-img.png';
-import googleLog from '../../assets/img/googleLogo.svg';
+import googleLogo from '../../assets/img/googleLogo.svg';
+import discordLogo from '../../assets/img/discordLogo.svg';
 import { DynaNavigation } from "../../components/nav.ts";
 import { forceRefreshToken, Redirect } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
@@ -51,10 +52,14 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                     password: state.password
                 }, (data) => [
                     Button("Sign in with Google")
+                        .setJustify("center")
+                        .asLinkButton(API.auth.fromUserInteractionLinkGoogle())
+                        .addPrefix(Custom(img(googleLogo)).addClass("prefix-logo")),
+                    Button("Sign in with Discord")
                         .setMargin("0 0 .8rem")
                         .setJustify("center")
-                        .asLinkButton(API.auth.fromUserInteractionLink())
-                        .addPrefix(Custom(img(googleLog)).addClass("prefix-logo")),
+                        .asLinkButton(API.auth.fromUserInteractionLinkDiscord())
+                        .addPrefix(Custom(img(discordLogo)).addClass("prefix-logo")),
                     Horizontal(state.error != undefined ? PlainText(`Error: ${state.error || "Something happend. Please try again later"}.`).addClass("error-message") : null, Spacer()),
                     ...(<{ [ key in NonNullable<typeof state.mode> ]: Component[]; }>{
                         login: [
@@ -172,6 +177,12 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
         if (type == "google" && state && code) {
             update({ loading: true });
             API.auth.google.post({ code, state })
+                .then(x => logIn(x, "0auth"))
+                .then(Redirect);
+        }
+        else if (type == "discord" && state && code) {
+            update({ loading: true });
+            API.auth.discord.post({ code, state })
                 .then(x => logIn(x, "0auth"))
                 .then(Redirect);
         }

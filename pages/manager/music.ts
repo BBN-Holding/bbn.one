@@ -2,11 +2,10 @@ import { loadingWheel, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Cu
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
-import { GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded, showPreviewImage } from "./helper.ts";
+import { IsLoggedIn, ProfileData, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded, showPreviewImage } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
-import { loadSongs } from "./helper.ts";
+import { loadDrops } from "./helper.ts";
 import { ViewState } from "./types.ts";
-import { ReviewPanel } from "./admin/reviews.ts";
 import { ExplainerText } from "./music/text.ts";
 import { ActionBar } from "./misc/actionbar.ts";
 import { changeThemeColor } from "./misc/common.ts";
@@ -21,7 +20,7 @@ Redirect();
 await RegisterAuthRefresh();
 
 const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(
-    ActionBar(`Hi ${GetCachedProfileData().profile.username}! 👋`, [
+    ActionBar(`Hi ${IsLoggedIn()?.profile.username}! 👋`, [
         {
             title: `Published ${getListCount([ DropType.Published ], state)}`,
             selected: state.type == DropType.Published,
@@ -37,12 +36,6 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
             selected: state.type == DropType.Unsubmitted,
             onclick: () => update({ type: DropType.Unsubmitted }),
             hide: !state.list?.find(x => x.type == DropType.Unsubmitted)
-        },
-        {
-            title: `Reviews (${state.reviews?.length})`,
-            selected: state.type == DropType.UnderReview,
-            onclick: () => update({ type: DropType.UnderReview }),
-            hide: !(state.reviews && state.reviews?.length != 0)
         }
     ],
         {
@@ -56,8 +49,6 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
     Box((() => {
         if (!state.list)
             return Custom(loadingWheel() as Element as HTMLElement);
-        if (state.reviews && state.reviews.length != 0 && state.type == DropType.UnderReview)
-            return ReviewPanel(() => view, state);
         return Vertical(
             CategoryRender(
                 state.list
@@ -85,7 +76,7 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
     });
 
 View(() => Vertical(...DynaNavigation("Music"), view.asComponent())).appendOn(document.body);
-renewAccessTokenIfNeeded().then(() => loadSongs(view));
+renewAccessTokenIfNeeded().then(() => loadDrops(view));
 
 function getListCount(list: Drop[ "type" ][], state: Partial<{ list: Drop[]; type: Drop[ "type" ]; aboutMe: ProfileData; }>) {
     const length = state.list?.filter(x => list.includes(x.type)).length;

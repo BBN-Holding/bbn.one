@@ -1,6 +1,7 @@
 import bbnLogo from '../assets/img/bbnBig.svg';
 import bbnMusicLogo from '../assets/img/bbnMusicBig.svg';
 import bbnHostingLogo from '../assets/img/bbnHosting.svg';
+import bbnAdminLogo from '../assets/img/bbnAdmin.svg';
 
 import '../assets/css/components/nav.css';
 import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, MaterialIcons, PlainText, Spacer, Vertical } from "webgen/mod.ts";
@@ -29,32 +30,38 @@ function ProfilePicture(component: Component, name: string) {
     ele.style.backgroundColor = stringToColour(name);
     return Custom(ele).addClass("profile-picture");
 }
-const dropOver = Box(
-    Vertical(
-        PlainText("SWITCH TO").addClass("title"),
-        Horizontal(
-            Custom(img(bbnLogo)),
-            Spacer(),
-            Icon("arrow_forward_ios")
-        ).addClass("small-entry")
-            .onClick(() => location.href = "/"),
-        Horizontal(
-            Custom(img(bbnMusicLogo)),
-            Spacer(),
-            Icon("arrow_forward_ios")
-        ).addClass("small-entry")
-            .onClick(() => location.href = "/music"),
-        Horizontal(
-            PlainText("Go to Settings"),
-            Spacer(),
-            Icon("arrow_forward_ios")
-        ).addClass("small-entry", "settings")
-            .onClick(() => location.href = "/settings")
-    )
+const dropOver = Box(Vertical(
+    PlainText("SWITCH TO").addClass("title"),
+    Horizontal(
+        Custom(img(bbnLogo)),
+        Spacer(),
+        Icon("arrow_forward_ios")
+    ).addClass("small-entry")
+        .onClick(() => location.href = "/"),
+    Horizontal(
+        Custom(img(bbnMusicLogo)),
+        Spacer(),
+        Icon("arrow_forward_ios")
+    ).addClass("small-entry")
+        .onClick(() => location.href = "/music"),
+    (API.permission.isReviewer(IsLoggedIn()) ? Horizontal(
+        Custom(img(bbnAdminLogo)),
+        Spacer(),
+        Icon("arrow_forward_ios")
+    ).addClass("small-entry")
+        .onClick(() => location.href = "/admin") : null),
+    Horizontal(
+        PlainText("Go to Settings"),
+        Spacer(),
+        Icon("arrow_forward_ios")
+    ).addClass("small-entry", "settings")
+        .onClick(() => location.href = "/settings")
+)
 ).addClass("drop-over").setId("drop-over").draw();
+
 dropOver.onblur = () => dropOver.classList.remove("open");
 dropOver.tabIndex = 0;
-export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting", user = IsLoggedIn()) {
+export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" | "Admin", user = IsLoggedIn()) {
     return [
         user && user.profile.verified?.email != true ? Nav(Horizontal(
             CenterV(
@@ -80,6 +87,8 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting", 
                                     return bbnMusicLogo;
                                 if (type == "Hosting")
                                     return bbnHostingLogo;
+                                if (type == "Admin")
+                                    return bbnAdminLogo;
                                 return bbnLogo;
                             })()
                         )),

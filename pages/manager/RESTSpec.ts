@@ -2,6 +2,7 @@
 import { assert } from "https://deno.land/std@0.167.0/testing/asserts.ts";
 import "https://unpkg.com/construct-style-sheets-polyfill@3.1.0/dist/adoptedStyleSheets.js";
 import { Drop, DropType } from "../../spec/music.ts";
+import { ProfileData } from "./helper.ts";
 
 export type ErrorObject = {
     error: true,
@@ -21,7 +22,8 @@ export const API = {
             admin: "6293b146d55350d24e6da542",
             reviewer: "6293bb4fd55350d24e6da550",
         },
-        canReview: (x: string[]) => x.find(x => API.permission.consts.admin == x || API.permission.consts.reviewer == x)
+        isReviewer: (x: ProfileData | null) => (x?.groups ?? []).find(x => API.permission.consts.admin == x || API.permission.consts.reviewer == x),
+        isAdmin: (x: ProfileData | null) => (x?.groups ?? []).find(x => API.permission.consts.admin == x),
     },
     user: (token: string) => ({
         mail: {
@@ -50,10 +52,19 @@ export const API = {
                 }).then(x => x.text());
                 return data;
             }
+        },
+        list: {
+            get: async () => {
+                const data = await fetch(`${API.BASE_URL}user/users`, {
+                    headers: headers(token)
+                }).then(x => x.json());
+                return data.users;
+            }
         }
     }),
     auth: {
-        fromUserInteractionLink: () => `${API.BASE_URL}auth/google-redirect?redirect=${location.href}&type=google-auth`,
+        fromUserInteractionLinkGoogle: () => `${API.BASE_URL}auth/google-redirect?redirect=${location.href}&type=google-auth`,
+        fromUserInteractionLinkDiscord: () => `${API.BASE_URL}auth/discord-redirect?redirect=${location.href}&type=discord-auth`,
         refreshAccessToken: {
             post: async ({ refreshToken }: { refreshToken: string; }) => {
                 return await fetch(`${API.BASE_URL}auth/refresh-access-token`, {
@@ -68,6 +79,14 @@ export const API = {
             post: async ({ code, state }: { code: string, state: string; }) => {
                 const param = new URLSearchParams({ code, state });
                 return await fetch(`${API.BASE_URL}auth/google?${param.toString()}`, {
+                    method: "POST"
+                }).then(x => x.json()) as { token: string; };
+            }
+        },
+        discord: {
+            post: async ({ code, state }: { code: string, state: string; }) => {
+                const param = new URLSearchParams({ code, state });
+                return await fetch(`${API.BASE_URL}auth/discord?${param.toString()}`, {
                     method: "POST"
                 }).then(x => x.json()) as { token: string; };
             }

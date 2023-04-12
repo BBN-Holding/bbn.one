@@ -20,6 +20,8 @@ serve({
         "p/leadership": "./pages/leadership.ts",
         "signin": "./pages/manager/signin.ts",
         "signin-google": "./pages/manager/misc/redirect.ts",
+        "signin-discord": "./pages/manager/misc/redirect.ts",
+
 
         "music": "./pages/manager/music.ts",
         "music/new-drop": "./pages/manager/newDrop.ts",
@@ -28,7 +30,9 @@ serve({
         "hosting": "./pages/hosting/minecraft.ts",
         "hosting/create": "./pages/hosting/create.ts",
 
-        "settings": "./pages/manager/settings/mod.ts"
+        "settings": "./pages/manager/settings/mod.ts",
+
+        "admin": "./pages/admin/admin.ts",
     },
     poylfills: [
         "https://unpkg.com/construct-style-sheets-polyfill@3.1.0"

@@ -1,5 +1,5 @@
 import { Box, Color, Grid, IconButton, TextInput, Page, PlainText, Vertical, Wizard, WizardComponent, Reactive, Image, AdvancedImage } from "webgen/mod.ts";
-import { allowedImageFormats, forceRefreshToken, GetCachedProfileData } from "../helper.ts";
+import { allowedImageFormats, forceRefreshToken, IsLoggedIn } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { API } from "../RESTSpec.ts";
 import { delay } from "https://deno.land/std@0.167.0/async/mod.ts";
@@ -23,10 +23,10 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
         buttonAlignment: "top",
     }, () => [
         Page({
-            email: GetCachedProfileData().profile.email,
-            name: GetCachedProfileData().profile.username,
+            email: IsLoggedIn()?.profile.email,
+            name: IsLoggedIn()?.profile.username,
             loading: false,
-            profilePicture: GetCachedProfileData().profile.avatar ?? <AdvancedImage | string>{ type: "loading" } as string | AdvancedImage | undefined
+            profilePicture: IsLoggedIn()?.profile.avatar ?? <AdvancedImage | string>{ type: "loading" } as string | AdvancedImage | undefined
         }, (data) => [
             Vertical(
                 Grid(
@@ -39,7 +39,7 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                                 StreamingUploadHandler(`user/set-me/avatar`, {
                                     failure: () => {
                                         data.loading = false;
-                                        data.profilePicture = GetCachedProfileData().profile.avatar;
+                                        data.profilePicture = IsLoggedIn()?.profile.avatar;
                                         alert("Your Upload has failed. Please try a different file or try again later");
                                     },
                                     uploadDone: () => {
@@ -47,7 +47,7 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                                     },
                                     backendResponse: async () => {
                                         await forceRefreshToken();
-                                        data.profilePicture = GetCachedProfileData().profile.avatar;
+                                        data.profilePicture = IsLoggedIn()?.profile.avatar;
                                         data.loading = false;
                                     },
                                     credentials: () => API.getToken(),

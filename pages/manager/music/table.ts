@@ -31,7 +31,7 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
                     ...(artists ?? []).map(([ name, url, _type ]: string[]) =>
                         ProfilePicture(url ? Image(url, "A profile picture") : PlainText(""), name)
                     ),
-                    IconButton("add")
+                    IconButton("add", "add")
                 )
                     .addClass("artists-list")
                     .onClick(() => {

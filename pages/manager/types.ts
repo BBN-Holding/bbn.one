@@ -13,6 +13,5 @@ export type TableData = {
 
 export type ViewState = {
     list: Drop[];
-    reviews: Drop[];
     type: Drop[ "type" ];
 };

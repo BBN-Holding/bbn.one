@@ -1,9 +1,10 @@
 import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, CenterV, Component, Icon, ViewClass, MediaQuery } from "webgen/mod.ts";
-import { Drop, DropType } from "../../../spec/music.ts";
-import { loadSongs, showPreviewImage } from "../helper.ts";
-import { API } from "../RESTSpec.ts";
-import { ViewState } from "../types.ts";
+import { Drop, DropType } from "../../spec/music.ts";
+import { showPreviewImage } from "../manager/helper.ts";
+import { API } from "../manager/RESTSpec.ts";
+import { ViewState } from "../admin/types.ts";
 import { ReviewDialog } from "./dialog.ts";
+import { loadReviews } from "./helper.ts";
 
 export function ReviewPanel(view: () => ViewClass<ViewState>, state: Partial<ViewState>): Component {
     return Vertical(
@@ -123,7 +124,7 @@ function ReviewActions(x: Drop, view: ViewClass<ViewState>) {
                         ReviewDialog.open().viewOptions().update({
                             drop: x
                         });
-                        ReviewDialog.onClose(async () => await loadSongs(view));
+                        ReviewDialog.onClose(async () => await loadReviews(view));
                     })
             ),
         ] : [],

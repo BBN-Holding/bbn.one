@@ -3,7 +3,7 @@ import primary from "../../data/primary.json" assert { type: "json"};
 import secondary from "../../data/secondary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, TextInput, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV, Box, MediaQuery, Image, AdvancedImage, Reactive } from "webgen/mod.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, GetCachedProfileData, ProfileData, Redirect, RegisterAuthRefresh, getSecondary, getDropFromPages } from "./helper.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, ProfileData, Redirect, RegisterAuthRefresh, getSecondary, getDropFromPages, IsLoggedIn } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
 import '../../assets/css/main.css';
@@ -42,7 +42,7 @@ View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
         : wizard(state.restoreData).addClass("wizard-box")
 ))
     .change(({ update }) => {
-        update({ aboutMe: GetCachedProfileData() });
+        update({ aboutMe: IsLoggedIn() ?? undefined });
         API.music(API.getToken()).id(dropId).get()
             .then(restoreData => {
                 update({ restoreData });
