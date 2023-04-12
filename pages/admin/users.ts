@@ -1,15 +1,15 @@
 import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, CenterV, Component, ViewClass, MediaQuery } from "webgen/mod.ts";
 import { ProfileData } from "../manager/helper.ts";
 import { ViewState } from "../admin/types.ts";
-import { showPreviewImage } from "./helper.ts";
+import { showProfilePicture } from "./helper.ts";
 
-export function UserPanel(view: () => ViewClass<ViewState>, state: Partial<ViewState>): Component {
+export function UserPanel(state: Partial<ViewState>): Component {
     return Vertical(
         (state.users?.filter(user => JSON.stringify(user).includes(state.usersearch ?? ''))) ? [
             PlainText("Users")
                 .addClass("list-title")
                 .addClass("limited-width"),
-            Vertical(...state.users!.map(x => RenderEntry(x, view))).setGap("1rem"),
+            Vertical(state.users!.map(x => RenderEntry(x))).setGap("1rem"),
         ] : [
             PlainText("No Users")
                 .addClass("list-title")
@@ -25,7 +25,7 @@ export function UserPanel(view: () => ViewClass<ViewState>, state: Partial<ViewS
 function RenderEntry(x: ProfileData) {
     return MediaQuery("(max-width: 880px)", (small) => small ? Vertical(
         Horizontal(
-            showPreviewImage(x).addClass("small-preview"),
+            showProfilePicture(x).addClass("small-preview"),
             Vertical(
                 PlainText(x.profile.username ?? "(no text)")
                     .setMargin("-0.4rem 0 0")
@@ -50,7 +50,7 @@ function RenderEntry(x: ProfileData) {
         .addClass("limited-width")
         :
         Horizontal(
-            showPreviewImage(x).addClass("small-preview"),
+            showProfilePicture(x).addClass("small-preview"),
             Vertical(
                 PlainText(x.profile.username ?? "(no text)")
                     .setMargin("-0.4rem 0 0")

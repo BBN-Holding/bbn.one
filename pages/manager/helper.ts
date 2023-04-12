@@ -113,7 +113,7 @@ export async function forceRefreshToken() {
     }
 }
 
-export function isExpired(exp: number) {
+function isExpired(exp: number) {
     return exp * 1000 < new Date().getTime() + (0.5 * 60 * 1000);
 }
 
