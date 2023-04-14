@@ -104,3 +104,18 @@ export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Artist = zod.infer<typeof artist>;
 export type Song = zod.infer<typeof song>;
+
+export type Payout = {
+    _id: string;
+    importer: string;
+    file: string;
+    period?: string;
+    moneythisperiod?: string;
+    entries?: {
+        distributor: string;
+        isrc: string;
+        territory: string;
+        quantity: number;
+        revenue: string;
+    }
+};
