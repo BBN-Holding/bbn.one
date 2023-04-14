@@ -100,24 +100,29 @@ export const drop = pureDrop
         reviewResponse: zod.nativeEnum(ReviewResponse).optional()
     }));
 
+export const payout = zod.object({
+    _id: zod.string(),
+    importer: zod.string(),
+    file: zod.string(),
+    period: zod.string().optional(),
+    moneythisperiod: zod.string().optional(),
+    entries: zod.array(
+        zod.object({
+            isrc: zod.string(),
+            data: zod.array(
+                zod.object({
+                    distributor: zod.string(),
+                    territory: zod.string(),
+                    quantity: zod.number(),
+                    revenue: zod.string()
+                })
+            )
+        })
+    )
+});
+
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Artist = zod.infer<typeof artist>;
 export type Song = zod.infer<typeof song>;
-
-export type Payout = {
-    _id: string;
-    importer: string;
-    file: string;
-    period?: string;
-    moneythisperiod?: string;
-    entries?: {
-        isrc: string;
-        data: {
-            distributor: string;
-            territory: string;
-            quantity: number;
-            revenue: string;
-        }[]
-    }[]
-};
+export type Payout = zod.infer<typeof payout>;
