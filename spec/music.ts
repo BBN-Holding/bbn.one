@@ -112,10 +112,12 @@ export type Payout = {
     period?: string;
     moneythisperiod?: string;
     entries?: {
-        distributor: string;
         isrc: string;
-        territory: string;
-        quantity: number;
-        revenue: string;
-    }
+        data: {
+            distributor: string;
+            territory: string;
+            quantity: number;
+            revenue: string;
+        }[]
+    }[]
 };
