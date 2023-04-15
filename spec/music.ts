@@ -44,9 +44,11 @@ export const song = zod.object({
     artists: artist.array().min(1),
     primaryGenre: zod.string(),
     secondaryGenre: zod.string(),
-    country: zod.string(),
-    year: zod.number(),
+    //TODO: no optional
+    country: zod.string().optional(),
+    language: zod.string().optional(),
     explicit: zod.boolean(),
+    instrumental: zod.boolean().optional(),
     file: zod.string({ required_error: "a Song is missing its file." }),
     progress: zod.number().optional().transform(x => <typeof x>undefined)
 });
@@ -118,7 +120,7 @@ export const payout = zod.object({
                 })
             )
         })
-    )
+    ).optional()
 });
 
 export type Drop = zod.infer<typeof drop>;
