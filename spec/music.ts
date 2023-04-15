@@ -44,6 +44,7 @@ export const song = zod.object({
     artists: artist.array().min(1),
     primaryGenre: zod.string(),
     secondaryGenre: zod.string(),
+    year: zod.number(),
     //TODO: no optional
     country: zod.string().optional(),
     language: zod.string().optional(),
@@ -111,6 +112,7 @@ export const payout = zod.object({
     entries: zod.array(
         zod.object({
             isrc: zod.string(),
+            user: zod.string(),
             data: zod.array(
                 zod.object({
                     distributor: zod.string(),
