@@ -2,7 +2,7 @@ import { loadingWheel, Horizontal, PlainText, Spacer, Vertical, View, WebGen, Cu
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
-import { IsLoggedIn, ProfileData, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded, showPreviewImage } from "./helper.ts";
+import { ProfileData, Redirect, RegisterAuthRefresh, activeUser, renewAccessTokenIfNeeded, showPreviewImage } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
 import { loadDrops } from "./helper.ts";
 import { ViewState } from "./types.ts";
@@ -20,7 +20,7 @@ Redirect();
 await RegisterAuthRefresh();
 
 const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(
-    ActionBar(`Hi ${IsLoggedIn()?.profile.username}! 👋`, [
+    ActionBar(`Hi ${activeUser.username}! 👋`, [
         {
             title: `Published ${getListCount([ DropType.Published ], state)}`,
             selected: state.type == DropType.Published,

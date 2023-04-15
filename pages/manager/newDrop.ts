@@ -130,6 +130,7 @@ const wizard = (restore?: Drop) => Wizard({
                 TextInput("text", "Title").sync(state, "title"),
                 Grid(
                     TextInput("date", "Release Date", "live").sync(state, "release"),
+                    // TODO: Show user spelled out language
                     DropDownInput("Language", language)
                         .sync(state, "language")
                 )
