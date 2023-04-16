@@ -23,7 +23,7 @@ serve({
         "signin-discord": "./pages/manager/misc/redirect.ts",
 
 
-        "music": "./pages/manager/music.ts",
+        "music": "./pages/music/main.ts",
         "music/new-drop": "./pages/manager/newDrop.ts",
         "music/edit": "./pages/manager/music/edit.ts",
 

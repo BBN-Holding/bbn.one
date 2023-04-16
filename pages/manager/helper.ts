@@ -67,13 +67,11 @@ export const activeUser = State({
 });
 
 export function permCheck(...per: Permission[]) {
-    console.log("permitted", API.isPermited(per, activeUser.permission), "req", per, "has", [ ...activeUser.permission ]);
     return API.isPermited(per, activeUser.permission);
 }
 
 export function updateActiveUserData() {
     try {
-        console.log(activeUser.permission);
         const user = IsLoggedIn();
         if (!user) return;
         activeUser.username = user.profile.username;
@@ -85,8 +83,7 @@ export function updateActiveUserData() {
             ...activeUser.permission,
             ...new Set(user.groups.map(x => API._legacyPermissionFromGroups(x)).flat())
         ]);
-
-        console.log(activeUser.permission);
+        console.log("Current User", JSON.parse(JSON.stringify(activeUser)));
     } catch (_) {
         // Session should be invalid
         logOut();
