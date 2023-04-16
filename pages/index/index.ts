@@ -6,8 +6,10 @@ import { renderFooter } from "../../components/footer.ts";
 import { asset } from "../../assets/img/subsidiaries/index.ts";
 import '../../assets/css/components/subsidiaries.css';
 import services from "../../data/services.json" assert { type: "json" };
+import { RegisterAuthRefresh } from "../manager/helper.ts";
 
 WebGen({ icon: new MaterialIcons() });
+await RegisterAuthRefresh();
 
 function inlineSVG(data: string) {
     const ele = createElement("div");

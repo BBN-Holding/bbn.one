@@ -1,13 +1,9 @@
-import bbnLogo from '../assets/img/bbnBig.svg';
-import bbnMusicLogo from '../assets/img/bbnMusicBig.svg';
-import bbnHostingLogo from '../assets/img/bbnHosting.svg';
-import bbnAdminLogo from '../assets/img/bbnAdmin.svg';
-
 import '../assets/css/components/nav.css';
-import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, MaterialIcons, PlainText, Spacer, Vertical } from "webgen/mod.ts";
-import { IsLoggedIn, stringToColour } from "../pages/manager/helper.ts";
+import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, MaterialIcons, PlainText, Reactive, Spacer, Vertical } from "webgen/mod.ts";
+import { activeUser, IsLoggedIn, permCheck, stringToColour } from "../pages/manager/helper.ts";
 import { delay } from "https://deno.land/std@0.167.0/async/delay.ts";
 import { API } from "../pages/manager/RESTSpec.ts";
+import { activeLogo, pages } from "./pages.ts";
 new MaterialIcons();
 const Nav = (component: Component) => {
     const nav = createElement("nav");
@@ -30,26 +26,17 @@ function ProfilePicture(component: Component, name: string) {
     ele.style.backgroundColor = stringToColour(name);
     return Custom(ele).addClass("profile-picture");
 }
-const dropOver = Box(Vertical(
+
+const dropOver = Reactive(activeUser, "permission", () => Vertical(
     PlainText("SWITCH TO").addClass("title"),
-    Horizontal(
-        Custom(img(bbnLogo)),
+    pages.map(([ logo, permission, route ]) => permCheck(...permission) ? Horizontal(
+        Custom(img(logo)),
         Spacer(),
         Icon("arrow_forward_ios")
-    ).addClass("small-entry")
-        .onClick(() => location.href = "/"),
-    Horizontal(
-        Custom(img(bbnMusicLogo)),
-        Spacer(),
-        Icon("arrow_forward_ios")
-    ).addClass("small-entry")
-        .onClick(() => location.href = "/music"),
-    (API.permission.isReviewer(IsLoggedIn()) ? Horizontal(
-        Custom(img(bbnAdminLogo)),
-        Spacer(),
-        Icon("arrow_forward_ios")
-    ).addClass("small-entry")
-        .onClick(() => location.href = "/admin") : null),
+    )
+        .addClass("small-entry")
+        .onClick(() => location.href = route) : null
+    ),
     Horizontal(
         PlainText("Go to Settings"),
         Spacer(),
@@ -57,7 +44,10 @@ const dropOver = Box(Vertical(
     ).addClass("small-entry", "settings")
         .onClick(() => location.href = "/settings")
 )
-).addClass("drop-over").setId("drop-over").draw();
+)
+    .addClass("drop-over")
+    .setId("drop-over")
+    .draw();
 
 dropOver.onblur = () => dropOver.classList.remove("open");
 dropOver.tabIndex = 0;
@@ -82,15 +72,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     Icon("apps"),
                     Vertical(
                         Custom(img(
-                            (() => {
-                                if (type == "Music")
-                                    return bbnMusicLogo;
-                                if (type == "Hosting")
-                                    return bbnHostingLogo;
-                                if (type == "Admin")
-                                    return bbnAdminLogo;
-                                return bbnLogo;
-                            })()
+                            activeLogo(type)
                         )),
                     ),
                 )

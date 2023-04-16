@@ -35,6 +35,7 @@ serve({
         "admin": "./pages/admin/admin.ts",
     },
     poylfills: [
-        "https://unpkg.com/construct-style-sheets-polyfill@3.1.0"
+        "https://unpkg.com/construct-style-sheets-polyfill@3.1.0",
+        "https://unpkg.com/urlpattern-polyfill@7.0.0"
     ]
 });

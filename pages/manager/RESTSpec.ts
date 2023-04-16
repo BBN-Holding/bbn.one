@@ -1,8 +1,6 @@
 // deno-lint-ignore-file no-unused-vars
 import { assert } from "https://deno.land/std@0.167.0/testing/asserts.ts";
-import "https://unpkg.com/construct-style-sheets-polyfill@3.1.0/dist/adoptedStyleSheets.js";
 import { Drop, DropType, Payout } from "../../spec/music.ts";
-import { ProfileData } from "./helper.ts";
 
 export type ErrorObject = {
     error: true,
@@ -12,18 +10,45 @@ export type ErrorObject = {
     // Only visable when running in verbose
     stack?: string;
 };
+export const Permissions = [
+    "/hmsys",
+    "/hmsys/user",
+    "/hmsys/user/manage",
+
+    "/bbn",
+    "/bbn/beta-hosting",
+    "/bbn/manage",
+    "/bbn/manage/drops",
+    "/bbn/manage/drops/review",
+    "/bbn/manage/payouts",
+] as const;
+
+export type Permission = typeof Permissions[ number ];
+
 export const API = {
     getToken: () => localStorage[ "access-token" ],
     BASE_URL: location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/",
     // deno-lint-ignore no-explicit-any
     isError: (data: any): data is ErrorObject => typeof data === "object" && data.error,
-    permission: {
-        consts: {
-            admin: "6293b146d55350d24e6da542",
-            reviewer: "6293bb4fd55350d24e6da550",
-        },
-        isReviewer: (x: ProfileData | null) => (x?.groups ?? []).find(x => API.permission.consts.admin == x || API.permission.consts.reviewer == x),
-        isAdmin: (x: ProfileData | null) => (x?.groups ?? []).find(x => API.permission.consts.admin == x),
+    permission: Permissions,
+    _legacyPermissionFromGroups: (group: string) => {
+        const admin = "6293b146d55350d24e6da542";
+        const reviewer = "6293bb4fd55350d24e6da550";
+        if (group === reviewer)
+            return [
+                "/bbn/payouts"
+            ];
+
+        if (group === admin)
+            // Always highest permissions
+            return [
+                "/bbn",
+                "/hmsys"
+            ];
+        return [];
+    },
+    isPermited: (requiredPermissions: Permission[], userPermission: Permission[]) => {
+        return requiredPermissions.every(required => userPermission.find(user => required.startsWith(user)));
     },
     user: (token: string) => ({
         mail: {

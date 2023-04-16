@@ -1,8 +1,7 @@
-import { WebGen, MaterialIcons, Box, Custom, Vertical, View, ViewClass, loadingWheel, PlainText } from "webgen/mod.ts";
-import { IsLoggedIn, Redirect, RegisterAuthRefresh, activeUser, renewAccessTokenIfNeeded } from "../manager/helper.ts";
+import { WebGen, MaterialIcons, Box, Custom, Vertical, View, ViewClass, loadingWheel } from "webgen/mod.ts";
+import { Redirect, RegisterAuthRefresh, activeUser, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { changeThemeColor } from "../manager/misc/common.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { API } from "../manager/RESTSpec.ts";
 import { ActionBar } from "../manager/misc/actionbar.ts";
 import { ViewState } from "../admin/types.ts";
 import { ReviewPanel } from "./reviews.ts";
@@ -16,7 +15,10 @@ import { OverviewPanel } from "./overview.ts";
 Redirect();
 await RegisterAuthRefresh();
 
-if (!API.permission.isReviewer(IsLoggedIn())) {
+if (!permCheck(
+    "/hmsys/user/manage",
+    "/bbn/manage"
+)) {
     location.href = "/";
 }
 
@@ -57,11 +59,11 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
             return ReviewPanel(() => view, state);
         if (state.users && state.users.length != 0 && state.type == "users")
             return UserPanel(state);
-        if (state.type == "payouts") 
-            return PayoutPanel(state)
+        if (state.type == "payouts")
+            return PayoutPanel(state);
         if (state.type == "overview")
-            return OverviewPanel(state)
-        return Custom(loadingWheel() as Element as HTMLElement)
+            return OverviewPanel(state);
+        return Custom(loadingWheel() as Element as HTMLElement);
     })()).addClass("loading"),
 ))
     .change(({ update }) => {

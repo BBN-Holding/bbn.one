@@ -1,7 +1,7 @@
 // This code Will be ported to webgen
 
 import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, ReCache, Spacer, State, StateHandler, Table, TextInput, Vertical, ViewClass } from "webgen/mod.ts";
-import { API } from "./RESTSpec.ts";
+import { API, Permission } from "./RESTSpec.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
 import { ViewState } from "./types.ts";
@@ -58,19 +58,35 @@ function rawAccessToken() {
     return JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ]));
 }
 
+
 export const activeUser = State({
     email: <string | undefined>"--",
     username: <string | undefined>"--",
-    avatar: <string | undefined>undefined
+    avatar: <string | undefined>undefined,
+    permission: <Permission[]>[]
 });
+
+export function permCheck(...per: Permission[]) {
+    console.log("permitted", API.isPermited(per, activeUser.permission), "req", per, "has", [ ...activeUser.permission ]);
+    return API.isPermited(per, activeUser.permission);
+}
 
 export function updateActiveUserData() {
     try {
-        if (!localStorage.getItem("access-token")) return;
-        const user = JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ])).user as ProfileData;
+        console.log(activeUser.permission);
+        const user = IsLoggedIn();
+        if (!user) return;
         activeUser.username = user.profile.username;
         activeUser.email = user.profile.email;
         activeUser.avatar = user.profile.avatar;
+
+        // Convert id based system to new hmsys permission system.
+        activeUser.permission = State([
+            ...activeUser.permission,
+            ...new Set(user.groups.map(x => API._legacyPermissionFromGroups(x)).flat())
+        ]);
+
+        console.log(activeUser.permission);
     } catch (_) {
         // Session should be invalid
         logOut();
@@ -119,6 +135,8 @@ function isExpired(exp: number) {
 
 export async function RegisterAuthRefresh() {
     try {
+        if (!IsLoggedIn()) return;
+
         updateActiveUserData();
         checkIfRefreshTokenIsValid();
         await renewAccessTokenIfNeeded();
