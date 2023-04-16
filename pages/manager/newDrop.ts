@@ -131,7 +131,8 @@ const wizard = (restore?: Drop) => Wizard({
                 Grid(
                     TextInput("date", "Release Date", "live").sync(state, "release"),
                     // TODO: Show user spelled out language
-                    DropDownInput("Language", language)
+                    DropDownInput("Language", Object.keys(language))
+                        .setRender((key) => language[ <keyof typeof language>key ])
                         .sync(state, "language")
                 )
                     .setEvenColumns(small ? 1 : 2)

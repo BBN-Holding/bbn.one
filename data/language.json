@@ -1,9 +1,9 @@
-[
-    "EN",
-    "PT",
-    "FR",
-    "DE",
-    "IT",
-    "RU",
-    "ES"
-]
+{
+    "EN": "English",
+    "PT": "Portuguese",
+    "FR": "French",
+    "DE": "German",
+    "IT": "Italian",
+    "RU": "Russian",
+    "ES": "Spanish"
+}

@@ -66,7 +66,8 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                 ],
                 TextInput("date", "Release Date").sync(data, "release"),
                 // TODO: Show user spelled out language
-                DropDownInput("Language", language)
+                DropDownInput("Language", Object.keys(language))
+                    .setRender((key) => language[ <keyof typeof language>key ])
                     .sync(data, "language"),
                 [
                     { width: 2 },
