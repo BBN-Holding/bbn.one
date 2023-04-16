@@ -12,7 +12,7 @@ serve({
         "email-header.png": "./static/email-header.png"
     },
     pages: {
-        "index": "./pages/index/index.ts",
+        "index": "./pages/holding/index.ts",
         "p/privacy": "./pages/OldPagesPolyfill.ts",
         "p/terms": "./pages/OldPagesPolyfill.ts",
         "p/imprint": "./pages/OldPagesPolyfill.ts",
