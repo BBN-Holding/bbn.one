@@ -1,5 +1,5 @@
-import { WebGen, MaterialIcons, Box, Custom, Vertical, View, ViewClass, loadingWheel } from "webgen/mod.ts";
-import { IsLoggedIn, Redirect, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
+import { WebGen, MaterialIcons, Box, Custom, Vertical, View, ViewClass, loadingWheel, PlainText } from "webgen/mod.ts";
+import { IsLoggedIn, Redirect, RegisterAuthRefresh, activeUser, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { changeThemeColor } from "../manager/misc/common.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { API } from "../manager/RESTSpec.ts";
@@ -9,8 +9,10 @@ import { ReviewPanel } from "./reviews.ts";
 
 import '../../assets/css/main.css';
 import '../../assets/css/admin.css';
-import { loadReviews, loadUsers } from "./helper.ts";
+import { loadPayouts, loadReviews, loadUsers } from "./helper.ts";
 import { UserPanel } from "./users.ts";
+import { PayoutPanel } from "./payouts.ts";
+import { OverviewPanel } from "./overview.ts";
 Redirect();
 await RegisterAuthRefresh();
 
@@ -26,7 +28,12 @@ WebGen({
 });
 
 const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertical(
-    ActionBar(`Hi ${IsLoggedIn()?.profile.username}! 👋`, [
+    ActionBar(`Hi ${activeUser.username}! 👋`, [
+        {
+            title: "Overview",
+            selected: state.type == "overview",
+            onclick: () => update({ type: "overview" }),
+        },
         {
             title: `Reviews ${getListCount(state.reviews)}`,
             selected: state.type == "reviews",
@@ -37,6 +44,12 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
             selected: state.type == "users",
             hide: !state.users,
             onclick: () => update({ type: "users" }),
+        },
+        {
+            title: `Payouts (${state.payouts?.length})`,
+            selected: state.type == "payouts",
+            hide: !state.payouts,
+            onclick: () => update({ type: "payouts" }),
         }
     ]),
     Box((() => {
@@ -44,17 +57,22 @@ const view: ViewClass<ViewState> = View<ViewState>(({ state, update }) => Vertic
             return ReviewPanel(() => view, state);
         if (state.users && state.users.length != 0 && state.type == "users")
             return UserPanel(state);
-        return Custom(loadingWheel() as Element as HTMLElement);
+        if (state.type == "payouts") 
+            return PayoutPanel(state)
+        if (state.type == "overview")
+            return OverviewPanel(state)
+        return Custom(loadingWheel() as Element as HTMLElement)
     })()).addClass("loading"),
 ))
     .change(({ update }) => {
-        update({ type: "reviews" });
+        update({ type: "overview" });
     });
 
 View(() => Vertical(...DynaNavigation("Admin"), view.asComponent())).appendOn(document.body);
 renewAccessTokenIfNeeded().then(() => {
     loadReviews(view);
     loadUsers(view);
+    loadPayouts(view);
 });
 
 

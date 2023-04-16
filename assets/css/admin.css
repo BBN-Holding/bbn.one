@@ -5,6 +5,10 @@
     font-size: 23.17px;
 }
 
+.grid {
+    justify-content: space-evenly;
+}
+
 .unset-height {
     height: unset !important;
 }

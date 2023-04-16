@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-unused-vars
 import { assert } from "https://deno.land/std@0.167.0/testing/asserts.ts";
 import "https://unpkg.com/construct-style-sheets-polyfill@3.1.0/dist/adoptedStyleSheets.js";
-import { Drop, DropType } from "../../spec/music.ts";
+import { Drop, DropType, Payout } from "../../spec/music.ts";
 import { ProfileData } from "./helper.ts";
 
 export type ErrorObject = {
@@ -175,6 +175,14 @@ export const API = {
             }).then(x => x.json());
             assert(typeof data.id == "string");
             return data.id as string;
+        },
+        payouts: {
+            get: async () => {
+                const data = await fetch(`${API.BASE_URL}music/payouts`, {
+                    headers: headers(token)
+                }).then(x => x.json());
+                return data.payouts as Payout[];
+            }
         },
         id: (id: string) => ({
             review: {

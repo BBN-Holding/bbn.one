@@ -17,6 +17,13 @@ export async function loadUsers(view: ViewClass<ViewState>) {
     }
 }
 
+export async function loadPayouts(view: ViewClass<ViewState>) {
+    if (API.permission.isAdmin(IsLoggedIn())) {
+        const list = await API.music(API.getToken()).payouts.get();
+        view.viewOptions().update({ payouts: list });
+    }
+}
+
 function ProfilePicture(component: Component, name: string) {
     const ele = component.draw();
     ele.style.backgroundColor = stringToColour(name);

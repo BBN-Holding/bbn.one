@@ -54,6 +54,7 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
                     .setStyle(ButtonStyle.Inline)
                     .addClass("low-level")
             ],
+            //TODO: Lock these components (greyed out), if only one song, since dependent on drop level values
             [ "Primary Genre", "max-content", ({ primaryGenre }, index) =>
                 DropDownInput("Primary Genre", primary)
                     .setValue(primaryGenre)
@@ -71,6 +72,7 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
                     .setStyle(ButtonStyle.Inline)
                     .addClass("low-level")
             ],
+            //TODO: Add instrumental
             [ "Explicit", "max-content", ({ explicit }, index) =>
                 Checkbox(explicit ?? false)
                     .onClick((_, value) => update(state, index, "explicit", !value))
