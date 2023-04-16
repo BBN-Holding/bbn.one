@@ -12,6 +12,7 @@ import { loadPayouts, loadReviews, loadUsers } from "./helper.ts";
 import { UserPanel } from "./users.ts";
 import { PayoutPanel } from "./payouts.ts";
 import { OverviewPanel } from "./overview.ts";
+import { getListCount } from "../shared/listCount.ts";
 Redirect();
 await RegisterAuthRefresh();
 
@@ -76,10 +77,3 @@ renewAccessTokenIfNeeded().then(() => {
     loadUsers(view);
     loadPayouts(view);
 });
-
-
-// deno-lint-ignore no-explicit-any
-function getListCount(list?: any[]) {
-    if (typeof list?.length == "number") return `(${list.length})`;
-    return "";
-}

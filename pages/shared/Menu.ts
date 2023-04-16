@@ -1,13 +1,4 @@
-/**
- * Menu will be put into WebGen.
- *
- * Blocker:
- * ActionBar should be put in WebGen first (requires rewrite)
- * Entry should be put in WebGen first (requires rewrite)
- * Add URL Router
- */
-
-import { Component, Reactive, State, Vertical } from "webgen/mod.ts";
+import { Box, ButtonComponent, Component, PlainText, Reactive, State, Vertical } from "webgen/mod.ts";
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
 import { Entry } from "../manager/misc/Entry.ts";
 
@@ -16,14 +7,36 @@ interface MenuItem {
     id: `${string}/`;
     subtitle?: string;
 
-    items?: MenuItem[] | { [ group in string ]: MenuItem[] };
+    items?: MenuItem[];
     action?: (clickPath: string, item: MenuItem) => Promise<void> | void;
     custom?: (clickPath: string) => Component;
+    /**
+     * @default true
+     */
+    visible?: () => boolean;
+    button?: ButtonComponent;
+}
+
+interface RootMenuItem extends MenuItem {
+    categories?: { [ group in `${string}/` ]: Omit<MenuItem, "id"> };
 }
 
 const FilterLastItem = (_: MenuItem, index: number, list: MenuItem[]): boolean => index != list.length - 1;
 
-export const Menu = (rootMenu: MenuItem) => new class extends Component {
+/**
+ * # Declarative Tree Navigation
+ *
+ * Menu will be put into WebGen.
+ *
+ * Blocker till release:
+ *
+ * - ActionBar should be put in WebGen first (requires rewrite)
+ *
+ * - Entry should be put in WebGen first (requires rewrite)
+ *
+ * - Add URL Router
+ */
+export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
     nav = State({
         active: <string>rootMenu.id
     });
@@ -32,17 +45,30 @@ export const Menu = (rootMenu: MenuItem) => new class extends Component {
         this.wrapper.append(Reactive(this.nav, "active", () => this.walkMenu()).draw());
     }
 
+    setActivePath(clickPath: string) {
+        this.nav.active = clickPath;
+        return this;
+    }
+
     getActivePath() {
-        const list = [ rootMenu ];
+        const list: (MenuItem | RootMenuItem)[] = [ rootMenu ];
         for (const iterator of this.nav.active.match(/(\w+\/)/g) ?? []) {
             const last = list.at(-1)!;
-            if (Array.isArray(last.items))
-                list.push(last.items.find(x => x.id == iterator)!);
+            if (isCategoryMenu(last) && last.id != iterator) {
+                // deno-lint-ignore no-explicit-any
+                const item = last.categories?.[ iterator as any ];
+                if (!item) continue;
+                list.push({ ...item, id: "+" + iterator } as MenuItem);
+            }
+            if (Array.isArray(last.items)) {
+                const item = last.items.find(x => x.id == iterator);
+                if (item) list.push(item);
+            }
         }
         return list;
     }
 
-    isRootNav() {
+    private isRootNav() {
         return this.nav.active == rootMenu.id;
     }
 
@@ -56,26 +82,44 @@ export const Menu = (rootMenu: MenuItem) => new class extends Component {
                 this.nav.active = activeEntries.filter((_, index) => index <= i).map(x => x.id).join("");
             }
         }));
-        if (Array.isArray(active.items) || !active.items)
+
+        const parentIsCategoryMenu = activeEntries.at(-2) && isCategoryMenu(activeEntries.at(-2)!);
+
+        if (isCategoryMenu(active) || parentIsCategoryMenu)
             return Vertical(
-                ActionBar(active.title, undefined, undefined, list),
-                Vertical(
-                    active.items?.map(menu => Entry(
-                        menu.title,
-                        menu.subtitle,
-                        this.menuClickHandler(menu)
-                    )) ?? []
-                ).setGap("var(--gap)"),
+                Box(this.renderCategoryBar(parentIsCategoryMenu ? rootMenu : active)).setMargin("0 0 1.5rem"),
+                this.renderList(active.items),
                 active.custom?.(activeEntries.map(x => x.id).join("") + active.id) ?? null
             );
-        // TODO: Implement Categories
+
         return Vertical(
-            ActionBar(active.title, Object.keys(active.items).map(group => ({
-                title: group,
-                selected: false,
-                onclick: () => { },
-            })))
+            ActionBar(active.title, undefined, undefined, list),
+            this.renderList(active.items),
+            active.custom?.(activeEntries.map(x => x.id).join("") + active.id) ?? null
         );
+    }
+
+    private renderCategoryBar(rootMenu: RootMenuItem) {
+        return ActionBar(rootMenu.title, Object.entries(rootMenu.categories!).map(([ key, value ]) => {
+            return {
+                title: value.title,
+                selected: key == this.getActivePath().at(-1)!.id.replace("+", ""),
+                onclick: () => this.nav.active = rootMenu.id + key
+            };
+        }));
+    }
+
+    private renderList(active?: MenuItem[]): Component | null {
+        if (!active) return null;
+
+        return Vertical(
+            active?.map(menu => Entry(
+                menu.title,
+                menu.subtitle,
+                this.menuClickHandler(menu)
+            )) ?? []
+        )
+            .setGap("var(--gap)");
     }
 
     private menuClickHandler(menu: MenuItem) {
@@ -92,3 +136,7 @@ export const Menu = (rootMenu: MenuItem) => new class extends Component {
         return undefined;
     }
 };
+
+function isCategoryMenu(type: RootMenuItem | MenuItem): type is RootMenuItem {
+    return !!(<RootMenuItem>type).categories;
+}

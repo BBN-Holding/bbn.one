@@ -1,12 +1,10 @@
-import { Box, Card, Custom, DropDownInput, Grid, Horizontal, InputForm, MaterialIcons, Page, PlainText, Reactive, Spacer, State, TextInput, Vertical, View, WebGen, Wizard, createElement, css } from "webgen/mod.ts";
+import { Box, Color, ButtonStyle, Custom, DropDownInput, Grid, Horizontal, InputForm, MaterialIcons, Page, PlainText, Reactive, Spacer, State, TextInput, Vertical, View, WebGen, Wizard, createElement } from "webgen/mod.ts";
 import { Redirect, RegisterAuthRefresh } from "../manager/helper.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/hosting.css';
 import { delay } from "https://deno.land/std@0.182.0/async/delay.ts";
 import { Menu } from "../shared/Menu.ts";
-import { Color } from "https://raw.githubusercontent.com/lucsoft/WebGen/3f922fc/src/lib/Color.ts";
-import { ButtonStyle } from "https://raw.githubusercontent.com/lucsoft/WebGen/3f922fc/src/types.ts";
 import { data } from "./data.ts";
 import { format } from "https://deno.land/std@0.182.0/fmt/bytes.ts";
 
