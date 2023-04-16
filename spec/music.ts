@@ -55,7 +55,10 @@ export const song = zod.object({
 });
 
 export const pageOne = zod.object({
-    upc: zod.string().min(1).transform(x => x.trim() || undefined).optional()
+    upc: zod.string().nullish()
+        .transform(x => x?.trim())
+        .transform(x => x?.length == 0 ? null : x)
+        .refine(x => x == null || x.length > 0, { message: "Not a valid UPC" })
 });
 
 export const pageTwo = zod.object({

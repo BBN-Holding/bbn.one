@@ -48,7 +48,7 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
                     .addClass("low-level")
             ],
             [ "Country", "max-content", (row, index) =>
-                DropDownInput("Country", language)
+                DropDownInput("Country", Object.keys(language))
                     .setValue(row.country)
                     .onChange((data) => update(state, index, "country", data))
                     .setStyle(ButtonStyle.Inline)
