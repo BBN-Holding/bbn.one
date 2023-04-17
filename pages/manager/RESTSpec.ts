@@ -1,6 +1,7 @@
 // deno-lint-ignore-file no-unused-vars
 import { assert } from "https://deno.land/std@0.167.0/testing/asserts.ts";
 import { Drop, DropType, Payout } from "../../spec/music.ts";
+import { ProfileData } from "./helper.ts";
 
 export type ErrorObject = {
     error: true,
@@ -83,7 +84,7 @@ export const API = {
                 const data = await fetch(`${API.BASE_URL}user/users`, {
                     headers: headers(token)
                 }).then(x => x.json());
-                return data.users;
+                return data.users as ProfileData[];
             }
         }
     }),

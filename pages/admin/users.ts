@@ -1,9 +1,9 @@
-import { Button, ButtonStyle, Color, Horizontal, PlainText, Spacer, Vertical, CenterV, Component, ViewClass, MediaQuery } from "webgen/mod.ts";
+import { Horizontal, PlainText, Spacer, Vertical, Component, MediaQuery } from "webgen/mod.ts";
 import { ProfileData } from "../manager/helper.ts";
-import { ViewState } from "../admin/types.ts";
 import { showProfilePicture } from "./helper.ts";
+import { state } from "./state.ts";
 
-export function UserPanel(state: Partial<ViewState>): Component {
+export function UserPanel(): Component {
     return Vertical(
         (state.users?.filter(user => JSON.stringify(user).includes(state.usersearch ?? ''))) ? [
             PlainText("Users")
@@ -18,8 +18,7 @@ export function UserPanel(state: Partial<ViewState>): Component {
                 .addClass("limited-width"),
         ],
     )
-        .setGap("1rem")
-        .setMargin("1rem 0");
+        .setGap("1rem");
 }
 
 function RenderEntry(x: ProfileData) {
@@ -33,16 +32,6 @@ function RenderEntry(x: ProfileData) {
                 PlainText(x._id + " - " + x.profile.email),
             ),
             Spacer()
-        ),
-        Horizontal(
-            Spacer(),
-            CenterV(
-                Button("Edit")
-                    .setStyle(ButtonStyle.Inline)
-                    .setColor(Color.Colored)
-                    .addClass("tag")
-                    .onClick(() => location.href = "/music/edit?id=" + x._id)
-            ),
         )
     ).setPadding("0.5rem")
         .setGap("0.8rem")
@@ -57,14 +46,7 @@ function RenderEntry(x: ProfileData) {
                     .setFont(2, 700),
                 PlainText(x._id + " - " + x.profile.email)
             ),
-            Spacer(),
-            CenterV(
-                Button("Edit")
-                    .setStyle(ButtonStyle.Inline)
-                    .setColor(Color.Colored)
-                    .addClass("tag")
-                    .onClick(() => location.href = "/admin/useredit?id=" + x._id)
-            ),
+            Spacer()
         )
             .setPadding("0.5rem")
             .addClass("list-entry")

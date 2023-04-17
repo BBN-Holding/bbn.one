@@ -1,4 +1,4 @@
-import { State } from "https://raw.githubusercontent.com/lucsoft/WebGen/3f922fc/mod.ts";
+import { State } from "webgen/mod.ts";
 import { Drop } from "../../spec/music.ts";
 
 export const state = State({

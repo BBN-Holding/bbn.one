@@ -1,28 +1,5 @@
-import { ViewClass, Component, Custom, PlainText, ReCache, Image, Box } from "webgen/mod.ts";
-import { API } from "../manager/RESTSpec.ts";
-import { ProfileData, permCheck, stringToColour } from "../manager/helper.ts";
-import { ViewState } from "./types.ts";
-
-export async function loadReviews(view: ViewClass<ViewState>) {
-    if (permCheck("/bbn/manage/drops/review")) {
-        const list = await API.music(API.getToken()).reviews.get();
-        view.viewOptions().update({ reviews: list });
-    }
-}
-
-export async function loadUsers(view: ViewClass<ViewState>) {
-    if (permCheck("/hmsys/user")) {
-        const list = await API.user(API.getToken()).list.get();
-        view.viewOptions().update({ users: list });
-    }
-}
-
-export async function loadPayouts(view: ViewClass<ViewState>) {
-    if (permCheck("/bbn/manage/drops/review")) {
-        const list = await API.music(API.getToken()).payouts.get();
-        view.viewOptions().update({ payouts: list });
-    }
-}
+import { Component, Custom, PlainText, ReCache, Image, Box } from "webgen/mod.ts";
+import { ProfileData, stringToColour } from "../manager/helper.ts";
 
 function ProfilePicture(component: Component, name: string) {
     const ele = component.draw();

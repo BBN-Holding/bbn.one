@@ -2,7 +2,9 @@ import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, Page
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import heroImage from '../../assets/img/hero-img.png';
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import googleLogo from '../../assets/img/googleLogo.svg';
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import discordLogo from '../../assets/img/discordLogo.svg';
 import { DynaNavigation } from "../../components/nav.ts";
 import { forceRefreshToken, Redirect } from "./helper.ts";

@@ -1,10 +1,11 @@
-import { Box, Custom, Reactive, loadingWheel } from "webgen/mod.ts";
+import { Reactive } from "webgen/mod.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { Menu } from "../../shared/Menu.ts";
 import { state } from "../state.ts";
 import { getListCount } from "../../shared/listCount.ts";
 import { musicList } from "./list.ts";
 import { DropType } from "../../../spec/music.ts";
+import { LoadingSpinner } from "../../shared/components.ts";
 
 export const musicMenu = () => Reactive(state, "loaded", () => Menu({
     title: activeUser.username ? `Hi ${activeUser.username} 👋` : `Hello 👋`,
@@ -23,7 +24,7 @@ export const musicMenu = () => Reactive(state, "loaded", () => Menu({
             custom: () => musicList(state.drafts ?? [], DropType.Unsubmitted),
         }
     },
-    custom: () => Box(Custom(loadingWheel() as Element as HTMLElement)).addClass("loading")
+    custom: () => LoadingSpinner()
 })
     .setActivePath(!state.loaded ? '/' : (state.drafts?.length ?? 0) > 0 ? "/drafts/" : "/published/")
 );
