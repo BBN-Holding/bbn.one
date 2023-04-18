@@ -48,12 +48,12 @@ export const adminMenu = () => Reactive(state, "loaded", () => Menu({
             title: `Payout ${getListCount(state.payouts)}`,
             items: [
                 {
-                    title: "Upload Manual xlsx file",
+                    title: "Upload Payout File (.xlsx)",
                     id: "upload+manual/",
                     action: () => upload("manual")
                 },
                 {
-                    title: "Sync ISRCs",
+                    title: "Sync ISRCs (release_export.xlsx)",
                     id: "sync+isrc/",
                     action: () => upload("isrc")
                 }
