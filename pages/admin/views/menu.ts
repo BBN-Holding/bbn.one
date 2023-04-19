@@ -1,4 +1,4 @@
-import { Reactive, Vertical } from "https://raw.githubusercontent.com/lucsoft/WebGen/3f922fc/mod.ts";
+import { Reactive, Vertical } from "webgen/mod.ts";
 import { state } from "../state.ts";
 import { Menu } from "../../shared/Menu.ts";
 import { activeUser } from "../../manager/helper.ts";

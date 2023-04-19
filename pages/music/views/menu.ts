@@ -6,10 +6,18 @@ import { getListCount } from "../../shared/listCount.ts";
 import { musicList } from "./list.ts";
 import { DropType } from "../../../spec/music.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
+import { API } from "../../manager/RESTSpec.ts";
 
 export const musicMenu = () => Reactive(state, "loaded", () => Menu({
     title: activeUser.username ? `Hi ${activeUser.username} 👋` : `Hello 👋`,
     id: "/",
+    menuBarAction: {
+        title: "Submit new Drop",
+        onclick: async () => {
+            const id = await API.music(API.getToken()).post();
+            location.href = `/music/new-drop?id=${id}`;
+        }
+    },
     categories: {
         "published/": {
             title: `Published ${getListCount(state.published)}`,

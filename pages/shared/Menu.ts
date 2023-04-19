@@ -1,4 +1,4 @@
-import { Box, ButtonComponent, Component, PlainText, Reactive, State, Vertical } from "webgen/mod.ts";
+import { Box, ButtonComponent, Component, Reactive, State, Vertical } from "webgen/mod.ts";
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
 import { Entry } from "../manager/misc/Entry.ts";
 
@@ -19,6 +19,7 @@ interface MenuItem {
 
 interface RootMenuItem extends MenuItem {
     categories?: { [ group in `${string}/` ]: Omit<MenuItem, "id"> };
+    menuBarAction?: Link,
 }
 
 const FilterLastItem = (_: MenuItem, index: number, list: MenuItem[]): boolean => index != list.length - 1;
@@ -93,7 +94,7 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
             );
 
         return Vertical(
-            ActionBar(active.title, undefined, undefined, list),
+            ActionBar(active.title, undefined, rootMenu.menuBarAction, list),
             this.renderList(active.items),
             active.custom?.(activeEntries.map(x => x.id).join("") + active.id) ?? null
         );
@@ -106,7 +107,7 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
                 selected: key == this.getActivePath().at(-1)!.id.replace("+", ""),
                 onclick: () => this.nav.active = rootMenu.id + key
             };
-        }));
+        }), rootMenu.menuBarAction);
     }
 
     private renderList(active?: MenuItem[]): Component | null {
