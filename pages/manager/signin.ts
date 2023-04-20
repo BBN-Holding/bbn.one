@@ -68,6 +68,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                             TextInput("email", "Email").sync(data, "email"),
                             TextInput("password", "Password").sync(data, "password"),
                             Button("Login")
+                                .setId("login-button")
                                 .onPromiseClick(async () => {
                                     const { email, password } = {
                                         email: data.email ?? "",
