@@ -25,7 +25,7 @@ function ProfilePicture(component: Component, name: string) {
 export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
     const tableView = View(() =>
         Table([
-            [ "Title", "auto", ({ progress, title }, index) => progress ? Progress(progress) : InlineTextInput("text", "blur").addClass("low-level").setValue(title).onChange(x => update(state, index, "title", x)) ],
+            [ "Title", "auto", ({ progress, title }, index) => progress !== undefined ? Progress(progress) : InlineTextInput("text", "blur").addClass("low-level").setValue(title).onChange(x => update(state, index, "title", x)) ],
             [ "Artists", "max-content", ({ artists }, index) =>
                 Box(
                     ...(artists ?? []).map(([ name, url, _type ]: string[]) =>
