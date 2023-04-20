@@ -33,7 +33,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                 if (state.loading) return Box(Custom(loadingWheel() as Element as HTMLElement), PlainText("Loading...")).addClass("loading", "loader");
                 if (state.resetToken)
                     return Page({ password: "" }, (state) => [
-                        TextInput("password", "New Passoword").sync(state, "password"),
+                        TextInput("password", "New Password").sync(state, "password"),
                         Button("Reset your Password")
                             .setJustify("center")
                             .onPromiseClick(async () => {
@@ -66,7 +66,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                     ...(<{ [ key in NonNullable<typeof state.mode> ]: Component[]; }>{
                         login: [
                             TextInput("email", "Email").sync(data, "email"),
-                            TextInput("password", "Passoword").sync(data, "password"),
+                            TextInput("password", "Password").sync(data, "password"),
                             Button("Login")
                                 .onPromiseClick(async () => {
                                     const { email, password } = {
@@ -109,7 +109,7 @@ View<{ mode: "login" | "register" | "reset-password"; email?: string, name?: str
                         register: [
                             TextInput("text", "Name").sync(data, "name"),
                             TextInput("email", "Email").sync(data, "email"),
-                            TextInput("password", "Passoword").sync(data, "password"),
+                            TextInput("password", "Password").sync(data, "password"),
                             Button("Register")
                                 .onPromiseClick(async () => {
                                     const { name, email, password } = {
