@@ -177,6 +177,16 @@ export const API = {
             }
         }
     },
+    payment: (token: string) => ({
+        payouts: {
+            get: async () => {
+                const data = await fetch(`${API.BASE_URL}payment/payouts`, {
+                    headers: headers(token)
+                }).then(x => x.json());
+                return data.payouts as Payout[];
+            }
+        },
+    }),
     music: (token: string) => ({
         reviews: {
             get: async () => {
@@ -201,14 +211,6 @@ export const API = {
             }).then(x => x.json());
             assert(typeof data.id == "string");
             return data.id as string;
-        },
-        payouts: {
-            get: async () => {
-                const data = await fetch(`${API.BASE_URL}music/payouts`, {
-                    headers: headers(token)
-                }).then(x => x.json());
-                return data.payouts as Payout[];
-            }
         },
         id: (id: string) => ({
             review: {

@@ -11,6 +11,9 @@
             "deno.unstable"
         ]
     },
+    "tasks": {
+        "start": "deno run -A serve.ts"
+    },
     "lint": {
         "files": {
             "exclude": [

@@ -10,7 +10,12 @@ export function listPayouts() {
             .addClass("list-title")
             .addClass("limited-width"),
         Vertical(state.payouts!.map(x =>
-            Entry((x.period && x.moneythisperiod) ? `${x.period} - ${x.moneythisperiod}` : 'Converting Data...', `${x._id}, ${x.importer}, ${x.file}`)
+            Entry(
+                (x.period && x.moneythisperiod)
+                    ? `${x.period} - ${x.moneythisperiod}`
+                    : 'Converting Data...',
+                `${x._id}, from ${state.users?.find(usr => usr._id == x.importer)?.profile.username ?? x.importer}, ${x.file}`
+            )
         )).setGap("1rem"),
     ] : [
         PlainText("No Payouts")
