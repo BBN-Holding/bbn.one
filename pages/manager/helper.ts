@@ -296,6 +296,6 @@ function update(state: StateHandler<{ list: [ name: string, img: string, type: A
 export function getDropFromPages(data: StateHandler<any>[], restore?: Drop): Drop {
     return <Drop>{
         ...restore,
-        ...data
+        ...Object.assign({}, ...data)
     };
 }
