@@ -28,7 +28,7 @@ export type Permission = typeof Permissions[ number ];
 
 export const API = {
     getToken: () => localStorage[ "access-token" ],
-    BASE_URL: location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/",
+    BASE_URL: localStorage.OVERRIDE_BASE_URL || location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/",
     // deno-lint-ignore no-explicit-any
     isError: (data: any): data is ErrorObject => typeof data === "object" && data.error,
     permission: Permissions,
