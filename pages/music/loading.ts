@@ -12,4 +12,5 @@ export async function refreshState() {
         || x.type === DropType.Private
         || x.type === DropType.ReviewDeclined
     );
+    state.payouts = await API.payment(API.getToken()).payouts.get();
 }

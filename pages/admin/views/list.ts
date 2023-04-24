@@ -1,4 +1,4 @@
-import { PlainText, Vertical } from "https://raw.githubusercontent.com/lucsoft/WebGen/3f922fc/mod.ts";
+import { PlainText, Vertical } from "webgen/mod.ts";
 import { Entry } from "../../manager/misc/Entry.ts";
 import { state } from "../state.ts";
 import { DropType } from "../../../spec/music.ts";
@@ -9,7 +9,7 @@ export function listPayouts() {
         PlainText("Payouts")
             .addClass("list-title")
             .addClass("limited-width"),
-        Vertical(state.payouts!.map(x =>
+        Vertical(state.payouts!.sort((a, b) => new Date(b.period?.split(" ")[1]!).getTime() - new Date(a.period?.split(" ")[1]!).getTime()).map(x =>
             Entry(
                 (x.period && x.moneythisperiod)
                     ? `${x.period} - ${x.moneythisperiod}`

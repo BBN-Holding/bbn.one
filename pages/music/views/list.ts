@@ -1,6 +1,8 @@
 import { CenterV, Component, MediaQuery, PlainText, Vertical } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { DropEntry } from "./entry.ts";
+import { state } from "../state.ts";
+import { Entry } from "../../manager/misc/Entry.ts";
 
 export const musicList = (list: Drop[], type: DropType) => Vertical(
     CategoryRender(
@@ -32,6 +34,25 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
     ];
 }
 
+export function listPayouts() {
+    return state.payouts && state.payouts.length > 0 ? [
+        PlainText("Payouts")
+            .addClass("list-title")
+            .addClass("limited-width"),
+        Vertical(state.payouts!.sort((a, b) => new Date(b.period?.split(" ")[1]!).getTime() - new Date(a.period?.split(" ")[1]!).getTime()).map(x =>
+            Entry(
+                x.period ?? "",
+                x.moneythisperiod
+            )
+        )).setGap("1rem"),
+    ] : [
+        PlainText("No Payouts")
+            .addClass("list-title")
+            .addClass("limited-width"),
+        PlainText("Release new Drops to earn money")
+            .addClass("limited-width"),
+    ];
+}
 
 export function ExplainerText(drop: Drop[], type: DropType) {
     return drop.length == 0 ?
@@ -60,5 +81,5 @@ export function DropTypeToText(type?: DropType) {
         "UNDER_REVIEW": "Under Review",
         "UNSUBMITTED": "Draft",
         "REVIEW_DECLINED": "Rejected"
-    })[ type ?? DropType.Unsubmitted ] ?? "";
+    })[type ?? DropType.Unsubmitted] ?? "";
 }
