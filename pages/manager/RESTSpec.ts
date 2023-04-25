@@ -184,7 +184,15 @@ export const API = {
                     headers: headers(token)
                 }).then(x => x.json());
                 return data.payouts as Payout[];
-            }
+            },
+            id: (id: string) => ({
+                get: async () => {
+                    const data = await fetch(`${API.BASE_URL}payment/payouts/${id}`, {
+                        headers: headers(token)
+                    }).then(x => x.json());
+                    return data.payout as Payout;
+                }
+            })
         },
     }),
     music: (token: string) => ({

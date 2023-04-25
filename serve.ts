@@ -26,6 +26,7 @@ serve({
         "music": "./pages/music/main.ts",
         "music/new-drop": "./pages/manager/newDrop.ts",
         "music/edit": "./pages/manager/music/edit.ts",
+        "music/payout": "./pages/payout/main.ts",
 
         "hosting": "./pages/hosting/minecraft.ts",
         "hosting/create": "./pages/hosting/create.ts",

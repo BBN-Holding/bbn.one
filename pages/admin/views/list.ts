@@ -14,7 +14,11 @@ export function listPayouts() {
                 (x.period && x.moneythisperiod)
                     ? `${x.period} - ${x.moneythisperiod}`
                     : 'Converting Data...',
-                `${x._id}, from ${state.users?.find(usr => usr._id == x.importer)?.profile.username ?? x.importer}, ${x.file}`
+                `${x._id}, from ${state.users?.find(usr => usr._id == x.importer)?.profile.username ?? x.importer}, ${x.file}`,
+                () => {
+                    location.href = `/music/payout?id=${x._id}`
+                    return;
+                }
             )
         )).setGap("1rem"),
     ] : [
