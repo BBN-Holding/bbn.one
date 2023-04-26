@@ -86,7 +86,15 @@ export const API = {
                 }).then(x => x.json());
                 return data.users as ProfileData[];
             }
-        }
+        },
+        zendesk: {
+            post: async () => {
+                return await fetch(`${API.BASE_URL}user/zendesk`, {
+                    method: "POST",
+                    headers: headers(token)
+                }).then(x => x.json()) as { token: string; };
+            }
+        },
     }),
     auth: {
         fromUserInteractionLinkGoogle: () => `${API.BASE_URL}auth/google-redirect?redirect=${location.href}&type=google-auth`,
@@ -184,7 +192,15 @@ export const API = {
                     headers: headers(token)
                 }).then(x => x.json());
                 return data.payouts as Payout[];
-            }
+            },
+            id: (id: string) => ({
+                get: async () => {
+                    const data = await fetch(`${API.BASE_URL}payment/payouts/${id}`, {
+                        headers: headers(token)
+                    }).then(x => x.json());
+                    return data.payout as Payout;
+                }
+            })
         },
     }),
     music: (token: string) => ({

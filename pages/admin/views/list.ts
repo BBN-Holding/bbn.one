@@ -4,35 +4,13 @@ import { state } from "../state.ts";
 import { DropType } from "../../../spec/music.ts";
 import { RenderEntry } from "./entry.ts";
 
-export function listPayouts() {
-    return state.payouts && state.payouts.length > 0 ? [
-        PlainText("Payouts")
-            .addClass("list-title")
-            .addClass("limited-width"),
-        Vertical(state.payouts!.sort((a, b) => new Date(b.period?.split(" ")[1]!).getTime() - new Date(a.period?.split(" ")[1]!).getTime()).map(x =>
-            Entry(
-                (x.period && x.moneythisperiod)
-                    ? `${x.period} - ${x.moneythisperiod}`
-                    : 'Converting Data...',
-                `${x._id}, from ${state.users?.find(usr => usr._id == x.importer)?.profile.username ?? x.importer}, ${x.file}`
-            )
-        )).setGap("1rem"),
-    ] : [
-        PlainText("No Payouts")
-            .addClass("list-title")
-            .addClass("limited-width"),
-        PlainText("All done! You are now allowed to lean back and relax. 🧋")
-            .addClass("limited-width"),
-    ];
-}
-
 export function listReviews() {
     return Vertical(
         (state.reviews?.find(x => x.type == DropType.UnderReview)) ? [
             PlainText("Reviews")
                 .addClass("list-title")
                 .addClass("limited-width"),
-            Vertical(...state.reviews!.filter(x => x.type == DropType.UnderReview).map(x => RenderEntry(x))).setGap("1rem"),
+            Vertical(...state.reviews.filter(x => x.type == DropType.UnderReview).map(x => RenderEntry(x))).setGap("1rem"),
         ] : [
             PlainText("No Reviews")
                 .addClass("list-title")

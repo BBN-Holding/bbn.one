@@ -2,7 +2,7 @@ import { Box, ButtonComponent, Component, Reactive, State, Vertical } from "webg
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
 import { Entry } from "../manager/misc/Entry.ts";
 
-interface MenuItem {
+export interface MenuItem {
     title: string;
     id: `${string}/`;
     subtitle?: string;

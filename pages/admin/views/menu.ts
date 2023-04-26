@@ -5,8 +5,9 @@ import { activeUser } from "../../manager/helper.ts";
 import { getListCount } from "../../shared/listCount.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
 import { upload } from "../loading.ts";
-import { listReviews, listPayouts } from "./list.ts";
+import { listReviews } from "./list.ts";
 import { UserPanel } from "../users.ts";
+import { listPayouts } from "../../music/views/list.ts";
 
 export const adminMenu = () => Reactive(state, "loaded", () => Menu({
     title: `Hi ${activeUser.username} 👋`,
@@ -59,7 +60,7 @@ export const adminMenu = () => Reactive(state, "loaded", () => Menu({
                 }
             ],
             custom: () => Reactive(state, "payouts", () =>
-                Vertical(listPayouts())
+                Vertical(listPayouts(state.payouts ?? []))
                     .setGap("0.5rem")
             )
         }

@@ -34,7 +34,7 @@ export const musicMenu = () => Reactive(state, "loaded", () => Menu({
         "payouts/": {
             title: `Payouts ${getListCount(state.payouts)}`,
             custom: () => Reactive(state, "payouts", () =>
-                Vertical(listPayouts())
+                Vertical(listPayouts(state.payouts ?? []))
                     .setGap("0.5rem")
             )
         }

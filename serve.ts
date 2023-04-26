@@ -21,11 +21,12 @@ serve({
         "signin": "./pages/manager/signin.ts",
         "signin-google": "./pages/manager/misc/redirect.ts",
         "signin-discord": "./pages/manager/misc/redirect.ts",
-
+        "signin-zendesk": "./pages/manager/misc/zendesk.ts",
 
         "music": "./pages/music/main.ts",
         "music/new-drop": "./pages/manager/newDrop.ts",
         "music/edit": "./pages/manager/music/edit.ts",
+        "music/payout": "./pages/payout/main.ts",
 
         "hosting": "./pages/hosting/minecraft.ts",
         "hosting/create": "./pages/hosting/create.ts",
