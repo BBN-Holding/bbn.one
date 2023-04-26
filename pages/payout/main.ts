@@ -15,13 +15,6 @@ import { LoadingSpinner } from "../shared/components.ts";
 Redirect();
 await RegisterAuthRefresh();
 
-if (!permCheck(
-    "/hmsys/user/manage",
-    "/bbn/manage"
-)) {
-    location.href = "/";
-}
-
 WebGen({
     icon: new MaterialIcons(),
     events: {
@@ -57,7 +50,7 @@ View(() => Vertical(
                         title: drop.title,
                         subtitle: "£ " + sumOf(entries.map((entry) => sumOf(entry.data, (data) => Number(data.revenue))), e => e),
                         id: `${drop._id}/`,
-                        items: drop.songs?.length > 1 ? drop.songs.filter(song => song.isrc).filter(song => entries.some(e => e.isrc === song.isrc) ).map(song => {
+                        items: drop.songs?.length > 1 ? drop.songs.filter(song => song.isrc).filter(song => entries.some(e => e.isrc === song.isrc)).map(song => {
                             const entry = entries.find(entry => entry.isrc === song.isrc)!;
                             return {
                                 title: song.title,
@@ -86,7 +79,7 @@ renewAccessTokenIfNeeded()
 
 async function refreshState() {
     state.payout = await API.payment(API.getToken()).payouts.id(data.id).get()
-    state.music = await API.music(API.getToken()).reviews.get()
+    state.music = permCheck("/hmsys/user/manage", "/bbn/manage") ? await API.music(API.getToken()).reviews.get() : await API.music(API.getToken()).list.get();
     state.loaded = true;
 }
 
