@@ -110,22 +110,20 @@ export const payout = zod.object({
     _id: zod.string(),
     importer: zod.string(),
     file: zod.string(),
-    period: zod.string().optional(),
-    moneythisperiod: zod.string().optional(),
-    entries: zod.array(
-        zod.object({
-            isrc: zod.string(),
-            user: zod.string().optional(),
-            data: zod.array(
-                zod.object({
-                    distributor: zod.string(),
-                    territory: zod.string(),
-                    quantity: zod.number(),
-                    revenue: zod.string()
-                })
-            )
-        })
-    ).optional()
+    period: zod.string(),
+    moneythisperiod: zod.string(),
+    entries: zod.object({
+        isrc: zod.string(),
+        user: zod.string().optional(),
+        data: zod.array(
+            zod.object({
+                distributor: zod.string(),
+                territory: zod.string(),
+                quantity: zod.number(),
+                revenue: zod.string()
+            })
+        )
+    }).array()
 });
 
 export type Drop = zod.infer<typeof drop>;

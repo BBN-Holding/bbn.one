@@ -1,8 +1,8 @@
 import { CenterV, Component, MediaQuery, PlainText, Vertical } from "webgen/mod.ts";
-import { Drop, DropType } from "../../../spec/music.ts";
+import { Drop, DropType, Payout } from "../../../spec/music.ts";
 import { DropEntry } from "./entry.ts";
-import { state } from "../state.ts";
 import { Entry } from "../../manager/misc/Entry.ts";
+import { sortBy } from "https://deno.land/std@0.138.0/collections/sort_by.ts";
 
 export const musicList = (list: Drop[], type: DropType) => Vertical(
     CategoryRender(
@@ -34,15 +34,18 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
     ];
 }
 
-export function listPayouts() {
-    return state.payouts && state.payouts.length > 0 ? [
+export function listPayouts(payouts: Payout[]) {
+    return payouts && payouts.length > 0 ? [
         PlainText("Payouts")
             .addClass("list-title")
             .addClass("limited-width"),
-        Vertical(state.payouts!.sort((a, b) => new Date(b.period?.split(" ")[1]!).getTime() - new Date(a.period?.split(" ")[1]!).getTime()).map(x =>
+        Vertical(sortBy(payouts, e => e.period).reverse().map(x =>
             Entry(
-                x.period ?? "",
-                x.moneythisperiod
+                x.period,
+                x.moneythisperiod,
+                () => {
+                    location.href = `/music/payout?id=${x._id}`
+                }
             )
         )).setGap("1rem"),
     ] : [

@@ -1,19 +1,15 @@
 import { WebGen, MaterialIcons, View, Vertical, CenterV, Center, Custom, loadingWheel, Spacer, Reactive, State, StateData, PlainText } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { API } from "../manager/RESTSpec.ts";
-import { Redirect, RegisterAuthRefresh, permCheck } from "../manager/helper.ts";
+import { Redirect, RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { changeThemeColor } from "../manager/misc/common.ts";
-import { ChangeDrop } from "../manager/music/changeDrop.ts";
-import { ChangeMain } from "../manager/music/changeMain.ts";
-import { ChangeSongs } from "../manager/music/changeSongs.ts";
-import { EditViewState } from "../manager/music/types.ts";
 
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
-import { Entry } from "../manager/misc/Entry.ts";
-import { Menu } from "../shared/Menu.ts";
-import { listPayouts } from "../music/views/list.ts";
+import { Menu, MenuItem } from "../shared/Menu.ts";
 import { Drop, Payout } from "../../spec/music.ts";
+import { sumOf } from "https://deno.land/std@0.170.0/collections/sum_of.ts";
+import { LoadingSpinner } from "../shared/components.ts";
 
 
 Redirect();
@@ -40,15 +36,38 @@ if (!data.id) {
     location.href = "/music";
 }
 
-View((state) => Vertical(
+const state = State({
+    payout: <Payout | undefined>undefined,
+    music: <Drop[] | undefined>undefined,
+    loaded: false
+})
+
+View(() => Vertical(
     DynaNavigation("Music"),
-    Menu({
+    Reactive(state, "loaded", () => Menu({
         title: "View Payout",
         id: "/",
         categories: {
             "drop/": {
                 title: `Drop`,
-                custom: () => renderEntries("drop", state.state)
+                items: (state.music?.map(drop => {
+                    const entries = state.payout?.entries.filter(entry => drop.songs?.some(song => song.isrc === entry.isrc)) ?? [];
+                    if (entries.length === 0) return undefined;
+                    return {
+                        title: drop.title,
+                        subtitle: "£ " + sumOf(entries.map((entry) => sumOf(entry.data, (data) => Number(data.revenue))), e => e),
+                        id: `${drop._id}/`,
+                        items: drop.songs?.length > 1 ? drop.songs.filter(song => song.isrc).filter(song => entries.some(e => e.isrc === song.isrc) ).map(song => {
+                            const entry = entries.find(entry => entry.isrc === song.isrc)!;
+                            return {
+                                title: song.title,
+                                subtitle: "£ " + sumOf(entry.data ?? [], e => Number(e.revenue)),
+                                id: `${song.isrc}/`,
+                                items: generateStores(entry.data ?? [])
+                            }
+                        }) : generateStores(entries[0].data ?? [])
+                    }
+                }) ?? []).filter(Boolean) as MenuItem[]
             },
             "store/": {
                 title: `Store`,
@@ -56,43 +75,27 @@ View((state) => Vertical(
             "country/": {
                 title: `Country`,
             },
+        },
+        custom: () => LoadingSpinner()
+    }).setActivePath(state.loaded ? "/drop/" : "/"))
+)).appendOn(document.body);
+
+renewAccessTokenIfNeeded()
+    .then(() => refreshState())
+    .then(() => state.loaded = true);
+
+async function refreshState() {
+    state.payout = await API.payment(API.getToken()).payouts.id(data.id).get()
+    state.music = await API.music(API.getToken()).reviews.get()
+    state.loaded = true;
+}
+
+function generateStores(datalist: Payout["entries"][0]["data"]) {
+    return datalist.filter(data => data.quantity).map((data, index) => {
+        return {
+            title: data.distributor + " - " + data.territory,
+            subtitle: "£ " + data.revenue + " - " + data.quantity + " streams",
+            id: `${index}/`
         }
-    }),
-))
-    .appendOn(document.body)
-    .change(({ update }) => {
-        API.payment(API.getToken()).payouts.id(data.id).get().then(data => {
-            update({ payout: data });
-        });
-        API.music(API.getToken()).reviews.get().then(data => {
-            update({ music: data });
-        });
-    });
-
-function renderEntries(type: "drop" | "store" | "country", data: { payout: Payout, music: Drop[] }) {
-    console.log(data)
-    switch (type) {
-        case "drop": {
-            // group data.payout.entries by drop
-            return Object.values(data.payout.entries!.reduce((acc: any, entry) => {
-                const drop = data.music.find(drop => drop.songs?.some(song => song.isrc === entry.isrc) ?? false);
-                if (!drop) return acc;
-                if (!acc[drop._id]) {
-                    acc[drop._id] = {
-                        drop,
-                        entries: []
-                    };
-                }
-                acc[drop._id].entries.push(entry);
-                return acc;
-            }, {})).map((data) => {
-                console.log(data)
-                return Entry(data.drop.title, "£ " + data.entries.map(entry => entry.data.map(data => Number(data.revenue)).reduce((a, b) => a + b, 0)).reduce((a, b) => a + b, 0))
-            })
-        }
-        case "store":
-
-
-    }
-    return PlainText("Not implemented");
+    }) as MenuItem[]
 }
