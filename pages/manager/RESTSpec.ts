@@ -198,7 +198,7 @@ export const API = {
                     const data = await fetch(`${API.BASE_URL}payment/payouts/${id}`, {
                         headers: headers(token)
                     }).then(x => x.json());
-                    return data.payout as Payout;
+                    return data as Payout;
                 }
             })
         },
