@@ -1,4 +1,4 @@
-import { Card, Grid, PlainText, Reactive, Vertical } from "https://raw.githubusercontent.com/lucsoft/WebGen/3f922fc/mod.ts";
+import { Card, Grid, PlainText, Reactive, Vertical } from "webgen/mod.ts";
 import { data } from "../data.ts";
 
 export const storeView = Reactive(data, "meta", () => Grid(
