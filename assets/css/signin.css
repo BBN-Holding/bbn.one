@@ -35,3 +35,7 @@ body {
     align-items: end;
     margin-top: -1rem;
 }
+
+.header {
+    max-width: 21rem;
+}

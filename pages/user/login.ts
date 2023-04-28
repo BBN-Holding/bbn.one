@@ -1,4 +1,4 @@
-import { Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, PlainText, Spacer, Vertical, View, WebGen, Box, TextInput, Reactive, Grid, Form } from "webgen/mod.ts";
+import { MediaQuery, Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, PlainText, Spacer, Vertical, View, WebGen, Box, TextInput, Reactive, Grid, Form } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import { discordLogo, heroImage, googleLogo } from "../../assets/imports.ts";
@@ -22,13 +22,14 @@ const ErrorMessage = () => Reactive(state, "error", () => state.error != undefin
 
 View(() => Vertical(
     ...DynaNavigation("Home"),
-    Horizontal(
+    Grid(
         Vertical(
-            PlainText("Welcome back!")
-                .setMargin("5rem 0 .8rem")
-                .addClass("line-header")
-                .setWidth("21rem")
-                .setFont(5.375, 800),
+            MediaQuery("(max-width: 700px)", (small) =>
+                PlainText("Welcome back!")
+                    .setMargin("5rem 0 .8rem")
+                    .addClass(small ? "no-custom" : "line-header", "header")
+                    .setFont(small ? 4 : 5.375, 800)
+            ).removeFromLayout(),
             Reactive(state, "type", () => {
                 if (state.type == "reset-password-from-email")
                     return Form(Grid(
@@ -205,7 +206,7 @@ View(() => Vertical(
             }),
         ),
         Spacer()
-    ).addClass("limited-width"),
+    ).addClass("limited-width").setJustify("start" as "flex-start"),
     Custom(img(heroImage)).addClass("background-image")
 ))
     .appendOn(document.body);
