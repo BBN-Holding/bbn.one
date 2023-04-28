@@ -1,4 +1,4 @@
-import { serve } from "../esbuild_serve/mod.ts";
+import { serve } from "https://raw.githubusercontent.com/lucsoft/esbuild_serve/85c36af/mod.ts";
 
 serve({
     port: 6969,
