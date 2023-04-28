@@ -7,18 +7,6 @@ body {
     background-color: var(--bbn-primary);
 }
 
-
-/*
-TODO: FIX ME
-*/
-.winput span {
-    padding: 10px 10px 18px;
-}
-
-.winput.has-value span {
-    padding: 5px 11px 0;
-}
-
 .line-header {
     line-height: 94px;
 }

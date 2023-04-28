@@ -1,4 +1,4 @@
-import { serve } from "https://raw.githubusercontent.com/lucsoft/esbuild_serve/65e25fe/mod.ts";
+import { serve } from "../esbuild_serve/mod.ts";
 
 serve({
     port: 6969,
@@ -18,7 +18,7 @@ serve({
         "p/imprint": "./pages/OldPagesPolyfill.ts",
         "p/distribution": "./pages/OldPagesPolyfill.ts",
         "p/leadership": "./pages/leadership.ts",
-        "signin": "./pages/manager/signin.ts",
+        "signin": "./pages/user/login.ts",
         "signin-google": "./pages/manager/misc/redirect.ts",
         "signin-discord": "./pages/manager/misc/redirect.ts",
         "signin-zendesk": "./pages/manager/misc/zendesk.ts",
