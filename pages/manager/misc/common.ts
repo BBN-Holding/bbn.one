@@ -1,4 +1,4 @@
-import { SafeParseReturnType } from "https://deno.land/x/zod@v3.20.2/types.ts";
+import { SafeParseReturnType } from "https://deno.land/x/zod@v3.21.4/types.ts";
 import { getErrorMessage, SupportedThemes } from "webgen/mod.ts";
 import { Style } from "webgen/src/lib/Style.ts";
 

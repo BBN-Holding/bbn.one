@@ -2,7 +2,7 @@ import { CenterV, Component, MediaQuery, PlainText, Vertical } from "webgen/mod.
 import { Drop, DropType, Payout } from "../../../spec/music.ts";
 import { DropEntry } from "./entry.ts";
 import { Entry } from "../../manager/misc/Entry.ts";
-import { sortBy } from "https://deno.land/std@0.138.0/collections/sort_by.ts";
+import { sortBy } from "https://deno.land/std@0.185.0/collections/sort_by.ts";
 
 export const musicList = (list: Drop[], type: DropType) => Vertical(
     CategoryRender(

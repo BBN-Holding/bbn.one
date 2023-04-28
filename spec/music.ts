@@ -1,4 +1,4 @@
-import * as zod from "https://deno.land/x/zod@v3.20.2/mod.ts";
+import * as zod from "https://deno.land/x/zod@v3.21.4/mod.ts";
 
 const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
 export const userString = zod.string().min(1).refine(x => x.trim()).transform(x => x.trim());

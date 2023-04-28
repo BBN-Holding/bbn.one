@@ -1,4 +1,4 @@
-import { delay } from "https://deno.land/std@0.167.0/async/delay.ts";
+import { delay } from "https://deno.land/std@0.185.0/async/delay.ts";
 import { AdvancedImage, State, StateHandler } from "webgen/mod.ts";
 import { Drop } from "../../../spec/music.ts";
 import { API } from "../RESTSpec.ts";

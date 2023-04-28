@@ -2,7 +2,7 @@ import { Grid, TextInput, Page, Vertical, Wizard, WizardComponent } from "webgen
 import { Redirect } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { API } from "../RESTSpec.ts";
-import { delay } from "https://deno.land/std@0.167.0/async/mod.ts";
+import { delay } from "https://deno.land/std@0.185.0/async/mod.ts";
 import { returnFunction, ViewState } from "./helper.ts";
 import { HandleSubmit, setErrorMessage } from "../misc/common.ts";
 

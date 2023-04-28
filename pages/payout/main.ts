@@ -8,7 +8,7 @@ import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { Menu, MenuItem } from "../shared/Menu.ts";
 import { Drop, Payout } from "../../spec/music.ts";
-import { sumOf } from "https://deno.land/std@0.170.0/collections/sum_of.ts";
+import { sumOf } from "https://deno.land/std@0.185.0/collections/sum_of.ts";
 import { LoadingSpinner } from "../shared/components.ts";
 
 
