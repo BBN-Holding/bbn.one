@@ -1,8 +1,22 @@
-import { CenterV, Component, MediaQuery, PlainText, Vertical } from "webgen/mod.ts";
+import { CenterV, Component, Entry, MediaQuery, PlainText, Vertical, css } from "webgen/mod.ts";
 import { Drop, DropType, Payout } from "../../../spec/music.ts";
+import { sortBy } from "std/collections/sort_by.ts";
 import { DropEntry } from "./entry.ts";
-import { Entry } from "../../manager/misc/Entry.ts";
-import { sortBy } from "https://deno.land/std@0.185.0/collections/sort_by.ts";
+
+document.adoptedStyleSheets.push(css`
+    .image-square {
+        height: 5rem;
+        aspect-ratio: 1 / 1;
+        border-radius: 15px;
+    }
+    .small .image-square {
+        height: 44px;
+    }
+    .image-square .wimage {
+        height: 100%;
+        width: 100%;
+    }
+`);
 
 export const musicList = (list: Drop[], type: DropType) => Vertical(
     CategoryRender(
@@ -29,7 +43,9 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
             .addClass("limited-width"),
         MediaQuery("(max-width: 700px)",
             (matches) =>
-                Vertical(...dropList.map(x => DropEntry(x, matches))).setGap("1rem")
+                Vertical(...dropList.map(x =>
+                    DropEntry(x, matches)
+                )).setGap("1rem")
         ),
     ];
 }
@@ -40,13 +56,12 @@ export function listPayouts(payouts: Payout[]) {
             .addClass("list-title")
             .addClass("limited-width"),
         Vertical(sortBy(payouts, e => e.period).reverse().map(x =>
-            Entry(
-                x.period,
-                x.moneythisperiod,
-                () => {
-                    location.href = `/music/payout?id=${x._id}`
-                }
-            )
+            Entry({
+                title: x.period,
+                subtitle: x.moneythisperiod,
+            }).onClick(() => {
+                location.href = `/music/payout?id=${x._id}`;
+            }).addClass("limited-width")
         )).setGap("1rem"),
     ] : [
         PlainText("No Payouts")
@@ -84,5 +99,5 @@ export function DropTypeToText(type?: DropType) {
         "UNDER_REVIEW": "Under Review",
         "UNSUBMITTED": "Draft",
         "REVIEW_DECLINED": "Rejected"
-    })[type ?? DropType.Unsubmitted] ?? "";
+    })[ type ?? DropType.Unsubmitted ] ?? "";
 }

@@ -1,10 +1,9 @@
-import { Grid, Horizontal, Page, PlainText, Spacer, Vertical, Wizard } from "webgen/mod.ts";
+import { Entry, Grid, Horizontal, Page, PlainText, Spacer, Vertical, Wizard } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { permCheck, showPreviewImage } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage } from "../misc/common.ts";
 import { DownloadDrop } from "../misc/drop.ts";
-import { Entry } from "../misc/Entry.ts";
 import { API } from "../RESTSpec.ts";
 import { DropTypeToText } from "./text.ts";
 import { EditViewState } from "./types.ts";
@@ -27,27 +26,27 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
             ).addClass("limited-width").setMargin("-1rem auto 2rem"),
             Vertical(
                 Permissions.canEdit(data) ? [
-                    Entry("Drop", "Change Title, Release Date, ...", changePage(update, "edit-drop")),
-                    Entry("Songs", "Move Songs, Remove Songs, Add Songs, ...", changePage(update, "edit-songs")),
-                    // Entry("Additional Data", "Change Release Date/Time, Store, Regions, ..."),
+                    Entry({ title: "Drop", subtitle: "Change Title, Release Date, ..." }).addClass("limited-width").onClick(changePage(update, "edit-drop")),
+                    Entry({ title: "Songs", subtitle: "Move Songs, Remove Songs, Add Songs, ...", }).addClass("limited-width").onClick(changePage(update, "edit-songs")),
+                    // Entry({}"Additional Data", "Change Release Date/Time, Store, Regions, ..."),
                 ] : null,
                 // TODO: Add Read-Only Mode for Drop and Songs
 
-                Entry("Export", "Download your complete Drop with every Song", () => DownloadDrop(data)),
+                Entry({ title: "Export", subtitle: "Download your complete Drop with every Song" }).addClass("limited-width").onClick(() => DownloadDrop(data)),
 
                 !Permissions.canCancelReview(data) ? null :
-                    Entry("Cancel Review", "Need to change Something? Cancel it now", async () => {
+                    Entry({ title: "Cancel Review", subtitle: "Need to change Something? Cancel it now" }).addClass("limited-width").onPromiseClick(async () => {
                         await API.music(API.getToken()).id(data._id).type.post(DropType.Private);
                         location.reload();
                     }),
                 !Permissions.canSubmit(data) ? null :
-                    Entry("Publish", "Submit your Drop for Approval", async () => {
+                    Entry({ title: "Publish", subtitle: "Submit your Drop for Approval" }).addClass("limited-width").onPromiseClick(async () => {
                         await API.music(API.getToken()).id(data._id).type.post(DropType.UnderReview);
                         location.reload();
                     }),
 
                 !Permissions.canTakedown(data) ? null :
-                    Entry("Takedown", "Completely Takedown your Drop", async () => {
+                    Entry({ title: "Takedown", subtitle: "Completely Takedown your Drop" }).addClass("limited-width").onPromiseClick(async () => {
                         await API.music(API.getToken()).id(data._id).type.post(DropType.Private);
                         location.reload();
                     }).addClass("entry-alert"),

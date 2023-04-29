@@ -1,4 +1,4 @@
-import { WebGen, MaterialIcons, View, Vertical, CenterV, Center, Custom, loadingWheel, Spacer, Reactive, State, StateData, PlainText } from "webgen/mod.ts";
+import { WebGen, MaterialIcons, View, Vertical, Reactive, State } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { API } from "../manager/RESTSpec.ts";
 import { Redirect, RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
@@ -8,7 +8,7 @@ import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { Menu, MenuItem } from "../shared/Menu.ts";
 import { Drop, Payout } from "../../spec/music.ts";
-import { sumOf } from "https://deno.land/std@0.185.0/collections/sum_of.ts";
+import { sumOf } from "std/collections/sum_of.ts";
 import { LoadingSpinner } from "../shared/components.ts";
 
 
@@ -33,7 +33,7 @@ const state = State({
     payout: <Payout | undefined>undefined,
     music: <Drop[] | undefined>undefined,
     loaded: false
-})
+});
 
 View(() => Vertical(
     DynaNavigation("Music"),
@@ -57,9 +57,9 @@ View(() => Vertical(
                                 subtitle: "£ " + sumOf(entry.data ?? [], e => Number(e.revenue)),
                                 id: `${song.isrc}/`,
                                 items: generateStores(entry.data ?? [])
-                            }
-                        }) : generateStores(entries[0].data ?? [])
-                    }
+                            };
+                        }) : generateStores(entries[ 0 ].data ?? [])
+                    };
                 }) ?? []).filter(Boolean) as MenuItem[]
             },
             "store/": {
@@ -78,17 +78,17 @@ renewAccessTokenIfNeeded()
     .then(() => state.loaded = true);
 
 async function refreshState() {
-    state.payout = await API.payment(API.getToken()).payouts.id(data.id).get()
+    state.payout = await API.payment(API.getToken()).payouts.id(data.id).get();
     state.music = permCheck("/hmsys/user/manage", "/bbn/manage") ? await API.music(API.getToken()).reviews.get() : await API.music(API.getToken()).list.get();
     state.loaded = true;
 }
 
-function generateStores(datalist: Payout["entries"][0]["data"]) {
+function generateStores(datalist: Payout[ "entries" ][ 0 ][ "data" ]) {
     return datalist.filter(data => data.quantity).map((data, index) => {
         return {
             title: data.distributor + " - " + data.territory,
             subtitle: "£ " + data.revenue + " - " + data.quantity + " streams",
             id: `${index}/`
-        }
-    }) as MenuItem[]
+        };
+    }) as MenuItem[];
 }

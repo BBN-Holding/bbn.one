@@ -1,8 +1,7 @@
 import { PlainText, Vertical } from "webgen/mod.ts";
-import { Entry } from "../../manager/misc/Entry.ts";
 import { state } from "../state.ts";
 import { DropType } from "../../../spec/music.ts";
-import { RenderEntry } from "./entry.ts";
+import { ReviewEntry } from "./entryReview.ts";
 
 export function listReviews() {
     return Vertical(
@@ -10,7 +9,7 @@ export function listReviews() {
             PlainText("Reviews")
                 .addClass("list-title")
                 .addClass("limited-width"),
-            Vertical(...state.reviews.filter(x => x.type == DropType.UnderReview).map(x => RenderEntry(x))).setGap("1rem"),
+            Vertical(...state.reviews.filter(x => x.type == DropType.UnderReview).map(x => ReviewEntry(x))).setGap("1rem"),
         ] : [
             PlainText("No Reviews")
                 .addClass("list-title")
@@ -23,31 +22,31 @@ export function listReviews() {
                 .addClass("list-title")
                 .addClass("limited-width"),
         ...state.reviews!.filter(x => x.type == DropType.Publishing).map(x =>
-            RenderEntry(x)
+            ReviewEntry(x)
         ),
         PlainText("Published")
             .addClass("list-title")
             .addClass("limited-width"),
         ...state.reviews!.filter(x => x.type == DropType.Published).map(x =>
-            RenderEntry(x)
+            ReviewEntry(x)
         ),
         PlainText("Private")
             .addClass("list-title")
             .addClass("limited-width"),
         ...state.reviews!.filter(x => x.type == DropType.Private).map(x =>
-            RenderEntry(x)
+            ReviewEntry(x)
         ),
         PlainText("Rejected")
             .addClass("list-title")
             .addClass("limited-width"),
         ...state.reviews!.filter(x => x.type == DropType.ReviewDeclined).map(x =>
-            RenderEntry(x)
+            ReviewEntry(x)
         ),
         PlainText("Drafts")
             .addClass("list-title")
             .addClass("limited-width"),
         ...state.reviews!.filter(x => x.type == DropType.Unsubmitted).map(x =>
-            RenderEntry(x)
+            ReviewEntry(x)
         )
     )
         .setGap("1rem");

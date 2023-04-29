@@ -1,6 +1,5 @@
-import { Box, ButtonComponent, Component, Reactive, State, Vertical } from "webgen/mod.ts";
+import { Box, ButtonComponent, Component, Entry, Reactive, State, Vertical } from "webgen/mod.ts";
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
-import { Entry } from "../manager/misc/Entry.ts";
 
 export interface MenuItem {
     title: string;
@@ -114,17 +113,22 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
         if (!active) return null;
 
         return Vertical(
-            active?.map(menu => Entry(
-                menu.title,
-                menu.subtitle,
-                this.menuClickHandler(menu)
-            )) ?? []
+            active?.map(menu => {
+                const entry = Entry(
+                    menu,
+                ).addClass("limited-width");
+                const it = this.menuClickHandler(menu);
+                if (it)
+                    entry.onPromiseClick(it);
+                return entry;
+            }) ?? []
         )
             .setGap("var(--gap)");
     }
 
     private menuClickHandler(menu: MenuItem) {
-        if (menu.items) return () => {
+        if (menu.items) return async () => {
+            await true;
             this.nav.active = this.nav.active + menu.id;
         };
         if (menu.action || menu.custom) return async () => {

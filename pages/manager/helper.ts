@@ -272,7 +272,10 @@ export function EditArtists(list: Artist[]) {
     });
 }
 export function showPreviewImage(x: Drop, big = false) {
-    return ReCache("image-preview-" + x._id + big, () => Promise.resolve(), (type) => type == "loaded" && x.artwork ? Image({ type: "direct", source: async () => await loadImage(x) ?? artwork }, "A Song Artwork") : Image(artwork, "A Placeholder Artwork.")).addClass("image-preview");
+    return ReCache("image-preview-" + x._id + big, () => Promise.resolve(),
+        (type) => type == "loaded" && x.artwork
+            ? Image({ type: "direct", source: async () => await loadImage(x) ?? artwork }, "A Song Artwork")
+            : Image(artwork, "A Placeholder Artwork.")).addClass("image-preview");
 }
 
 export async function loadImage(x: Drop) {

@@ -1,10 +1,9 @@
-import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Entry, MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
 import { Redirect, RegisterAuthRefresh } from "../helper.ts";
 import '../../../assets/css/main.css';
 import { changeThemeColor } from "../misc/common.ts";
 import { DynaNavigation } from "../../../components/nav.ts";
 import { ActionBar } from "../misc/actionbar.ts";
-import { Entry } from "../misc/Entry.ts";
 import { ViewState } from "./helper.ts";
 import { ChangePassword } from "./changePassword.ts";
 import { ChangePersonal } from "./changePersonal.ts";
@@ -24,14 +23,21 @@ View<ViewState>(({ state, update }) => Vertical(
         "landing-page": [
             ActionBar("Settings", undefined, undefined),
             Vertical(
-                Entry("Personal", "Username, Email, Profile Picture...", () => {
+                Entry({
+                    title: "Personal",
+                    subtitle: "Username, Email, Profile Picture...",
+                }).addClass("limited-width").onClick(() => {
                     update({ mode: "change-personal" });
                 }),
                 localStorage.type != "email" ? null :
-                    Entry("Change Password", undefined, () => {
+                    Entry({
+                        title: "Change Password",
+                    }).addClass("limited-width").onClick(() => {
                         update({ mode: "change-password" });
                     }),
-                Entry("Logout", undefined, () => {
+                Entry({
+                    title: "Logout"
+                }).addClass("limited-width").onClick(() => {
                     localStorage.clear();
                     Redirect();
                 }),

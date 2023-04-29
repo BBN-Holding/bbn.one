@@ -1,7 +1,7 @@
 import { Card, Grid, PlainText, Reactive } from "webgen/mod.ts";
 import { data } from "../data.ts";
 import './details.css';
-import { format } from "https://deno.land/std@0.185.0/fmt/bytes.ts";
+import { format } from "std/fmt/bytes.ts";
 
 export const detailsView = Reactive(data, "meta", () => Grid(
     Card(

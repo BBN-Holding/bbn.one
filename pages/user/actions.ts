@@ -1,8 +1,8 @@
-import { assert } from "https://deno.land/std@0.185.0/testing/asserts.ts";
+import { assert } from "std/testing/asserts.ts";
 import { API } from "../manager/RESTSpec.ts";
 import { state } from "./state.ts";
 import { Redirect, forceRefreshToken } from "../manager/helper.ts";
-import { delay } from "https://deno.land/std@0.185.0/async/delay.ts";
+import { delay } from "std/async/delay.ts";
 
 export async function loginUser() {
     try {

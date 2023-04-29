@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-unused-vars
-import { assert } from "https://deno.land/std@0.185.0/testing/asserts.ts";
+import { assert } from "std/testing/asserts.ts";
 import { Drop, DropType, Payout } from "../../spec/music.ts";
 import { ProfileData } from "./helper.ts";
 

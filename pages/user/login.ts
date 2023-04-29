@@ -3,7 +3,7 @@ import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import { discordLogo, heroImage, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { assert } from "https://deno.land/std@0.185.0/testing/asserts.ts";
+import { assert } from "std/testing/asserts.ts";
 import { API } from "../manager/RESTSpec.ts";
 import { Redirect } from "../manager/helper.ts";
 import { state } from "./state.ts";

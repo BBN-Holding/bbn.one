@@ -1,6 +1,7 @@
 {
     "imports": {
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/4104499/"
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/90e64cc/",
+        "std/": "https://deno.land/std@0.185.0/"
     },
     "compilerOptions": {
         "lib": [

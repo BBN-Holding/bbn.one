@@ -1,13 +1,13 @@
 import { Component, Custom, PlainText, ReCache, Image, Box } from "webgen/mod.ts";
 import { ProfileData, stringToColour } from "../manager/helper.ts";
 
-function ProfilePicture(component: Component, name: string) {
+export function ProfilePicture(component: Component, name: string) {
     const ele = component.draw();
     ele.style.backgroundColor = stringToColour(name);
     return Custom(ele).addClass("profile-picture");
 }
 
-function getNameInital(raw: string) {
+export function getNameInital(raw: string) {
     const name = raw.trim();
     if (name.includes(", "))
         return name.split(", ").map(x => x.at(0)?.toUpperCase()).join("");

@@ -2,7 +2,7 @@ import { State, UploadFilesDialog } from "webgen/mod.ts";
 import { API } from "../manager/RESTSpec.ts";
 import { state } from "./state.ts";
 import { StreamingUploadHandler } from "../manager/upload.ts";
-import { delay } from "https://deno.land/std@0.185.0/async/delay.ts";
+import { delay } from "std/async/delay.ts";
 
 export async function refreshState() {
     state.reviews = State(await API.music(API.getToken()).reviews.get());
