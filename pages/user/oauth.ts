@@ -8,13 +8,22 @@ import { handleStateChange } from "./actions.ts";
 
 Redirect();
 
+const para = new URLSearchParams(location.search);
+const params = {
+    state: para.get("state"),
+    type: para.get("type"),
+    code: para.get("code")
+};
+
+
 WebGen();
 
 View(() => Vertical(
     ...DynaNavigation("Home"),
     Button("Accept and Redirect").onClick(() => {
-        const url = new URL("https://p.bbn.one/redirect")
+        const url = new URL("https://p.bbn.one/")
         url.searchParams.set("code", API.getToken());
+        url.searchParams.set("state", params.state!);
         window.location.href = url.toString();
     })
 ))
