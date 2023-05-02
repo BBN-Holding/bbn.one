@@ -22,6 +22,7 @@ serve({
         "signin-google": "./pages/manager/misc/redirect.ts",
         "signin-discord": "./pages/manager/misc/redirect.ts",
         "signin-zendesk": "./pages/manager/misc/zendesk.ts",
+        "oauth": "./pages/user/oauth.ts",
 
         "music": "./pages/music/main.ts",
         "music/new-drop": "./pages/manager/newDrop.ts",

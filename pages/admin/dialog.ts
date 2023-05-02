@@ -121,14 +121,14 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                                 .setFont(0.8),
                         ),
                         // TODO: Replace with a PickerInput (when api is available)
-                        DropDownInput("Review", reviewActions)
+                        DropDownInput("Select Review Action", reviewActions)
                             .setRender((data) => reviewActionsText[ reviewActions.indexOf(data) ])
                             .sync(data, "review")
                     )
                         .setGap("1rem")
                         .setMargin("0 0 1rem")
                 ]).setValidator((val) => val.object({
-                    review: val.any().refine(x => reviewActions.includes(x), "Missing Review Feedback.")
+                    review: val.any().refine(x => reviewActions.includes(x), "Missing Review Action.")
                 })),
                 Page({
                     respones: [] as ReviewResponse[],

@@ -4,12 +4,31 @@ const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
 export const userString = zod.string().min(1).refine(x => x.trim()).transform(x => x.trim());
 
 export enum DropType {
-    Published = 'PUBLISHED',
-    Publishing = 'PUBLISHING',
-    Private = 'PRIVATE',
+    Published = 'PUBLISHED', // Uploaded, Approved
+    Publishing = 'PUBLISHING', // Uploading
+    Private = 'PRIVATE', // Declined, can be resubmitted
     UnderReview = 'UNDER_REVIEW',
-    Unsubmitted = 'UNSUBMITTED',
-    ReviewDeclined = "REVIEW_DECLINED"
+    Unsubmitted = 'UNSUBMITTED', // Draft
+    ReviewDeclined = "REVIEW_DECLINED" // Rejected, cant be resubmitted
+    /*
+        1: Drafts - Not on Store
+            - Draft: Submit (No Fields locked, submitted => Under Review)
+            - Under Review (Drafts): Cancel (Reviewers can approve or decline with a reason, declined => Draft with Reason, approved => Publishing, Cancel => Draft)
+            - Publishing (Drafts): Take Down Request (Backend is uploading the files and waits for Batch Delivery to complete and sets type to Published, Take Down Request => Takedown Pending)
+        2: On Store
+            - Revision: Submit (Some fields are locked, Show Changes to Reviewer, submitted => Under Review)
+            - Under Review (Revisions): Cancel (Reviewers can approve or decline with a reason, declined => Draft with Reason, approved => Publishing, Cancel => Revision)
+            - Publishing (Revisions): Take Down Request (Backend is uploading the files and waits for Batch Delivery to complete and sets type to Published, Take Down Request => Takedown Pending)
+            - Published: Take Down Request, Edit (Take Down Request => Takedown Pending, Edit => Revision)
+        3: Takendowns
+            - Takedown Review: Cancel (Cancel => Published) (On Store Label)
+            - Takedown Pending: None (On Store Label)
+            - Takedowns: None
+        History:
+            When in Editing Mode, changes are saved to other object,
+                when approved or declined, the changes are pushed into history array,
+                when approved, the changes are applied to the main object
+    */
 }
 
 export enum DataHints {
