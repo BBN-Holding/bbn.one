@@ -13,7 +13,7 @@ WebGen();
 View(() => Vertical(
     ...DynaNavigation("Home"),
     Button("Accept and Redirect").onClick(() => {
-        const url = new URL("p.bbn.one/redirect")
+        const url = new URL("https://p.bbn.one/redirect")
         url.searchParams.set("code", API.getToken());
         window.location.href = url.toString();
     })
