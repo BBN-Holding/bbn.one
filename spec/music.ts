@@ -153,9 +153,21 @@ export const oauthapp = zod.object({
     icon: zod.string().url(),
 });
 
+export const file = zod.object({
+    _id: zod.string(),
+    length: zod.number(),
+    chunkSize: zod.number(),
+    uploadDate: zod.string(),
+    metadata: zod.object({
+        filename: zod.string(),
+        type: zod.string(),
+    })
+});
+
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Artist = zod.infer<typeof artist>;
 export type Song = zod.infer<typeof song>;
 export type Payout = zod.infer<typeof payout>;
 export type OAuthApp = zod.infer<typeof oauthapp>;
+export type File = zod.infer<typeof file>;

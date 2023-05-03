@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-unused-vars
 import { assert } from "std/testing/asserts.ts";
-import { Drop, DropType, Payout } from "../../spec/music.ts";
+import { Drop, DropType, OAuthApp, Payout, File } from "../../spec/music.ts";
 import { ProfileData } from "./helper.ts";
 
 export type ErrorObject = {
@@ -24,10 +24,10 @@ export const Permissions = [
     "/bbn/manage/payouts",
 ] as const;
 
-export type Permission = typeof Permissions[ number ];
+export type Permission = typeof Permissions[number];
 
 export const API = {
-    getToken: () => localStorage[ "access-token" ],
+    getToken: () => localStorage["access-token"],
     BASE_URL: localStorage.OVERRIDE_BASE_URL || (location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/"),
     // deno-lint-ignore no-explicit-any
     isError: (data: any): data is ErrorObject => typeof data === "object" && data.error,
@@ -185,6 +185,58 @@ export const API = {
             }
         }
     },
+    oauth: (token: string) => ({
+        get: async (clientid: string): Promise<OAuthApp> => {
+            const data = await fetch(`${API.BASE_URL}oauth/${clientid}`, {
+                headers: headers(token)
+            }).then(x => x.json());
+            return data;
+        },
+        list: async (): Promise<OAuthApp[]> => {
+            const data = await fetch(`${API.BASE_URL}oauth/`, {
+                headers: headers(token)
+            }).then(x => x.json());
+            return data;
+        },
+        post: async (name: string, redirect: string, icon: string): Promise<{id: string, secret: string}> => {
+            const data = await fetch(`${API.BASE_URL}oauth/`, {
+                method: "POST",
+                headers: headers(token),
+                body: JSON.stringify({ name, redirect, icon })
+            }).then(x => x.json());
+            return data;
+        },
+        icon: async (clientid: string) => {
+            const data = await fetch(`${API.BASE_URL}oauth/${clientid}/icon`, {
+                headers: headers(token)
+            }).then(x => x.blob());
+            return data;
+        }
+    }),
+    admin: (token: string) => ({
+        files: {
+            list: async (): Promise<File[]> => {
+                const data = await fetch(`${API.BASE_URL}admin/files`, {
+                    headers: headers(token)
+                }).then(x => x.json());
+                console.log(data);
+                return data;
+            },
+            download: async (id: string) => {
+                const data = await fetch(`${API.BASE_URL}admin/files/${id}`, {
+                    headers: headers(token)
+                }).then(x => x.blob());
+                return data;
+            },
+            delete: async (id: string) => {
+                const data = await fetch(`${API.BASE_URL}admin/files/${id}`, {
+                    method: "DELETE",
+                    headers: headers(token)
+                }).then(x => x.json());
+                return data;
+            }
+        }
+    }),
     payment: (token: string) => ({
         payouts: {
             get: async () => {
