@@ -145,8 +145,17 @@ export const payout = zod.object({
     }).array()
 });
 
+export const oauthapp = zod.object({
+    _id: zod.string(),
+    name: zod.string().min(3).max(32),
+    redirect: zod.string().url(),
+    secret: zod.string().min(32).max(64),
+    icon: zod.string().url(),
+});
+
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Artist = zod.infer<typeof artist>;
 export type Song = zod.infer<typeof song>;
 export type Payout = zod.infer<typeof payout>;
+export type OAuthApp = zod.infer<typeof oauthapp>;
