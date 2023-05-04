@@ -10,4 +10,4 @@ const { brand_id, locale_id, return_to, timestamp } = {
 
 const jwt = await API.user(API.getToken()).zendesk.post()
 
-location.href = `https://bbn6775.zendesk.com/access/jwt?jwt=${jwt}`;
+location.href = `https://bbn6775.zendesk.com/access/jwt?jwt=${jwt.jwt}}&return_to=${return_to}`;

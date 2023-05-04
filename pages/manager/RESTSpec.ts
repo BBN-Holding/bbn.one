@@ -24,10 +24,10 @@ export const Permissions = [
     "/bbn/manage/payouts",
 ] as const;
 
-export type Permission = typeof Permissions[number];
+export type Permission = typeof Permissions[ number ];
 
 export const API = {
-    getToken: () => localStorage["access-token"],
+    getToken: () => localStorage[ "access-token" ],
     BASE_URL: localStorage.OVERRIDE_BASE_URL || (location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/"),
     // deno-lint-ignore no-explicit-any
     isError: (data: any): data is ErrorObject => typeof data === "object" && data.error,
@@ -92,7 +92,7 @@ export const API = {
                 return await fetch(`${API.BASE_URL}user/zendesk`, {
                     method: "POST",
                     headers: headers(token)
-                }).then(x => x.json()) as { token: string; };
+                }).then(x => x.json()) as { jwt: string; };
             }
         },
     }),
@@ -198,7 +198,7 @@ export const API = {
             }).then(x => x.json());
             return data;
         },
-        post: async (name: string, redirect: string, icon: string): Promise<{id: string, secret: string}> => {
+        post: async (name: string, redirect: string, icon: string): Promise<{ id: string, secret: string }> => {
             const data = await fetch(`${API.BASE_URL}oauth/`, {
                 method: "POST",
                 headers: headers(token),

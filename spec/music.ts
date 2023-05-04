@@ -180,9 +180,9 @@ export const wallet = zod.object({
         counterParty: zod.string()
     }).array(),
     user: zod.string(),
-/*     providerdata: zod.object({
+    /*     providerdata: zod.object({
 
-    }) */
+        }) */
 });
 
 export type Drop = zod.infer<typeof drop>;
