@@ -169,15 +169,14 @@ enum PaymentType {
     "UNRESTRAINT" // can be withdrawn
 }
 
-export const paymentmethod = zod.object({
+export const wallet = zod.object({
     _id: zod.string(),
     name: zod.string(),
     transactions: zod.object({
-        amount: zod.number(),
+        amount: zod.number(), // positive for incoming, negative for outgoing
         timestamp: zod.string(),
         type: zod.nativeEnum(PaymentType),
         description: zod.string(),
-        source: zod.string(),
         counterParty: zod.string()
     }).array(),
     user: zod.string(),
@@ -193,4 +192,4 @@ export type Song = zod.infer<typeof song>;
 export type Payout = zod.infer<typeof payout>;
 export type OAuthApp = zod.infer<typeof oauthapp>;
 export type File = zod.infer<typeof file>;
-export type PaymentMethod = zod.infer<typeof paymentmethod>;
+export type Wallet = zod.infer<typeof wallet>;
