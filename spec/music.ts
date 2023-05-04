@@ -180,6 +180,7 @@ export const paymentmethod = zod.object({
         source: zod.string(),
         counterParty: zod.string()
     }).array(),
+    user: zod.string(),
 /*     providerdata: zod.object({
 
     }) */
