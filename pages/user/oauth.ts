@@ -14,10 +14,13 @@ await RegisterAuthRefresh();
 
 const para = new URLSearchParams(location.search);
 const params = {
-    state: para.get("state"),
     clientId: para.get("client_id"),
+    scope: para.get("scope"),
+    state: para.get("state"),
+    redirectUri: para.get("redirect_uri"),
+    //TODO: USE PROMPT
+    prompt: para.get("prompt"),
 };
-
 
 WebGen();
 
@@ -73,7 +76,8 @@ const list = Reactive(state, "loaded", () => {
                 .setJustify("center")
                 .setMargin("1rem 0 0")
                 .onClick(() => {
-                    const url = new URL("https://p.bbn.one/")
+                    //TODO: VALIDATE FIRST
+                    const url = new URL(params.redirectUri ? params.redirectUri : "https://bbn.one")
                     url.searchParams.set("code", API.getToken());
                     url.searchParams.set("state", params.state!);
                     window.location.href = url.toString();
