@@ -1,4 +1,8 @@
 import { API } from "../RESTSpec.ts";
+import { Redirect, RegisterAuthRefresh } from "../helper.ts";
+
+Redirect();
+await RegisterAuthRefresh();
 
 const para = new URLSearchParams(location.search);
 const { brand_id, locale_id, return_to, timestamp } = {
