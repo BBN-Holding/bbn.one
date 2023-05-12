@@ -217,8 +217,17 @@ export const pteroServer = zod.object({
     allocation: zod.number().optional()
 });
 
+export enum ServerTypes {
+    Vanilla = "/minecraft/vanilla/",
+    Default = "/minecraft/default/",
+    FabricQuilt = "/minecraft/modded/fabric+quilt/",
+    Forge = "/minecraft/modded/forge/",
+    Bedrock = "/minecraft/bedrock/"
+}
+
 export const serverCreate = zod.object({
     name: zod.string().min(3),
+    type: zod.nativeEnum(ServerTypes),
     location: zod.enum([ "cluster1" ]),
     limits: limits,
 });
