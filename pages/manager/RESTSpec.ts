@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-unused-vars
 import { assert } from "std/testing/asserts.ts";
-import { Drop, DropType, OAuthApp, Payout, File } from "../../spec/music.ts";
+import { Drop, DropType, OAuthApp, Payout, File, Server, PteroServer, PowerState, ServerCreate } from "../../spec/music.ts";
 import { ProfileData } from "./helper.ts";
 
 export type ErrorObject = {
@@ -198,7 +198,7 @@ export const API = {
             }).then(x => x.json());
             return data;
         },
-        post: async (name: string, redirect: string, icon: string): Promise<{ id: string, secret: string }> => {
+        post: async (name: string, redirect: string, icon: string): Promise<{ id: string, secret: string; }> => {
             const data = await fetch(`${API.BASE_URL}oauth/`, {
                 method: "POST",
                 headers: headers(token),
@@ -254,6 +254,42 @@ export const API = {
                 }
             })
         },
+    }),
+    hosting: (token: string) => ({
+        servers: (): Promise<Server[]> => {
+            return fetch(`${API.BASE_URL}hosting/servers`, {
+                headers: headers(token)
+            }).then(x => x.json());
+        },
+        create: (data: ServerCreate) => {
+            return fetch(`${API.BASE_URL}hosting/`, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: headers(token)
+            }).then(x => x.json());
+        },
+        serverId: (id: string) => ({
+            get: (): Promise<PteroServer> => {
+                return fetch(`${API.BASE_URL}hosting/${id}`, {
+                    headers: headers(token)
+                }).then(x => x.json());
+            },
+            power: (data: PowerState) => {
+                return fetch(`${API.BASE_URL}hosting/${id}/power`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        signal: data
+                    }),
+                    headers: headers(token)
+                }).then(x => x.json());
+            },
+            delete: () => {
+                return fetch(`${API.BASE_URL}hosting/${id}`, {
+                    method: 'DELETE',
+                    headers: headers(token)
+                }).then(x => x.json());
+            }
+        }),
     }),
     music: (token: string) => ({
         reviews: {

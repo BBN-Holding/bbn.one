@@ -1,57 +1,33 @@
 import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
-import { Redirect, RegisterAuthRefresh, activeUser } from "../manager/helper.ts";
-import { ActionBar } from "../manager/misc/actionbar.ts";
-import { detailsView } from "./features/details.ts";
-import { storeView } from "./features/store.ts";
-import { serverView } from "./features/server.ts";
+import { Redirect, RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/hosting.css';
+import { changeThemeColor } from "../manager/misc/common.ts";
+import { hostingMenu } from "./views/menu.ts";
+import { state } from "./data.ts";
+import { refreshState } from "./loading.ts";
 
-WebGen({
-    icon: new MaterialIcons()
-});
 Redirect();
 await RegisterAuthRefresh();
 
-type ViewState = {
-    type: "Servers" | "Details" | "Store";
-};
+if (!permCheck(
+    "/hmsys/user/manage",
+    "/bbn/manage"
+)) {
+    location.href = "/";
+}
 
-const view = View<ViewState>(({ state, update }) => Vertical(
-    ActionBar(`Hi ${activeUser.username}! 👋`, [
-        {
-            title: `Servers`,
-            selected: state.type == "Servers",
-            onclick: () => update({ type: "Servers" })
-        },
-        {
-            title: `Details`,
-            selected: state.type == "Details",
-            onclick: () => update({ type: "Details" })
-        },
-        {
-            title: `Store`,
-            selected: state.type == "Store",
-            onclick: () => update({ type: "Store" })
-        }
-    ], {
-        title: "Start new Server",
-        onclick: () => {
-            location.href += "/create";
-        }
-    }),
-    {
-        Details: detailsView,
-        Store: storeView,
-        Servers: serverView
-    }[ state.type ?? "Servers" ]
-).setGap("20px"))
-    .change(({ update }) => {
-        update({ type: "Servers" });
-    });
 
-View(() => Vertical(
-    ...DynaNavigation("Hosting"),
-    view.asComponent()
-)).appendOn(document.body);
+WebGen({
+    icon: new MaterialIcons(),
+    events: {
+        themeChanged: changeThemeColor()
+    }
+});
+
+View(() => Vertical(...DynaNavigation("Admin"), hostingMenu())).appendOn(document.body);
+
+renewAccessTokenIfNeeded()
+    .then(() => refreshState())
+    .then(() => state.loaded = true);

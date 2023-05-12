@@ -1,11 +1,11 @@
 import { Box, Card, CenterV, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, Spacer, Vertical } from "webgen/mod.ts";
-import { data } from "../data.ts";
+import { state } from "../data.ts";
 import './server.css';
 
 new MaterialIcons();
 
-export const serverView = Reactive(data, "servers", () => Grid(
-    ...data.servers.map(server => Card(Horizontal(
+export const serverView = Reactive(state, "servers", () => Grid(
+    ...state.servers.map(server => Card(Horizontal(
         Vertical(
             PlainText(server.name)
                 .setFont(36 / 16, 700)

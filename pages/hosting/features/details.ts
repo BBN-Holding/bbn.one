@@ -1,12 +1,12 @@
 import { Card, Grid, PlainText, Reactive } from "webgen/mod.ts";
-import { data } from "../data.ts";
+import { state } from "../data.ts";
 import './details.css';
 import { format } from "std/fmt/bytes.ts";
 
-export const detailsView = Reactive(data, "meta", () => Grid(
+export const detailsView = Reactive(state, "meta", () => Grid(
     Card(
         Grid(
-            PlainText(data.meta.coins.toLocaleString())
+            PlainText(state.meta.coins.toLocaleString())
                 .setFont(2, 700),
             PlainText("Coins")
                 .setFont(1, 700)
@@ -17,7 +17,7 @@ export const detailsView = Reactive(data, "meta", () => Grid(
 
     Card(
         Grid(
-            PlainText(format(data.meta.ram[ 0 ]) + " / " + format(data.meta.ram[ 1 ]))
+            PlainText(format(state.meta.ram[ 0 ]) + " / " + format(state.meta.ram[ 1 ]))
                 .setFont(2, 700),
             PlainText("Memory")
                 .setFont(1, 700)
@@ -28,7 +28,7 @@ export const detailsView = Reactive(data, "meta", () => Grid(
 
     Card(
         Grid(
-            PlainText(format(data.meta.disk[ 0 ]) + " / " + format(data.meta.disk[ 1 ]))
+            PlainText(format(state.meta.disk[ 0 ]) + " / " + format(state.meta.disk[ 1 ]))
                 .setFont(2, 700),
             PlainText("Disk")
                 .setFont(1, 700)
@@ -39,7 +39,7 @@ export const detailsView = Reactive(data, "meta", () => Grid(
 
     Card(
         Grid(
-            PlainText(data.meta.dbs[ 0 ] + " / " + data.meta.dbs[ 1 ])
+            PlainText(state.meta.dbs[ 0 ] + " / " + state.meta.dbs[ 1 ])
                 .setFont(2, 700),
             PlainText("Databases")
                 .setFont(1, 700)
@@ -50,7 +50,7 @@ export const detailsView = Reactive(data, "meta", () => Grid(
 
     Card(
         Grid(
-            PlainText(data.meta.slots[ 0 ] + " / " + data.meta.slots[ 1 ])
+            PlainText(state.meta.slots[ 0 ] + " / " + state.meta.slots[ 1 ])
                 .setFont(2, 700),
             PlainText("Servers")
                 .setFont(1, 700)
@@ -61,7 +61,7 @@ export const detailsView = Reactive(data, "meta", () => Grid(
 
     Card(
         Grid(
-            PlainText(data.meta.ports[ 0 ] + " / " + data.meta.ports[ 1 ])
+            PlainText(state.meta.ports[ 0 ] + " / " + state.meta.ports[ 1 ])
                 .setFont(2, 700),
             PlainText("Endpoints (Ports)")
                 .setFont(1, 700)

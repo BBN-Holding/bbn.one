@@ -1,19 +1,18 @@
 import { State } from "webgen/mod.ts";
+import { Limits, Server } from "../../spec/music.ts";
 
-export const data = State({
-    servers: <{
-        id: string;
-        name: string;
-        server: string,
-        location: string;
-    }[]>[
-            {
-                id: "1",
-                name: "Skywars",
-                server: "Minecraft - v1.19.3",
-                location: "🇩🇪 Frankfurt"
-            }
-        ],
+// {
+//     id: string;
+//     name: string;
+//     server: string,
+//     location: string;
+// }[]
+
+const GB = 1000000000;
+
+export const state = State({
+    loaded: false,
+    servers: <Server[]>[],
     meta: {
         coins: 13123122,
         ram: [ 10240000, 20000048 ],
@@ -21,6 +20,13 @@ export const data = State({
         slots: [ 1, 2 ],
         ports: [ 1, 1 ],
         dbs: [ 0, 1 ],
+        limits: <Limits>{
+            memory: 2 * GB,
+            swap: 1 * GB,
+            disk: 2 * GB,
+            io: 100,
+            cpu: 100,
+        },
         plan: "FREE"
     }
 });

@@ -3,10 +3,14 @@ import { Redirect, RegisterAuthRefresh } from "../manager/helper.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/hosting.css';
-import { delay } from "std/async/delay.ts";
 import { Menu } from "../shared/Menu.ts";
-import { data } from "./data.ts";
+import { state } from "./data.ts";
 import { format } from "std/fmt/bytes.ts";
+import { t } from "https://raw.githubusercontent.com/justin-schroeder/arrow-js/abcdb75/src/index.ts";
+import { t } from "https://raw.githubusercontent.com/justin-schroeder/arrow-js/abcdb75/src/index.ts";
+import { ZodAny } from "https://deno.land/x/zod@v3.21.4/types.ts";
+import { ServerCreate, limits, serverCreate } from "../../spec/music.ts";
+import { API } from "../manager/RESTSpec.ts";
 
 WebGen({
     icon: new MaterialIcons()
@@ -78,7 +82,7 @@ const SliderInput = (label: string) => new class extends InputForm<number> {
 };
 
 
-const creation = View<{ service: string; }>(({ state }) => {
+const creation = View<{ service: string; }>(({ state: { service } }) => {
     return Vertical(
         PlainText("Final Steps!")
             .addClass("same-height")
@@ -91,42 +95,54 @@ const creation = View<{ service: string; }>(({ state }) => {
 
         Vertical(
             Wizard({
-                submitAction: () => { },
+                submitAction: async ([ { data: { data } } ]) => {
+                    try {
+                        await API.hosting(API.getToken()).create(data);
+                    } catch (error) {
+                        alert(JSON.stringify(error));
+                    }
+                },
                 buttonAlignment: "bottom",
                 buttonArrangement: "flex-end"
             }, () => [
-                Page({
-
-                }, () => [
+                Page(<ServerCreate>{
+                    name: "",
+                    type: service,
+                    location: "cluster1",
+                    limits: state.meta.limits
+                }, (data) => [
                     Box(
                         PlainText("About your Server")
-                            .setFont(1, 700),
+                            .setFont(.8, 700),
                         Grid(
-                            TextInput("text", "Friendly Name"),
+                            TextInput("text", "Friendly Name")
+                                .sync(data, "name"),
                             DropDownInput("Location", [
-                                "Cluster1"
+                                "cluster1"
                             ]).setRender(() => "🇩🇪 Falkenstein (Free)")
+                                .sync(data, "location")
                         )
                             .setDynamicColumns(10)
-                            .setMargin(".5rem 0 1.5rem")
+                            .setMargin(".5rem 0 2rem")
                             .setGap("var(--gap)"),
 
                         PlainText("Setup Ressources")
-                            .setFont(1, 700),
+                            .setFont(.8, 700),
                         Grid(
                             SliderInput("Memory (RAM)")
-                                .setMax(data.meta.ram[ 0 ])
+                                .setMax(state.meta.limits.memory)
+                                .sync(data.limits, "memory")
                                 .setRender((val) => format(val)),
                             SliderInput("Storage (Disk)")
-                                .setMax(data.meta.disk[ 0 ])
+                                .setMax(state.meta.limits.disk)
+                                .sync(data.limits, "disk")
                                 .setRender((val) => format(val)),
-
                         )
                             .setDynamicColumns(10)
                             .setMargin(".5rem 0 1.5rem")
                             .setGap("var(--gap)")
                     ).addClass("wizard-colors")
-                ])
+                ]).setValidator(() => serverCreate)
             ])
         )
             .setGap("0.5rem")
@@ -158,10 +174,8 @@ const menu = Menu({
                     title: "Vanilla",
                     id: "vanilla/",
                     subtitle: "Playing on Snapshots? Play on the Vanilla Server.",
-                    action: async () => {
-                        await delay(1000);
-                    },
-                    custom: (path) => PlainText("Welcome to Wonderland! Here is your path " + path).addClass("limited-width")
+                    action: (clickPath) => { creation.change(({ update }) => update({ service: clickPath })); },
+                    custom: () => Creator
                 },
                 {
                     title: "Modded",
@@ -171,19 +185,23 @@ const menu = Menu({
                         {
                             title: "Fabric/Quilt",
                             id: "fabric+quilt/",
+                            action: (clickPath) => { creation.change(({ update }) => update({ service: clickPath })); },
+                            custom: () => Creator
                         },
                         {
                             title: "Forge",
                             id: "forge/",
-                            custom: () => PlainText("Hello World")
-                                .addClass("limited-width")
+                            action: (clickPath) => { creation.change(({ update }) => update({ service: clickPath })); },
+                            custom: () => Creator
                         }
                     ]
                 },
                 {
                     title: "Bedrock",
                     id: "bedrock/",
-                    subtitle: "Play Modded or Vanilla."
+                    subtitle: "Play Modded or Vanilla.",
+                    action: (clickPath) => { creation.change(({ update }) => update({ service: clickPath })); },
+                    custom: () => Creator
                 }
             ]
         },
