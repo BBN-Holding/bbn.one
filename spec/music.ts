@@ -185,6 +185,46 @@ export const wallet = zod.object({
         }) */
 });
 
+const server = zod.object({
+    _id: zod.string(),
+    installed: zod.boolean(),
+    pteroId: zod.number(),
+    identifier: zod.string(),
+    user: zod.string(),
+    name: zod.string(),
+    egg: zod.number(),
+    node: zod.number(),
+});
+
+export const limits = zod.object({
+    memory: zod.number(),
+    swap: zod.number(),
+    disk: zod.number(),
+    io: zod.number(),
+    cpu: zod.number()
+});
+
+export const pteroServer = zod.object({
+    name: zod.string(),
+    suspended: zod.boolean(),
+    egg: zod.number(),
+    container: zod.object({
+        image: zod.string(),
+        startup_command: zod.string(),
+        environment: zod.record(zod.string(), zod.union([ zod.string(), zod.number(), zod.boolean() ])),
+    }),
+    limits: limits,
+    allocation: zod.number().optional()
+});
+
+export const serverCreate = zod.object({
+    name: zod.string().min(3),
+    location: zod.enum([ "cluster1" ]),
+    limits: limits,
+});
+
+export const powerState = zod.enum([ "start", "stop", "restart", "kill" ]);
+
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Artist = zod.infer<typeof artist>;
@@ -193,3 +233,8 @@ export type Payout = zod.infer<typeof payout>;
 export type OAuthApp = zod.infer<typeof oauthapp>;
 export type File = zod.infer<typeof file>;
 export type Wallet = zod.infer<typeof wallet>;
+export type Server = zod.infer<typeof server>;
+export type PteroServer = zod.infer<typeof pteroServer>;
+export type PowerState = zod.infer<typeof powerState>;
+export type ServerCreate = zod.infer<typeof serverCreate>;
+export type Limits = zod.infer<typeof limits>;
