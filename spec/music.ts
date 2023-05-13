@@ -185,17 +185,6 @@ export const wallet = zod.object({
         }) */
 });
 
-const server = zod.object({
-    _id: zod.string(),
-    installed: zod.boolean(),
-    pteroId: zod.number(),
-    identifier: zod.string(),
-    user: zod.string(),
-    name: zod.string(),
-    egg: zod.number(),
-    node: zod.number(),
-});
-
 export const limits = zod.object({
     memory: zod.number(),
     swap: zod.number(),
@@ -214,13 +203,19 @@ export enum ServerTypes {
 
 export const powerState = zod.enum([ "start", "stop", "restart", "kill" ]);
 
-export const pteroServer = zod.object({
+export const server = zod.object({
+    _id: zod.string(),
     name: zod.string(),
     type: zod.nativeEnum(ServerTypes),
     location: zod.enum([ "cluster1" ]),
     limits: limits,
     state: powerState,
+    user: zod.string().optional(),
+});
+
+export const pteroServer = server.extend({
     ptero: zod.object({
+        pteroId: zod.number(),
         allocation: zod.number().optional(),
         suspended: zod.boolean(),
         container: zod.object({
@@ -228,7 +223,10 @@ export const pteroServer = zod.object({
             startup_command: zod.string(),
             environment: zod.record(zod.string(), zod.union([ zod.string(), zod.number(), zod.boolean() ])),
         }),
-        egg: zod.number()
+        egg: zod.number(),
+        installed: zod.boolean(),
+        identifier: zod.string(),
+        node: zod.number(),
     })
 });
 
