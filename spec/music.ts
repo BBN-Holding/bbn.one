@@ -212,11 +212,14 @@ export enum ServerTypes {
     Bedrock = "/minecraft/bedrock/"
 }
 
+export const powerState = zod.enum([ "start", "stop", "restart", "kill" ]);
+
 export const pteroServer = zod.object({
     name: zod.string(),
     type: zod.nativeEnum(ServerTypes),
     location: zod.enum([ "cluster1" ]),
     limits: limits,
+    state: powerState,
     ptero: zod.object({
         allocation: zod.number().optional(),
         suspended: zod.boolean(),
@@ -235,8 +238,6 @@ export const serverCreate = zod.object({
     location: zod.enum([ "cluster1" ]),
     limits: limits,
 });
-
-export const powerState = zod.enum([ "start", "stop", "restart", "kill" ]);
 
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
