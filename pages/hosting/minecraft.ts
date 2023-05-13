@@ -26,7 +26,7 @@ WebGen({
     }
 });
 
-View(() => Vertical(...DynaNavigation("Admin"), hostingMenu())).appendOn(document.body);
+View(() => Vertical(...DynaNavigation("Hosting"), hostingMenu())).appendOn(document.body);
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())

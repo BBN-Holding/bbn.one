@@ -204,19 +204,6 @@ export const limits = zod.object({
     cpu: zod.number()
 });
 
-export const pteroServer = zod.object({
-    name: zod.string(),
-    suspended: zod.boolean(),
-    egg: zod.number(),
-    container: zod.object({
-        image: zod.string(),
-        startup_command: zod.string(),
-        environment: zod.record(zod.string(), zod.union([ zod.string(), zod.number(), zod.boolean() ])),
-    }),
-    limits: limits,
-    allocation: zod.number().optional()
-});
-
 export enum ServerTypes {
     Vanilla = "/minecraft/vanilla/",
     Default = "/minecraft/default/",
@@ -224,6 +211,23 @@ export enum ServerTypes {
     Forge = "/minecraft/modded/forge/",
     Bedrock = "/minecraft/bedrock/"
 }
+
+export const pteroServer = zod.object({
+    name: zod.string(),
+    type: zod.nativeEnum(ServerTypes),
+    location: zod.enum([ "cluster1" ]),
+    limits: limits,
+    ptero: zod.object({
+        allocation: zod.number().optional(),
+        suspended: zod.boolean(),
+        container: zod.object({
+            image: zod.string(),
+            startup_command: zod.string(),
+            environment: zod.record(zod.string(), zod.union([ zod.string(), zod.number(), zod.boolean() ])),
+        }),
+        egg: zod.number()
+    })
+});
 
 export const serverCreate = zod.object({
     name: zod.string().min(3),
