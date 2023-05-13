@@ -8,7 +8,7 @@ import { Limits, Server } from "../../spec/music.ts";
 //     location: string;
 // }[]
 
-const GB = 1000000000;
+const GB = 1000000;
 
 export const state = State({
     loaded: false,

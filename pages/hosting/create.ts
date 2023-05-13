@@ -6,10 +6,7 @@ import '../../assets/css/hosting.css';
 import { Menu } from "../shared/Menu.ts";
 import { state } from "./data.ts";
 import { format } from "std/fmt/bytes.ts";
-import { t } from "https://raw.githubusercontent.com/justin-schroeder/arrow-js/abcdb75/src/index.ts";
-import { t } from "https://raw.githubusercontent.com/justin-schroeder/arrow-js/abcdb75/src/index.ts";
-import { ZodAny } from "https://deno.land/x/zod@v3.21.4/types.ts";
-import { ServerCreate, limits, serverCreate } from "../../spec/music.ts";
+import { ServerCreate, serverCreate } from "../../spec/music.ts";
 import { API } from "../manager/RESTSpec.ts";
 
 WebGen({
@@ -132,11 +129,11 @@ const creation = View<{ service: string; }>(({ state: { service } }) => {
                             SliderInput("Memory (RAM)")
                                 .setMax(state.meta.limits.memory)
                                 .sync(data.limits, "memory")
-                                .setRender((val) => format(val)),
+                                .setRender((val) => format(val * 1000)),
                             SliderInput("Storage (Disk)")
                                 .setMax(state.meta.limits.disk)
                                 .sync(data.limits, "disk")
-                                .setRender((val) => format(val)),
+                                .setRender((val) => format(val * 1000)),
                         )
                             .setDynamicColumns(10)
                             .setMargin(".5rem 0 1.5rem")
