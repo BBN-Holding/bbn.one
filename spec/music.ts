@@ -165,8 +165,8 @@ export const file = zod.object({
 });
 
 export enum PaymentType {
-    "RESTRAINED", // cannot be withdrawn (when adding funds to account)
-    "UNRESTRAINED" // can be withdrawn
+    Restrained = "RESTRAINED", // cannot be withdrawn (when adding funds to account)
+    Unrestrained = "UNRESTRAINED" // can be withdrawn
 }
 
 export const wallet = zod.object({
