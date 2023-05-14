@@ -164,7 +164,7 @@ export const file = zod.object({
     })
 });
 
-enum PaymentType {
+export enum PaymentType {
     "RESTRAINED", // cannot be withdrawn (when adding funds to account)
     "UNRESTRAINED" // can be withdrawn
 }
