@@ -63,7 +63,8 @@ export const activeUser = State({
     email: <string | undefined>"--",
     username: <string | undefined>"--",
     avatar: <string | undefined>undefined,
-    permission: <Permission[]>[]
+    permission: <Permission[]>[],
+    id: <string | undefined>undefined
 });
 
 export function permCheck(...per: Permission[]) {
@@ -77,6 +78,7 @@ export function updateActiveUserData() {
         activeUser.username = user.profile.username;
         activeUser.email = user.profile.email;
         activeUser.avatar = user.profile.avatar;
+        activeUser.id = user._id;
 
         // Convert id based system to new hmsys permission system.
         activeUser.permission = State([

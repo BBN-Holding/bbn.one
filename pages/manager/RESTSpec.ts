@@ -235,7 +235,31 @@ export const API = {
                 }).then(x => x.json());
                 return data;
             }
-        }
+        },
+        reviews: {
+            get: async () => {
+                const data = await fetch(`${API.BASE_URL}admin/reviews`, {
+                    headers: headers(token)
+                }).then(x => x.json());
+                return data.drops as Drop[];
+            },
+        },
+        payouts: {
+            get: async () => {
+                const data = await fetch(`${API.BASE_URL}admin/payouts`, {
+                    headers: headers(token)
+                }).then(x => x.json());
+                return data.payouts as Payout[];
+            },
+            id: (id: string) => ({
+                get: async () => {
+                    const data = await fetch(`${API.BASE_URL}admin/payouts/${id}`, {
+                        headers: headers(token)
+                    }).then(x => x.json());
+                    return data as Payout;
+                }
+            })
+        },
     }),
     payment: (token: string) => ({
         payouts: {
@@ -292,14 +316,6 @@ export const API = {
         }),
     }),
     music: (token: string) => ({
-        reviews: {
-            get: async () => {
-                const data = await fetch(`${API.BASE_URL}music/reviews`, {
-                    headers: headers(token)
-                }).then(x => x.json());
-                return data.drops as Drop[];
-            },
-        },
         list: {
             get: async () => {
                 const data = await fetch(`${API.BASE_URL}music/list`, {

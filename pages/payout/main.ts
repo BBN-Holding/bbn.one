@@ -112,11 +112,11 @@ renewAccessTokenIfNeeded()
     .then(() => state.loaded = true);
 
 async function refreshState() {
-    state.payout = await API.payment(API.getToken()).payouts.id(data.id).get();
+    state.payout = permCheck("/hmsys/user/manage", "/bbn/manage") ? await API.admin(API.getToken()).payouts.id(data.id).get() : await API.payment(API.getToken()).payouts.id(data.id).get();
     if (data.userid) {
         state.payout.entries = state.payout.entries.filter(entry => entry.user === data.userid);
     }
-    state.music = permCheck("/hmsys/user/manage", "/bbn/manage") ? await API.music(API.getToken()).reviews.get() : await API.music(API.getToken()).list.get();
+    state.music = permCheck("/hmsys/user/manage", "/bbn/manage") ? await API.admin(API.getToken()).reviews.get() : await API.music(API.getToken()).list.get();
     state.loaded = true;
 }
 

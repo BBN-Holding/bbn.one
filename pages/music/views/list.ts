@@ -2,6 +2,8 @@ import { CenterV, Component, Entry, MediaQuery, PlainText, Vertical, css } from 
 import { Drop, DropType, Payout } from "../../../spec/music.ts";
 import { sortBy } from "std/collections/sort_by.ts";
 import { DropEntry } from "./entry.ts";
+import { API } from "../../manager/RESTSpec.ts";
+import { activeUser, permCheck } from "../../manager/helper.ts";
 
 document.adoptedStyleSheets.push(css`
     .image-square {
@@ -50,7 +52,7 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
     ];
 }
 
-export function listPayouts(payouts: Payout[]) {
+export function listPayouts(payouts: Payout[], admin = false) {
     return payouts && payouts.length > 0 ? [
         PlainText("Payouts")
             .addClass("list-title")
@@ -60,7 +62,7 @@ export function listPayouts(payouts: Payout[]) {
                 title: x.period,
                 subtitle: x.moneythisperiod,
             }).onClick(() => {
-                location.href = `/music/payout?id=${x._id}`;
+                location.href = `/music/payout?id=${x._id}${(!admin && permCheck("/hmsys/user/manage", "/bbn/manage")) ? `&userid=${activeUser.id}` : ""}`;
             }).addClass("limited-width")
         )).setGap("1rem"),
     ] : [

@@ -65,7 +65,7 @@ export const adminMenu = () => Reactive(state, "loaded", () => Menu({
                 }
             ],
             custom: () => Reactive(state, "payouts", () =>
-                Vertical(listPayouts(state.payouts ?? []))
+                Vertical(listPayouts(state.payouts ?? [], true))
                     .setGap("0.5rem")
             )
         },

@@ -5,9 +5,9 @@ import { StreamingUploadHandler } from "../manager/upload.ts";
 import { delay } from "std/async/delay.ts";
 
 export async function refreshState() {
-    state.reviews = State(await API.music(API.getToken()).reviews.get());
+    state.reviews = State(await API.admin(API.getToken()).reviews.get());
     state.users = State(await API.user(API.getToken()).list.get());
-    state.payouts = State(await API.payment(API.getToken()).payouts.get());
+    state.payouts = State(await API.admin(API.getToken()).payouts.get());
     state.oauth = State(await API.oauth(API.getToken()).list());
     state.files = State(await API.admin(API.getToken()).files.list());
 }
