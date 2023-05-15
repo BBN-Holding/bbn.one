@@ -36,7 +36,7 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                             data.profilePicture = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage: 0 };
                             data.loading = true;
                             setTimeout(() => {
-                                StreamingUploadHandler(`user/set-me/avatar`, {
+                                StreamingUploadHandler(`user/set-me/avatar/upload`, {
                                     failure: () => {
                                         data.loading = false;
                                         data.profilePicture = activeUser.avatar;
