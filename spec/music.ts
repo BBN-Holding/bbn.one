@@ -150,7 +150,7 @@ export const oauthapp = zod.object({
     name: zod.string().min(3).max(32),
     redirect: zod.string().url(),
     secret: zod.string().min(32).max(64),
-    icon: zod.string().url(),
+    icon: zod.string()
 });
 
 export const file = zod.object({
