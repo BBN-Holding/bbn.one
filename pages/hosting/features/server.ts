@@ -1,6 +1,7 @@
 import { Box, Card, CenterV, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, Spacer, Vertical } from "webgen/mod.ts";
 import { state } from "../data.ts";
 import './server.css';
+import { API } from "../../manager/RESTSpec.ts";
 
 new MaterialIcons();
 
@@ -16,7 +17,10 @@ export const serverView = Reactive(state, "servers", () => Grid(
         ).setGap("17px"),
         Spacer(),
         CenterV(Horizontal(
-            IconButton("dashboard", "dashboard"),
+            IconButton("dashboard", "dashboard")
+                .onClick(async () => {
+                    alert(JSON.stringify(await API.hosting(API.getToken()).serverId(server._id).get()));
+                }),
             IconButton(CommonIconType.Edit, "edit"),
             IconButton(CommonIconType.Delete, "delete")
                 .setColor(Color.Critical)
@@ -27,15 +31,15 @@ export const serverView = Reactive(state, "servers", () => Grid(
 
     )).setPadding("1.6rem").addClass("list-entry", "limited-width")
     )
-));
+).setGap("var(--gap)"));
 
 function deleteServer(serverId: string) {
     Dialog(() => Box(PlainText("Deleting this Server, will result in data loss.\nAfter this point there is no going back.")).setMargin("0 0 1.5rem"))
         .setTitle("Are you sure?")
         .addButton("Cancel", "remove")
-        .addButton("Delete", () => {
-            alert("Not yet impl. serverId:" + serverId);
-            return "remove";
+        .addButton("Delete", async () => {
+            await API.hosting(API.getToken()).serverId(serverId).delete();
+            return "remove" as const;
         }, Color.Critical)
         .allowUserClose()
         .open();
