@@ -210,7 +210,8 @@ export const server = zod.object({
     location: zod.enum([ "cluster1" ]),
     limits: limits,
     state: powerState,
-    user: zod.string().optional(),
+    user: zod.string(),
+    identifier: zod.string(),
 });
 
 export const pteroServer = server.extend({
@@ -227,6 +228,13 @@ export const pteroServer = server.extend({
         installed: zod.boolean(),
         identifier: zod.string(),
         node: zod.number(),
+        limits: zod.object({
+            memory: zod.number(),
+            swap: zod.number(),
+            disk: zod.number(),
+            io: zod.number(),
+            cpu: zod.number()
+        }),
     })
 });
 
