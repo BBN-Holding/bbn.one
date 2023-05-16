@@ -99,8 +99,11 @@ const creation = View<{ service: string; }>(({ state: { service } }) => {
                 submitAction: async ([ { data: { data } } ]) => {
                     isLoading.loading = true;
                     try {
-                        await API.hosting(API.getToken()).create(data);
+                        const rsp = await API.hosting(API.getToken()).create(data);
 
+                        if (rsp.error)
+                            throw rsp;
+                        
                         Dialog(() => PlainText("Server has been created. We are now installing everything for you."))
                             .setTitle("Successful!")
                             .allowUserClose()

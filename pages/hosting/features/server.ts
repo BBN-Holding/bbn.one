@@ -12,7 +12,7 @@ export const serverView = Reactive(state, "servers", () => Grid(
             PlainText(server.name)
                 .setFont(36 / 16, 700)
                 .addClass("title-server"),
-            PlainText(`${server.server} @ ${server.location}`)
+            PlainText(`${server.type} @ ${server.location} @ ${server.state}`)
                 .setFont(1, 700)
                 .addClass("gray-color", "same-height")
         ).setGap("17px"),
