@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Pull Project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.5.2
 
       - name: Set Up Deno
-        uses: denoland/setup-deno@v1
+        uses: denoland/setup-deno@v1.1.2
         with:
           deno-version: v1.x
 
@@ -22,11 +22,11 @@ jobs:
         run: deno run --no-check -A serve.ts build
 
       - name: Publish to bbn.one
-        uses: garygrossgarten/github-action-scp@v0.7.3
+        uses: SamKirkland/web-deploy@v1
         with:
-          local: ./dist
-          remote: /root/bbn/bbn.one
-          host: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          username: ${{ secrets.USERNAME }}
-          privateKey: ${{ secrets.KEY }}
+            target-server: ${{ secrets.HOST }}
+            ssh-port: ${{ secrets.PORT }}
+            remote-user: ${{ secrets.USERNAME }}
+            private-ssh-key: ${{ secrets.KEY }}
+            source-path: ./dist/
+            destination-path: /root/bbn/bbn.one
