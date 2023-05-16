@@ -201,7 +201,7 @@ export enum ServerTypes {
     Bedrock = "/minecraft/bedrock/"
 }
 
-export const powerState = zod.enum([ "start", "stop", "restart", "kill" ]);
+export const powerState = zod.enum([ "start", "stop", "restart", "kill", "installing" ]);
 
 export const server = zod.object({
     _id: zod.string(),
