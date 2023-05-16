@@ -227,13 +227,6 @@ export const pteroServer = server.extend({
         installed: zod.boolean(),
         identifier: zod.string(),
         node: zod.number(),
-        limits: zod.object({
-            memory: zod.number(),
-            swap: zod.number(),
-            disk: zod.number(),
-            io: zod.number(),
-            cpu: zod.number()
-        }),
     })
 });
 
