@@ -1,13 +1,14 @@
-import { Box, Color, ButtonStyle, Custom, DropDownInput, Grid, Horizontal, InputForm, MaterialIcons, Page, PlainText, Reactive, Spacer, State, TextInput, Vertical, View, WebGen, Wizard, createElement } from "webgen/mod.ts";
+import { Box, Color, ButtonStyle, Custom, DropDownInput, Grid, Horizontal, InputForm, MaterialIcons, Page, PlainText, Reactive, Spacer, State, TextInput, Vertical, View, WebGen, Wizard, createElement, Dialog } from "webgen/mod.ts";
 import { Redirect, RegisterAuthRefresh } from "../manager/helper.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/hosting.css';
 import { Menu } from "../shared/Menu.ts";
-import { state } from "./data.ts";
+import { MB, state } from "./data.ts";
 import { format } from "std/fmt/bytes.ts";
 import { ServerCreate, serverCreate } from "../../spec/music.ts";
 import { API } from "../manager/RESTSpec.ts";
+import { LoadingSpinner } from "../shared/components.ts";
 
 WebGen({
     icon: new MaterialIcons()
@@ -78,6 +79,9 @@ const SliderInput = (label: string) => new class extends InputForm<number> {
 
 };
 
+const isLoading = State({
+    loading: false
+});
 
 const creation = View<{ service: string; }>(({ state: { service } }) => {
     return Vertical(
@@ -93,8 +97,16 @@ const creation = View<{ service: string; }>(({ state: { service } }) => {
         Vertical(
             Wizard({
                 submitAction: async ([ { data: { data } } ]) => {
+                    isLoading.loading = true;
                     try {
                         await API.hosting(API.getToken()).create(data);
+
+                        Dialog(() => PlainText("Server has been created. We are now installing everything for you."))
+                            .setTitle("Successful!")
+                            .allowUserClose()
+                            .addButton("Return", "remove")
+                            .onClose(() => location.href = "/hosting")
+                            .open();
                     } catch (error) {
                         alert(JSON.stringify(error));
                     }
@@ -129,11 +141,11 @@ const creation = View<{ service: string; }>(({ state: { service } }) => {
                             SliderInput("Memory (RAM)")
                                 .setMax(state.meta.limits.memory)
                                 .sync(data.limits, "memory")
-                                .setRender((val) => format(val * 1000)),
+                                .setRender((val) => format(val * MB)),
                             SliderInput("Storage (Disk)")
                                 .setMax(state.meta.limits.disk)
                                 .sync(data.limits, "disk")
-                                .setRender((val) => format(val * 1000)),
+                                .setRender((val) => format(val * MB)),
                         )
                             .setDynamicColumns(10)
                             .setMargin(".5rem 0 1.5rem")
@@ -149,7 +161,12 @@ const creation = View<{ service: string; }>(({ state: { service } }) => {
 });
 
 
-const Creator = creation.asComponent();
+const Creator = Reactive(isLoading, "loading", () => {
+    if (isLoading.loading)
+        return LoadingSpinner();
+
+    return creation.asComponent();
+});
 
 const menu = Menu({
     title: "New Server",

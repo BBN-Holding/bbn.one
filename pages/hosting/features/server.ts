@@ -2,6 +2,7 @@ import { Box, Card, CenterV, Color, CommonIconType, Dialog, Grid, Horizontal, Ic
 import { state } from "../data.ts";
 import './server.css';
 import { API } from "../../manager/RESTSpec.ts";
+import { refreshState } from "../loading.ts";
 
 new MaterialIcons();
 
@@ -38,7 +39,12 @@ function deleteServer(serverId: string) {
         .setTitle("Are you sure?")
         .addButton("Cancel", "remove")
         .addButton("Delete", async () => {
-            await API.hosting(API.getToken()).serverId(serverId).delete();
+            try {
+                await API.hosting(API.getToken()).serverId(serverId).delete();
+            } catch (error) {
+                alert(JSON.stringify(error));
+            }
+            await refreshState();
             return "remove" as const;
         }, Color.Critical)
         .allowUserClose()

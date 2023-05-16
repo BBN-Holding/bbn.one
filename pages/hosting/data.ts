@@ -1,14 +1,8 @@
 import { State } from "webgen/mod.ts";
 import { Limits, Server } from "../../spec/music.ts";
 
-// {
-//     id: string;
-//     name: string;
-//     server: string,
-//     location: string;
-// }[]
-
-const GB = 1000000;
+const GB = 1000;
+export const MB = 1000_000;
 
 export const state = State({
     loaded: false,
