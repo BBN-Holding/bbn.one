@@ -25,7 +25,7 @@ export const serverView = Reactive(state, "servers", () => Grid(
             IconButton(CommonIconType.Delete, "delete")
                 .setColor(Color.Critical)
                 .onClick(() => {
-                    deleteServer(server.id);
+                    deleteServer(server._id);
                 })
         ).setGap("1rem").addClass("icon-buttons-list"))
 
