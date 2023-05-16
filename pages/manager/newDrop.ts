@@ -76,7 +76,6 @@ const wizard = (restore?: Drop) => Wizard({
         const _data = await ResponseData();
         let obj = {};
         _data.map(x => x.success == true ? x.data : ({})).forEach(x => obj = { ...obj, ...x });
-        console.log(obj);
         try {
             // deno-lint-ignore no-explicit-any
             await API.music(API.getToken()).id(dropId).post(<any>obj);
@@ -130,7 +129,6 @@ const wizard = (restore?: Drop) => Wizard({
                 TextInput("text", "Title").sync(state, "title"),
                 Grid(
                     TextInput("date", "Release Date", "live").sync(state, "release"),
-                    // TODO: Show user spelled out language
                     DropDownInput("Language", Object.keys(language))
                         .setRender((key) => language[ <keyof typeof language>key ])
                         .sync(state, "language")
@@ -142,10 +140,8 @@ const wizard = (restore?: Drop) => Wizard({
                     .onClick(() => {
                         EditArtists(state.artists ?? [ [ "", "", ArtistTypes.Primary ] ])
                             .then((x) => {
-                                console.log(x);
                                 // deno-lint-ignore no-explicit-any
                                 state.artists = <any>x?.map(x => x.map(x => x.trim()));
-                                console.log(JSON.parse(JSON.stringify(state)));
                             });
                     }),
                 Center(PlainText("Set your target Audience").addClass("title")),

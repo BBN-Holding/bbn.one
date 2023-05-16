@@ -219,7 +219,6 @@ export const API = {
                 const data = await fetch(`${API.BASE_URL}admin/files`, {
                     headers: headers(token)
                 }).then(x => x.json());
-                console.log(data);
                 return data;
             },
             download: async (id: string) => {
@@ -352,7 +351,6 @@ export const API = {
                 },
             },
             post: async (data: Drop) => {
-                console.log(data);
                 const fetchData = await fetch(`${API.BASE_URL}music/${id}`, {
                     method: "POST",
                     body: JSON.stringify(data),

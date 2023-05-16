@@ -25,7 +25,6 @@ export const rawTemplate = (data: string) => `
 
 export function render(data: string) {
     const rsp = mjml(rawTemplate(data));
-    console.log(rsp);
     return rsp;
 }
 
