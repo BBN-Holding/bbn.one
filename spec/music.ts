@@ -211,7 +211,6 @@ export const server = zod.object({
     limits: limits,
     state: powerState,
     user: zod.string(),
-    identifier: zod.string(),
 });
 
 export const pteroServer = server.extend({
