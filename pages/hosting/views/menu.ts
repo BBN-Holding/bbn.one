@@ -2,7 +2,7 @@ import { Reactive } from "webgen/mod.ts";
 import { Menu } from "../../shared/Menu.ts";
 import { state } from "../data.ts";
 import { activeUser } from "../../manager/helper.ts";
-import { serverView } from "../views/server.ts";
+import { listView } from "../views/list.ts";
 import { storeView } from "../views/store.ts";
 import { detailsView } from "../views/details.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
@@ -14,7 +14,7 @@ export const hostingMenu = () => Reactive(state, "loaded", () => Menu({
         "servers/": {
             title: "Servers",
             custom: () => Reactive(state, "servers", () =>
-                serverView
+                listView
             )
         },
         "details/": {

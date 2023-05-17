@@ -10,7 +10,7 @@ import { ServerCreate, serverCreate } from "../../../spec/music.ts";
 import { API } from "../../manager/RESTSpec.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
 import { SliderInput } from "../../shared/Slider.ts";
-
+import locations from "../../../data/locations.json" assert { type: "json" };
 WebGen({
     icon: new MaterialIcons()
 });
@@ -69,9 +69,8 @@ const creation = View<{ service: string; }>(({ state: { service } }) => {
                         Grid(
                             TextInput("text", "Friendly Name")
                                 .sync(data, "name"),
-                            DropDownInput("Location", [
-                                "cluster1"
-                            ]).setRender(() => "🇩🇪 Falkenstein (Free)")
+                            DropDownInput("Location", Object.keys(locations))
+                                .setRender((val) => locations[val as keyof typeof locations])
                                 .sync(data, "location")
                         )
                             .setDynamicColumns(10)
