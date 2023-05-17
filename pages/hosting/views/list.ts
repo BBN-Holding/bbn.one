@@ -66,9 +66,12 @@ export const listView = MediaQuery("(max-width: 700px)", (small) => Reactive(sta
                         .addClass("color-green")
                         .setColor(Color.Colored)
                         .onClick(async () => {
-                            server.loading = true;
                             await API.hosting(API.getToken()).serverId(server._id).power("start");
+                            // This actually works when we a have better change stream system
+                            server.state = "starting";
                         }),
+                    // TODO: make this better (labels or something)
+                    "installing": LoadingSpinner(),
                     "stopping": LoadingSpinner(),
                     "starting": LoadingSpinner(),
                     "running": IconButton("pause", "delete")
