@@ -6,7 +6,7 @@ export const MB = 1000_000;
 
 export const state = State({
     loaded: false,
-    servers: <Server[]>[],
+    servers: <(Server & { loading: undefined | boolean; })[]>[],
     meta: {
         coins: 13123122,
         ram: [ 10240000, 20000048 ],

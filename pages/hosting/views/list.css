@@ -15,7 +15,17 @@
     font-size: 2rem;
 }
 
+.wiconbutton:active {
+    transform: translate(0, 1px);
+}
+
 .icon-buttons-list .wiconbutton:is(:hover, :focus) {
     box-shadow: none;
     background-color: hsla(var(--background-color-h), var(--background-color-s), var(--background-color-l), 25%);
+}
+
+.color-green {
+    --color-colored-hue: 95deg;
+    --color-colored-saturation: 1000%;
+    --color-colored-lightness: 39%;
 }
