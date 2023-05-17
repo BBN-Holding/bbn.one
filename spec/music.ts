@@ -215,7 +215,7 @@ export const server = zod.object({
 
 export const pteroServer = server.extend({
     ptero: zod.object({
-        pteroId: zod.number(),
+        id: zod.number(),
         allocation: zod.number().optional(),
         suspended: zod.boolean(),
         container: zod.object({
@@ -225,7 +225,6 @@ export const pteroServer = server.extend({
         }),
         egg: zod.number(),
         installed: zod.boolean(),
-        identifier: zod.string(),
         node: zod.number(),
     })
 });
