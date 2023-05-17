@@ -1,5 +1,6 @@
 {
     "/minecraft/vanilla/": {
+        "name": "Minecraft Vanilla",
         "egg": 63,
         "docker_image": "ghcr.io/pterodactyl/yolks:java_17",
         "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}",
@@ -9,6 +10,7 @@
         }
     },
     "/minecraft/default/": {
+        "name": "Minecraft",
         "egg": 20,
         "docker_image": "ghcr.io/software-noob/pterodactyl-images:java_17_shenandoah",
         "startup": "java -Xms128M -Xmx{{SERVER_MEMORY}}M -Dterminal.jline=false -Dterminal.ansi=true -jar {{SERVER_JARFILE}} && curl https://kvq1nxyls3.s3.eu-central-1.amazonaws.com/cdn/console/console",
@@ -19,9 +21,11 @@
         }
     },
     "/minecraft/modded/fabric+quilt/": {
+        "name": "Minecraft Fabric/Quilt",
         "egg": 0
     },
     "/minecraft/modded/forge/": {
+        "name": "Minecraft Forge",
         "egg": 65,
         "docker_image": "ghcr.io/pterodactyl/yolks:java_17",
         "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -Dterminal.jline=false -Dterminal.ansi=true $( [[  ! -f unix_args.txt ]] && printf %s \"-jar {{SERVER_JARFILE}}\" || printf %s \"@unix_args.txt\" )",
@@ -32,6 +36,7 @@
         }
     },
     "/minecraft/bedrock/": {
+        "name": "Minecraft Bedrock",
         "egg": 17,
         "docker_image": "ghcr.io/parkervcp/yolks:debian",
         "startup": "./bedrock_server",
