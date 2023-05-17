@@ -1,6 +1,6 @@
-import { Dialog, DropDownInput, Page, Vertical, Wizard, Image, Box, Horizontal, Spacer, PlainText, Custom, createElement, Checkbox, Reactive, Button } from "webgen/mod.ts";
+import { Dialog, DropDownInput, Page, Vertical, Wizard, Image, Box, Horizontal, Spacer, PlainText, Custom, createElement, Checkbox, Reactive } from "webgen/mod.ts";
 import { Drop, ReviewResponse } from "../../spec/music.ts";
-import { saveBlob, showPreviewImage } from "../manager/helper.ts";
+import { showPreviewImage } from "../manager/helper.ts";
 import reviewTexts from "../../data/reviewTexts.json" assert { type: "json" };
 import { API } from "../manager/RESTSpec.ts";
 import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
@@ -186,25 +186,7 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                     Reactive(data, "responseText", () => clientRender(dropPatternMatching(data.responseText, state.drop!))),
                 ]).setValidator((v) => v.object({
                     responseText: v.string().refine(x => render(dropPatternMatching(x, state.drop!)).errors.length == 0, { message: "Invalid MJML" })
-                })),
-                Page({
-
-                }, () => [
-                    Vertical(
-
-                        PlainText("Review almost completed! Last Click!"),
-                        Horizontal(
-                            Button("Download Store3k Image")
-                                .onPromiseClick(async () => {
-                                    saveBlob(await API.music(API.getToken()).id(state.drop!._id).artworkStore3k(), state.drop!.title + ".jpg");
-                                }),
-                            Spacer()
-                        )
-                    )
-                        .setGap("1rem")
-                        .setMargin("0 0 1rem")
-
-                ])
+                }))
             ]),
     )
         .setMargin("0 0 var(--gap)")
