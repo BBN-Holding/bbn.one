@@ -293,7 +293,7 @@ export const API = {
         },
         serverId: (id: string) => ({
             get: (): Promise<PteroServer> => {
-                return fetch(`${API.BASE_URL}hosting/${id}`, {
+                return fetch(`${API.BASE_URL}hosting/servers/${id}`, {
                     headers: headers(token)
                 }).then(x => x.json());
             },
@@ -307,7 +307,7 @@ export const API = {
                 }).then(x => x.json());
             },
             delete: () => {
-                return fetch(`${API.BASE_URL}hosting/${id}`, {
+                return fetch(`${API.BASE_URL}hosting/servers/${id}`, {
                     method: 'DELETE',
                     headers: headers(token)
                 }).then(x => x.json());
