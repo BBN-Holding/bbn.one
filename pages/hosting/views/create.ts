@@ -1,4 +1,4 @@
-import { Box, Color, ButtonStyle, Custom, DropDownInput, Grid, Horizontal, InputForm, MaterialIcons, Page, PlainText, Reactive, Spacer, State, TextInput, Vertical, View, WebGen, Wizard, createElement, Dialog } from "webgen/mod.ts";
+import { Box, DropDownInput, Grid, MaterialIcons, Page, PlainText, Reactive, State, TextInput, Vertical, View, WebGen, Wizard, Dialog } from "webgen/mod.ts";
 import { Redirect, RegisterAuthRefresh } from "../../manager/helper.ts";
 import { DynaNavigation } from "../../../components/nav.ts";
 import '../../../assets/css/main.css';
@@ -9,6 +9,7 @@ import { format } from "std/fmt/bytes.ts";
 import { ServerCreate, serverCreate } from "../../../spec/music.ts";
 import { API } from "../../manager/RESTSpec.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
+import { SliderInput } from "../../shared/Slider.ts";
 
 WebGen({
     icon: new MaterialIcons()
@@ -17,67 +18,6 @@ WebGen({
 Redirect();
 await RegisterAuthRefresh();
 
-const SliderInput = (label: string) => new class extends InputForm<number> {
-    input = createElement("input");
-    valueRender = (value: number) => ((value / Number(this.input.max || "100")) * 100).toFixed(0) + " %";
-
-    constructor() {
-        super();
-        const val = State({ value: "" });
-        this.input.type = "range";
-        this.input.classList.add("wslider");
-        this.wrapper.append(Vertical(
-            Horizontal(
-                PlainText(label).setFont(0.8, 700),
-                Spacer(),
-                Reactive(val, "value", () => PlainText(val.value).setFont(0.8, 700)).addClass("same-height")
-            ).setPadding("0 0.2rem"),
-            Custom(this.input)
-        ).setMargin("0 -0.1rem").draw());
-
-        this.addEventListener("update", (event) => {
-            const value = (<CustomEvent<number>>event).detail;
-            if (value)
-                this.wrapper.classList.add("has-value");
-            this.input.value = (value ?? 0).toString();
-        });
-        this.input.oninput = () => {
-            val.value = this.valueRender(this.input.valueAsNumber);
-        };
-        this.input.onchange = () => {
-            val.value = this.valueRender(this.input.valueAsNumber);
-            this.setValue(this.input.valueAsNumber);
-        };
-        this.addEventListener("data", () => {
-            val.value = this.valueRender(this.input.valueAsNumber);
-        });
-
-        this.dispatchEvent(new CustomEvent("data", {}));
-    }
-
-    setMax(val: number) {
-        this.input.max = val.toString();
-        return this;
-    }
-
-    setStep(val: number) {
-        this.input.step = val.toString();
-        return this;
-    }
-
-    setMin(val: number) {
-        this.input.min = val.toString();
-        return this;
-    }
-
-    setStyle(_style: ButtonStyle): this {
-        throw new Error("Method not implemented.");
-    }
-    setColor(_color: Color): this {
-        throw new Error("Method not implemented.");
-    }
-
-};
 
 const isLoading = State({
     loading: false
