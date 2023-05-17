@@ -6,8 +6,6 @@ import { refreshState } from "../loading.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import servers from "../../../data/eggs.json" assert { type: "json" };
 import { PowerState } from "../../../spec/music.ts";
-import { LoadingSpinner } from "../../shared/components.ts";
-import { serve } from "https://deno.land/std@0.182.0/http/server.ts";
 
 new MaterialIcons();
 
@@ -62,24 +60,21 @@ export const listView = MediaQuery("(max-width: 700px)", (small) => Reactive(sta
                             .open();
 
                     }),
-                Reactive(server, "loading", () => server.loading
-                    ? LoadingSpinner()
-                    : ((<StateActions>{
-                        "stop": IconButton("play_arrow", "delete")
-                            .addClass("color-green")
-                            .setColor(Color.Colored)
-                            .onClick(async () => {
-                                server.loading = true;
-                                await API.hosting(API.getToken()).serverId(server._id).power("start");
-                            }),
-                        "start": IconButton("pause", "delete")
-                            .setColor(Color.Critical)
-                            .onClick(async () => {
-                                server.loading = true;
-                                await API.hosting(API.getToken()).serverId(server._id).power("stop");
-                            })
-                    })[ server.state ] ?? null)
-                ).removeFromLayout()
+                Reactive(server, "state", () => ((<StateActions>{
+                    "stop": IconButton("play_arrow", "delete")
+                        .addClass("color-green")
+                        .setColor(Color.Colored)
+                        .onClick(async () => {
+                            server.loading = true;
+                            await API.hosting(API.getToken()).serverId(server._id).power("start");
+                        }),
+                    "start": IconButton("pause", "delete")
+                        .setColor(Color.Critical)
+                        .onClick(async () => {
+                            server.loading = true;
+                            await API.hosting(API.getToken()).serverId(server._id).power("stop");
+                        })
+                })[ server.state ] ?? Box())).removeFromLayout()
             )
                 .setGap(small ? ".5rem" : "1rem")
                 .addClass("icon-buttons-list", small ? "small" : "normal")

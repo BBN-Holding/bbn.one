@@ -6,7 +6,7 @@ import '../../assets/css/hosting.css';
 import { changeThemeColor } from "../manager/misc/common.ts";
 import { hostingMenu } from "./views/menu.ts";
 import { state } from "./data.ts";
-import { refreshState } from "./loading.ts";
+import { pulling, refreshState } from "./loading.ts";
 
 Redirect();
 await RegisterAuthRefresh();
@@ -30,4 +30,5 @@ View(() => Vertical(...DynaNavigation("Hosting"), hostingMenu())).appendOn(docum
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())
+    .then(() => pulling())
     .then(() => state.loaded = true);
