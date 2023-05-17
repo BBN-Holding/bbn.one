@@ -1,14 +1,14 @@
 import { Box, Color, ButtonStyle, Custom, DropDownInput, Grid, Horizontal, InputForm, MaterialIcons, Page, PlainText, Reactive, Spacer, State, TextInput, Vertical, View, WebGen, Wizard, createElement, Dialog } from "webgen/mod.ts";
-import { Redirect, RegisterAuthRefresh } from "../manager/helper.ts";
-import { DynaNavigation } from "../../components/nav.ts";
-import '../../assets/css/main.css';
-import '../../assets/css/hosting.css';
-import { Menu } from "../shared/Menu.ts";
-import { MB, state } from "./data.ts";
+import { Redirect, RegisterAuthRefresh } from "../../manager/helper.ts";
+import { DynaNavigation } from "../../../components/nav.ts";
+import '../../../assets/css/main.css';
+import '../../../assets/css/hosting.css';
+import { Menu } from "../../shared/Menu.ts";
+import { MB, state } from "./../data.ts";
 import { format } from "std/fmt/bytes.ts";
-import { ServerCreate, serverCreate } from "../../spec/music.ts";
-import { API } from "../manager/RESTSpec.ts";
-import { LoadingSpinner } from "../shared/components.ts";
+import { ServerCreate, serverCreate } from "../../../spec/music.ts";
+import { API } from "../../manager/RESTSpec.ts";
+import { LoadingSpinner } from "../../shared/components.ts";
 
 WebGen({
     icon: new MaterialIcons()
@@ -103,7 +103,7 @@ const creation = View<{ service: string; }>(({ state: { service } }) => {
 
                         if (rsp.error)
                             throw rsp;
-                        
+
                         Dialog(() => PlainText("Server has been created. We are now installing everything for you."))
                             .setTitle("Successful!")
                             .allowUserClose()
