@@ -285,7 +285,7 @@ export const API = {
             }).then(x => x.json());
         },
         create: (data: ServerCreate) => {
-            return fetch(`${API.BASE_URL}hosting/`, {
+            return fetch(`${API.BASE_URL}hosting/servers`, {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: headers(token)
