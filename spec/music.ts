@@ -224,7 +224,7 @@ export const pteroServer = server.extend({
             environment: zod.record(zod.string(), zod.union([ zod.string(), zod.number(), zod.boolean() ])),
         }),
         egg: zod.number(),
-        installed: zod.boolean(),
+        identifier: zod.string(),
         node: zod.number(),
     })
 });
