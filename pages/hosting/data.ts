@@ -6,5 +6,5 @@ export const MB = 1000_000;
 export const state = State({
     loaded: false,
     servers: <(Server)[]>[],
-    meta: <Meta | undefined>undefined
+    meta: <Meta>undefined!
 });

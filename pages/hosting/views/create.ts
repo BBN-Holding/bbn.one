@@ -62,7 +62,7 @@ const creation = View<{ service: string; }>(({ state: { service } }) => {
                     name: "",
                     type: service,
                     location: "cluster1",
-                    limits: state.meta!.limits
+                    limits: state.meta.limits
                 }, (data) => [
                     Box(
                         PlainText("About your Server")
@@ -82,11 +82,11 @@ const creation = View<{ service: string; }>(({ state: { service } }) => {
                             .setFont(.8, 700),
                         Grid(
                             SliderInput("Memory (RAM)")
-                                .setMax(state.meta!.limits.memory)
+                                .setMax(state.meta.limits.memory)
                                 .sync(data.limits, "memory")
                                 .setRender((val) => format(val * MB)),
                             SliderInput("Storage (Disk)")
-                                .setMax(state.meta!.limits.disk)
+                                .setMax(state.meta.limits.disk)
                                 .sync(data.limits, "disk")
                                 .setRender((val) => format(val * MB)),
                         )

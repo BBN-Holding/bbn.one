@@ -20,7 +20,7 @@ export const hostingMenu = () => Reactive(state, "loaded", () => Menu({
         "details/": {
             title: "Details",
             custom: () => Reactive(state, "meta", () =>
-                detailsView
+                detailsView()
             )
         },
         "store/": {
