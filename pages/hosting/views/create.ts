@@ -70,7 +70,7 @@ const creation = View<{ service: string; }>(({ state: { service } }) => {
                             TextInput("text", "Friendly Name")
                                 .sync(data, "name"),
                             DropDownInput("Location", Object.keys(locations))
-                                .setRender((val) => locations[val as keyof typeof locations])
+                                .setRender((val) => locations[ val as keyof typeof locations ])
                                 .sync(data, "location")
                         )
                             .setDynamicColumns(10)
@@ -136,11 +136,11 @@ const menu = Menu({
                 {
                     title: "Modded",
                     id: "modded/",
-                    subtitle: "Start a Fabric/Quilt or Forge Server.",
+                    subtitle: "Start a Fabric or Forge Server.",
                     items: [
                         {
-                            title: "Fabric/Quilt",
-                            id: "fabric+quilt/",
+                            title: "Fabric",
+                            id: "fabric/",
                             action: (clickPath) => { creation.change(({ update }) => update({ service: clickPath })); },
                             custom: () => Creator
                         },
