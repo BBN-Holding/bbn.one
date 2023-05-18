@@ -11,12 +11,6 @@ import { migrationDialog } from "./views/details.ts";
 
 await RegisterAuthRefresh();
 
-if (!permCheck(
-    "/hmsys/user/manage",
-    "/bbn/manage"
-)) {
-    location.href = "/";
-}
 
 
 WebGen({

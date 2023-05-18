@@ -240,7 +240,7 @@ export const API = {
                 const data = await fetch(`${API.BASE_URL}admin/reviews`, {
                     headers: headers(token)
                 }).then(x => x.json());
-                return data.drops as Drop[];
+                return data as Drop[];
             },
         },
         payouts: {
@@ -248,7 +248,7 @@ export const API = {
                 const data = await fetch(`${API.BASE_URL}admin/payouts`, {
                     headers: headers(token)
                 }).then(x => x.json());
-                return data.payouts as Payout[];
+                return data as Payout[];
             },
             id: (id: string) => ({
                 get: async () => {

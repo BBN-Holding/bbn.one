@@ -3,7 +3,7 @@ import { state } from "../data.ts";
 
 export const storeView = Reactive(state, "meta", () => Grid(
     Card(Vertical(
-        PlainText("Nothing here yet")
+        PlainText("Coming Soon!")
     ).setPadding("1rem"))
 )
     .setDynamicColumns(1, "10rem")
