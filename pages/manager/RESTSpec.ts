@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-unused-vars
 import { assert } from "std/testing/asserts.ts";
-import { Drop, DropType, OAuthApp, Payout, File, Server, PteroServer, PowerState, ServerCreate } from "../../spec/music.ts";
+import { Drop, DropType, OAuthApp, Payout, File, Server, PteroServer, PowerState, ServerCreate, Meta } from "../../spec/music.ts";
 import { ProfileData } from "./helper.ts";
 
 export type ErrorObject = {
@@ -288,6 +288,11 @@ export const API = {
             return fetch(`${API.BASE_URL}hosting/servers`, {
                 method: 'POST',
                 body: JSON.stringify(data),
+                headers: headers(token)
+            }).then(x => x.json());
+        },
+        meta: (): Promise<Meta> => {
+            return fetch(`${API.BASE_URL}hosting/meta`, {
                 headers: headers(token)
             }).then(x => x.json());
         },

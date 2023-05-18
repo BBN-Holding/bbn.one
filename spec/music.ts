@@ -236,6 +236,19 @@ export const serverCreate = zod.object({
     limits: limits,
 });
 
+export const meta = zod.object({
+    _id: zod.string(),
+    owner: zod.string(),
+    pteroId: zod.number(),
+    migrationPassword: zod.string(),
+    coins: zod.number(),
+    limits: zod.object({
+        memory: zod.number(),
+        disk: zod.number(),
+        cpu: zod.number(),
+        slots: zod.number(),
+    }),
+});
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Artist = zod.infer<typeof artist>;
@@ -249,3 +262,4 @@ export type PteroServer = zod.infer<typeof pteroServer>;
 export type PowerState = zod.infer<typeof powerState>;
 export type ServerCreate = zod.infer<typeof serverCreate>;
 export type Limits = zod.infer<typeof limits>;
+export type Meta = zod.infer<typeof meta>;
