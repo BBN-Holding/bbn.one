@@ -103,7 +103,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                             : PlainText(getNameInital(user.profile.username)),
                         user.profile.username
                     )
-                    : (type == "Home" ?
+                    : (type == "Home" && !location.pathname.startsWith("/signin") ?
                         Button("Sign in")
                             .setColor(Color.Colored)
                             .addClass("contact")
