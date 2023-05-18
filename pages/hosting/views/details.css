@@ -6,3 +6,7 @@
 .details-grid {
     justify-content: center;
 }
+
+.full-width {
+    grid-column: 1 / -1;
+}

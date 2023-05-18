@@ -38,5 +38,5 @@ export const hostingMenu = () => Reactive(state, "loaded", () => Menu({
     },
     custom: () => LoadingSpinner()
 })
-    .setActivePath(!state.loaded ? '/' : '/servers/')
+    .setActivePath(!state.loaded ? '/' : state.servers.length == 0 ? '/details/' : '/servers/')
 );
