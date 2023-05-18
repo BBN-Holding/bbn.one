@@ -12,6 +12,55 @@ export const migrationInfo = {
     button: "Get your legacy password"
 };
 
+export const migrationDialog = () => Dialog(() => Vertical(
+    PlainText(migrationInfo.text0),
+    PlainText(migrationInfo.text1),
+).addClass("dialog-max-width"))
+    .setTitle(migrationInfo.title)
+    .addButton("View legacy password", () => {
+        migrationCredentials();
+        return "close";
+    })
+    .addButton("Ok", "remove")
+    .allowUserClose()
+    .open();
+
+export const migrationCredentials = () => Dialog(() =>
+    Vertical(
+        PlainText("If you want to login to the legacy panel here is you migration password."),
+        PlainText("Notice: You can change your password in the legacy panel."),
+        PlainText("This is only the creation password of you migrated account."),
+        Grid(
+            [
+                {
+                    width: 2
+                },
+                TextInput("email", "Username")
+                    .setColor(Color.Disabled)
+                    .setValue(activeUser.email)
+            ],
+            TextInput("text", "Password")
+                .setColor(Color.Disabled)
+                .setValue(state.meta.migrationPassword),
+            Button("Copy")
+                .onClick(() => {
+                    navigator.clipboard.writeText(state.meta.migrationPassword);
+                })
+        )
+            .setGap("0.5rem")
+            .setMargin("1rem 0 0.5rem 0")
+            .setRawColumns("auto max-content")
+    )
+)
+    .setTitle("View legacy password")
+    .allowUserClose()
+    .addButton("Go to legacy panel", () => {
+        open("https://panel.mc4u.xyz/", "_blank");
+        return "remove";
+    }, Color.Grayscaled, ButtonStyle.Inline)
+    .addButton("Close", "remove", Color.Grayscaled, ButtonStyle.Inline)
+    .open();
+
 export const detailsView = () =>
     MediaQuery("(max-width: 700px)", (small) =>
         Reactive(state, "meta", () =>
@@ -27,42 +76,7 @@ export const detailsView = () =>
                             Button(migrationInfo.button)
                                 .setStyle(ButtonStyle.Inline)
                                 .onClick(() => {
-                                    Dialog(() =>
-                                        Vertical(
-                                            PlainText("If you want to login to the legacy panel here is you migration password."),
-                                            PlainText("Notice: You can change your password in the legacy panel."),
-                                            PlainText("This is only the creation password of you migrated account."),
-                                            Grid(
-                                                [
-                                                    {
-                                                        width: 2
-                                                    },
-                                                    TextInput("email", "Username")
-                                                        .setColor(Color.Disabled)
-                                                        .setValue(activeUser.email)
-                                                ],
-                                                TextInput("text", "Password")
-                                                    .setColor(Color.Disabled)
-                                                    .setValue(state.meta.migrationPassword),
-                                                Button("Copy")
-                                                    .onClick(() => {
-                                                        navigator.clipboard.writeText(state.meta.migrationPassword);
-                                                    })
-                                            )
-                                                .setGap("0.5rem")
-                                                .setMargin("1rem 0 0.5rem 0")
-                                                .setRawColumns("auto max-content")
-                                        )
-                                    )
-                                        .setTitle("View legacy password")
-                                        .allowUserClose()
-
-                                        .addButton("Go to legacy panel", () => {
-                                            open("https://panel.mc4u.xyz/", "_blank");
-                                            return "remove";
-                                        }, Color.Grayscaled, ButtonStyle.Inline)
-                                        .addButton("Close", "remove", Color.Grayscaled, ButtonStyle.Inline)
-                                        .open();
+                                    migrationCredentials();
                                 })
                         )
                     )
