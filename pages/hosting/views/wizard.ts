@@ -1,11 +1,11 @@
 import { Box, Dialog, DropDownInput, Grid, Page, PlainText, Reactive, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import { MB, creationState, state } from "../data.ts";
-import { format } from "std/testing/_format.ts";
 import { ServerCreate, serverCreate } from "../../../spec/music.ts";
 import { API } from "../../manager/RESTSpec.ts";
 import { SliderInput } from "../../shared/Slider.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
+import { format } from "std/fmt/bytes.ts";
 
 export const creationView = () => Reactive(creationState, "loading", () => {
     if (creationState.loading)
