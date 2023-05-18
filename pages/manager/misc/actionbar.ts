@@ -1,4 +1,4 @@
-import { Box, Button, ButtonStyle, Color, Horizontal, Icon, PlainText, Spacer, Vertical } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Color, Component, Grid, Horizontal, Icon, PlainText, Spacer, Vertical } from "webgen/mod.ts";
 
 export type Link = {
     title: string;
@@ -9,9 +9,9 @@ export function ActionBar(title: string,
     categories?: { title: string, selected: boolean, onclick: () => void, hide?: boolean; }[],
     action?: Link,
     history?: Link[]) {
-    return Horizontal(
-        Vertical(
-            Horizontal(
+    return Grid(
+        Grid(
+            Grid(
                 ...(history ?? []).map(x =>
                     Box(
                         PlainText(x.title)
@@ -20,32 +20,34 @@ export function ActionBar(title: string,
                     ).addClass("history-entry").onClick(x.onclick)
                 ),
                 PlainText(title)
+                    .addClass("text")
                     .setFont(2.260625, 700),
                 Spacer()
             ).setMargin("0 0 18px"),
             categories && categories.length != 0 ?
                 Horizontal(
-                    ...categories.map(x =>
-                        !x.hide ? Button(x.title)
-                            .setColor(Color.Colored)
-                            .addClass("tag")
-                            .setStyle(x.selected ? ButtonStyle.Normal : ButtonStyle.Secondary)
-                            .onClick(x.onclick) : null
-                    ),
+                    ...[
+                        ...categories.map(x =>
+                            !x.hide ? Button(x.title)
+                                .setColor(Color.Colored)
+                                .addClass("tag")
+                                .setStyle(x.selected ? ButtonStyle.Normal : ButtonStyle.Secondary)
+                                .onClick(x.onclick) : null
+                        ),
+                    ].filter(x => x) as Component[],
                     Spacer()
-                ).setGap("10px") : null,
+                ).addClass("category-list").setGap("10px") : Box(),
             PlainText("")
                 .addClass("error-message", "hidden-message")
                 .setId("error-message-area")
         ),
-        Spacer(),
         action ?
             Vertical(
                 Spacer(),
                 Button(action.title)
                     .onPromiseClick(async () => { await action.onclick(); }),
                 Spacer()
-            ) : null,
+            ) : Box(),
     )
         .setPadding("5rem 0 0 0")
         .addClass("action-bar")

@@ -210,6 +210,7 @@ cardlist {
 
 .action-bar {
     cursor: default;
+    grid-template-columns: auto max-content;
 }
 
 .history-entry {
@@ -223,6 +224,19 @@ cardlist {
 
 .history-entry .webgen-icon {
     margin: 0 .5rem;
+}
+
+.action-bar .text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.action-bar .category-list {
+    display: grid;
+    grid-auto-flow: column;
+    overflow: auto;
+    justify-content: start;
 }
 
 .settings-form {
