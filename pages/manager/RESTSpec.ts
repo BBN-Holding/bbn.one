@@ -222,7 +222,7 @@ export const API = {
                 return data;
             },
             download: async (id: string) => {
-                const data = await fetch(`${API.BASE_URL}admin/files/${id}`, {
+                const data = await fetch(`${API.BASE_URL}admin/files/${id}/download`, {
                     headers: headers(token)
                 }).then(x => x.blob());
                 return data;

@@ -4,19 +4,27 @@ import './details.css';
 import { format } from "std/fmt/bytes.ts";
 import { activeUser } from "../../manager/helper.ts";
 
+
+export const migrationInfo = {
+    title: "Welcome to our Beta Dashboard!",
+    text0: "We're excited to have you on board as we unveil our new and improved platform.",
+    text1: "As we transition to this enhanced experience, we want to make sure you have a seamless migration process. To access your account on the old panel, simply click the button below to get access to your legacy password:",
+    button: "Get your legacy password"
+};
+
 export const detailsView = () =>
     MediaQuery("(max-width: 700px)", (small) =>
         Reactive(state, "meta", () =>
             Grid(
                 Card(
                     Grid(
-                        PlainText("Welcome to our Beta Dashboard!")
+                        PlainText(migrationInfo.title)
                             .setFont(2, 700),
-                        PlainText("We're excited to have you on board as we unveil our new and improved platform."),
-                        PlainText("As we transition to this enhanced experience, we want to make sure you have a seamless migration process. To access your account on the old panel, simply click the button below to get access to your legacy password:"),
+                        PlainText(migrationInfo.text0),
+                        PlainText(migrationInfo.text1),
                         Horizontal(
                             Spacer(),
-                            Button("Get your legacy password")
+                            Button(migrationInfo.button)
                                 .setStyle(ButtonStyle.Inline)
                                 .onClick(() => {
                                     Dialog(() =>
