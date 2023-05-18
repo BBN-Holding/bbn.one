@@ -102,14 +102,15 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                             Custom(img(user.profile.avatar))
                             : PlainText(getNameInital(user.profile.username)),
                         user.profile.username
-                    )
+                    ).onClick(() => { location.href = "/settings"; })
                     : (type == "Home" && !location.pathname.startsWith("/signin") ?
                         Button("Sign in")
                             .setColor(Color.Colored)
                             .addClass("contact")
+                            .onClick(() => { location.href = "/signin"; })
                         : null)
-                )
-                    ?.onClick(() => { location.href = "/settings"; }) ?? null
+
+                ) ?? null
             )
                 .setMargin("0.5rem auto")
                 .setGap("0.4rem"),
