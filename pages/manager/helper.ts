@@ -106,6 +106,8 @@ export function logOut() {
     if (location.pathname.startsWith("/signin")) return;
     resetTokens();
     location.href = "/signin";
+    // default location
+    localStorage.goal = "/music";
 }
 
 export function resetTokens() {
