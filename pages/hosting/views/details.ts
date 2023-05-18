@@ -2,6 +2,7 @@ import { Button, ButtonStyle, Card, Color, Dialog, Grid, Horizontal, MediaQuery,
 import { MB, state } from "../data.ts";
 import './details.css';
 import { format } from "std/fmt/bytes.ts";
+import { activeUser } from "../../manager/helper.ts";
 
 export const detailsView = () =>
     MediaQuery("(max-width: 700px)", (small) =>
@@ -24,6 +25,14 @@ export const detailsView = () =>
                                             PlainText("Notice: You can change your password in the legacy panel."),
                                             PlainText("This is only the creation password of you migrated account."),
                                             Grid(
+                                                [
+                                                    {
+                                                        width: 2
+                                                    },
+                                                    TextInput("email", "Username")
+                                                        .setColor(Color.Disabled)
+                                                        .setValue(activeUser.email)
+                                                ],
                                                 TextInput("text", "Password")
                                                     .setColor(Color.Disabled)
                                                     .setValue(state.meta.migrationPassword),
@@ -39,6 +48,11 @@ export const detailsView = () =>
                                     )
                                         .setTitle("View legacy password")
                                         .allowUserClose()
+
+                                        .addButton("Go to legacy panel", () => {
+                                            open("https://panel.mc4u.xyz/", "_blank");
+                                            return "remove";
+                                        }, Color.Grayscaled, ButtonStyle.Inline)
                                         .addButton("Close", "remove", Color.Grayscaled, ButtonStyle.Inline)
                                         .open();
                                 })

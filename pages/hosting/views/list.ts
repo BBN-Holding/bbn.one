@@ -25,7 +25,7 @@ export const listView = MediaQuery("(max-width: 700px)", (small) => Reactive(sta
                 IconButton("dashboard", "dashboard")
                     .onClick(async () => {
                         const thing = await API.hosting(API.getToken()).serverId(server._id).get();
-                        location.href = `https://panel.mc4u.xyz/server/${thing.ptero.identifier}`;
+                        open(`https://panel.mc4u.xyz/server/${thing.ptero.identifier}`, "_blank");
                     }),
                 IconButton(CommonIconType.Edit, "edit")
                     .onClick(() => {
