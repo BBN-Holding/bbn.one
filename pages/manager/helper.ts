@@ -158,7 +158,7 @@ export async function RegisterAuthRefresh() {
 
 export function shouldLoginPage() {
     if (loginRequired.find(x => location.pathname.startsWith(x))) {
-        localStorage.goal = location.pathname;
+        localStorage.goal = location.pathname + location.search;
         location.href = "/signin";
         throw "aborting javascript here";
     }
