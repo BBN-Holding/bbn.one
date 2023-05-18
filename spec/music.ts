@@ -242,12 +242,7 @@ export const meta = zod.object({
     pteroId: zod.number(),
     migrationPassword: zod.string(),
     coins: zod.number(),
-    limits: zod.object({
-        memory: zod.number(),
-        disk: zod.number(),
-        cpu: zod.number(),
-        slots: zod.number(),
-    }),
+    limits: limits,
 });
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
