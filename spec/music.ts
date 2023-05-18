@@ -196,7 +196,7 @@ export const limits = zod.object({
 export enum ServerTypes {
     Vanilla = "/minecraft/vanilla/",
     Default = "/minecraft/default/",
-    FabricQuilt = "/minecraft/modded/fabric+quilt/",
+    Fabric = "/minecraft/modded/fabric/",
     Forge = "/minecraft/modded/forge/",
     Bedrock = "/minecraft/bedrock/"
 }
