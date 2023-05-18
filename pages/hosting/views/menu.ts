@@ -33,7 +33,7 @@ export const hostingMenu = () => Reactive(state, "loaded", () => Menu({
     menuBarAction: {
         title: "Start new Server",
         onclick: () => {
-            location.href += "/create";
+            location.href = "/hosting/create";
         }
     },
     custom: () => LoadingSpinner()
