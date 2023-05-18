@@ -52,6 +52,7 @@ const creation = View<{ service: string; }>(({ state: { service } }) => {
                             .open();
                     } catch (error) {
                         alert(JSON.stringify(error));
+                        location.reload();
                     }
                 },
                 buttonAlignment: "bottom",

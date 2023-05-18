@@ -306,3 +306,10 @@ cardlist {
 .wtable .wbutton.low-level:has(ul.open) {
     z-index: 10;
 }
+
+.list-title {
+    margin: 0 auto;
+    padding-top: 22px;
+    font-weight: 700;
+    font-size: 23.17px;
+}

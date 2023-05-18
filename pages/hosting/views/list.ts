@@ -1,4 +1,4 @@
-import { Box, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, MediaQuery, Entry, TextInput, DropDownInput, Vertical, Component, IconButtonComponent, State } from "webgen/mod.ts";
+import { Box, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, MediaQuery, Entry, TextInput, DropDownInput, Vertical, Component, IconButtonComponent, State, CenterV } from "webgen/mod.ts";
 import { state } from "../data.ts";
 import './list.css';
 import { API } from "../../manager/RESTSpec.ts";
@@ -87,9 +87,10 @@ export const listView = MediaQuery("(max-width: 700px)", (small) => Reactive(sta
                 .addClass("icon-buttons-list", small ? "small" : "normal")
         )
         .setPadding("1.6rem")
-        .addClass("limited-width", small ? "small" : "normal")
-    )
-).setGap("var(--gap)")));
+        .addClass(small ? "small" : "normal")
+    ),
+    ...[ ExplainerText() ].filter(x => x) as Component[]
+).setGap("var(--gap)").addClass("limited-width")));
 
 function deleteServer(serverId: string) {
     Dialog(() => Box(PlainText("Deleting this Server, will result in data loss.\nAfter this point there is no going back.")).setMargin("0 0 1.5rem"))
@@ -106,4 +107,15 @@ function deleteServer(serverId: string) {
         }, Color.Critical)
         .allowUserClose()
         .open();
+}
+
+export function ExplainerText() {
+    return state.servers.length == 0 ?
+        Vertical(
+            PlainText("No Servers")
+                .addClass("list-title")
+                .setMargin("0"),
+            PlainText("Welcome! Create a server to get going. 🤖🛠️") ,
+        ).setGap("1rem")
+        : null;
 }
