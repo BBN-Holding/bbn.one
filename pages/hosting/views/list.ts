@@ -103,7 +103,7 @@ function deleteServer(serverId: string) {
                 console.log(error);
                 alert(JSON.stringify(error));
             }
-            await refreshState();
+            location.reload();
             return "remove" as const;
         }, Color.Critical)
         .allowUserClose()

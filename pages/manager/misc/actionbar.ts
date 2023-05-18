@@ -2,6 +2,7 @@ import { Box, Button, ButtonStyle, Color, Component, Grid, Horizontal, Icon, Pla
 
 export type Link = {
     title: string;
+    color?: Color;
     onclick: () => Promise<void> | void;
 };
 
@@ -45,6 +46,7 @@ export function ActionBar(title: string,
             Vertical(
                 Spacer(),
                 Button(action.title)
+                    .setColor(action.color ?? Color.Grayscaled)
                     .onPromiseClick(async () => { await action.onclick(); }),
                 Spacer()
             ) : Box(),

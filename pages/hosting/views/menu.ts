@@ -1,4 +1,4 @@
-import { Reactive } from "webgen/mod.ts";
+import { Color, Reactive } from "webgen/mod.ts";
 import { Menu } from "../../shared/Menu.ts";
 import { state } from "../data.ts";
 import { activeUser } from "../../manager/helper.ts";
@@ -32,6 +32,7 @@ export const hostingMenu = () => Reactive(state, "loaded", () => Menu({
     },
     menuBarAction: {
         title: "Start new Server",
+        color: !state.meta || (state.meta.used.slots >= state.meta.limits.slots) ? Color.Disabled : Color.Grayscaled,
         onclick: () => {
             location.href = "/hosting/create";
         }
