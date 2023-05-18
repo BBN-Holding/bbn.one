@@ -237,6 +237,7 @@ cardlist {
     grid-auto-flow: column;
     overflow: auto;
     justify-content: start;
+    padding-bottom: 1px;
 }
 
 .settings-form {
