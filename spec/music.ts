@@ -234,13 +234,18 @@ export const serverCreate = zod.object({
     limits: limits,
 });
 
+export const metaLimti = limits.extend({
+    slots: zod.number()
+});
+
 export const meta = zod.object({
     _id: zod.string(),
     owner: zod.string(),
     pteroId: zod.number(),
     migrationPassword: zod.string(),
     coins: zod.number(),
-    limits: limits,
+    limits: metaLimti,
+    used: metaLimti,
 });
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
