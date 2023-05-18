@@ -97,8 +97,8 @@ export const API = {
         },
     }),
     auth: {
-        fromUserInteractionLinkGoogle: () => `${API.BASE_URL}auth/google-redirect?redirect=${location.href}&type=google-auth`,
-        fromUserInteractionLinkDiscord: () => `${API.BASE_URL}auth/discord-redirect?redirect=${location.href}&type=discord-auth`,
+        fromUserInteractionLinkGoogle: () => `${API.BASE_URL}auth/google-redirect?redirect=${localStorage.getItem('goal') ?? 'https://bbn.one/music'}&type=google-auth`,
+        fromUserInteractionLinkDiscord: () => `${API.BASE_URL}auth/discord-redirect?redirect=${localStorage.getItem('goal') ?? 'https://bbn.one/music'}&type=discord-auth`,
         refreshAccessToken: {
             post: async ({ refreshToken }: { refreshToken: string; }) => {
                 return await fetch(`${API.BASE_URL}auth/refresh-access-token`, {
