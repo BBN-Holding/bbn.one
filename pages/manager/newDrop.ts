@@ -3,7 +3,7 @@ import primary from "../../data/primary.json" assert { type: "json"};
 import secondary from "../../data/secondary.json" assert { type: "json"};
 import language from "../../data/language.json" assert { type: "json"};
 import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, TextInput, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV, Box, MediaQuery, Image, AdvancedImage, Reactive } from "webgen/mod.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, ProfileData, Redirect, RegisterAuthRefresh, getSecondary, getDropFromPages, IsLoggedIn } from "./helper.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, ProfileData, RegisterAuthRefresh, getSecondary, getDropFromPages, IsLoggedIn } from "./helper.ts";
 import { API } from "./RESTSpec.ts";
 import '../../assets/css/wizard.css';
 import '../../assets/css/main.css';
@@ -12,12 +12,12 @@ import { ManageSongs } from "./music/table.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
 import { ArtistTypes, Drop, DropType, pageFive, pageFour, pageOne, pageThree, pageTwo } from "../../spec/music.ts";
 
+await RegisterAuthRefresh();
 WebGen({
     theme: SupportedThemes.dark,
     icon: new MaterialIcons()
 });
-Redirect();
-await RegisterAuthRefresh();
+
 const params = new URLSearchParams(location.search);
 
 if (!params.has("id")) {

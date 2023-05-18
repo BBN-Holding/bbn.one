@@ -5,11 +5,11 @@ import { discordLogo, heroImage, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { assert } from "std/testing/asserts.ts";
 import { API } from "../manager/RESTSpec.ts";
-import { Redirect } from "../manager/helper.ts";
 import { state } from "./state.ts";
 import { handleStateChange, loginUser, registerUser } from "./actions.ts";
+import { RegisterAuthRefresh } from "../manager/helper.ts";
 
-Redirect();
+await RegisterAuthRefresh();
 
 WebGen({
 });

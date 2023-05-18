@@ -1,7 +1,7 @@
 import { WebGen, MaterialIcons, View, Vertical, Reactive, State } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { API } from "../manager/RESTSpec.ts";
-import { Redirect, RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
+import { RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { changeThemeColor } from "../manager/misc/common.ts";
 
 import '../../assets/css/main.css';
@@ -13,8 +13,6 @@ import { LoadingSpinner } from "../shared/components.ts";
 import { groupBy } from "std/collections/group_by.ts";
 import { sortBy } from "std/collections/sort_by.ts";
 
-
-Redirect();
 await RegisterAuthRefresh();
 
 WebGen({
@@ -73,7 +71,7 @@ View(() => Vertical(
                         }
                         a[ key ][ 0 ] += sumOf(value!, e => Number(e.revenue));
                         a[ key ][ 1 ] += sumOf(value!, e => Number(e.quantity));
-                    })
+                    });
                     return a;
                 }, {} as Record<string, [ number, number ]>)), e => e[ 1 ][ 0 ]).reverse().map(([ key, value ]) => {
                     return {
@@ -92,7 +90,7 @@ View(() => Vertical(
                         }
                         a[ key ][ 0 ] += sumOf(value!, e => Number(e.revenue));
                         a[ key ][ 1 ] += sumOf(value!, e => Number(e.quantity));
-                    })
+                    });
                     return a;
                 }, {} as Record<string, [ number, number ]>)), e => e[ 1 ][ 0 ]).reverse().filter(([ _k, [ _v, streams ] ]) => streams !== 0).map(([ key, value ]) => {
                     return {

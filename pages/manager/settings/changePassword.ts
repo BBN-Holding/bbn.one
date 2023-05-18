@@ -1,5 +1,5 @@
 import { Grid, TextInput, Page, Vertical, Wizard, WizardComponent } from "webgen/mod.ts";
-import { Redirect } from "../helper.ts";
+import { logOut } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { API } from "../RESTSpec.ts";
 import { delay } from "std/async/mod.ts";
@@ -13,8 +13,7 @@ export function ChangePassword(update: (data: Partial<ViewState>) => void): Wiza
                 password: data.newPassword
             });
             await delay(300);
-            localStorage.clear();
-            Redirect();
+            logOut();
         },
         buttonArrangement: ({ PageValid, Submit }) => {
             setErrorMessage();

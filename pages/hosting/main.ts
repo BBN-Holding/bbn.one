@@ -1,5 +1,5 @@
 import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
-import { Redirect, RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
+import { RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/hosting.css';
@@ -8,7 +8,6 @@ import { hostingMenu } from "./views/menu.ts";
 import { state } from "./data.ts";
 import { pulling, refreshState } from "./loading.ts";
 
-Redirect();
 await RegisterAuthRefresh();
 
 if (!permCheck(

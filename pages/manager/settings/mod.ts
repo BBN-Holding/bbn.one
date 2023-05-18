@@ -1,5 +1,5 @@
 import { Entry, MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
-import { Redirect, RegisterAuthRefresh } from "../helper.ts";
+import { RegisterAuthRefresh, logOut } from "../helper.ts";
 import '../../../assets/css/main.css';
 import { changeThemeColor } from "../misc/common.ts";
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -14,7 +14,6 @@ WebGen({
         themeChanged: changeThemeColor()
     }
 });
-Redirect();
 await RegisterAuthRefresh();
 View<ViewState>(({ state, update }) => Vertical(
     ...DynaNavigation("Settings"),
@@ -38,8 +37,7 @@ View<ViewState>(({ state, update }) => Vertical(
                 Entry({
                     title: "Logout"
                 }).addClass("limited-width").onClick(() => {
-                    localStorage.clear();
-                    Redirect();
+                    logOut();
                 }),
             ).setGap("20px")
         ],

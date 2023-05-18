@@ -5,6 +5,7 @@ import { API, Permission } from "./RESTSpec.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
 import { ViewState } from "./types.ts";
+import { loginRequired } from "../../components/pages.ts";
 export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
@@ -39,7 +40,7 @@ export function IsLoggedIn(): ProfileData | null {
         return localStorage[ "access-token" ] ? JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ]?.split(".")[ 1 ])).user : null;
     } catch (_) {
         // Invalid state. We gonna need to say goodbye to that session
-        localStorage.clear();
+        resetTokens();
         return null;
     }
 }
@@ -97,15 +98,25 @@ function checkIfRefreshTokenIsValid() {
     if (!token) return;
     const tokenData = JSON.parse(b64DecodeUnicode(token.split(".")[ 1 ]));
     if (isExpired(tokenData.exp)) {
-        localStorage.clear();
-        Redirect();
+        logOut();
         return;
     }
 }
 export function logOut() {
     if (location.pathname.startsWith("/signin")) return;
-    localStorage.clear();
+    resetTokens();
     location.href = "/signin";
+}
+
+export function resetTokens() {
+    localStorage.removeItem("refresh-token");
+    localStorage.removeItem("access-token");
+    localStorage.removeItem("type");
+    localStorage.removeItem("goal");
+}
+
+export function gotoGoal() {
+    location.href = localStorage.goal;
 }
 export async function renewAccessTokenIfNeeded() {
     const { exp } = rawAccessToken();
@@ -133,8 +144,8 @@ function isExpired(exp: number) {
 }
 
 export async function RegisterAuthRefresh() {
+    if (!IsLoggedIn()) return shouldLoginPage();
     try {
-        if (!IsLoggedIn()) return;
 
         updateActiveUserData();
         checkIfRefreshTokenIsValid();
@@ -144,11 +155,13 @@ export async function RegisterAuthRefresh() {
         console.error(_);
     }
 }
-export function Redirect() {
-    if (localStorage[ "refresh-token" ] && location.href.includes("/signin"))
-        location.href = "/music"; // TODO do this better
-    else if (!localStorage[ "refresh-token" ] && !location.href.includes("/signin"))
+
+export function shouldLoginPage() {
+    if (loginRequired.find(x => location.pathname.startsWith(x))) {
+        localStorage.goal = location.pathname;
         location.href = "/signin";
+        throw "aborting javascript here";
+    }
 }
 
 export function CenterAndRight(center: Component, right: Component): Component {

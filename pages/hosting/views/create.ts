@@ -1,5 +1,5 @@
 import { Box, DropDownInput, Grid, MaterialIcons, Page, PlainText, Reactive, State, TextInput, Vertical, View, WebGen, Wizard, Dialog } from "webgen/mod.ts";
-import { Redirect, RegisterAuthRefresh } from "../../manager/helper.ts";
+import { RegisterAuthRefresh } from "../../manager/helper.ts";
 import { DynaNavigation } from "../../../components/nav.ts";
 import '../../../assets/css/main.css';
 import '../../../assets/css/hosting.css';
@@ -11,12 +11,11 @@ import { API } from "../../manager/RESTSpec.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
 import { SliderInput } from "../../shared/Slider.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
+
+await RegisterAuthRefresh();
 WebGen({
     icon: new MaterialIcons()
 });
-
-Redirect();
-await RegisterAuthRefresh();
 
 
 const isLoading = State({

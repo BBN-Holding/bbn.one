@@ -1,7 +1,7 @@
 import { assert } from "std/testing/asserts.ts";
 import { API } from "../manager/RESTSpec.ts";
 import { state } from "./state.ts";
-import { Redirect, forceRefreshToken } from "../manager/helper.ts";
+import { forceRefreshToken, gotoGoal } from "../manager/helper.ts";
 import { delay } from "std/async/delay.ts";
 
 export async function loginUser() {
@@ -15,7 +15,7 @@ export async function loginUser() {
             state.error = rsp.message || "";
 
         else
-            logIn(rsp, "email").finally(Redirect);
+            logIn(rsp, "email").finally(gotoGoal);
     } catch (error) {
         state.error = error.message;
     }
@@ -38,7 +38,7 @@ export async function registerUser() {
             state.error = rsp.message || "";
 
         else
-            logIn(rsp, "email").finally(Redirect);
+            logIn(rsp, "email").finally(gotoGoal);
     } catch (error) {
         state.error = error.message;
     }
@@ -65,12 +65,12 @@ export async function handleStateChange() {
     if (params.type == "google" && params.stateCode && params.code) {
         API.auth.google.post({ code: params.code, state: params.stateCode })
             .then(x => logIn(x, "0auth"))
-            .then(Redirect);
+            .then(gotoGoal);
     }
     else if (params.type == "discord" && params.stateCode && params.code) {
         API.auth.discord.post({ code: params.code, state: params.stateCode })
             .then(x => logIn(x, "0auth"))
-            .then(Redirect);
+            .then(gotoGoal);
     }
     else if (params.type == "forgot-password" && params.token) {
         API.auth.fromUserInteraction.get("JWT " + params.token).then(async x => {
@@ -84,7 +84,7 @@ export async function handleStateChange() {
         await API.user(API.getToken()).mail.validate.post(params.token);
         await forceRefreshToken();
         await delay(1000);
-        Redirect();
+        gotoGoal();
     }
     else
         state.type = "login";

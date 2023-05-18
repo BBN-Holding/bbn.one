@@ -1,5 +1,5 @@
 import { Center, CenterV, Custom, loadingWheel, MaterialIcons, Spacer, Vertical, View, WebGen } from "webgen/mod.ts";
-import { Redirect, RegisterAuthRefresh } from "../helper.ts";
+import { RegisterAuthRefresh } from "../helper.ts";
 import { changeThemeColor } from "../misc/common.ts";
 import '../../../assets/css/main.css';
 import '../../../assets/css/music.css';
@@ -15,7 +15,7 @@ WebGen({
         themeChanged: changeThemeColor()
     }
 });
-Redirect();
+
 await RegisterAuthRefresh();
 
 const params = new URLSearchParams(location.search);

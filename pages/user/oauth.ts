@@ -3,13 +3,12 @@ import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { API } from "../manager/RESTSpec.ts";
-import { Redirect, RegisterAuthRefresh, activeUser, logOut } from "../manager/helper.ts";
+import { RegisterAuthRefresh, activeUser, logOut } from "../manager/helper.ts";
 import './oauth.css';
 import { dots, templateArtwork } from "../../assets/imports.ts";
 import { ProfilePicture, getNameInital } from "../admin/helper.ts";
 import { LoadingSpinner } from "../shared/components.ts";
 
-Redirect();
 await RegisterAuthRefresh();
 
 const para = new URLSearchParams(location.search);
@@ -28,11 +27,11 @@ const state = State({
     loaded: false,
     name: "",
     icon: ""
-})
+});
 
 const list = Reactive(state, "loaded", () => {
     if (state.loaded)
-        return  Grid(
+        return Grid(
             MediaQuery("(max-width: 700px)", (small) =>
                 PlainText("Connect Now!")
                     .setMargin("5rem 0 .8rem")
@@ -53,7 +52,7 @@ const list = Reactive(state, "loaded", () => {
                         activeUser.avatar ?
                             Custom(img(activeUser.avatar))
                             : PlainText(getNameInital(activeUser.username ?? "")),
-                            activeUser.username ?? ""
+                        activeUser.username ?? ""
                     ),
                     PlainText(activeUser.username ?? "")
                         .addClass("label-small", "label-center")
@@ -70,36 +69,36 @@ const list = Reactive(state, "loaded", () => {
                 Icon("check"),
                 PlainText("Access to view your Email address")
             )
-            .addClass("permission"),
+                .addClass("permission"),
             Button("Connect")
                 .setWidth("100%")
                 .setJustify("center")
                 .setMargin("1rem 0 0")
                 .onClick(() => {
                     //TODO: VALIDATE FIRST
-                    const url = new URL(params.redirectUri ? params.redirectUri : "https://bbn.one")
+                    const url = new URL(params.redirectUri ? params.redirectUri : "https://bbn.one");
                     url.searchParams.set("code", API.getToken());
                     url.searchParams.set("state", params.state!);
                     window.location.href = url.toString();
                 }),
-                Horizontal(
-                    PlainText("Wrong account?"),
-                    Button("Switch it here")
-                        .setStyle(ButtonStyle.Inline)
-                        .setColor(Color.Colored)
-                        .onClick(() => {
-                            logOut();
-                        })
-                        .addClass("link"),
-                    Spacer()
-                )
-                    .setMargin("1rem 0 0"),
+            Horizontal(
+                PlainText("Wrong account?"),
+                Button("Switch it here")
+                    .setStyle(ButtonStyle.Inline)
+                    .setColor(Color.Colored)
+                    .onClick(() => {
+                        logOut();
+                    })
+                    .addClass("link"),
+                Spacer()
+            )
+                .setMargin("1rem 0 0"),
         )
             .addClass("limited-width")
             .addClass("area-space")
-            .setJustify("start" as "flex-start")
-    return LoadingSpinner()
-})
+            .setJustify("start" as "flex-start");
+    return LoadingSpinner();
+});
 
 View(() => Vertical(
     ...DynaNavigation("Home"),
@@ -111,4 +110,4 @@ API.oauth(API.getToken()).get(params.clientId!).then(async (e) => {
     state.name = e.name;
     state.icon = e.icon ? URL.createObjectURL(await API.oauth(API.getToken()).icon(params.clientId!)) : "";
     state.loaded = true;
-})
+});

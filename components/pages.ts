@@ -16,6 +16,14 @@ export const pages: [ logo: any, perm: Permission[], route: string ][] = [
     [ bbnAdminLogo, [ "/bbn/manage", "/hmsys/user" ], "/admin" ],
 ];
 
+// Moved this to the up array when we use the hmsys permission system
+export const loginRequired = [
+    "/music",
+    "/hosting",
+    "/admin",
+    "/oauth"
+];
+
 export function activeLogo(type: string) {
     if (type == "Music")
         return bbnMusicLogo;
