@@ -315,7 +315,7 @@ export const API = {
                 return fetch(`${API.BASE_URL}hosting/servers/${id}`, {
                     method: 'DELETE',
                     headers: headers(token)
-                }).then(x => x.json());
+                }).then(x => x.text());
             }
         }),
     }),
