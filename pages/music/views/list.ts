@@ -2,7 +2,6 @@ import { CenterV, Component, Entry, MediaQuery, PlainText, Vertical, css } from 
 import { Drop, DropType, Payout } from "../../../spec/music.ts";
 import { sortBy } from "std/collections/sort_by.ts";
 import { DropEntry } from "./entry.ts";
-import { API } from "../../manager/RESTSpec.ts";
 import { activeUser, permCheck } from "../../manager/helper.ts";
 
 document.adoptedStyleSheets.push(css`

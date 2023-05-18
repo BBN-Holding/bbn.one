@@ -68,6 +68,11 @@
     background-color: #cc3232;
 }
 
+.dot.installing {
+    background-color: #2e2e2e;
+    animation: pulse 300ms ease infinite;
+}
+
 .action-list .wiconbutton {
     width: 39px;
 }

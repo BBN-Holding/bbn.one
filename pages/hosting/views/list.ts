@@ -100,6 +100,7 @@ function deleteServer(serverId: string) {
             try {
                 await API.hosting(API.getToken()).serverId(serverId).delete();
             } catch (error) {
+                console.log(error);
                 alert(JSON.stringify(error));
             }
             await refreshState();

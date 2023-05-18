@@ -4,6 +4,7 @@ import { API } from "../manager/RESTSpec.ts";
 
 export async function refreshState() {
     state.servers = State((await API.hosting(API.getToken()).servers()).map(x => State(x)));
+    await API.hosting(API.getToken()).meta();
 }
 
 export function pulling() {
