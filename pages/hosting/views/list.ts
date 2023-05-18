@@ -1,4 +1,4 @@
-import { Box, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, MediaQuery, Entry, TextInput, DropDownInput, Vertical, Component, IconButtonComponent } from "webgen/mod.ts";
+import { Box, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, MediaQuery, Entry, TextInput, DropDownInput, Vertical, Component, IconButtonComponent, State } from "webgen/mod.ts";
 import { state } from "../data.ts";
 import './list.css';
 import { API } from "../../manager/RESTSpec.ts";
@@ -17,8 +17,9 @@ type StateActions = {
 export const listView = MediaQuery("(max-width: 700px)", (small) => Reactive(state, "servers", () => Grid(
     ...state.servers.map(server => Entry({
         title: server.name,
-        subtitle: `${servers[ server.type ].name} @ ${locations[ server.location ]} @ ${server.state}`
+        subtitle: `${servers[ server.type ].name} @ ${locations[ server.location ]}`
     })
+        .addPrefix(Reactive(server, "state", () => Box().addClass("dot", server.state)).removeFromLayout())
         .addSuffix(
             Horizontal(
                 IconButton("dashboard", "dashboard")
@@ -80,7 +81,7 @@ export const listView = MediaQuery("(max-width: 700px)", (small) => Reactive(sta
                             server.loading = true;
                             await API.hosting(API.getToken()).serverId(server._id).power("stop");
                         })
-                })[ server.state ] ?? Box())).removeFromLayout()
+                })[ server.state ] ?? Box())).addClass("action-list").removeFromLayout()
             )
                 .setGap(small ? ".5rem" : "1rem")
                 .addClass("icon-buttons-list", small ? "small" : "normal")

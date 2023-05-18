@@ -29,3 +29,50 @@
     --color-colored-saturation: 1000%;
     --color-colored-lightness: 39%;
 }
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 10rem;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.dot.running {
+    background-color: #2dc937;
+}
+
+.dot.starting {
+    background-color: #99c140;
+    animation: pulse 300ms ease infinite;
+}
+
+.dot.stopping {
+    background-color: #db7b2b;
+    animation: pulse 300ms ease infinite;
+}
+
+.dot.offline {
+    background-color: #cc3232;
+}
+
+.action-list .wiconbutton {
+    width: 39px;
+}
+
+
+.action-list .loading {
+    width: 51px;
+}
