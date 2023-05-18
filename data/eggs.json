@@ -78,19 +78,19 @@
             "VERSION": "pm4"
         }
     },
-    "/minecraft/legacy/magma": {
+    "/minecraft/legacy/magma/": {
         "name": "Minecraft Magma",
         "egg": 30
     },
-    "/minecraft/legacy/nukkit": {
+    "/minecraft/legacy/nukkit/": {
         "name": "Minecraft Nukkit",
         "egg": 33
     },
-    "/minecraft/legacy/pgf": {
+    "/minecraft/legacy/pgf/": {
         "name": "Minecraft Purpur Geyser Floodgate",
         "egg": 34
     },
-    "/minecraft/legacy/purpur": {
+    "/minecraft/legacy/purpur/": {
         "name": "Minecraft Purpur",
         "egg": 20
     }
