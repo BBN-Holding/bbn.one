@@ -12,7 +12,7 @@ import { Permission } from "../pages/manager/RESTSpec.ts";
 export const pages: [ logo: any, perm: Permission[], route: string ][] = [
     [ bbnHolding, [], "/" ],
     [ bbnMusicLogo, [], "/music" ],
-    [ bbnHostingLogo, [ "/bbn/beta-hosting" ], "/hosting" ],
+    [ bbnHostingLogo, [], "/hosting" ],
     [ bbnAdminLogo, [ "/bbn/manage", "/hmsys/user" ], "/admin" ],
 ];
 
