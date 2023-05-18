@@ -75,7 +75,7 @@ export const listView = MediaQuery("(max-width: 700px)", (small) => Reactive(sta
                     "installing": LoadingSpinner(),
                     "stopping": LoadingSpinner(),
                     "starting": LoadingSpinner(),
-                    "running": IconButton("pause", "delete")
+                    "running": IconButton("stop", "delete")
                         .setColor(Color.Critical)
                         .onClick(async () => {
                             server.loading = true;
