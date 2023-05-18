@@ -196,7 +196,12 @@ export enum ServerTypes {
     Default = "/minecraft/default/",
     Fabric = "/minecraft/modded/fabric/",
     Forge = "/minecraft/modded/forge/",
-    Bedrock = "/minecraft/bedrock/"
+    Bedrock = "/minecraft/bedrock/",
+    PocketMine = "/minecraft/pocketmine/",
+    LegacyPurpur = "/minecraft/legacy/purpur/",
+    LegacyMagma = "/minecraft/legacy/magma/",
+    LegacyNukkit = "/minecraft/legacy/nukkit/",
+    LegacyPGF = "/minecraft/legacy/pgf/",
 }
 
 export const powerState = zod.enum([ "offline", "starting", "stopping", "running", "installing", "start", "stop", "kill", "restart" ]);
