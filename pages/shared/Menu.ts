@@ -32,8 +32,6 @@ const FilterLastItem = (_: MenuItem, index: number, list: MenuItem[]): boolean =
  *
  * - ActionBar should be put in WebGen first (requires rewrite)
  *
- * - Entry should be put in WebGen first (requires rewrite)
- *
  * - Add URL Router
  */
 export const Menu = (rootMenu: RootMenuItem) => new class extends Component {

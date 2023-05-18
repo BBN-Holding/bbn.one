@@ -187,19 +187,19 @@ export const API = {
     },
     oauth: (token: string) => ({
         get: async (clientid: string): Promise<OAuthApp> => {
-            const data = await fetch(`${API.BASE_URL}oauth/${clientid}`, {
+            const data = await fetch(`${API.BASE_URL}oauth/applications/${clientid}`, {
                 headers: headers(token)
             }).then(x => x.json());
             return data;
         },
         list: async (): Promise<OAuthApp[]> => {
-            const data = await fetch(`${API.BASE_URL}oauth/`, {
+            const data = await fetch(`${API.BASE_URL}oauth/applications`, {
                 headers: headers(token)
             }).then(x => x.json());
             return data;
         },
         post: async (name: string, redirect: string, icon: string): Promise<{ id: string, secret: string; }> => {
-            const data = await fetch(`${API.BASE_URL}oauth/`, {
+            const data = await fetch(`${API.BASE_URL}oauth/applications`, {
                 method: "POST",
                 headers: headers(token),
                 body: JSON.stringify({ name, redirect, icon })
@@ -207,7 +207,7 @@ export const API = {
             return data;
         },
         icon: async (clientid: string) => {
-            const data = await fetch(`${API.BASE_URL}oauth/${clientid}/icon`, {
+            const data = await fetch(`${API.BASE_URL}oauth/${clientid}/download`, {
                 headers: headers(token)
             }).then(x => x.blob());
             return data;
