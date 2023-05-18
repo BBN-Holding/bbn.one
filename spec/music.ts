@@ -187,9 +187,7 @@ export const wallet = zod.object({
 
 export const limits = zod.object({
     memory: zod.number(),
-    swap: zod.number(),
     disk: zod.number(),
-    io: zod.number(),
     cpu: zod.number()
 });
 
