@@ -26,7 +26,7 @@ const menu = Menu({
                 {
                     title: "Recommended",
                     id: "default/",
-                    subtitle: "Play on Efficent First Servers with Server-Side Modding (Plugins).",
+                    subtitle: "Play on Efficent First Servers with Plugins (Paper/Purpur).",
                     action: (serverType) => { creationState.type = serverType as ServerTypes; },
                     custom: creationView
                 },
