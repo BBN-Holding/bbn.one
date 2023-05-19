@@ -74,6 +74,11 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
                     .addClass("low-level")
             ],
             //TODO: Add instrumental
+            [ "Instrumental", "max-content", ({ instrumental }, index) =>
+                Checkbox(instrumental ?? false)
+                    .onClick((_, value) => update(state, index, "instrumental", !value))
+                    .addClass("low-level")
+            ],
             [ "Explicit", "max-content", ({ explicit }, index) =>
                 Checkbox(explicit ?? false)
                     .onClick((_, value) => update(state, index, "explicit", !value))
