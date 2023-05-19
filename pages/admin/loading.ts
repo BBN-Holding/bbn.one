@@ -18,7 +18,7 @@ export async function refreshState() {
 const urls = {
     "isrc": [ "payment/payout/isrcsync", '.xlsx' ],
     "manual": [ "payment/payout/upload", '.xlsx' ],
-    "oauth": [ "admin/uploadfiles", 'image/*' ]
+    "oauth": [ "oauth/applications/upload", 'image/*' ]
 };
 export function upload(type: keyof typeof urls): Promise<string> {
     const [ url, extension ] = urls[ type ];

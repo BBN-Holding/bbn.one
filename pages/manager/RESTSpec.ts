@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-unused-vars
 import { assert } from "std/testing/asserts.ts";
 import { Drop, DropType, OAuthApp, Payout, File, Server, PteroServer, PowerState, ServerCreate, Meta } from "../../spec/music.ts";
 import { ProfileData } from "./helper.ts";
@@ -179,7 +178,7 @@ export const API = {
                         })
                     }).then(x => x.json());
                     return data;
-                } catch (error) {
+                } catch (_error) {
                     return <ErrorObject>{ error: true, type: "client-side" };
                 }
             }
@@ -210,6 +209,13 @@ export const API = {
             const data = await fetch(`${API.BASE_URL}oauth/${clientid}/download`, {
                 headers: headers(token)
             }).then(x => x.blob());
+            return data;
+        },
+        delete: async (clientid: string) => {
+            const data = await fetch(`${API.BASE_URL}oauth/applications/${clientid}`, {
+                method: "DELETE",
+                headers: headers(token)
+            }).then(x => x.json());
             return data;
         }
     }),

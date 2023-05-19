@@ -66,7 +66,7 @@ export function listOAuth(apps: OAuthApp[]) {
             return Box(imageSource)
                 .addClass("image-square");
         })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
-            alert("Not implemented yet.")
+            API.oauth(API.getToken()).delete(app._id)
         })).addSuffix(Button("View").onClick(() => {
             oAuthViewDialog(app).open();
         })).addClass("limited-width"))
@@ -97,7 +97,7 @@ export function listFiles(files: File[]) {
             return Box(imageSource)
                 .addClass("image-square");
         })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
-            alert("Not implemented yet.")
+            API.admin(API.getToken()).files.delete(file._id)
         })).addClass("limited-width"))
     );
 }

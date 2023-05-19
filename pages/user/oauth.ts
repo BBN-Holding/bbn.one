@@ -1,4 +1,4 @@
-import { Button, Grid, MediaQuery, PlainText, Vertical, View, WebGen, Image, Color, Icon, Box, Horizontal, ButtonStyle, Spacer, img, Custom, State, Reactive } from "webgen/mod.ts";
+import { Button, Grid, MediaQuery, PlainText, Vertical, View, WebGen, Image, Color, Icon, Horizontal, ButtonStyle, Spacer, img, Custom, State, Reactive } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
 import { DynaNavigation } from "../../components/nav.ts";
