@@ -265,6 +265,14 @@ export const API = {
                 }
             })
         },
+        servers: {
+            get: async () => {
+                const data = await fetch(`${API.BASE_URL}admin/servers`, {
+                    headers: headers(token)
+                }).then(x => x.json());
+                return data as Server[];
+            }
+        }
     }),
     payment: (token: string) => ({
         payouts: {

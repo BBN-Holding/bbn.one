@@ -1,6 +1,6 @@
 import { Entry, PlainText, Vertical, Image, Box, ReCache, Button, Color, CommonIconType, IconButton, Dialog, Grid, TextInput } from "webgen/mod.ts";
 import { state } from "../state.ts";
-import { DropType, OAuthApp, File } from "../../../spec/music.ts";
+import { DropType, OAuthApp, File, Server } from "../../../spec/music.ts";
 import { ReviewEntry } from "./entryReview.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { API } from "../../manager/RESTSpec.ts";
@@ -52,6 +52,15 @@ export function listReviews() {
         )
     )
         .setGap("1rem");
+}
+
+export function listServers(servers: Server[]) {
+    return Vertical(
+        servers.map(server => Entry({
+            title: server.name,
+            subtitle: server._id,
+        }))
+    )
 }
 
 export function listOAuth(apps: OAuthApp[]) {

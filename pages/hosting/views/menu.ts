@@ -14,7 +14,7 @@ export const hostingMenu = () => Reactive(state, "loaded", () => Menu({
         "servers/": {
             title: "Servers",
             custom: () => Reactive(state, "servers", () =>
-                listView
+                listView(state)
             )
         },
         "details/": {

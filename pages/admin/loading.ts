@@ -11,7 +11,8 @@ export async function refreshState() {
         (async () => state.users = State(await API.user(API.getToken()).list.get()))(),
         (async () => state.payouts = State(await API.admin(API.getToken()).payouts.get()))(),
         (async () => state.oauth = State(await API.oauth(API.getToken()).list()))(),
-        (async () => state.files = State(await API.admin(API.getToken()).files.list()))()
+        (async () => state.files = State(await API.admin(API.getToken()).files.list()))(),
+        (async () => state.servers = State(await API.admin(API.getToken()).servers.get()))()
     ]);
 }
 

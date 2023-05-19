@@ -1,11 +1,10 @@
-import { Box, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, MediaQuery, Entry, TextInput, DropDownInput, Vertical, Component, IconButtonComponent, State, CenterV } from "webgen/mod.ts";
+import { Box, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, MediaQuery, Entry, TextInput, DropDownInput, Vertical, Component, IconButtonComponent, State, CenterV, StateHandler } from "webgen/mod.ts";
 import { state } from "../data.ts";
 import './list.css';
 import { API } from "../../manager/RESTSpec.ts";
-import { refreshState } from "../loading.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import servers from "../../../data/eggs.json" assert { type: "json" };
-import { PowerState } from "../../../spec/music.ts";
+import { Meta, PowerState, Server } from "../../../spec/music.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
 
 new MaterialIcons();
@@ -14,7 +13,11 @@ type StateActions = {
     [ type in PowerState ]: Component | IconButtonComponent;
 };
 
-export const listView = MediaQuery("(max-width: 700px)", (small) => Reactive(state, "servers", () => Grid(
+export const listView = (state: StateHandler<{
+    loaded: boolean,
+    servers: Server[],
+    meta: Meta
+}>) => MediaQuery("(max-width: 700px)", (small) => Reactive(state, "servers", () => Grid(
     ...state.servers.map(server => Entry({
         title: server.name,
         subtitle: `${servers[ server.type ].name} @ ${locations[ server.location ]}`

@@ -73,7 +73,6 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
                     .setStyle(ButtonStyle.Inline)
                     .addClass("low-level")
             ],
-            //TODO: Add instrumental
             [ "Instrumental", "max-content", ({ instrumental }, index) =>
                 Checkbox(instrumental ?? false)
                     .onClick((_, value) => update(state, index, "instrumental", !value))

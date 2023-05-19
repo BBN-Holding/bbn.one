@@ -5,10 +5,11 @@ import { activeUser } from "../../manager/helper.ts";
 import { getListCount } from "../../shared/listCount.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
 import { upload } from "../loading.ts";
-import { listFiles, listOAuth, listReviews } from "./list.ts";
+import { listFiles, listOAuth, listReviews, listServers } from "./list.ts";
 import { UserPanel } from "../users.ts";
 import { listPayouts } from "../../music/views/list.ts";
 import { API } from "../../manager/RESTSpec.ts";
+import { listView } from "../../hosting/views/list.ts";
 
 export const adminMenu = () => Reactive(state, "loaded", () => Menu({
     title: `Hi ${activeUser.username} 👋`,
@@ -90,6 +91,13 @@ export const adminMenu = () => Reactive(state, "loaded", () => Menu({
             custom: () => Reactive(state, "files", () =>
                 Vertical(listFiles(state.files ?? []))
                     .setGap("0.5rem")
+            )
+        },
+        "servers/": {
+            title: `Minecraft Servers`,
+            custom: () => Reactive(state, "servers", () =>
+                // @ts-ignore
+                listView(state)
             )
         }
     },

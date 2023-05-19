@@ -1,6 +1,6 @@
 import { State } from "webgen/mod.ts";
 import { ProfileData } from "../manager/helper.ts";
-import { Drop, OAuthApp, Payout, File } from "../../spec/music.ts";
+import { Drop, OAuthApp, Payout, File, Server } from "../../spec/music.ts";
 
 export const state = State({
     loaded: false,
@@ -10,6 +10,7 @@ export const state = State({
     payouts: <Payout[] | undefined>undefined,
     oauth: <OAuthApp[] | undefined>undefined,
     files: <File[] | undefined>undefined,
+    servers: <Server[] | undefined>undefined,
 
     disableDialog: true
 });
