@@ -1,4 +1,4 @@
-import { Box, Button, ButtonStyle, Color, Component, Grid, Horizontal, Icon, PlainText, Spacer, Vertical } from "webgen/mod.ts";
+import { Box, Button, Color, Grid, Icon, PlainText, Pointable, Pointer, Spacer, Taglist, Vertical } from "webgen/mod.ts";
 
 export type Link = {
     title: string;
@@ -6,8 +6,8 @@ export type Link = {
     onclick: () => Promise<void> | void;
 };
 
-export function ActionBar(title: string,
-    categories?: { title: string, selected: boolean, onclick: () => void, hide?: boolean; }[],
+export function ActionBar(title: Pointable<string>,
+    categories?: { list: Pointable<string>[], selected: Pointer<number>; },
     action?: Link,
     history?: Link[]) {
     return Grid(
@@ -25,19 +25,9 @@ export function ActionBar(title: string,
                     .setFont(2.260625, 700),
                 Spacer()
             ).setMargin("0 0 18px"),
-            categories && categories.length != 0 ?
-                Horizontal(
-                    ...[
-                        ...categories.map(x =>
-                            !x.hide ? Button(x.title)
-                                .setColor(Color.Colored)
-                                .addClass("tag")
-                                .setStyle(x.selected ? ButtonStyle.Normal : ButtonStyle.Secondary)
-                                .onClick(x.onclick) : null
-                        ),
-                    ].filter(x => x) as Component[],
-                    Spacer()
-                ).addClass("category-list").setGap("10px") : Box(),
+            categories ?
+                Taglist(categories.list, categories.selected)
+                : Box(),
             PlainText("")
                 .addClass("error-message", "hidden-message")
                 .setId("error-message-area")

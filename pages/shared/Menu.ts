@@ -1,8 +1,8 @@
-import { Box, ButtonComponent, Component, Entry, Reactive, State, Vertical } from "webgen/mod.ts";
+import { Box, ButtonComponent, Component, Entry, Pointable, Reactive, State, Vertical } from "webgen/mod.ts";
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
 
 export interface MenuItem {
-    title: string;
+    title: Pointable<string>;
     id: `${string}/`;
     subtitle?: string;
 
@@ -36,11 +36,17 @@ const FilterLastItem = (_: MenuItem, index: number, list: MenuItem[]): boolean =
  */
 export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
     nav = State({
-        active: <string>rootMenu.id
+        active: <string>rootMenu.id,
+        activeCategory: 0
     });
     constructor() {
         super();
         this.wrapper.append(Reactive(this.nav, "active", () => this.walkMenu()).draw());
+
+        if (rootMenu.categories)
+            this.nav.$activeCategory.on((val) => {
+                this.nav.active = rootMenu.id + Object.keys(rootMenu.categories!)[ val ];
+            });
     }
 
     setActivePath(clickPath: string) {
@@ -98,13 +104,10 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
     }
 
     private renderCategoryBar(rootMenu: RootMenuItem) {
-        return ActionBar(rootMenu.title, Object.entries(rootMenu.categories!).map(([ key, value ]) => {
-            return {
-                title: value.title,
-                selected: key == this.getActivePath().at(-1)!.id.replace("+", ""),
-                onclick: () => this.nav.active = rootMenu.id + key
-            };
-        }), rootMenu.menuBarAction);
+        return ActionBar(rootMenu.title, {
+            list: Object.values(rootMenu.categories!).map(value => value.title),
+            selected: this.nav.$activeCategory
+        }, rootMenu.menuBarAction);
     }
 
     private renderList(active?: MenuItem[]): Component | null {

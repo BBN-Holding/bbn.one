@@ -6,7 +6,7 @@
     height: unset !important;
 }
 
-.tag {
+.wtags .wbutton {
     --background-color-h: 0 !important;
     --background-color-s: 65% !important;
     --background-color-l: 44% !important;

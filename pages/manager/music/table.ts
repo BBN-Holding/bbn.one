@@ -1,4 +1,4 @@
-import { Box, ButtonStyle, Checkbox, Component, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, State, StateHandler, Table, View } from "webgen/mod.ts";
+import { Box, ButtonStyle, Checkbox, Component, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, State, EditableStateHandler, Table, View } from "webgen/mod.ts";
 import { EditArtists, getSecondary, getYearList, stringToColour } from "../helper.ts";
 import primary from "../../../data/primary.json" assert { type: "json"};
 import secondary from "../../../data/secondary.json" assert { type: "json"};
@@ -22,7 +22,7 @@ function ProfilePicture(component: Component, name: string) {
     return Custom(ele).addClass("profile-picture");
 }
 
-export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
+export function ManageSongs(state: EditableStateHandler<{ songs: Drop[ "songs" ]; }>) {
     const tableView = View(() =>
         Table([
             [ "Title", "auto", ({ progress, title }, index) => progress !== undefined ? Progress(progress) : InlineTextInput("text", "blur").addClass("low-level").setValue(title).onChange(x => update(state, index, "title", x)) ],
@@ -94,7 +94,7 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
 }
 
 // deno-lint-ignore no-explicit-any
-function update(state: StateHandler<{ songs: Drop[ "songs" ]; }>, index: number, key: keyof NonNullable<Drop[ "songs" ]>[ 0 ], value: any) {
+function update(state: EditableStateHandler<{ songs: Drop[ "songs" ]; }>, index: number, key: keyof NonNullable<Drop[ "songs" ]>[ 0 ], value: any) {
     if (!state.songs)
         state.songs = State([]);
     // @ts-ignore errors due to any usage.

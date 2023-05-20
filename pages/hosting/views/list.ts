@@ -1,4 +1,4 @@
-import { Box, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, MediaQuery, Entry, TextInput, DropDownInput, Vertical, Component, IconButtonComponent, State, CenterV, StateHandler } from "webgen/mod.ts";
+import { Box, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, MediaQuery, Entry, TextInput, DropDownInput, Vertical, Component, IconButtonComponent, StateHandler } from "webgen/mod.ts";
 import { state } from "../data.ts";
 import './list.css';
 import { API } from "../../manager/RESTSpec.ts";
@@ -16,7 +16,7 @@ type StateActions = {
 export const listView = (state: StateHandler<{
     loaded: boolean,
     servers: Server[],
-    meta: Meta
+    meta: Meta;
 }>) => MediaQuery("(max-width: 700px)", (small) => Reactive(state, "servers", () => Grid(
     ...state.servers.map(server => Entry({
         title: server.name,
@@ -81,7 +81,7 @@ export const listView = (state: StateHandler<{
                     "running": IconButton("stop", "delete")
                         .setColor(Color.Critical)
                         .onClick(async () => {
-                            server.loading = true;
+                            server.state = "stopping";
                             await API.hosting(API.getToken()).serverId(server._id).power("stop");
                         })
                 })[ server.state ] ?? Box())).addClass("action-list").removeFromLayout()

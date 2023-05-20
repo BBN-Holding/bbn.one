@@ -85,7 +85,7 @@ export function updateActiveUserData() {
         activeUser.permission = State([
             ...activeUser.permission,
             ...new Set(user.groups.map(x => API._legacyPermissionFromGroups(x)).flat())
-        ]);
+        ] as Permission[]);
         console.log("Current User", JSON.parse(JSON.stringify(activeUser)));
     } catch (_) {
         // Session should be invalid
@@ -292,12 +292,12 @@ export function EditArtists(list: Artist[]) {
 export function showPreviewImage(x: Drop, big = false) {
     return ReCache("image-preview-" + x._id + big, () => Promise.resolve(),
         (type) => type == "loaded" && x.artwork
-            ? Image({ type: "direct", source: async () => await loadImage(x) ?? artwork }, "A Song Artwork")
+            ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork")
             : Image(artwork, "A Placeholder Artwork.")).addClass("image-preview");
 }
 
 export async function loadImage(x: Drop) {
-    if (!x.artwork) return undefined;
+    if (!x.artwork) return fetch(artwork).then(x => x.blob());
     return await API.music(API.getToken()).id(x._id).artworkPreview();
 }
 export async function loadDrops(view: ViewClass<ViewState>) {

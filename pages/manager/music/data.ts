@@ -4,6 +4,7 @@ import { Drop } from "../../../spec/music.ts";
 import { API } from "../RESTSpec.ts";
 import { StreamingUploadHandler } from "../upload.ts";
 
+// TODO: Remove all theses spread operator, update values directly,
 
 export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[]; songs: Drop[ "songs" ]; }>, drop: Drop, source: File[]) {
     for (const file of source) {
@@ -28,20 +29,20 @@ export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[];
             year: new Date().getFullYear(),
             progress: 0,
             file: undefined!
-        } ]);
+        } ] as Drop[ "songs" ]);
 
         StreamingUploadHandler(`music/${drop._id}/upload`, {
             failure: () => {
                 state.uploadingSongs = <StateHandler<string[]>>state.uploadingSongs.filter(x => x != uploadId);
                 if (state.songs)
                     state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = -1;
-                state.songs = State([ ...state.songs ?? [] ]);
+                state.songs = State([ ...state.songs ?? [] ] as Drop[ "songs" ]);
                 alert("Your Upload has failed. Please try a different file or try again later");
             },
             uploadDone: () => {
                 if (state.songs)
                     state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = 100;
-                state.songs = State([ ...state.songs ?? [] ]);
+                state.songs = State([ ...state.songs ?? [] ] as Drop[ "songs" ]);
             },
             credentials: () => API.getToken(),
             backendResponse: (id) => {
@@ -50,13 +51,13 @@ export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[];
                     state.songs[ state.songs.findIndex(x => x.id == uploadId) ].file = id;
                 }
                 state.uploadingSongs = <StateHandler<string[]>>state.uploadingSongs.filter(x => x != uploadId);
-                state.songs = State([ ...state.songs ?? [] ]);
+                state.songs = State([ ...state.songs ?? [] ] as Drop[ "songs" ]);
             },
             // deno-lint-ignore require-await
             onUploadTick: async (percentage) => {
                 if (state.songs)
                     state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = percentage;
-                state.songs = State([ ...state.songs ?? [] ]);
+                state.songs = State([ ...state.songs ?? [] ] as Drop[ "songs" ]);
             }
         }, file);
     }

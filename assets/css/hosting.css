@@ -2,7 +2,7 @@
     --bbn-secondary: hsl(201, 88%, 55%);
 }
 
-.tag {
+.wtags .wbutton {
     --background-color-h: 201 !important;
     --background-color-s: 88% !important;
     --background-color-l: 55% !important;
