@@ -204,9 +204,25 @@ cardlist {
     grid-template-columns: auto max-content;
 }
 
+.history-list {
+    grid-auto-flow: column;
+    grid-auto-columns: auto;
+    justify-content: start;
+    white-space: nowrap;
+}
+
 .history-entry {
     opacity: 60%;
     cursor: pointer;
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+}
+
+.history-entry .label {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .history-entry:hover {

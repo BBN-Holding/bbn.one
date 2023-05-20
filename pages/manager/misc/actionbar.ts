@@ -16,6 +16,7 @@ export function ActionBar(title: Pointable<string>,
                 ...(history ?? []).map(x =>
                     Box(
                         PlainText(x.title)
+                            .addClass("label")
                             .setFont(2.260625, 700),
                         Icon("arrow_forward_ios")
                     ).addClass("history-entry").onClick(x.onclick)
@@ -24,7 +25,7 @@ export function ActionBar(title: Pointable<string>,
                     .addClass("text")
                     .setFont(2.260625, 700),
                 Spacer()
-            ).setMargin("0 0 18px"),
+            ).addClass("history-list").setMargin("0 0 18px"),
             categories ?
                 Taglist(categories.list, categories.selected)
                 : Box(),
