@@ -72,7 +72,7 @@ export const adminMenu = Menu({
             )
         },
         "oauth/": {
-            title: ref`OAuth ${count(state.$files)}`,
+            title: ref`OAuth ${count(state.$oauth)}`,
             items: [
                 {
                     title: "Add OAuth",
