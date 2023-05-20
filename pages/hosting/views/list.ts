@@ -28,7 +28,7 @@ export const listView = (state: StateHandler<{
                 IconButton("dashboard", "dashboard")
                     .onClick(async () => {
                         const thing = await API.hosting(API.getToken()).serverId(server._id).get();
-                        open(`https://panel.mc4u.xyz/server/${thing.ptero.identifier}`, "_blank");
+                        open(`https://panel.bbn.one/server/${thing.ptero.identifier}`, "_blank");
                     }),
                 IconButton(CommonIconType.Edit, "edit")
                     .onClick(() => {
@@ -119,7 +119,7 @@ export function ExplainerText() {
             PlainText("No Servers")
                 .addClass("list-title")
                 .setMargin("0"),
-            PlainText("Welcome! Create a server to get going. 🤖🛠️") ,
+            PlainText("Welcome! Create a server to get going. 🤖🛠️"),
         ).setGap("1rem")
         : null;
 }

@@ -55,7 +55,7 @@ export const migrationCredentials = () => Dialog(() =>
     .setTitle("View legacy password")
     .allowUserClose()
     .addButton("Go to legacy panel", () => {
-        open("https://panel.mc4u.xyz/", "_blank");
+        open("https://panel.bbn.one/", "_blank");
         return "remove";
     }, Color.Grayscaled, ButtonStyle.Inline)
     .addButton("Close", "remove", Color.Grayscaled, ButtonStyle.Inline)
