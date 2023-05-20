@@ -1,18 +1,19 @@
-import { Button, Color, Dialog, Grid, PlainText, Reactive, State, TextInput, Vertical } from "webgen/mod.ts";
+import { Button, Color, Dialog, Grid, PlainText, Reactive, State, StateHandler, TextInput, Vertical, ref, refMap } from "webgen/mod.ts";
 import { state } from "../state.ts";
 import { Menu } from "../../shared/Menu.ts";
 import { activeUser } from "../../manager/helper.ts";
-import { getListCount } from "../../shared/listCount.ts";
+import { count } from "../../shared/listCount.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
 import { upload } from "../loading.ts";
-import { listFiles, listOAuth, listReviews, listServers } from "./list.ts";
+import { listFiles, listOAuth, listReviews } from "./list.ts";
 import { UserPanel } from "../users.ts";
 import { listPayouts } from "../../music/views/list.ts";
 import { API } from "../../manager/RESTSpec.ts";
 import { listView } from "../../hosting/views/list.ts";
+import { Server } from "../../../spec/music.ts";
 
-export const adminMenu = () => Reactive(state, "loaded", () => Menu({
-    title: `Hi ${activeUser.username} 👋`,
+export const adminMenu = Menu({
+    title: ref`Hi ${activeUser.$username} 👋`,
     id: "/",
     categories: {
         "overview/": {
@@ -36,32 +37,32 @@ export const adminMenu = () => Reactive(state, "loaded", () => Menu({
             ]
         },
         "reviews/": {
-            title: `Music Reviews ${getListCount(state.reviews)}`,
+            title: ref`Music Reviews ${count(state.$reviews)}`,
             custom: () => Reactive(state, "reviews", () =>
                 listReviews()
             )
         },
         "users/": {
-            title: `User ${getListCount(state.users)}`,
+            title: ref`User ${count(state.$users)}`,
             custom: () => Reactive(state, "users", () =>
                 UserPanel()
             )
         },
         "payouts/": {
-            title: `Payout ${getListCount(state.payouts)}`,
+            title: ref`Payout ${count(state.$payouts)}`,
             items: [
                 {
                     title: "Upload Payout File (.xlsx)",
                     id: "upload+manual/",
                     action: () => {
-                        upload("manual")
+                        upload("manual");
                     }
                 },
                 {
                     title: "Sync ISRCs (release_export.xlsx)",
                     id: "sync+isrc/",
                     action: () => {
-                        upload("isrc")
+                        upload("isrc");
                     }
                 }
             ],
@@ -71,13 +72,13 @@ export const adminMenu = () => Reactive(state, "loaded", () => Menu({
             )
         },
         "oauth/": {
-            title: `OAuth ${getListCount(state.oauth)}`,
+            title: ref`OAuth ${count(state.$files)}`,
             items: [
                 {
                     title: "Add OAuth",
                     id: "add+oauth/",
                     action: () => {
-                        addOAuthDialog.open()
+                        addOAuthDialog.open();
                     }
                 }
             ],
@@ -87,30 +88,28 @@ export const adminMenu = () => Reactive(state, "loaded", () => Menu({
             )
         },
         "files/": {
-            title: `Files ${getListCount(state.files)}`,
+            title: ref`Files ${count(state.$files)}`,
             custom: () => Reactive(state, "files", () =>
                 Vertical(listFiles(state.files ?? []))
                     .setGap("0.5rem")
             )
         },
         "servers/": {
-            title: `Minecraft Servers`,
+            title: ref`Minecraft Servers ${count(state.$servers)}`,
             custom: () => Reactive(state, "servers", () =>
-                // @ts-ignore
-                listView(state)
+                listView(state.servers as StateHandler<Server[]>)
             )
         }
     },
     custom: () => LoadingSpinner()
 })
-    .setActivePath(!state.loaded ? '/' : '/overview/')
-);
+    .setActivePath(refMap(state.$loaded, loaded => loaded ? '/overview/' : '/'));
 
 const oAuthData = State({
     name: "",
     redirectURI: "",
     image: ""
-})
+});
 const addOAuthDialog = Dialog(() =>
     Grid(
         PlainText("Add OAuth"),
@@ -123,9 +122,9 @@ const addOAuthDialog = Dialog(() =>
             Button("Submit")
                 .setColor(oAuthData.image === "" ? Color.Disabled : Color.Grayscaled)
                 .onClick(() => {
-                API.oauth(API.getToken()).post(oAuthData.name, oAuthData.redirectURI, oAuthData.image)
-                addOAuthDialog.close()
-            })
+                    API.oauth(API.getToken()).post(oAuthData.name, oAuthData.redirectURI, oAuthData.image);
+                    addOAuthDialog.close();
+                })
         )
     )
 ).setTitle("Add OAuth");

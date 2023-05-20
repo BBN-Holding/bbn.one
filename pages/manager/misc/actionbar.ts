@@ -2,7 +2,7 @@ import { Box, Button, Color, Grid, Icon, PlainText, Pointable, Pointer, Spacer, 
 
 export type Link = {
     title: string;
-    color?: Color;
+    color?: Pointable<Color>;
     onclick: () => Promise<void> | void;
 };
 

@@ -1,15 +1,15 @@
-import { Reactive, Vertical } from "webgen/mod.ts";
+import { Reactive, Vertical, ref, refMap } from "webgen/mod.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { Menu } from "../../shared/Menu.ts";
 import { state } from "../state.ts";
-import { getListCount } from "../../shared/listCount.ts";
+import { count } from "../../shared/listCount.ts";
 import { listPayouts, musicList } from "./list.ts";
 import { DropType } from "../../../spec/music.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
 import { API } from "../../manager/RESTSpec.ts";
 
-export const musicMenu = () => Reactive(state, "loaded", () => Menu({
-    title: activeUser.username ? `Hi ${activeUser.username} 👋` : `Hello 👋`,
+export const musicMenu = Menu({
+    title: ref`Hi ${activeUser.$username} 👋`,
     id: "/",
     menuBarAction: {
         title: "Submit new Drop",
@@ -20,19 +20,19 @@ export const musicMenu = () => Reactive(state, "loaded", () => Menu({
     },
     categories: {
         "published/": {
-            title: `Published ${getListCount(state.published)}`,
+            title: ref`Published ${count(state.$published)}`,
             custom: () => musicList(state.published ?? [], DropType.Published),
         },
         "unpublished/": {
-            title: `Unpublished ${getListCount(state.unpublished)}`,
+            title: ref`Unpublished ${count(state.$unpublished)}`,
             custom: () => musicList(state.unpublished ?? [], DropType.Private),
         },
         "drafts/": {
-            title: `Drafts ${getListCount(state.drafts)}`,
+            title: ref`Drafts ${count(state.$drafts)}`,
             custom: () => musicList(state.drafts ?? [], DropType.Unsubmitted),
         },
         "payouts/": {
-            title: `Payouts ${getListCount(state.payouts)}`,
+            title: ref`Payouts ${count(state.$payouts)}`,
             custom: () => Reactive(state, "payouts", () =>
                 Vertical(listPayouts(state.payouts ?? []))
                     .setGap("0.5rem")
@@ -41,5 +41,7 @@ export const musicMenu = () => Reactive(state, "loaded", () => Menu({
     },
     custom: () => LoadingSpinner()
 })
-    .setActivePath(!state.loaded ? '/' : (state.drafts?.length ?? 0) > 0 ? "/drafts/" : "/published/")
-);
+    .setActivePath(refMap(state.$loaded, loaded => loaded
+        ? ((state.drafts?.length ?? 0) > 0 ? "/drafts/" : "/published/")
+        : "/"
+    ));

@@ -1,5 +1,5 @@
 import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
-import { RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
+import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/hosting.css';
@@ -20,7 +20,7 @@ WebGen({
     }
 });
 
-View(() => Vertical(...DynaNavigation("Hosting"), hostingMenu())).appendOn(document.body);
+View(() => Vertical(...DynaNavigation("Hosting"), hostingMenu)).appendOn(document.body);
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())

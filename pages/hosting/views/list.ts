@@ -4,7 +4,7 @@ import './list.css';
 import { API } from "../../manager/RESTSpec.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import servers from "../../../data/eggs.json" assert { type: "json" };
-import { Meta, PowerState, Server } from "../../../spec/music.ts";
+import { PowerState, Server } from "../../../spec/music.ts";
 import { LoadingSpinner } from "../../shared/components.ts";
 
 new MaterialIcons();
@@ -13,12 +13,8 @@ type StateActions = {
     [ type in PowerState ]: Component | IconButtonComponent;
 };
 
-export const listView = (state: StateHandler<{
-    loaded: boolean,
-    servers: Server[],
-    meta: Meta;
-}>) => MediaQuery("(max-width: 700px)", (small) => Reactive(state, "servers", () => Grid(
-    ...state.servers.map(server => Entry({
+export const listView = (server: StateHandler<Server[]>) => MediaQuery("(max-width: 700px)", (small) => Reactive(state, "servers", () => Grid(
+    ...server.map(server => Entry({
         title: server.name,
         subtitle: `${servers[ server.type ].name} @ ${locations[ server.location ]}`
     })

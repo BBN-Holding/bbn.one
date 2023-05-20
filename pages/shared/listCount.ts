@@ -1,5 +1,3 @@
-// deno-lint-ignore no-explicit-any
-export function getListCount(list?: any[]) {
-    if (typeof list?.length == "number") return `(${list.length})`;
-    return "";
-}
+import { Pointable, Pointer, refMap } from "../../../WebGen/src/State.ts";
+
+export const count = (list: Pointer<unknown[] | undefined>) => refMap(list, val => typeof val?.length == "number" ? `(${val.length})` : "");

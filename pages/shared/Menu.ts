@@ -1,4 +1,4 @@
-import { Box, ButtonComponent, Component, Entry, Pointable, Reactive, State, Vertical } from "webgen/mod.ts";
+import { Box, ButtonComponent, Component, Entry, Pointable, Reactive, State, Vertical, isPointer } from "webgen/mod.ts";
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
 
 export interface MenuItem {
@@ -49,7 +49,11 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
             });
     }
 
-    setActivePath(clickPath: string) {
+    setActivePath(clickPath: Pointable<string>) {
+        if (isPointer(clickPath)) {
+            clickPath.on((val) => this.setActivePath(val));
+            return this;
+        }
         this.nav.active = clickPath;
         if (rootMenu.categories)
             this.nav.activeCategory = Object.keys(rootMenu.categories).findIndex(key => key === this.getActivePath().at(-1)!.id.replace("+", ""));

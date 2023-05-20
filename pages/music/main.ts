@@ -16,7 +16,7 @@ WebGen({
     }
 });
 
-View(() => Vertical(...DynaNavigation("Music"), musicMenu()))
+View(() => Vertical(...DynaNavigation("Music"), musicMenu))
     .appendOn(document.body);
 
 // make sure we are safe then we start loading.
