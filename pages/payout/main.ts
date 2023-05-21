@@ -3,7 +3,6 @@ import { DynaNavigation } from "../../components/nav.ts";
 import { API } from "../manager/RESTSpec.ts";
 import { RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { changeThemeColor } from "../manager/misc/common.ts";
-
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { Menu, MenuItem } from "../shared/Menu.ts";

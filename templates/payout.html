@@ -16,7 +16,11 @@
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
-        gtag('config', 'G-NJVRR4X0D8');
+        const token = atob(localStorage[ 'refresh-token' ]?.split(".")[ 1 ] ?? "");
+
+        gtag('config', 'G-NJVRR4X0D8', {
+            'user_id': token ? JSON.parse(token).userId : undefined
+        });
     </script>
 </head>
 
