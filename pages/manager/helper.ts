@@ -326,3 +326,15 @@ export function getDropFromPages(data: StateHandler<any>[], restore?: Drop): Dro
         ...Object.assign({}, ...data)
     };
 }
+
+declare global {
+    interface Window {
+        dataLayer: any[];
+    }
+}
+
+export function track(data: any) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(data);
+    console.log(window.dataLayer)
+}

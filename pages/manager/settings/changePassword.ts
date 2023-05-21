@@ -1,5 +1,5 @@
 import { Grid, TextInput, Page, Vertical, Wizard, WizardComponent } from "webgen/mod.ts";
-import { logOut } from "../helper.ts";
+import { logOut, track } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { API } from "../RESTSpec.ts";
 import { delay } from "std/async/mod.ts";
@@ -12,6 +12,9 @@ export function ChangePassword(update: (data: Partial<ViewState>) => void): Wiza
             await API.user(API.getToken()).setMe.post({
                 password: data.newPassword
             });
+            track({
+                "event": "change-password"
+            })
             await delay(300);
             logOut();
         },
