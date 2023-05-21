@@ -26,7 +26,7 @@ const menu = Menu({
                 {
                     title: "Recommended",
                     id: "default/",
-                    subtitle: "Play on Efficent First Servers with Plugins (Paper/Purpur).",
+                    subtitle: "Play on Efficiency-First Servers with Plugins (Paper/Purpur).",
                     action: (serverType) => { creationState.type = serverType as ServerTypes; },
                     custom: creationView
                 },
@@ -45,12 +45,14 @@ const menu = Menu({
                         {
                             title: "Fabric",
                             id: "fabric/",
+                            subtitle: "The preferred server software for lightweight modding, customization, and optimized performance.",
                             action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
                             custom: creationView
                         },
                         {
                             title: "Forge",
                             id: "forge/",
+                            subtitle: "The go-to server software for Minecraft Java Edition, empowering extensive modding capabilities and customization options.",
                             action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
                             custom: creationView
                         }
@@ -59,7 +61,14 @@ const menu = Menu({
                 {
                     title: "Bedrock",
                     id: "bedrock/",
-                    subtitle: "Play Modded or Vanilla.",
+                    subtitle: "Bedrock Edition (also known as the Bedrock Version, Bedrock Codebase, Bedrock Engine or just Bedrock)",
+                    action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
+                    custom: creationView
+                },
+                {
+                    title: "PocketMineMP",
+                    id: "pocketmine/",
+                    subtitle: "The ideal server software for Minecraft Bedrock Edition, providing customization, plugin support, and optimal performance.",
                     action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
                     custom: creationView
                 }
