@@ -6,21 +6,18 @@
 
     <meta charset='UTF-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NJVRR4X0D8"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        const token = atob(localStorage[ 'refresh-token' ]?.split(".")[ 1 ] ?? "");
-
-        gtag('config', 'G-NJVRR4X0D8', {
-            'user_id': token ? JSON.parse(token).userId : undefined
-        });
-    </script>
+    <script>(function (w, d, s, l, i) {
+            w[ l ] = w[ l ] || []; w[ l ].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[ 0 ],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-KMCWNVD');</script>
 </head>
 
 <body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KMCWNVD" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div>
         <h2><strong>Terms of Use</strong></h2>
         <p><span>BBN Holding Inc., a Mississippi c-corporation (“BBN Holding”, "BBN Music", "BBN", “we”, or “us”) provides access to the BBN website, currently located at bbn.one and all associated websites and subpages, including any and all related mobile applications we may make available (collectively, “Application”), together with all enabled features, functionality and services. These terms and conditions (“Terms”) govern your access and use (as a registered user or otherwise) of the Services.</span></p>
