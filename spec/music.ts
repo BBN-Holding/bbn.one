@@ -171,7 +171,6 @@ export enum PaymentType {
 
 export const wallet = zod.object({
     _id: zod.string(),
-    name: zod.string(),
     transactions: zod.object({
         amount: zod.number(), // positive for incoming, negative for outgoing
         timestamp: zod.string(),
@@ -179,10 +178,8 @@ export const wallet = zod.object({
         description: zod.string(),
         counterParty: zod.string()
     }).array(),
+    cut: zod.number(),
     user: zod.string(),
-    /*     providerdata: zod.object({
-
-        }) */
 });
 
 export const limits = zod.object({
