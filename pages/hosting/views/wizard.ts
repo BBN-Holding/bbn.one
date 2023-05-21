@@ -59,7 +59,10 @@ export const creationView = () => Reactive(creationState, "loading", () => {
                                 .sync(data, "name"),
                             DropDownInput("Location", Object.keys(locations))
                                 .setRender((val) => locations[ val as keyof typeof locations ])
-                                .sync(data, "location")
+                                .sync(data, "location"),
+                            /*DropDownInput("Version", Object.keys(locations))
+                                .setRender((val) => locations[ val as keyof typeof locations ])
+                                .sync(data, "location")*/
                         )
                             .setDynamicColumns(10)
                             .setMargin(".5rem 0 2rem")
@@ -69,13 +72,17 @@ export const creationView = () => Reactive(creationState, "loading", () => {
                             .setFont(.8, 700),
                         Grid(
                             SliderInput("Memory (RAM)")
-                                .setMax(state.meta.limits.memory)
+                                .setMax(state.meta.limits.memory - state.meta.used.memory)
                                 .sync(data.limits, "memory")
                                 .setRender((val) => format(val * MB)),
                             SliderInput("Storage (Disk)")
-                                .setMax(state.meta.limits.disk)
+                                .setMax(state.meta.limits.disk - state.meta.used.disk)
                                 .sync(data.limits, "disk")
                                 .setRender((val) => format(val * MB)),
+                            SliderInput("Processor (CPU)")
+                                .setMax(state.meta.limits.cpu - state.meta.used.cpu)
+                                .sync(data.limits, "cpu")
+                                .setRender((val) => `${val.toString()} %`),
                         )
                             .setDynamicColumns(10)
                             .setMargin(".5rem 0 1.5rem")

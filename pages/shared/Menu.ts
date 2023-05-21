@@ -42,7 +42,6 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
     constructor() {
         super();
         this.wrapper.append(Reactive(this.nav, "active", () => this.walkMenu()).draw());
-
         if (rootMenu.categories)
             this.nav.$activeCategory.on((val) => {
                 this.nav.active = rootMenu.id + Object.keys(rootMenu.categories!)[ val ];
@@ -136,14 +135,13 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
     private menuClickHandler(menu: MenuItem) {
         if (menu.items) return async () => {
             await true;
-            this.setActivePath(this.nav.active + menu.id);
+            this.nav.active = this.nav.active + menu.id;
         };
         if (menu.action || menu.custom) return async () => {
             const clickPath = this.getActivePath().map(x => x.id).join("") + menu.id;
             await menu.action?.(clickPath, menu);
             if (menu.custom)
-                this.setActivePath(this.nav.active + menu.id);
-
+            this.nav.active = this.nav.active + menu.id;
         };
         return undefined;
     }

@@ -123,6 +123,16 @@ export const detailsView = () =>
                     )
                         .addClass("details-item")
                 ),
+                Card(
+                    Grid(
+                        PlainText(state.meta.used.cpu + " % / " + state.meta.limits.cpu + " %")
+                            .setFont(2, 700),
+                        PlainText("CPU")
+                            .setFont(1, 700)
+                            .addClass("gray-color")
+                    )
+                        .addClass("details-item")
+                ),
             )
                 .setEvenColumns(small ? 1 : 2)
                 .setGap("var(--gap)")

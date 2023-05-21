@@ -88,7 +88,7 @@ export const listView = (server: StateHandler<Server[]>) => MediaQuery("(max-wid
         .setPadding("1.6rem")
         .addClass(small ? "small" : "normal")
     ),
-    ...[ ExplainerText() ].filter(x => x) as Component[]
+    ...[ ExplainerText(state.servers) ].filter(x => x) as Component[]
 ).setGap("var(--gap)").addClass("limited-width")));
 
 function deleteServer(serverId: string) {
@@ -109,8 +109,8 @@ function deleteServer(serverId: string) {
         .open();
 }
 
-export function ExplainerText() {
-    return state.servers.length == 0 ?
+export function ExplainerText(servers: Server[]) {
+    return servers.length == 0 ?
         Vertical(
             PlainText("No Servers")
                 .addClass("list-title")

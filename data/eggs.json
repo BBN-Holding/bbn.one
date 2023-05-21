@@ -55,7 +55,8 @@
             "SUSPEND_ALLOW": 1,
             "SUSPEND_REFRESH": 30,
             "WL_IMPORT": 0
-        }
+        },
+        "version_api": "https://papermc.io/api/v2/projects/paper"
     },
     "/minecraft/modded/fabric/": {
         "name": "Minecraft Fabric",
