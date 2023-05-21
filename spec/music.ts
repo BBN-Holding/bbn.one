@@ -178,6 +178,7 @@ export const wallet = zod.object({
         description: zod.string(),
         counterParty: zod.string()
     }).array(),
+    cut: zod.number(),
     user: zod.string(),
 });
 
