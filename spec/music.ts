@@ -136,7 +136,7 @@ export const payout = zod.object({
         user: zod.string().optional(),
         data: zod.array(
             zod.object({
-                distributor: zod.string(),
+                store: zod.string(),
                 territory: zod.string(),
                 quantity: zod.number(),
                 revenue: zod.string()

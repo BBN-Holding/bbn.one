@@ -63,7 +63,7 @@ View(() => Vertical(
             },
             "store/": {
                 title: `Store`,
-                items: state.payout ? sortBy(Object.entries(state.payout.entries.map(entry => groupBy(entry.data, e => e.distributor)).reduce((a, b) => {
+                items: state.payout ? sortBy(Object.entries(state.payout.entries.map(entry => groupBy(entry.data, e => e.store)).reduce((a, b) => {
                     Object.entries(b).forEach(([ key, value ]) => {
                         if (!a[ key ]) {
                             a[ key ] = [ 0, 0 ];
@@ -120,7 +120,7 @@ async function refreshState() {
 function generateStores(datalist: Payout[ "entries" ][ 0 ][ "data" ]) {
     return sortBy(datalist.filter(data => data.quantity).map((data, index) => {
         return {
-            title: data.distributor + " - " + data.territory,
+            title: data.store + " - " + data.territory,
             subtitle: "£ " + Number(data.revenue).toFixed(2) + " - " + data.quantity + " streams",
             id: `${index}/`
         };
