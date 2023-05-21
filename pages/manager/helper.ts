@@ -131,10 +131,16 @@ export async function renewAccessTokenIfNeeded() {
     }
 
 }
+
+export const tokens = State({
+    accessToken: localStorage[ "access-token" ],
+    refreshToken: localStorage[ "refresh-token" ]
+});
 export async function forceRefreshToken() {
     try {
         const access = await API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] });
         localStorage[ "access-token" ] = access.token;
+        tokens.accessToken = access.token;
         console.log("Refreshed token");
     } catch (_) {
         // TODO: Make a better offline support
