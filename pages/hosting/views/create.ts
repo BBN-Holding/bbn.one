@@ -45,14 +45,14 @@ const menu = Menu({
                         {
                             title: "Fabric",
                             id: "fabric/",
-                            subtitle: "The preferred server software for lightweight modding, customization, and optimized performance.",
+                            subtitle: "Lightweight modding, customization, and optimized performance.",
                             action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
                             custom: creationView
                         },
                         {
                             title: "Forge",
                             id: "forge/",
-                            subtitle: "The go-to server software for Minecraft Java Edition, empowering extensive modding capabilities and customization options.",
+                            subtitle: "Extensive modding capabilities and customization options.",
                             action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
                             custom: creationView
                         }
@@ -68,7 +68,7 @@ const menu = Menu({
                 {
                     title: "PocketMineMP",
                     id: "pocketmine/",
-                    subtitle: "The ideal server software for Minecraft Bedrock Edition, providing customization, plugin support, and optimal performance.",
+                    subtitle: "Bedrock server, providing customization, plugin support, and optimal performance.",
                     action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
                     custom: creationView
                 }
