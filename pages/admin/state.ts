@@ -1,6 +1,6 @@
 import { State } from "webgen/mod.ts";
+import { Drop, File, OAuthApp, Payout, Server } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
-import { Drop, OAuthApp, Payout, File, Server } from "../../spec/music.ts";
 
 export const state = State({
     loaded: false,

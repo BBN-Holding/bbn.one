@@ -1,9 +1,9 @@
-import { Entry, PlainText, Vertical, Image, Box, ReCache, Button, Color, CommonIconType, IconButton, Dialog, Grid, TextInput } from "webgen/mod.ts";
-import { state } from "../state.ts";
-import { DropType, OAuthApp, File, Server } from "../../../spec/music.ts";
-import { ReviewEntry } from "./entryReview.ts";
+import { API } from "shared";
+import { Box, Button, Color, CommonIconType, Dialog, Entry, Grid, IconButton, Image, PlainText, ReCache, TextInput, Vertical } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
-import { API } from "../../manager/RESTSpec.ts";
+import { DropType, File, OAuthApp, Server } from "../../../spec/music.ts";
+import { state } from "../state.ts";
+import { ReviewEntry } from "./entryReview.ts";
 
 export function listReviews() {
     return Vertical(
@@ -60,7 +60,7 @@ export function listServers(servers: Server[]) {
             title: server.name,
             subtitle: server._id,
         }))
-    )
+    );
 }
 
 export function listOAuth(apps: OAuthApp[]) {
@@ -75,7 +75,7 @@ export function listOAuth(apps: OAuthApp[]) {
             return Box(imageSource)
                 .addClass("image-square");
         })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
-            API.oauth(API.getToken()).delete(app._id)
+            API.oauth(API.getToken()).delete(app._id);
         })).addSuffix(Button("View").onClick(() => {
             oAuthViewDialog(app).open();
         })).addClass("limited-width"))
@@ -92,7 +92,7 @@ const oAuthViewDialog = (oauth: OAuthApp) => {
         )
     ).allowUserClose().setTitle("OAuth App Details").addButton("Close", "remove");
     return dialog;
-}
+};
 
 export function listFiles(files: File[]) {
     return Vertical(
@@ -106,7 +106,7 @@ export function listFiles(files: File[]) {
             return Box(imageSource)
                 .addClass("image-square");
         })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
-            API.admin(API.getToken()).files.delete(file._id)
+            API.admin(API.getToken()).files.delete(file._id);
         })).addClass("limited-width"))
     );
 }

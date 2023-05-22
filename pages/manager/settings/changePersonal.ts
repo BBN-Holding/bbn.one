@@ -1,11 +1,10 @@
-import { Box, Color, Grid, IconButton, TextInput, Page, PlainText, Vertical, Wizard, WizardComponent, Reactive, Image, AdvancedImage } from "webgen/mod.ts";
+import { API, StreamingUploadHandler, uploadFilesDialog } from "shared";
+import { delay } from "std/async/mod.ts";
+import { AdvancedImage, Box, Color, Grid, IconButton, Image, Page, PlainText, Reactive, TextInput, Vertical, Wizard, WizardComponent } from "webgen/mod.ts";
 import { activeUser, allowedImageFormats, forceRefreshToken } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
-import { API } from "../RESTSpec.ts";
-import { delay } from "std/async/mod.ts";
-import { returnFunction, ViewState } from "./helper.ts";
-import { StreamingUploadHandler, uploadFilesDialog } from "../upload.ts";
 import { HandleSubmit, setErrorMessage } from "../misc/common.ts";
+import { returnFunction, ViewState } from "./helper.ts";
 
 export function ChangePersonal(update: (data: Partial<ViewState>) => void): WizardComponent {
     return Wizard({

@@ -1,13 +1,13 @@
+import { Menu } from "shared";
 import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
-import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../../manager/helper.ts";
-import { DynaNavigation } from "../../../components/nav.ts";
-import '../../../assets/css/main.css';
 import '../../../assets/css/hosting.css';
-import { Menu } from "../../shared/Menu.ts";
-import { creationState, state } from "./../data.ts";
-import { refreshState } from "../loading.ts";
-import { creationView } from "./wizard.ts";
+import '../../../assets/css/main.css';
+import { DynaNavigation } from "../../../components/nav.ts";
 import { ServerTypes } from "../../../spec/music.ts";
+import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../../manager/helper.ts";
+import { refreshState } from "../loading.ts";
+import { creationState, state } from "./../data.ts";
+import { creationView } from "./wizard.ts";
 
 await RegisterAuthRefresh();
 WebGen({

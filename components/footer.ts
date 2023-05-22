@@ -1,8 +1,7 @@
 import { createElement, Custom, custom, img, PlainText } from "webgen/mod.ts";
 import '../assets/css/components/footer.css';
 import bbnLogo from '../assets/img/bbnSmall.svg';
-import { renderAction, actions } from "./actions.ts";
-import { link } from "./actions.ts";
+import { actions, link, renderAction } from "./actions.ts";
 
 // TODO: Refactor this to stack based layout
 export function renderFooter() {

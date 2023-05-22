@@ -1,8 +1,8 @@
-import '../assets/css/components/nav.css';
-import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, MaterialIcons, PlainText, Reactive, Spacer, Vertical } from "webgen/mod.ts";
-import { activeUser, IsLoggedIn, permCheck, stringToColour } from "../pages/manager/helper.ts";
+import { API } from "shared";
 import { delay } from "std/async/delay.ts";
-import { API } from "../pages/manager/RESTSpec.ts";
+import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, MaterialIcons, PlainText, Reactive, Spacer, Vertical } from "webgen/mod.ts";
+import '../assets/css/components/nav.css';
+import { activeUser, IsLoggedIn, permCheck, stringToColour } from "../pages/manager/helper.ts";
 import { activeLogo, pages } from "./pages.ts";
 new MaterialIcons();
 const Nav = (component: Component) => {

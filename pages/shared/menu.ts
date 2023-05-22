@@ -1,14 +1,15 @@
-import { Box, ButtonComponent, Component, Entry, Pointable, Reactive, State, Vertical, isPointer } from "webgen/mod.ts";
+import { Box, ButtonComponent, Component, Entry, isPointer, Pointable, Reactive, State, Vertical } from "webgen/mod.ts";
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
+import { HeavyList, HeavyReRender } from "./List.ts";
 
 export interface MenuItem {
     title: Pointable<string>;
     id: `${string}/`;
     subtitle?: string;
 
-    items?: MenuItem[];
+    items?: Pointable<MenuItem[]>;
     action?: (clickPath: string, item: MenuItem) => Promise<void> | void;
-    custom?: (clickPath: string) => Component;
+    custom?: Pointable<(clickPath: string) => Component>;
     /**
      * @default true
      */
@@ -98,13 +99,13 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
             return Vertical(
                 Box(this.renderCategoryBar(parentIsCategoryMenu ? rootMenu : active)).setMargin("0 0 1.5rem"),
                 this.renderList(active.items),
-                active.custom?.(activeEntries.map(x => x.id).join("") + active.id) ?? null
+                HeavyReRender(active.custom, (it) => it?.(activeEntries.map(x => x.id).join("") + active.id) ?? Box()),
             );
 
         return Vertical(
             ActionBar(active.title, undefined, rootMenu.menuBarAction, list),
             this.renderList(active.items),
-            active.custom?.(activeEntries.map(x => x.id).join("") + active.id) ?? null
+            HeavyReRender(active.custom, (it) => it?.(activeEntries.map(x => x.id).join("") + active.id) ?? Box()),
         );
     }
 
@@ -115,21 +116,18 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
         }, rootMenu.menuBarAction);
     }
 
-    private renderList(active?: MenuItem[]): Component | null {
+    private renderList(active?: Pointable<MenuItem[]>): Component | null {
         if (!active) return null;
 
-        return Vertical(
-            active?.map(menu => {
-                const entry = Entry(
-                    menu,
-                ).addClass("limited-width");
-                const it = this.menuClickHandler(menu);
-                if (it)
-                    entry.onPromiseClick(it);
-                return entry;
-            }) ?? []
-        )
-            .setGap("var(--gap)");
+        return HeavyList(active, (menu) => {
+            const entry = Entry(
+                menu,
+            ).addClass("limited-width");
+            const it = this.menuClickHandler(menu);
+            if (it)
+                entry.onPromiseClick(it);
+            return entry;
+        });
     }
 
     private menuClickHandler(menu: MenuItem) {
@@ -141,7 +139,7 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
             const clickPath = this.getActivePath().map(x => x.id).join("") + menu.id;
             await menu.action?.(clickPath, menu);
             if (menu.custom)
-            this.nav.active = this.nav.active + menu.id;
+                this.nav.active = this.nav.active + menu.id;
         };
         return undefined;
     }

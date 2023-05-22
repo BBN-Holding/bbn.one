@@ -1,4 +1,4 @@
-import { PlainText, Vertical, Component } from "webgen/mod.ts";
+import { Component, PlainText, Vertical } from "webgen/mod.ts";
 import { state } from "./state.ts";
 import { UserEntry } from "./views/entryUser.ts";
 

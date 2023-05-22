@@ -1,11 +1,10 @@
-import { Box, Color, CommonIconType, Dialog, Grid, Horizontal, IconButton, MaterialIcons, PlainText, Reactive, MediaQuery, Entry, TextInput, DropDownInput, Vertical, Component, IconButtonComponent, StateHandler } from "webgen/mod.ts";
+import { API, LoadingSpinner } from "shared";
+import { Box, Color, CommonIconType, Component, Dialog, DropDownInput, Entry, Grid, Horizontal, IconButton, IconButtonComponent, MaterialIcons, MediaQuery, PlainText, Reactive, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
+import servers from "../../../data/eggs.json" assert { type: "json" };
+import locations from "../../../data/locations.json" assert { type: "json" };
+import { PowerState, Server } from "../../../spec/music.ts";
 import { state } from "../data.ts";
 import './list.css';
-import { API } from "../../manager/RESTSpec.ts";
-import locations from "../../../data/locations.json" assert { type: "json" };
-import servers from "../../../data/eggs.json" assert { type: "json" };
-import { PowerState, Server } from "../../../spec/music.ts";
-import { LoadingSpinner } from "../../shared/components.ts";
 
 new MaterialIcons();
 

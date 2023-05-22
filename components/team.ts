@@ -1,9 +1,9 @@
-import { PlainText, View, Grid, Vertical, Button, Color, Horizontal } from "webgen/mod.ts";
+import { Button, Color, Grid, Horizontal, PlainText, Vertical, View } from "webgen/mod.ts";
 import '../assets/css/components/team.css';
 import { assets } from "../assets/img/team/assets.ts";
+import members from '../data/members.json' assert { type: "json" };
 import { actions } from "./actions.ts";
 import { renderPerson } from "./profileCard.ts";
-import members from '../data/members.json' assert { type: "json"};
 
 export const renderTeam = (sizelimt?: number) =>
     View(() => Vertical(

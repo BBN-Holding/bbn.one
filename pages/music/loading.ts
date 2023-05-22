@@ -1,5 +1,5 @@
+import { API } from "shared";
 import { DropType } from "../../spec/music.ts";
-import { API } from "../manager/RESTSpec.ts";
 import { state } from "./state.ts";
 
 export async function refreshState() {

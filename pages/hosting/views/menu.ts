@@ -1,12 +1,10 @@
+import { count, LoadingSpinner, Menu } from "shared";
 import { Color, Reactive, ref, refMap } from "webgen/mod.ts";
-import { Menu } from "../../shared/Menu.ts";
-import { state } from "../data.ts";
 import { activeUser } from "../../manager/helper.ts";
+import { state } from "../data.ts";
+import { detailsView } from "../views/details.ts";
 import { listView } from "../views/list.ts";
 import { storeView } from "../views/store.ts";
-import { detailsView } from "../views/details.ts";
-import { LoadingSpinner } from "../../shared/components.ts";
-import { count } from "../../shared/listCount.ts";
 
 export const hostingMenu = Menu({
     title: ref`Hi ${activeUser.$username} 👋`,

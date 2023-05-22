@@ -1,11 +1,12 @@
+// deno-lint-ignore-file no-explicit-any
 // This code Will be ported to webgen
 
+import { API, Permission } from "shared";
 import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, ReCache, Spacer, State, StateHandler, Table, TextInput, Vertical, ViewClass } from "webgen/mod.ts";
-import { API, Permission } from "./RESTSpec.ts";
 import artwork from "../../assets/img/template-artwork.png";
+import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
 import { ViewState } from "./types.ts";
-import { loginRequired } from "../../components/pages.ts";
 export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
@@ -268,7 +269,6 @@ export function EditArtists(list: Artist[]) {
                     Spacer(),
                     Button("Add Artist") // TODO: Remove this in the future => switch to ghost rows
                         .onClick(() => {
-                            // deno-lint-ignore no-explicit-any
                             state.list = <any>[ ...state.list, [ "", "", "PRIMARY" ] ];
                         })
                 ).setPadding("0 0 3rem 0")
@@ -311,7 +311,6 @@ export async function loadDrops(view: ViewClass<ViewState>) {
     view.viewOptions().update({ list });
 }
 
-// deno-lint-ignore no-explicit-any
 function update(state: StateHandler<{ list: [ name: string, img: string, type: ArtistTypes ][] | undefined; }>, index: number, key: number, value: any) {
     if (!state.list)
         state.list = [];
@@ -336,5 +335,5 @@ declare global {
 export function track(data: any) {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(data);
-    console.log(window.dataLayer)
+    console.log(window.dataLayer);
 }

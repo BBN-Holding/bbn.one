@@ -1,17 +1,17 @@
-import { DynaNavigation } from "../../components/nav.ts";
-import primary from "../../data/primary.json" assert { type: "json"};
-import secondary from "../../data/secondary.json" assert { type: "json"};
-import language from "../../data/language.json" assert { type: "json"};
-import { View, WebGen, loadingWheel, Horizontal, PlainText, Center, Vertical, Spacer, TextInput, Button, ButtonStyle, SupportedThemes, Grid, MaterialIcons, Color, DropDownInput, Wizard, Page, Custom, DropAreaInput, CenterV, Box, MediaQuery, Image, AdvancedImage, Reactive } from "webgen/mod.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, ProfileData, RegisterAuthRefresh, getSecondary, getDropFromPages, IsLoggedIn } from "./helper.ts";
-import { API } from "./RESTSpec.ts";
-import '../../assets/css/wizard.css';
+import { API, uploadFilesDialog } from "shared";
+import { AdvancedImage, Box, Button, ButtonStyle, Center, CenterV, Color, Custom, DropAreaInput, DropDownInput, Grid, Horizontal, Image, loadingWheel, MaterialIcons, MediaQuery, Page, PlainText, Reactive, Spacer, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard } from "webgen/mod.ts";
 import '../../assets/css/main.css';
-import { uploadFilesDialog } from "./upload.ts";
-import { ManageSongs } from "./music/table.ts";
-import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
+import { DynaNavigation } from "../../components/nav.ts";
+import language from "../../data/language.json" assert { type: "json" };
+import primary from "../../data/primary.json" assert { type: "json" };
+import secondary from "../../data/secondary.json" assert { type: "json" };
 import { ArtistTypes, Drop, DropType, pageFive, pageFour, pageOne, pageThree, pageTwo } from "../../spec/music.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, getDropFromPages, getSecondary, IsLoggedIn, ProfileData, RegisterAuthRefresh } from "./helper.ts";
+import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
+import { ManageSongs } from "./music/table.ts";
 
+
+import '../../assets/css/wizard.css';
 await RegisterAuthRefresh();
 WebGen({
     theme: SupportedThemes.dark,

@@ -1,8 +1,8 @@
-import { Dialog, DropDownInput, Page, Vertical, Wizard, Image, Box, Horizontal, Spacer, PlainText, Custom, createElement, Checkbox, Reactive } from "webgen/mod.ts";
+import { API } from "shared";
+import { Box, Checkbox, createElement, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, Spacer, Vertical, Wizard } from "webgen/mod.ts";
+import reviewTexts from "../../data/reviewTexts.json" assert { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
 import { showPreviewImage } from "../manager/helper.ts";
-import reviewTexts from "../../data/reviewTexts.json" assert { type: "json" };
-import { API } from "../manager/RESTSpec.ts";
 import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
 function css(data: TemplateStringsArray, ...expr: string[]) {
     const merge = data.map((x, i) => x + (expr[ i ] || ''));

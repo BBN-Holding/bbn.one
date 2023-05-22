@@ -1,12 +1,12 @@
-import { Card, Custom, Grid, Horizontal, img, MaterialIcons, PlainText, Spacer, Vertical, View, WebGen, createElement } from "webgen/mod.ts";
-import { renderOpener } from "./components/opener.ts";
-import '../../assets/css/main.css';
-import { DynaNavigation } from "../../components/nav.ts";
-import { renderFooter } from "../../components/footer.ts";
-import { asset } from "../../assets/img/subsidiaries/index.ts";
+import { Card, createElement, Custom, Grid, Horizontal, img, MaterialIcons, PlainText, Spacer, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/components/subsidiaries.css';
+import '../../assets/css/main.css';
+import { asset } from "../../assets/img/subsidiaries/index.ts";
+import { renderFooter } from "../../components/footer.ts";
+import { DynaNavigation } from "../../components/nav.ts";
 import services from "../../data/services.json" assert { type: "json" };
 import { RegisterAuthRefresh } from "../manager/helper.ts";
+import { renderOpener } from "./components/opener.ts";
 
 WebGen({ icon: new MaterialIcons() });
 await RegisterAuthRefresh();

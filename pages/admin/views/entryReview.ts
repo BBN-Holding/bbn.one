@@ -1,10 +1,10 @@
+import { API } from "shared";
 import { Box, Button, ButtonStyle, CenterV, Color, Entry, Icon, Image, ReCache } from "webgen/mod.ts";
+import { templateArtwork } from "../../../assets/imports.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
-import { API } from "../../manager/RESTSpec.ts";
 import { loadImage } from "../../manager/helper.ts";
 import { ReviewDialog } from "../dialog.ts";
 import { refreshState } from "../loading.ts";
-import { templateArtwork } from "../../../assets/imports.ts";
 
 export function ReviewEntry(x: Drop) {
     return Entry({

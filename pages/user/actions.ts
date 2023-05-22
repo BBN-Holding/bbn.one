@@ -1,8 +1,8 @@
-import { assert } from "std/testing/asserts.ts";
-import { API } from "../manager/RESTSpec.ts";
-import { state } from "./state.ts";
-import { forceRefreshToken, gotoGoal } from "../manager/helper.ts";
+import { API } from "shared";
 import { delay } from "std/async/delay.ts";
+import { assert } from "std/testing/asserts.ts";
+import { forceRefreshToken, gotoGoal } from "../manager/helper.ts";
+import { state } from "./state.ts";
 
 export async function loginUser() {
     try {

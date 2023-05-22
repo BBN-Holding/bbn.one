@@ -1,16 +1,13 @@
-import { Button, Color, Dialog, Grid, PlainText, Reactive, State, StateHandler, TextInput, Vertical, ref, refMap } from "webgen/mod.ts";
-import { state } from "../state.ts";
-import { Menu } from "../../shared/Menu.ts";
-import { activeUser } from "../../manager/helper.ts";
-import { count } from "../../shared/listCount.ts";
-import { LoadingSpinner } from "../../shared/components.ts";
-import { upload } from "../loading.ts";
-import { listFiles, listOAuth, listReviews } from "./list.ts";
-import { UserPanel } from "../users.ts";
-import { listPayouts } from "../../music/views/list.ts";
-import { API } from "../../manager/RESTSpec.ts";
-import { listView } from "../../hosting/views/list.ts";
+import { API, count, LoadingSpinner, Menu } from "shared";
+import { Button, Color, Dialog, Grid, PlainText, Reactive, ref, refMap, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import { Server } from "../../../spec/music.ts";
+import { listView } from "../../hosting/views/list.ts";
+import { activeUser } from "../../manager/helper.ts";
+import { listPayouts } from "../../music/views/list.ts";
+import { upload } from "../loading.ts";
+import { state } from "../state.ts";
+import { UserPanel } from "../users.ts";
+import { listFiles, listOAuth, listReviews } from "./list.ts";
 
 export const adminMenu = Menu({
     title: ref`Hi ${activeUser.$username} 👋`,
