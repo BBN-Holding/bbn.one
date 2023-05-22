@@ -71,7 +71,8 @@ export const song = zod.object({
     instrumental: zod.boolean().optional(),
     file: zod.string({ required_error: "a Song is missing its file." }),
     progress: zod.number().optional().transform(x => <typeof x>undefined)
-});
+})
+    .refine(({ instrumental, explicit }) => !(instrumental && explicit), "Can't have an explicit instrumental song");
 
 export const pageOne = zod.object({
     upc: zod.string().nullish()
