@@ -207,7 +207,7 @@ export const API = {
             return data;
         },
         icon: async (clientid: string) => {
-            const data = await fetch(`${API.BASE_URL}oauth/${clientid}/download`, {
+            const data = await fetch(`${API.BASE_URL}oauth/applications/${clientid}/download`, {
                 headers: headers(token)
             }).then(x => x.blob());
             return data;
