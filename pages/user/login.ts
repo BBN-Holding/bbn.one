@@ -206,7 +206,7 @@ View(() => Vertical(
             }),
         ),
         Spacer()
-    ).addClass("limited-width").setJustify("start" as "flex-start"),
+    ).addClass("limited-width").setJustify("start"),
     Custom(img(heroImage)).addClass("background-image")
 ))
     .appendOn(document.body);

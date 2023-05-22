@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 // This code Will be ported to webgen
 
 import { API, Permission } from "shared";
@@ -268,7 +269,6 @@ export function EditArtists(list: Artist[]) {
                     Spacer(),
                     Button("Add Artist") // TODO: Remove this in the future => switch to ghost rows
                         .onClick(() => {
-                            // deno-lint-ignore no-explicit-any
                             state.list = <any>[ ...state.list, [ "", "", "PRIMARY" ] ];
                         })
                 ).setPadding("0 0 3rem 0")
@@ -311,7 +311,6 @@ export async function loadDrops(view: ViewClass<ViewState>) {
     view.viewOptions().update({ list });
 }
 
-// deno-lint-ignore no-explicit-any
 function update(state: StateHandler<{ list: [ name: string, img: string, type: ArtistTypes ][] | undefined; }>, index: number, key: number, value: any) {
     if (!state.list)
         state.list = [];

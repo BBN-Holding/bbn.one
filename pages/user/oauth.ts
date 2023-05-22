@@ -95,7 +95,7 @@ const list = Reactive(state, "loaded", () => {
         )
             .addClass("limited-width")
             .addClass("area-space")
-            .setJustify("start" as "flex-start");
+            .setJustify("start");
     return LoadingSpinner();
 });
 
