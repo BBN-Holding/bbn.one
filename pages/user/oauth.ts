@@ -1,13 +1,12 @@
-import { Button, Grid, MediaQuery, PlainText, Vertical, View, WebGen, Image, Color, Icon, Horizontal, ButtonStyle, Spacer, img, Custom, State, Reactive } from "webgen/mod.ts";
+import { API, LoadingSpinner } from "shared";
+import { Button, ButtonStyle, Color, Custom, Grid, Horizontal, Icon, Image, img, MediaQuery, PlainText, Reactive, Spacer, State, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
-import { DynaNavigation } from "../../components/nav.ts";
-import { API } from "../manager/RESTSpec.ts";
-import { RegisterAuthRefresh, activeUser, logOut } from "../manager/helper.ts";
-import './oauth.css';
 import { dots, templateArtwork } from "../../assets/imports.ts";
-import { ProfilePicture, getNameInital } from "../admin/helper.ts";
-import { LoadingSpinner } from "../shared/components.ts";
+import { DynaNavigation } from "../../components/nav.ts";
+import { getNameInital, ProfilePicture } from "../admin/helper.ts";
+import { activeUser, logOut, RegisterAuthRefresh } from "../manager/helper.ts";
+import './oauth.css';
 
 await RegisterAuthRefresh();
 

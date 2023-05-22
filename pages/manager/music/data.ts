@@ -1,8 +1,7 @@
+import { API, StreamingUploadHandler } from "shared";
 import { delay } from "std/async/delay.ts";
 import { AdvancedImage, State, StateHandler } from "webgen/mod.ts";
 import { Drop } from "../../../spec/music.ts";
-import { API } from "../RESTSpec.ts";
-import { StreamingUploadHandler } from "../upload.ts";
 
 // TODO: Remove all theses spread operator, update values directly,
 
@@ -45,7 +44,7 @@ export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[];
                 state.songs = State([ ...state.songs ?? [] ] as Drop[ "songs" ]);
             },
             credentials: () => API.getToken(),
-            backendResponse: (id) => {
+            backendResponse: (id: string) => {
                 if (state.songs) {
                     state.songs[ state.songs.findIndex(x => x.id == uploadId) ].progress = undefined;
                     state.songs[ state.songs.findIndex(x => x.id == uploadId) ].file = id;

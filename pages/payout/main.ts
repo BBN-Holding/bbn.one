@@ -1,16 +1,14 @@
-import { WebGen, MaterialIcons, View, Vertical, Reactive, State } from "webgen/mod.ts";
-import { DynaNavigation } from "../../components/nav.ts";
-import { API } from "../manager/RESTSpec.ts";
-import { RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
-import { changeThemeColor } from "../manager/misc/common.ts";
-import '../../assets/css/main.css';
-import '../../assets/css/music.css';
-import { Menu, MenuItem } from "../shared/Menu.ts";
-import { Drop, Payout } from "../../spec/music.ts";
-import { sumOf } from "std/collections/sum_of.ts";
-import { LoadingSpinner } from "../shared/components.ts";
+import { API, LoadingSpinner, Menu, MenuItem } from "shared";
 import { groupBy } from "std/collections/group_by.ts";
 import { sortBy } from "std/collections/sort_by.ts";
+import { sumOf } from "std/collections/sum_of.ts";
+import { MaterialIcons, Reactive, State, Vertical, View, WebGen } from "webgen/mod.ts";
+import '../../assets/css/main.css';
+import '../../assets/css/music.css';
+import { DynaNavigation } from "../../components/nav.ts";
+import { Drop, Payout } from "../../spec/music.ts";
+import { permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
+import { changeThemeColor } from "../manager/misc/common.ts";
 
 await RegisterAuthRefresh();
 

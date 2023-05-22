@@ -1,13 +1,12 @@
+import { API, uploadFilesDialog } from "shared";
 import { Button, Grid, Horizontal, Page, Spacer, Wizard } from "webgen/mod.ts";
+import { Drop, pageFive } from "../../../spec/music.ts";
+import { allowedAudioFormats, getDropFromPages } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage, HandleSubmit, setErrorMessage } from "../misc/common.ts";
-import { API } from "../RESTSpec.ts";
-import { EditViewState } from "./types.ts";
-import { ManageSongs } from "./table.ts";
-import { Drop, pageFive } from "../../../spec/music.ts";
-import { uploadFilesDialog } from "../upload.ts";
 import { uploadSongToDrop } from "./data.ts";
-import { allowedAudioFormats, getDropFromPages } from "../helper.ts";
+import { ManageSongs } from "./table.ts";
+import { EditViewState } from "./types.ts";
 
 export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({

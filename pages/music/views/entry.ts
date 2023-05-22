@@ -1,6 +1,6 @@
 import { Box, CenterV, Entry, Image, PlainText, ReCache } from "webgen/mod.ts";
-import { Drop, DropType } from "../../../spec/music.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
+import { Drop, DropType } from "../../../spec/music.ts";
 import { loadImage } from "../../manager/helper.ts";
 
 export function DropEntry(x: Drop, small: boolean) {

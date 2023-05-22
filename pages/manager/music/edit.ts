@@ -1,14 +1,14 @@
+import { API } from "shared";
 import { Center, CenterV, Custom, loadingWheel, MaterialIcons, Spacer, Vertical, View, WebGen } from "webgen/mod.ts";
-import { RegisterAuthRefresh } from "../helper.ts";
-import { changeThemeColor } from "../misc/common.ts";
 import '../../../assets/css/main.css';
 import '../../../assets/css/music.css';
 import { DynaNavigation } from "../../../components/nav.ts";
-import { API } from "../RESTSpec.ts";
-import { EditViewState } from "./types.ts";
-import { ChangeMain } from "./changeMain.ts";
+import { RegisterAuthRefresh } from "../helper.ts";
+import { changeThemeColor } from "../misc/common.ts";
 import { ChangeDrop } from "./changeDrop.ts";
+import { ChangeMain } from "./changeMain.ts";
 import { ChangeSongs } from "./changeSongs.ts";
+import { EditViewState } from "./types.ts";
 WebGen({
     icon: new MaterialIcons(),
     events: {

@@ -1,9 +1,9 @@
-import { Box, ButtonStyle, Checkbox, Component, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, State, EditableStateHandler, Table, View } from "webgen/mod.ts";
-import { EditArtists, getSecondary, getYearList, stringToColour } from "../helper.ts";
-import primary from "../../../data/primary.json" assert { type: "json"};
-import secondary from "../../../data/secondary.json" assert { type: "json"};
-import language from "../../../data/language.json" assert { type: "json"};
+import { Box, ButtonStyle, Checkbox, Component, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, State, StateHandler, Table, View } from "webgen/mod.ts";
+import language from "../../../data/language.json" assert { type: "json" };
+import primary from "../../../data/primary.json" assert { type: "json" };
+import secondary from "../../../data/secondary.json" assert { type: "json" };
 import { Drop } from "../../../spec/music.ts";
+import { EditArtists, getSecondary, getYearList, stringToColour } from "../helper.ts";
 
 function Progress(progress: number) {
     return Box(
@@ -22,7 +22,7 @@ function ProfilePicture(component: Component, name: string) {
     return Custom(ele).addClass("profile-picture");
 }
 
-export function ManageSongs(state: EditableStateHandler<{ songs: Drop[ "songs" ]; }>) {
+export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
     const tableView = View(() =>
         Table([
             [ "Title", "auto", ({ progress, title }, index) => progress !== undefined ? Progress(progress) : InlineTextInput("text", "blur").addClass("low-level").setValue(title).onChange(x => update(state, index, "title", x)) ],
@@ -42,7 +42,7 @@ export function ManageSongs(state: EditableStateHandler<{ songs: Drop[ "songs" ]
             ],
             [ "Year", "max-content", ({ year }, index) =>
                 DropDownInput("Year", getYearList())
-                    .setValue(year)
+                    .setValue(year.toString())
                     .onChange((data) => update(state, index, "year", data ? parseInt(data) : undefined))
                     .setStyle(ButtonStyle.Inline)
                     .addClass("low-level")
@@ -94,7 +94,7 @@ export function ManageSongs(state: EditableStateHandler<{ songs: Drop[ "songs" ]
 }
 
 // deno-lint-ignore no-explicit-any
-function update(state: EditableStateHandler<{ songs: Drop[ "songs" ]; }>, index: number, key: keyof NonNullable<Drop[ "songs" ]>[ 0 ], value: any) {
+function update(state: StateHandler<{ songs: Drop[ "songs" ]; }>, index: number, key: keyof NonNullable<Drop[ "songs" ]>[ 0 ], value: any) {
     if (!state.songs)
         state.songs = State([]);
     // @ts-ignore errors due to any usage.

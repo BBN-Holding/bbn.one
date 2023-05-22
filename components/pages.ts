@@ -7,7 +7,7 @@ import bbnHostingLogo from '../assets/img/bbnHosting.svg';
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import bbnAdminLogo from '../assets/img/bbnAdmin.svg';
 
-import { Permission } from "../pages/manager/RESTSpec.ts";
+import { Permission } from "shared";
 
 export const pages: [ logo: any, perm: Permission[], route: string ][] = [
     [ bbnHolding, [], "/" ],

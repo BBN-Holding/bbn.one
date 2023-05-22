@@ -1,10 +1,10 @@
-import { Grid, TextInput, Page, Vertical, Wizard, WizardComponent } from "webgen/mod.ts";
+import { API } from "shared";
+import { delay } from "std/async/mod.ts";
+import { Grid, Page, TextInput, Vertical, Wizard, WizardComponent } from "webgen/mod.ts";
 import { logOut, track } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
-import { API } from "../RESTSpec.ts";
-import { delay } from "std/async/mod.ts";
-import { returnFunction, ViewState } from "./helper.ts";
 import { HandleSubmit, setErrorMessage } from "../misc/common.ts";
+import { returnFunction, ViewState } from "./helper.ts";
 
 export function ChangePassword(update: (data: Partial<ViewState>) => void): WizardComponent {
     return Wizard({
@@ -14,7 +14,7 @@ export function ChangePassword(update: (data: Partial<ViewState>) => void): Wiza
             });
             track({
                 "event": "change-password"
-            })
+            });
             await delay(300);
             logOut();
         },

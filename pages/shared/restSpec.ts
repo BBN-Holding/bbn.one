@@ -1,6 +1,6 @@
 import { assert } from "std/testing/asserts.ts";
-import { Drop, DropType, OAuthApp, Payout, File, Server, PteroServer, PowerState, ServerCreate, Meta } from "../../spec/music.ts";
-import { ProfileData } from "./helper.ts";
+import { Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate } from "../../spec/music.ts";
+import { ProfileData } from "../manager/helper.ts";
 
 export type ErrorObject = {
     error: true,

@@ -1,9 +1,8 @@
+import { format } from "std/fmt/bytes.ts";
 import { Button, ButtonStyle, Card, Color, Dialog, Grid, Horizontal, MediaQuery, PlainText, Reactive, Spacer, TextInput, Vertical } from "webgen/mod.ts";
+import { activeUser } from "../../manager/helper.ts";
 import { MB, state } from "../data.ts";
 import './details.css';
-import { format } from "std/fmt/bytes.ts";
-import { activeUser } from "../../manager/helper.ts";
-
 
 export const migrationInfo = {
     title: "Welcome to our Beta Dashboard!",

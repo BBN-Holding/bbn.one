@@ -1,9 +1,9 @@
-import { State } from "webgen/mod.ts";
-import { state } from "./data.ts";
-import { API } from "../manager/RESTSpec.ts";
 import { LoginRequest, MessageType, PublishResponse, SubscribeRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
-import { activeUser, tokens } from "../manager/helper.ts";
+import { API } from "shared";
+import { State } from "webgen/mod.ts";
 import { Server } from "../../spec/music.ts";
+import { activeUser, tokens } from "../manager/helper.ts";
+import { state } from "./data.ts";
 
 export async function refreshState() {
     state.servers = State((await API.hosting(API.getToken()).servers()).map(x => State(x)));

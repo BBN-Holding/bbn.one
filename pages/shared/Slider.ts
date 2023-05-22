@@ -1,4 +1,4 @@
-import { ButtonStyle, Color, Custom, Horizontal, InputForm, PlainText, Reactive, Spacer, State, Vertical, createElement } from "webgen/mod.ts";
+import { ButtonStyle, Color, createElement, Custom, Horizontal, InputForm, PlainText, Reactive, Spacer, State, Vertical } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 
 export const SliderInput = (label: string) => new class extends InputForm<number> {

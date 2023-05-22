@@ -1,4 +1,4 @@
-import { serve } from "https://raw.githubusercontent.com/lucsoft/esbuild_serve/f904f69/mod.ts";
+import { serve } from "https://deno.land/x/esbuild_serve@1.2.4/mod.ts";
 
 serve({
     port: 6969,

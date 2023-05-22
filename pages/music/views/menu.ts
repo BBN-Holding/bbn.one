@@ -1,12 +1,9 @@
-import { Reactive, Vertical, ref, refMap } from "webgen/mod.ts";
-import { activeUser } from "../../manager/helper.ts";
-import { Menu } from "../../shared/Menu.ts";
-import { state } from "../state.ts";
-import { count } from "../../shared/listCount.ts";
-import { listPayouts, musicList } from "./list.ts";
+import { API, count, LoadingSpinner, Menu } from "shared";
+import { Reactive, ref, refMap, Vertical } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
-import { LoadingSpinner } from "../../shared/components.ts";
-import { API } from "../../manager/RESTSpec.ts";
+import { activeUser } from "../../manager/helper.ts";
+import { state } from "../state.ts";
+import { listPayouts, musicList } from "./list.ts";
 
 export const musicMenu = Menu({
     title: ref`Hi ${activeUser.$username} 👋`,

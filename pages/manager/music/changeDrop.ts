@@ -1,16 +1,15 @@
+import { API, uploadFilesDialog } from "shared";
 import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, Page, Reactive, Spacer, State, TextInput, Wizard } from "webgen/mod.ts";
-import { allowedImageFormats, EditArtists, getSecondary } from "../helper.ts";
-import { ActionBar } from "../misc/actionbar.ts";
-import { changePage, HandleSubmit, setErrorMessage } from "../misc/common.ts";
-import { API } from "../RESTSpec.ts";
-import { EditViewState } from "./types.ts";
+import artwork from "../../../assets/img/template-artwork.png";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
 import secondary from "../../../data/secondary.json" assert { type: "json" };
-import artwork from "../../../assets/img/template-artwork.png";
-import { uploadFilesDialog } from "../upload.ts";
-import { uploadArtwork } from "./data.ts";
 import { ArtistTypes, Drop, pureDrop } from "../../../spec/music.ts";
+import { allowedImageFormats, EditArtists, getSecondary } from "../helper.ts";
+import { ActionBar } from "../misc/actionbar.ts";
+import { changePage, HandleSubmit, setErrorMessage } from "../misc/common.ts";
+import { uploadArtwork } from "./data.ts";
+import { EditViewState } from "./types.ts";
 
 export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) => void) {
     return Wizard({

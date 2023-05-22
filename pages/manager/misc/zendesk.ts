@@ -1,4 +1,4 @@
-import { API } from "../RESTSpec.ts";
+import { API } from "shared";
 
 const para = new URLSearchParams(location.search);
 const { brand_id, locale_id, return_to, timestamp } = {
@@ -8,6 +8,6 @@ const { brand_id, locale_id, return_to, timestamp } = {
     timestamp: para.get("timestamp")
 };
 
-const jwt = await API.user(API.getToken()).zendesk.post()
+const jwt = await API.user(API.getToken()).zendesk.post();
 
 location.href = `https://bbn6775.zendesk.com/access/jwt?jwt=${jwt.jwt}}&return_to=${return_to}`;

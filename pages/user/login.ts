@@ -1,13 +1,13 @@
-import { MediaQuery, Button, ButtonStyle, Color, Custom, loadingWheel, Horizontal, img, PlainText, Spacer, Vertical, View, WebGen, Box, TextInput, Reactive, Grid, Form } from "webgen/mod.ts";
+import { API } from "shared";
+import { assert } from "std/testing/asserts.ts";
+import { Box, Button, ButtonStyle, Color, Custom, Form, Grid, Horizontal, img, loadingWheel, MediaQuery, PlainText, Reactive, Spacer, TextInput, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/signin.css';
-import { discordLogo, heroImage, googleLogo } from "../../assets/imports.ts";
+import { discordLogo, googleLogo, heroImage } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { assert } from "std/testing/asserts.ts";
-import { API } from "../manager/RESTSpec.ts";
-import { state } from "./state.ts";
-import { handleStateChange, loginUser, registerUser } from "./actions.ts";
 import { RegisterAuthRefresh } from "../manager/helper.ts";
+import { handleStateChange, loginUser, registerUser } from "./actions.ts";
+import { state } from "./state.ts";
 
 await RegisterAuthRefresh();
 

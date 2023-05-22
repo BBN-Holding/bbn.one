@@ -1,8 +1,7 @@
-import { State, UploadFilesDialog } from "webgen/mod.ts";
-import { API } from "../manager/RESTSpec.ts";
-import { state } from "./state.ts";
-import { StreamingUploadHandler } from "../manager/upload.ts";
+import { API, StreamingUploadHandler } from "shared";
 import { delay } from "std/async/delay.ts";
+import { State, UploadFilesDialog } from "webgen/mod.ts";
+import { state } from "./state.ts";
 
 export async function refreshState() {
 

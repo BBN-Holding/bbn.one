@@ -1,11 +1,11 @@
 // This code Will be ported to webgen
 
+import { API, Permission } from "shared";
 import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, ReCache, Spacer, State, StateHandler, Table, TextInput, Vertical, ViewClass } from "webgen/mod.ts";
-import { API, Permission } from "./RESTSpec.ts";
 import artwork from "../../assets/img/template-artwork.png";
+import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
 import { ViewState } from "./types.ts";
-import { loginRequired } from "../../components/pages.ts";
 export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
@@ -336,5 +336,5 @@ declare global {
 export function track(data: any) {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(data);
-    console.log(window.dataLayer)
+    console.log(window.dataLayer);
 }

@@ -11,5 +11,8 @@
         "tsconfig.json": "tsconfig.*.json",
         "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml",
         "deno.jsonc": "deno.lock"
-    }
+    },
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true,
+    },
 }
