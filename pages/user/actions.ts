@@ -73,7 +73,7 @@ export async function handleStateChange() {
             .then(gotoGoal);
     }
     else if (params.type == "forgot-password" && params.token) {
-        API.auth.fromUserInteraction.get("JWT " + params.token).then(async x => {
+        API.auth.fromUserInteraction.get(params.token).then(async x => {
             await logIn(x, "email");
             state.token = API.getToken();
         }).catch(() => {

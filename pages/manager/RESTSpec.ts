@@ -54,7 +54,7 @@ export const API = {
     user: (token: string) => ({
         mail: {
             validate: {
-                post: (emailToken: string) => fetch(`${API.BASE_URL}user/mail/validate/` + encodeURIComponent("JWT " + emailToken), {
+                post: (emailToken: string) => fetch(`${API.BASE_URL}user/mail/validate/` + emailToken, {
                     method: "POST",
                     headers: headers(token),
                 }).then(x => x.text())
