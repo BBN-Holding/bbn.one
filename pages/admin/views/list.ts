@@ -1,7 +1,7 @@
 import { API } from "shared";
 import { Box, Button, Color, CommonIconType, Dialog, Entry, Grid, IconButton, Image, PlainText, ReCache, TextInput, Vertical } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
-import { DropType, File, OAuthApp, Server } from "../../../spec/music.ts";
+import { DropType, File, OAuthApp, Wallet } from "../../../spec/music.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
 
@@ -54,13 +54,13 @@ export function listReviews() {
         .setGap("1rem");
 }
 
-export function listServers(servers: Server[]) {
+export function listWallets(wallets: Wallet[]) {
     return Vertical(
-        servers.map(server => Entry({
-            title: server.name,
-            subtitle: server._id,
+        wallets.map(wallet => Entry({
+            title: `${state.users?.find(x => x._id == wallet.user)?.profile.username ?? "Unknown User"} - ${(wallet.balance?.restraint ?? 0) + (wallet.balance?.unrestraint ?? 0)}`,
+            subtitle: `userid: ${wallet.user} walletid: ${wallet._id} cut: ${wallet.cut}% restraint: ${wallet.balance?.restraint} unrestraint: ${wallet.balance?.unrestraint}`,
         }))
-    );
+    ).addClass("limited-width").setGap("1rem");
 }
 
 export function listOAuth(apps: OAuthApp[]) {

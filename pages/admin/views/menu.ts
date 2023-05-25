@@ -7,7 +7,7 @@ import { listPayouts } from "../../music/views/list.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { UserPanel } from "../users.ts";
-import { listFiles, listOAuth, listReviews } from "./list.ts";
+import { listFiles, listOAuth, listReviews, listWallets } from "./list.ts";
 
 export const adminMenu = Menu({
     title: ref`Hi ${activeUser.$username} 👋`,
@@ -95,6 +95,12 @@ export const adminMenu = Menu({
             title: ref`Minecraft Servers ${count(state.$servers)}`,
             custom: () => Reactive(state, "servers", () =>
                 listView(state.servers as StateHandler<Server[]>)
+            )
+        },
+        "wallets/": {
+            title: ref`Wallets ${count(state.$wallets)}`,
+            custom: () => Reactive(state, "wallets", () =>
+                listWallets(state.wallets ?? [])
             )
         }
     },

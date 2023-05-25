@@ -181,6 +181,10 @@ export const wallet = zod.object({
     }).array(),
     cut: zod.number(),
     user: zod.string(),
+    balance: zod.object({
+        restraint: zod.number(),
+        unrestraint: zod.number()
+    }).optional()
 });
 
 export const limits = zod.object({

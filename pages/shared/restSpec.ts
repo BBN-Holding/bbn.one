@@ -1,5 +1,5 @@
 import { assert } from "std/testing/asserts.ts";
-import { Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate } from "../../spec/music.ts";
+import { Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
 
 export type ErrorObject = {
@@ -272,6 +272,28 @@ export const API = {
                     headers: headers(token)
                 }).then(x => x.json());
                 return data as Server[];
+            }
+        },
+        wallets: {
+            list: async () => {
+                const data = await fetch(`${API.BASE_URL}admin/wallets`, {
+                    headers: headers(token)
+                }).then(x => x.json());
+                return data as Wallet[];
+            },
+            get: async (id: string) => {
+                const data = await fetch(`${API.BASE_URL}admin/wallets/${id}`, {
+                    headers: headers(token)
+                }).then(x => x.json());
+                return data as Wallet;
+            },
+            update: async (id: string, data: Wallet) => {
+                const res = await fetch(`${API.BASE_URL}admin/wallets/${id}`, {
+                    method: "PATCH",
+                    headers: headers(token),
+                    body: JSON.stringify(data)
+                });
+                return res;
             }
         }
     }),
