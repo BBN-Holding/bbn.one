@@ -57,8 +57,8 @@ export function listReviews() {
 export function listWallets(wallets: Wallet[]) {
     return Vertical(
         wallets.map(wallet => Entry({
-            title: `${state.users?.find(x => x._id == wallet.user)?.profile.username ?? "Unknown User"} - ${(wallet.balance?.restraint ?? 0) + (wallet.balance?.unrestraint ?? 0)}`,
-            subtitle: `userid: ${wallet.user} walletid: ${wallet._id} cut: ${wallet.cut}% restraint: ${wallet.balance?.restraint} unrestraint: ${wallet.balance?.unrestraint}`,
+            title: `${state.users?.find(x => x._id == wallet.user)?.profile.username ?? "Unknown User"} - ${(wallet.balance?.restrained ?? 0) + (wallet.balance?.unrestrained ?? 0)}`,
+            subtitle: `userid: ${wallet.user} walletid: ${wallet._id} cut: ${wallet.cut}% restrained: ${wallet.balance?.restrained} unrestrained: ${wallet.balance?.unrestrained}`,
         }))
     ).addClass("limited-width").setGap("1rem");
 }

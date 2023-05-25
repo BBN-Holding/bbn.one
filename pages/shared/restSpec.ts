@@ -185,6 +185,21 @@ export const API = {
             }
         }
     },
+    wallet: (token: string) => ({
+        get: async (): Promise<Wallet> => {
+            const data = await fetch(`${API.BASE_URL}wallet/get`, {
+                headers: headers(token)
+            }).then(x => x.json());
+            return data;
+        },
+        requestPayout: async (): Promise<{ success: boolean; }> => {
+            const data = await fetch(`${API.BASE_URL}wallet/request-payment`, {
+                method: "POST",
+                headers: headers(token),
+            }).then(x => x.json());
+            return data;
+        }
+    }),
     oauth: (token: string) => ({
         get: async (clientid: string): Promise<OAuthApp> => {
             const data = await fetch(`${API.BASE_URL}oauth/applications/${clientid}`, {

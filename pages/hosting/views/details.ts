@@ -80,8 +80,7 @@ export const detailsView = () =>
                         )
                     )
                         .addClass("details-item")
-                ).addClass("full-width")
-                ,
+                ).addClass("full-width"),
                 Card(
                     Grid(
                         PlainText(state.meta.coins.toLocaleString())

@@ -35,6 +35,8 @@ serve({
         "settings": "./pages/manager/settings/mod.ts",
 
         "admin": "./pages/admin/admin.ts",
+
+        "wallet": "./pages/wallet/wallet.ts",
     },
     poylfills: [
         "https://unpkg.com/construct-style-sheets-polyfill@3.1.0",

@@ -1,8 +1,8 @@
 import { API } from "shared";
 import { delay } from "std/async/delay.ts";
-import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Horizontal, Icon, img, MaterialIcons, PlainText, Reactive, Spacer, Vertical } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, CenterV, Color, Component, Custom, Horizontal, Icon, MaterialIcons, PlainText, Reactive, Spacer, Vertical, createElement, img } from "webgen/mod.ts";
 import '../assets/css/components/nav.css';
-import { activeUser, IsLoggedIn, permCheck, stringToColour } from "../pages/manager/helper.ts";
+import { IsLoggedIn, activeUser, permCheck, stringToColour } from "../pages/manager/helper.ts";
 import { activeLogo, pages } from "./pages.ts";
 new MaterialIcons();
 const Nav = (component: Component) => {
@@ -51,7 +51,7 @@ const dropOver = Reactive(activeUser, "permission", () => Vertical(
 
 dropOver.onblur = () => dropOver.classList.remove("open");
 dropOver.tabIndex = 0;
-export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" | "Admin", user = IsLoggedIn()) {
+export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" | "Admin" | "Wallet", user = IsLoggedIn()) {
     return [
         user && user.profile.verified?.email != true ? Nav(Horizontal(
             CenterV(

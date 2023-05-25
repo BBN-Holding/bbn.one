@@ -1,4 +1,4 @@
-import { Component, Custom, PlainText, ReCache, Image, Box } from "webgen/mod.ts";
+import { Box, Component, Custom, Image, PlainText, ReCache } from "webgen/mod.ts";
 import { ProfileData, stringToColour } from "../manager/helper.ts";
 
 export function ProfilePicture(component: Component, name: string) {
