@@ -1,7 +1,6 @@
 import { API } from "shared";
 import { createElement } from "webgen/mod.ts";
 
-
 export type StreamingUploadEvents = {
     credentials: () => string,
     onUploadTick: (percentage: number) => Promise<void>,

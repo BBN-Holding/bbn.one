@@ -1,6 +1,5 @@
 import { Box, Entry, Image, PlainText, ReCache } from "webgen/mod.ts";
-import { ProfileData } from "../../manager/helper.ts";
-import { ProfilePicture, getNameInital } from "../helper.ts";
+import { ProfileData, ProfilePicture, getNameInital } from "../../manager/helper.ts";
 
 export function UserEntry(x: ProfileData) {
     return Entry({

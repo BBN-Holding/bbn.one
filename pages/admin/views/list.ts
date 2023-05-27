@@ -5,6 +5,7 @@ import { DropType, File, OAuthApp, Wallet } from "../../../spec/music.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
 
+//TODO: PLEASE ADD PAGINATION
 export function listReviews() {
     return Vertical(
         (state.reviews?.find(x => x.type == DropType.UnderReview)) ? [
@@ -58,7 +59,7 @@ export function listWallets(wallets: Wallet[]) {
     return Vertical(
         wallets.map(wallet => Entry({
             title: `${state.users?.find(x => x._id == wallet.user)?.profile.username ?? "Unknown User"} - ${(wallet.balance?.restrained ?? 0) + (wallet.balance?.unrestrained ?? 0)}`,
-            subtitle: `userid: ${wallet.user} walletid: ${wallet._id} cut: ${wallet.cut}% restrained: ${wallet.balance?.restrained} unrestrained: ${wallet.balance?.unrestrained}`,
+            subtitle: `${wallet.user} - ${wallet._id} - ${wallet.cut}% - restrained: ${wallet.balance?.restrained} unrestrained: ${wallet.balance?.unrestrained}`,
         }))
     ).addClass("limited-width").setGap("1rem");
 }
@@ -70,7 +71,7 @@ export function listOAuth(apps: OAuthApp[]) {
             subtitle: app._id,
         }).addPrefix(ReCache("appicon-" + app._id, () => Promise.resolve(), (type) => {
             const imageSource = type == "loaded" && app.icon !== ""
-                ? Image({ type: "direct", source: () => API.admin(API.getToken()).files.download(app.icon) }, "A Song Artwork")
+                ? Image({ type: "direct", source: () => API.admin(API.getToken()).files.download(app.icon) }, "O-Auth Icon")
                 : Image(templateArtwork, "A Placeholder Artwork.");
             return Box(imageSource)
                 .addClass("image-square");
@@ -79,7 +80,7 @@ export function listOAuth(apps: OAuthApp[]) {
         })).addSuffix(Button("View").onClick(() => {
             oAuthViewDialog(app).open();
         })).addClass("limited-width"))
-    );
+    ).addClass("limited-width").setGap("1rem");
 }
 
 const oAuthViewDialog = (oauth: OAuthApp) => {
@@ -108,5 +109,5 @@ export function listFiles(files: File[]) {
         })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
             API.admin(API.getToken()).files.delete(file._id);
         })).addClass("limited-width"))
-    );
+    ).setGap("1rem");
 }

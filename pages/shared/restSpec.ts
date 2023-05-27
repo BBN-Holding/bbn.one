@@ -416,8 +416,8 @@ export const API = {
                 await fetchData.text();
                 assert(fetchData.ok);
             },
-            songSownload: async (): Promise<{ code: string; }> => {
-                return await fetch(`${API.BASE_URL}music/${id}/song-download`, {
+            dropDownload: async (): Promise<{ code: string; }> => {
+                return await fetch(`${API.BASE_URL}music/${id}/drop-download`, {
                     method: "POST",
                     headers: headers(token)
                 }).then(x => x.json());

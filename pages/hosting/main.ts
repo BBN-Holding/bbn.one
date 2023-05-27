@@ -1,17 +1,15 @@
 import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
-import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
-import { DynaNavigation } from "../../components/nav.ts";
-import '../../assets/css/main.css';
 import '../../assets/css/hosting.css';
+import '../../assets/css/main.css';
+import { DynaNavigation } from "../../components/nav.ts";
+import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { changeThemeColor } from "../manager/misc/common.ts";
-import { hostingMenu } from "./views/menu.ts";
 import { state } from "./data.ts";
 import { listener, refreshState } from "./loading.ts";
 import { migrationDialog } from "./views/details.ts";
+import { hostingMenu } from "./views/menu.ts";
 
 await RegisterAuthRefresh();
-
-
 
 WebGen({
     icon: new MaterialIcons(),

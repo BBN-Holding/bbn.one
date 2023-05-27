@@ -5,9 +5,9 @@ import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
 import secondary from "../../../data/secondary.json" assert { type: "json" };
 import { ArtistTypes, Drop, pureDrop } from "../../../spec/music.ts";
-import { allowedImageFormats, EditArtists, getSecondary } from "../helper.ts";
+import { EditArtists, allowedImageFormats, getSecondary } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
-import { changePage, HandleSubmit, setErrorMessage } from "../misc/common.ts";
+import { HandleSubmit, changePage, setErrorMessage } from "../misc/common.ts";
 import { uploadArtwork } from "./data.ts";
 import { EditViewState } from "./types.ts";
 

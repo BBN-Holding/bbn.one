@@ -1,9 +1,9 @@
-import { Box, ButtonStyle, Checkbox, Component, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, State, StateHandler, Table, View } from "webgen/mod.ts";
+import { Box, ButtonStyle, Checkbox, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, State, StateHandler, Table, View } from "webgen/mod.ts";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
 import secondary from "../../../data/secondary.json" assert { type: "json" };
 import { Drop } from "../../../spec/music.ts";
-import { EditArtists, getSecondary, getYearList, stringToColour } from "../helper.ts";
+import { EditArtists, getSecondary, getYearList, ProfilePicture } from "../helper.ts";
 
 function Progress(progress: number) {
     return Box(
@@ -14,12 +14,6 @@ function Progress(progress: number) {
             element.value = progress;
             return element;
         })()).addClass("low-level"));
-}
-
-function ProfilePicture(component: Component, name: string) {
-    const ele = component.draw();
-    ele.style.backgroundColor = stringToColour(name);
-    return Custom(ele).addClass("profile-picture");
 }
 
 export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {

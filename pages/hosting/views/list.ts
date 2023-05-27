@@ -49,7 +49,7 @@ export const listView = (server: StateHandler<Server[]>) => MediaQuery("(max-wid
                             )
                                 .setGap("var(--gap)")
                         )
-                            .setTitle(server.name)
+                            .setTitle(`Edit '${server.name}'`)
                             .allowUserClose()
                             .addButton("Delete Server", () => {
                                 deleteServer(server._id);

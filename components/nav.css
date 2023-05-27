@@ -41,9 +41,28 @@ nav>div {
     position: relative;
 }
 
+.profile-picture {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    font-weight: 800;
+}
+
+.profile-picture img {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    font-weight: 800;
+}
+
 nav img {
     height: 1.7rem;
-    margin-top: 0.05rem;
 }
 
 nav .wbutton {
@@ -103,10 +122,6 @@ nav .wbutton.contact:is(:hover, :focus) {
     nav>div .wbutton {
         display: none;
     }
-
-    .profile-picture {
-        margin-right: -0.4rem;
-    }
 }
 
 @media(max-width:360px) {
@@ -114,17 +129,6 @@ nav .wbutton.contact:is(:hover, :focus) {
         position: absolute;
     }
 }
-
-.profile-picture {
-    width: 38px;
-    height: 38px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    font-weight: 800;
-}
-
 
 nav.email-banner {
     top: 0;

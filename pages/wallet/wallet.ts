@@ -1,5 +1,5 @@
 import { API } from "shared";
-import { Card, Grid, MaterialIcons, MediaQuery, PlainText, Reactive, State, Table, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Card, Color, Grid, MaterialIcons, MediaQuery, PlainText, Reactive, State, Table, Vertical, View, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
 import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
@@ -29,6 +29,7 @@ View(() => Vertical(
             id: "/",
             menuBarAction: {
                 title: "Request Payout",
+                color: state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained! > 0 ? Color.Grayscaled : Color.Disabled,
                 onclick: async () => {
                     await API.wallet(API.getToken()).requestPayout();
                     alert(`Your payout request has been submitted.`)
@@ -39,23 +40,6 @@ View(() => Vertical(
             Reactive(state, "wallet", () =>
                 Vertical(
                     Grid(
-                        // Card(
-                        //     Grid(
-                        //         PlainText(migrationInfo.title)
-                        //             .setFont(2, 700),
-                        //         PlainText(migrationInfo.text0),
-                        //         PlainText(migrationInfo.text1),
-                        //         Horizontal(
-                        //             Spacer(),
-                        //             Button(migrationInfo.button)
-                        //                 .setStyle(ButtonStyle.Inline)
-                        //                 .onClick(() => {
-                        //                     migrationCredentials();
-                        //                 })
-                        //         )
-                        //     )
-                        //         .addClass("details-item")
-                        // ).addClass("full-width"),
                         Card(
                             Grid(
                                 PlainText(Number(state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained!).toFixed(2) + " £")
@@ -81,10 +65,10 @@ View(() => Vertical(
                         .setGap("var(--gap)")
                         .addClass("limited-width", "details-grid"),
                     Table([
-                        ["Amount", "auto", ({ amount }) => PlainText(amount.toFixed(2) + " £")],
-                        ["Description", "auto", ({ description }) => PlainText(description)],
-                        ["Counterparty", "auto", ({ counterParty }) => PlainText(counterParty)],
-                        ["Date", "auto", ({ timestamp }) => PlainText(new Date(Number(timestamp)).toDateString())],
+                        [ "Amount", "auto", ({ amount }) => PlainText(amount.toFixed(2) + " £") ],
+                        [ "Description", "auto", ({ description }) => PlainText(description) ],
+                        [ "Counterparty", "auto", ({ counterParty }) => PlainText(counterParty) ],
+                        [ "Date", "auto", ({ timestamp }) => PlainText(new Date(Number(timestamp)).toDateString()) ],
                     ], state.wallet?.transactions ?? [])
                 ).setGap("var(--gap)")
             )

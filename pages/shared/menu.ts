@@ -1,6 +1,6 @@
-import { Box, ButtonComponent, Component, Entry, isPointer, Pointable, Reactive, State, Vertical } from "webgen/mod.ts";
+import { HeavyList, HeavyReRender } from "shared";
+import { Box, ButtonComponent, Component, Entry, Pointable, Reactive, State, Vertical, isPointer } from "webgen/mod.ts";
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
-import { HeavyList, HeavyReRender } from "./List.ts";
 
 export interface MenuItem {
     title: Pointable<string>;

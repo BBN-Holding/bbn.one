@@ -1,7 +1,7 @@
 import { createElement, Custom, custom, img, PlainText } from "webgen/mod.ts";
-import '../assets/css/components/footer.css';
 import bbnLogo from '../assets/img/bbnSmall.svg';
 import { actions, link, renderAction } from "./actions.ts";
+import './footer.css';
 
 // TODO: Refactor this to stack based layout
 export function renderFooter() {
@@ -11,7 +11,7 @@ export function renderFooter() {
     const label = PlainText("Cluster wie ein Laster").draw();
     label.style.display = "block";
     label.style.marginTop = ".5rem";
-    colOne.append(img(bbnLogo), custom('b', "Email: "), PlainText("support@bbn.one").draw(), label);
+    colOne.append(img(bbnLogo), custom('b', "E-Mail: "), PlainText("support@bbn.one").draw(), label);
 
     const colTwo = createElement('div');
 

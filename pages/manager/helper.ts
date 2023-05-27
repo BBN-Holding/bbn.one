@@ -2,11 +2,10 @@
 // This code Will be ported to webgen
 
 import { API, Permission } from "shared";
-import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, ReCache, Spacer, State, StateHandler, Table, TextInput, Vertical, ViewClass } from "webgen/mod.ts";
+import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, ReCache, Reactive, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
-import { ViewState } from "./types.ts";
 export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
@@ -30,8 +29,8 @@ export type ProfileData = {
         username: string;
         avatar?: string;
         created: number;
-        permissions: string[];
     };
+    permissions: string[];
     groups: string[];
     exp: number;
 };
@@ -59,7 +58,6 @@ function b64DecodeUnicode(value: string) {
 function rawAccessToken() {
     return JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ]));
 }
-
 
 export const activeUser = State({
     email: <string | undefined>"--",
@@ -196,7 +194,7 @@ export function getYearList(): string[] {
         .map((x) => x.toString());
 }
 
-export function stringToColour(str: string) {
+export function stringToColor(str: string) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
@@ -306,10 +304,6 @@ export async function loadImage(x: Drop) {
     if (!x.artwork) return fetch(artwork).then(x => x.blob());
     return await API.music(API.getToken()).id(x._id).artworkPreview();
 }
-export async function loadDrops(view: ViewClass<ViewState>) {
-    const list = await API.music(API.getToken()).list.get();
-    view.viewOptions().update({ list });
-}
 
 function update(state: StateHandler<{ list: [ name: string, img: string, type: ArtistTypes ][] | undefined; }>, index: number, key: number, value: any) {
     if (!state.list)
@@ -336,4 +330,29 @@ export function track(data: any) {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(data);
     console.log(window.dataLayer);
+}
+
+export function ProfilePicture(component: Component, name: string) {
+    const ele = component.draw();
+    ele.style.backgroundColor = stringToColor(name);
+    return Custom(ele);
+}
+
+export function getNameInital(raw: string) {
+    const name = raw.trim();
+    if (name.includes(", "))
+        return name.split(", ").map(x => x.at(0)?.toUpperCase()).join("");
+    if (name.includes(","))
+        return name.split(",").map(x => x.at(0)?.toUpperCase()).join("");
+    if (name.includes(" "))
+        return name.split(" ").map(x => x.at(0)?.toUpperCase()).join("");
+    return name.at(0)!.toUpperCase();
+}
+
+export function showProfilePicture(x: ProfileData) {
+    return ProfilePicture(
+        x.profile.avatar ?
+            ReCache(x.profile.avatar, () => Promise.resolve(), (type) => type == "loaded" ? Image(x.profile.avatar!, "") : Box()) : PlainText(getNameInital(x.profile.username)),
+        x.profile.username
+    ).addClass("profile-picture");
 }

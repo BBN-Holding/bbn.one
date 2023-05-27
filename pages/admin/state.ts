@@ -12,6 +12,4 @@ export const state = State({
     files: <File[] | undefined>undefined,
     servers: <Server[] | undefined>undefined,
     wallets: <Wallet[] | undefined>undefined,
-
-    disableDialog: true
 });

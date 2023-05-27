@@ -1,8 +1,8 @@
 import { API } from "shared";
 import { delay } from "std/async/delay.ts";
-import { Box, Button, ButtonStyle, CenterV, Color, Component, Custom, Horizontal, Icon, MaterialIcons, PlainText, Reactive, Spacer, Vertical, createElement, img } from "webgen/mod.ts";
-import '../assets/css/components/nav.css';
-import { IsLoggedIn, activeUser, permCheck, stringToColour } from "../pages/manager/helper.ts";
+import { Box, Button, ButtonStyle, CenterV, Color, Component, Custom, Horizontal, Icon, Image, MaterialIcons, PlainText, Reactive, Spacer, Vertical, createElement, img } from "webgen/mod.ts";
+import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/manager/helper.ts";
+import './nav.css';
 import { activeLogo, pages } from "./pages.ts";
 new MaterialIcons();
 const Nav = (component: Component) => {
@@ -11,26 +11,10 @@ const Nav = (component: Component) => {
     return Custom(nav);
 };
 
-function getNameInital(raw: string) {
-    const name = raw.trim();
-    if (name.includes(", "))
-        return name.split(", ").map(x => x.at(0)?.toUpperCase()).join("");
-    if (name.includes(","))
-        return name.split(",").map(x => x.at(0)?.toUpperCase()).join("");
-    if (name.includes(" "))
-        return name.split(" ").map(x => x.at(0)?.toUpperCase()).join("");
-    return name.at(0)!.toUpperCase();
-}
-function ProfilePicture(component: Component, name: string) {
-    const ele = component.draw();
-    ele.style.backgroundColor = stringToColour(name);
-    return Custom(ele).addClass("profile-picture");
-}
-
 const dropOver = Reactive(activeUser, "permission", () => Vertical(
     PlainText("SWITCH TO").addClass("title"),
     pages.map(([ logo, permission, route ]) => permCheck(...permission) ? Horizontal(
-        Custom(img(logo)),
+        Image(logo, "Logo"),
         Spacer(),
         Icon("arrow_forward_ios")
     )
@@ -71,9 +55,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                 Vertical(
                     Icon("apps"),
                     Vertical(
-                        Custom(img(
-                            activeLogo(type)
-                        )),
+                        Custom(img(activeLogo(type)))
                     ),
                 )
                     .setGap(".5rem")
@@ -88,7 +70,6 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                 [
                     [ "Home", "/#" ],
                     [ "Services", "/#services" ],
-                    // [ "Team", "/#team" ],
                     [ "FAQ", "/#faq" ],
                     [ "News", "https://blog.bbn.one" ]
                 ].map(([ text, link ]) =>
@@ -97,12 +78,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                         .setStyle(ButtonStyle.Inline)
                 ),
                 (user
-                    ? ProfilePicture(
-                        user.profile.avatar ?
-                            Custom(img(user.profile.avatar))
-                            : PlainText(getNameInital(user.profile.username)),
-                        user.profile.username
-                    ).onClick(() => { location.href = "/settings"; })
+                    ? showProfilePicture(user).onClick(() => { location.href = "/settings"; })
                     : (type == "Home" && !location.pathname.startsWith("/signin") ?
                         Button("Sign in")
                             .setColor(Color.Colored)

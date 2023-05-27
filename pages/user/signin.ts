@@ -2,17 +2,16 @@ import { API } from "shared";
 import { assert } from "std/testing/asserts.ts";
 import { Box, Button, ButtonStyle, Color, Custom, Form, Grid, Horizontal, img, loadingWheel, MediaQuery, PlainText, Reactive, Spacer, TextInput, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
-import '../../assets/css/signin.css';
 import { discordLogo, googleLogo, heroImage } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../manager/helper.ts";
 import { handleStateChange, loginUser, registerUser } from "./actions.ts";
+import './signin.css';
 import { state } from "./state.ts";
 
 await RegisterAuthRefresh();
 
-WebGen({
-});
+WebGen();
 
 const ErrorMessage = () => Reactive(state, "error", () => state.error != undefined
     ? PlainText(state.error ?? "Error: Please try again later.").addClass("error-message").setMargin("1rem 0 0")
