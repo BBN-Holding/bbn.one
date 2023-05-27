@@ -1,5 +1,4 @@
 import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
-import '../../assets/css/hosting.css';
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
@@ -9,6 +8,7 @@ import { listener, refreshState } from "./loading.ts";
 import { migrationDialog } from "./views/details.ts";
 import { hostingMenu } from "./views/menu.ts";
 
+import '../../assets/css/hosting.css';
 await RegisterAuthRefresh();
 
 WebGen({
