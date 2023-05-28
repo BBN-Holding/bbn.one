@@ -119,8 +119,7 @@ export function resetTokens() {
 }
 
 export function gotoGoal() {
-    if (!localStorage.goal) return location.href = "/music";
-    location.href = localStorage.goal;
+    location.href = localStorage.goal || "/music";
 }
 export async function renewAccessTokenIfNeeded() {
     const { exp } = rawAccessToken();

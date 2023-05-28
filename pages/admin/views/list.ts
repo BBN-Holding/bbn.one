@@ -62,24 +62,21 @@ export function listServers(servers: Server[]) {
         }))
     );
 }
-
-export function listOAuth(apps: OAuthApp[]) {
-    return Vertical(
-        apps.map(app => Entry({
-            title: app.name,
-            subtitle: app._id,
-        }).addPrefix(ReCache("appicon-" + app._id, () => Promise.resolve(), (type) => {
-            const imageSource = type == "loaded" && app.icon !== ""
-                ? Image({ type: "direct", source: () => API.admin(API.getToken()).files.download(app.icon) }, "A Song Artwork")
-                : Image(templateArtwork, "A Placeholder Artwork.");
-            return Box(imageSource)
-                .addClass("image-square");
-        })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
-            API.oauth(API.getToken()).delete(app._id);
-        })).addSuffix(Button("View").onClick(() => {
-            oAuthViewDialog(app).open();
-        })).addClass("limited-width"))
-    );
+export function entryOAuth(app: OAuthApp) {
+    return Entry({
+        title: app.name,
+        subtitle: app._id,
+    }).addPrefix(ReCache("appicon-" + app._id, () => Promise.resolve(), (type) => {
+        const imageSource = type == "loaded" && app.icon !== ""
+            ? Image({ type: "direct", source: () => API.admin(API.getToken()).files.download(app.icon) }, "A Song Artwork")
+            : Image(templateArtwork, "A Placeholder Artwork.");
+        return Box(imageSource)
+            .addClass("image-square");
+    })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
+        API.oauth(API.getToken()).delete(app._id);
+    })).addSuffix(Button("View").onClick(() => {
+        oAuthViewDialog(app).open();
+    })).addClass("limited-width");
 }
 
 const oAuthViewDialog = (oauth: OAuthApp) => {

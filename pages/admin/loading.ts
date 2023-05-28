@@ -5,11 +5,14 @@ import { state } from "./state.ts";
 
 export async function refreshState() {
 
-    await Promise.all([
+    API.oauth(API.getToken()).list()
+        .then(x => {
+            state.oauth = x;
+        });
+    await Promise.allSettled([
         (async () => state.reviews = State(await API.admin(API.getToken()).reviews.get()))(),
         (async () => state.users = State(await API.user(API.getToken()).list.get()))(),
         (async () => state.payouts = State(await API.admin(API.getToken()).payouts.get()))(),
-        (async () => state.oauth = State(await API.oauth(API.getToken()).list()))(),
         (async () => state.files = State(await API.admin(API.getToken()).files.list()))(),
         (async () => state.servers = State(await API.admin(API.getToken()).servers.get()))()
     ]);

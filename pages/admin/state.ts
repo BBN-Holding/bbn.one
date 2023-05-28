@@ -1,3 +1,4 @@
+import { External } from "shared";
 import { State } from "webgen/mod.ts";
 import { Drop, File, OAuthApp, Payout, Server } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
@@ -8,7 +9,7 @@ export const state = State({
     reviews: <Drop[] | undefined>undefined,
     users: <ProfileData[] | undefined>undefined,
     payouts: <Payout[] | undefined>undefined,
-    oauth: <OAuthApp[] | undefined>undefined,
+    oauth: <External<OAuthApp[]>>"loading",
     files: <File[] | undefined>undefined,
     servers: <Server[] | undefined>undefined,
 

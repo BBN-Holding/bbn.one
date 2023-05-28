@@ -2,14 +2,6 @@ import { assert } from "std/testing/asserts.ts";
 import { Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
 
-export type ErrorObject = {
-    error: true,
-    type: 'assert' | 'client-side' | string,
-    message?: string;
-
-    // Only visable when running in verbose
-    stack?: string;
-};
 export const Permissions = [
     "/hmsys",
     "/hmsys/user",
@@ -24,13 +16,76 @@ export const Permissions = [
 ] as const;
 
 export type Permission = typeof Permissions[ number ];
+export type External<T> = PromiseSettledResult<T> | "loading";
+
+async function settle<T>(promise: Promise<T>): Promise<PromiseSettledResult<T>> {
+    try {
+        return {
+            status: "fulfilled",
+            value: await promise
+        };
+    } catch (e) {
+        return {
+            status: "rejected",
+            reason: e
+        };
+    }
+}
+
+function json<T>() {
+    return async (rsp: Response) => {
+        if (!rsp.ok)
+            return await settle(Promise.reject(await rsp.text()));
+        return await settle(rsp.json() as Promise<T>);
+    };
+}
+
+function none() {
+    return async (rsp: Response) => {
+        if (!rsp.ok)
+            return await settle(Promise.reject(await rsp.text()));
+        return await settle(Promise.resolve(true));
+    };
+}
+
+function blob() {
+    return async (rsp: Response) => {
+        if (!rsp.ok)
+            return await settle(Promise.reject(await rsp.text()));
+        return await settle(rsp.blob());
+    };
+}
+
+export function stupidErrorAlert<T>(data: PromiseSettledResult<T>): T {
+    if (data.status === "fulfilled")
+        return data.value;
+    alert(JSON.stringify(data.reason));
+    throw data.reason;
+}
+
+
+function reject(rsp: unknown) {
+    return settle(Promise.reject(rsp));
+}
+
+export const defaultError = "Error: Something happend unexpectedly. Please try again later.";
+
+// This is very limited make error handling more useful.
+export function displayError(data: unknown) {
+    console.error("displayError", data);
+    if (data instanceof Error) {
+        if (data.message === "Failed to fetch")
+            return "Error: Can't load. Please try again later.";
+
+        return data.message || defaultError;
+    }
+    return defaultError;
+}
 
 export const API = {
     getToken: () => localStorage[ "access-token" ],
     BASE_URL: <string>localStorage.OVERRIDE_BASE_URL || (location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/"),
     WS_URL: <string>localStorage.OVERRIDE_BASE_URL || (location.hostname == "bbn.one" ? "wss://bbn.one/ws" : "ws://localhost:8443/ws"),
-    // deno-lint-ignore no-explicit-any
-    isError: (data: any): data is ErrorObject => typeof data === "object" && data.error,
     permission: Permissions,
     _legacyPermissionFromGroups: (group: string) => {
         const admin = "6293b146d55350d24e6da542";
@@ -57,7 +112,7 @@ export const API = {
                 post: (emailToken: string) => fetch(`${API.BASE_URL}user/mail/validate/` + emailToken, {
                     method: "POST",
                     headers: headers(token),
-                }).then(x => x.text())
+                }).then(none())
 
             },
             resendVerifyEmail: {
@@ -65,25 +120,27 @@ export const API = {
                     return fetch(`${API.BASE_URL}user/mail/resend-verify-email`, {
                         method: "POST",
                         headers: headers(token),
-                    }).then(x => x.text());
+                    }).then(none());
                 }
             }
         },
         setMe: {
-            post: async (para: Partial<{ name: string, password: string; }>) => {
-                const data = await fetch(`${API.BASE_URL}user/set-me`, {
+            post: (para: Partial<{ name: string, password: string; }>) => {
+                return fetch(`${API.BASE_URL}user/set-me`, {
                     method: "POST",
                     headers: headers(token),
                     body: JSON.stringify(para)
-                }).then(x => x.text());
-                return data;
+                })
+                    .then(none());
+
             }
         },
         list: {
             get: async () => {
                 const data = await fetch(`${API.BASE_URL}user/users`, {
                     headers: headers(token)
-                }).then(x => x.json());
+                })
+                    .then(x => x.json());
                 return data.users as ProfileData[];
             }
         },
@@ -106,15 +163,18 @@ export const API = {
                     headers: {
                         "Authorization": "JWT " + refreshToken
                     }
-                }).then(x => x.json()) as { token: string; };
+                })
+                    .then(x => x.json()) as { token: string; };
             }
         },
         google: {
-            post: async ({ code, state }: { code: string, state: string; }) => {
+            post: ({ code, state }: { code: string, state: string; }) => {
                 const param = new URLSearchParams({ code, state });
-                return await fetch(`${API.BASE_URL}auth/google?${param.toString()}`, {
+                return fetch(`${API.BASE_URL}auth/google?${param.toString()}`, {
                     method: "POST"
-                }).then(x => x.json()) as { token: string; };
+                })
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
             }
         },
         discord: {
@@ -122,18 +182,21 @@ export const API = {
                 const param = new URLSearchParams({ code, state });
                 return await fetch(`${API.BASE_URL}auth/discord?${param.toString()}`, {
                     method: "POST"
-                }).then(x => x.json()) as { token: string; };
+                })
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
             }
         },
         fromUserInteraction: {
-            get: async (id: string) => {
-                const data = await fetch(`${API.BASE_URL}auth/from-user-interaction/${id}`, {
+            get: (id: string) => {
+                return fetch(`${API.BASE_URL}auth/from-user-interaction/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
                     }
-                }).then(x => x.json());
-                return data;
+                })
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
             }
         },
         forgotPassword: {
@@ -145,10 +208,11 @@ export const API = {
                 body: JSON.stringify({
                     email
                 })
-            }).then(x => x.text())
+            })
+                .then(none())
         },
         register: {
-            post: async ({ email, password, name }: { email: string, password: string, name: string; }): Promise<{ token: string; } | ErrorObject> => {
+            post: async ({ email, password, name }: { email: string, password: string, name: string; }) => {
                 return await fetch(`${API.BASE_URL}auth/register`, {
                     method: "POST",
                     headers: {
@@ -160,64 +224,63 @@ export const API = {
                         name
                     })
                 })
-                    .then(x => x.json())
-                    .catch(() => <ErrorObject>{ error: true, type: "client-side" });
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
             }
         },
         email: {
-            post: async ({ email, password }: { email: string, password: string; }): Promise<{ token: string; } | ErrorObject> => {
-                try {
-
-                    const data = await fetch(`${API.BASE_URL}auth/email`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            email,
-                            password
-                        })
-                    }).then(x => x.json());
-                    return data;
-                } catch (_error) {
-                    return <ErrorObject>{ error: true, type: "client-side" };
-                }
+            post: ({ email, password }: { email: string, password: string; }) => {
+                return fetch(`${API.BASE_URL}auth/email`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                })
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
             }
         }
     },
     oauth: (token: string) => ({
-        get: async (clientid: string): Promise<OAuthApp> => {
-            const data = await fetch(`${API.BASE_URL}oauth/applications/${clientid}`, {
+        get: (clientid: string) => {
+            return fetch(`${API.BASE_URL}oauth/applications/${clientid}`, {
                 headers: headers(token)
-            }).then(x => x.json());
-            return data;
+            })
+                .then(json<OAuthApp>())
+                .catch(reject);
         },
-        list: async (): Promise<OAuthApp[]> => {
-            const data = await fetch(`${API.BASE_URL}oauth/applications`, {
+        list: () => {
+            return fetch(`${API.BASE_URL}oauth/applications`, {
                 headers: headers(token)
-            }).then(x => x.json());
-            return data;
+            })
+                .then(json<OAuthApp[]>())
+                .catch(reject);
         },
-        post: async (name: string, redirect: string, icon: string): Promise<{ id: string, secret: string; }> => {
-            const data = await fetch(`${API.BASE_URL}oauth/applications`, {
+        post: (name: string, redirect: string, icon: string) => {
+            return fetch(`${API.BASE_URL}oauth/applications`, {
                 method: "POST",
                 headers: headers(token),
                 body: JSON.stringify({ name, redirect, icon })
-            }).then(x => x.json());
-            return data;
+            })
+                .then(json<{ id: string, secret: string; }>())
+                .catch(reject);
         },
-        icon: async (clientid: string) => {
-            const data = await fetch(`${API.BASE_URL}oauth/applications/${clientid}/download`, {
+        icon: (clientid: string) => {
+            return fetch(`${API.BASE_URL}oauth/applications/${clientid}/download`, {
                 headers: headers(token)
-            }).then(x => x.blob());
-            return data;
+            })
+                .then(blob());
         },
-        delete: async (clientid: string) => {
-            const data = await fetch(`${API.BASE_URL}oauth/applications/${clientid}`, {
+        delete: (clientid: string) => {
+            return fetch(`${API.BASE_URL}oauth/applications/${clientid}`, {
                 method: "DELETE",
                 headers: headers(token)
-            }).then(x => x.json());
-            return data;
+            })
+                .then(none());
         }
     }),
     admin: (token: string) => ({

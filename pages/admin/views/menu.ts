@@ -1,4 +1,4 @@
-import { API, count, LoadingSpinner, Menu } from "shared";
+import { API, count, HeavyList, LoadingSpinner, Menu } from "shared";
 import { Button, Color, Dialog, Grid, PlainText, Reactive, ref, refMap, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import { Server } from "../../../spec/music.ts";
 import { listView } from "../../hosting/views/list.ts";
@@ -7,7 +7,7 @@ import { listPayouts } from "../../music/views/list.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { UserPanel } from "../users.ts";
-import { listFiles, listOAuth, listReviews } from "./list.ts";
+import { entryOAuth, listFiles, listReviews } from "./list.ts";
 
 export const adminMenu = Menu({
     title: ref`Hi ${activeUser.$username} 👋`,
@@ -70,7 +70,7 @@ export const adminMenu = Menu({
         },
         "oauth/": {
             title: ref`OAuth ${count(state.$oauth)}`,
-            items: [
+            items: refMap(state.$oauth, it => it === "loading" || it.status === "rejected" ? [] : [
                 {
                     title: "Add OAuth",
                     id: "add+oauth/",
@@ -78,11 +78,8 @@ export const adminMenu = Menu({
                         addOAuthDialog.open();
                     }
                 }
-            ],
-            custom: () => Reactive(state, "oauth", () =>
-                Vertical(listOAuth(state.oauth ?? []))
-                    .setGap("0.5rem")
-            )
+            ]),
+            custom: () => HeavyList(state.$oauth, entryOAuth).setMargin("var(--gap)")
         },
         "files/": {
             title: ref`Files ${count(state.$files)}`,

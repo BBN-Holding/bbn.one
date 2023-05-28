@@ -1,4 +1,4 @@
-import { API } from "shared";
+import { API, displayError } from "shared";
 import { delay } from "std/async/delay.ts";
 import { assert } from "std/testing/asserts.ts";
 import { forceRefreshToken, gotoGoal } from "../manager/helper.ts";
@@ -11,13 +11,13 @@ export async function loginUser() {
             email: state.email,
             password: state.password
         });
-        if (API.isError(rsp))
-            state.error = rsp.message || "";
+        if (rsp.status == "rejected")
+            throw rsp.reason;
 
-        else
-            logIn(rsp, "email").finally(gotoGoal);
+        await logIn(rsp.value, "email");
+        gotoGoal();
     } catch (error) {
-        state.error = error.message;
+        state.error = displayError(error);
     }
 }
 
@@ -34,13 +34,13 @@ export async function registerUser() {
             email,
             password
         });
-        if (API.isError(rsp))
-            state.error = rsp.message || "";
+        if (rsp.status == "rejected")
+            throw rsp.reason;
 
-        else
-            logIn(rsp, "email").finally(gotoGoal);
+        await logIn(rsp.value, "email");
+        gotoGoal();
     } catch (error) {
-        state.error = error.message;
+        state.error = displayError(error);
     }
 }
 
@@ -63,25 +63,30 @@ export async function handleStateChange() {
 
 
     if (params.type == "google" && params.stateCode && params.code) {
-        API.auth.google.post({ code: params.code, state: params.stateCode })
-            .then(x => logIn(x, "0auth"))
-            .then(gotoGoal);
+        const rsp = await API.auth.google.post({ code: params.code, state: params.stateCode });
+        if (rsp.status === "rejected")
+            return state.error = displayError(rsp.reason);
+        await logIn(rsp.value, "0auth");
+        gotoGoal();
     }
     else if (params.type == "discord" && params.stateCode && params.code) {
-        API.auth.discord.post({ code: params.code, state: params.stateCode })
-            .then(x => logIn(x, "0auth"))
-            .then(gotoGoal);
+        const rsp = await API.auth.discord.post({ code: params.code, state: params.stateCode });
+        if (rsp.status === "rejected")
+            return state.error = displayError(rsp.reason);
+        logIn(rsp.value, "0auth");
+        gotoGoal();
     }
     else if (params.type == "forgot-password" && params.token) {
-        API.auth.fromUserInteraction.get(params.token).then(async x => {
-            await logIn(x, "email");
-            state.token = API.getToken();
-        }).catch(() => {
-            state.error = "Error: Something happend unexpectedly";
-        });
+        const rsp = await API.auth.fromUserInteraction.get(params.token);
+        if (rsp.status === "rejected")
+            return state.error = displayError(rsp.reason);
+        await logIn(rsp.value, "email");
+        state.token = API.getToken();
     }
     else if (params.type == "sign-up" && params.token) {
-        await API.user(API.getToken()).mail.validate.post(params.token);
+        const rsp = await API.user(API.getToken()).mail.validate.post(params.token);
+        if (rsp.status === "rejected")
+            return state.error = displayError(rsp.reason);
         await forceRefreshToken();
         await delay(1000);
         gotoGoal();
