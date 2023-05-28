@@ -68,7 +68,7 @@ function reject(rsp: unknown) {
     return settle(Promise.reject(rsp));
 }
 
-export const defaultError = "Error: Something happend unexpectedly. Please try again later.";
+export const defaultError = "Something happend unexpectedly. Please try again later.";
 
 // This is very limited make error handling more useful.
 export function displayError(data: unknown) {
@@ -77,9 +77,20 @@ export function displayError(data: unknown) {
         if (data.message === "Failed to fetch")
             return "Error: Can't load. Please try again later.";
 
-        return data.message || defaultError;
+        return `Error: ${data.message || defaultError}`;
     }
-    return defaultError;
+    if (typeof data === "string") {
+        try {
+            const jdata = JSON.parse(data) as unknown;
+            // display assert errors that have a message
+            if (jdata && typeof jdata === "object" && 'type' in jdata && 'message' in jdata && jdata.type === "assert") {
+                return `Error: ${jdata.message || defaultError}`;
+            }
+        } catch (_e) {
+            return "Error: " + defaultError;
+        }
+    }
+    return "Error: " + defaultError;
 }
 
 export const API = {
