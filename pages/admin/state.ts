@@ -4,13 +4,11 @@ import { Drop, File, OAuthApp, Payout, Server, Wallet } from "../../spec/music.t
 import { ProfileData } from "../manager/helper.ts";
 
 export const state = State({
-    loaded: false,
-
-    reviews: <Drop[] | undefined>undefined,
-    users: <ProfileData[] | undefined>undefined,
-    payouts: <Payout[] | undefined>undefined,
+    reviews: <External<Drop[]>>"loading",
+    users: <External<ProfileData[]>>"loading",
+    payouts: <External<Payout[]>>"loading",
     oauth: <External<OAuthApp[]>>"loading",
-    files: <File[] | undefined>undefined,
-    servers: <Server[] | undefined>undefined,
-    wallets: <Wallet[] | undefined>undefined,
+    files: <External<File[]>>"loading",
+    servers: <External<Server[]>>"loading",
+    wallets: <External<Wallet[]>>"loading",
 });

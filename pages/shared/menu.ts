@@ -5,7 +5,7 @@ import { ActionBar, Link } from "../manager/misc/actionbar.ts";
 export interface MenuItem {
     title: Pointable<string>;
     id: `${string}/`;
-    subtitle?: string;
+    subtitle?: Pointable<string>;
 
     items?: Pointable<MenuItem[]>;
     action?: (clickPath: string, item: MenuItem) => Promise<void> | void;

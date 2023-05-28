@@ -1,23 +1,18 @@
 import { API, StreamingUploadHandler } from "shared";
 import { delay } from "std/async/delay.ts";
-import { State, UploadFilesDialog } from "webgen/mod.ts";
+import { UploadFilesDialog } from "webgen/mod.ts";
 import { state } from "./state.ts";
 
 export async function refreshState() {
-
-    API.oauth(API.getToken()).list()
-        .then(x => {
-            state.oauth = x;
-        });
-    await Promise.allSettled([
-        (async () => state.reviews = State(await API.admin(API.getToken()).reviews.get()))(),
-        (async () => state.users = State(await API.user(API.getToken()).list.get()))(),
-        (async () => state.payouts = State(await API.admin(API.getToken()).payouts.get()))(),
-        (async () => state.files = State(await API.admin(API.getToken()).files.list()))(),
-        (async () => state.servers = State(await API.admin(API.getToken()).servers.get()))(),
-        (async () => state.wallets = State(await API.admin(API.getToken()).wallets.list()))()
+    await Promise.all([
+        (async () => state.reviews = await API.admin(API.getToken()).reviews.get())(),
+        (async () => state.users = await API.user(API.getToken()).list.get())(),
+        (async () => state.payouts = await API.admin(API.getToken()).payouts.get())(),
+        (async () => state.files = await API.admin(API.getToken()).files.list())(),
+        (async () => state.servers = await API.admin(API.getToken()).servers.get())(),
+        (async () => state.wallets = await API.admin(API.getToken()).wallets.list())(),
+        (async () => state.oauth = await API.oauth(API.getToken()).list())()
     ]);
-    state.loaded = true;
 }
 
 const urls = {

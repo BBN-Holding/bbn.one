@@ -1,23 +1,8 @@
 import { sortBy } from "std/collections/sort_by.ts";
-import { CenterV, Component, css, Entry, MediaQuery, PlainText, Vertical } from "webgen/mod.ts";
+import { CenterV, Component, Entry, MediaQuery, PlainText, Vertical } from "webgen/mod.ts";
 import { Drop, DropType, Payout } from "../../../spec/music.ts";
 import { activeUser, permCheck } from "../../manager/helper.ts";
 import { DropEntry } from "./entry.ts";
-
-document.adoptedStyleSheets.push(css`
-    .image-square {
-        height: 5rem;
-        aspect-ratio: 1 / 1;
-        border-radius: 15px;
-    }
-    .small .image-square {
-        height: 44px;
-    }
-    .image-square .wimage {
-        height: 100%;
-        width: 100%;
-    }
-`);
 
 export const musicList = (list: Drop[], type: DropType) => Vertical(
     CategoryRender(
@@ -70,7 +55,7 @@ export function listPayouts(payouts: Payout[], admin = false) {
             .addClass("limited-width"),
         PlainText("Release new Drops to earn money")
             .addClass("limited-width"),
-    ])
+    ]);
 }
 
 export function ExplainerText(drop: Drop[], type: DropType) {

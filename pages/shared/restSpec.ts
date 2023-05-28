@@ -59,7 +59,7 @@ function blob() {
 export function stupidErrorAlert<T>(data: PromiseSettledResult<T>): T {
     if (data.status === "fulfilled")
         return data.value;
-    alert(JSON.stringify(data.reason));
+    alert(displayError(data.reason));
     throw data.reason;
 }
 
@@ -148,11 +148,11 @@ export const API = {
         },
         list: {
             get: async () => {
-                const data = await fetch(`${API.BASE_URL}user/users`, {
+                return await fetch(`${API.BASE_URL}user/users`, {
                     headers: headers(token)
                 })
-                    .then(x => x.json());
-                return data.users as ProfileData[];
+                    .then(json<ProfileData[]>())
+                    .catch(reject);
             }
         },
         zendesk: {
@@ -311,40 +311,45 @@ export const API = {
     }),
     admin: (token: string) => ({
         files: {
-            list: async (): Promise<File[]> => {
-                const data = await fetch(`${API.BASE_URL}admin/files`, {
+            list: async () => {
+                return await fetch(`${API.BASE_URL}admin/files`, {
                     headers: headers(token)
-                }).then(x => x.json());
-                return data;
+                })
+                    .then(json<File[]>())
+                    .catch(reject);
             },
             download: async (id: string) => {
-                const data = await fetch(`${API.BASE_URL}admin/files/${id}/download`, {
+                return await fetch(`${API.BASE_URL}admin/files/${id}/download`, {
                     headers: headers(token)
-                }).then(x => x.blob());
-                return data;
+                })
+                    .then(blob())
+                    .catch(reject);
             },
             delete: async (id: string) => {
-                const data = await fetch(`${API.BASE_URL}admin/files/${id}`, {
+                return await fetch(`${API.BASE_URL}admin/files/${id}`, {
                     method: "DELETE",
                     headers: headers(token)
-                }).then(x => x.json());
-                return data;
+                })
+                    .then(none())
+                    .catch(reject);
             }
         },
         reviews: {
             get: async () => {
-                const data = await fetch(`${API.BASE_URL}admin/reviews`, {
+                return await fetch(`${API.BASE_URL}admin/reviews`, {
                     headers: headers(token)
-                }).then(x => x.json());
-                return data as Drop[];
+                })
+                    .then(json<Drop[]>())
+                    .catch(reject);
             },
         },
         payouts: {
             get: async () => {
-                const data = await fetch(`${API.BASE_URL}admin/payouts`, {
+                return await fetch(`${API.BASE_URL}admin/payouts`, {
                     headers: headers(token)
-                }).then(x => x.json());
-                return data as Payout[];
+                })
+                    .then(json<Payout[]>())
+                    .catch(reject);
             },
             id: (id: string) => ({
                 get: async () => {
@@ -357,18 +362,20 @@ export const API = {
         },
         servers: {
             get: async () => {
-                const data = await fetch(`${API.BASE_URL}admin/servers`, {
+                return await fetch(`${API.BASE_URL}admin/servers`, {
                     headers: headers(token)
-                }).then(x => x.json());
-                return data as Server[];
+                })
+                    .then(json<Server[]>())
+                    .catch(reject);
             }
         },
         wallets: {
             list: async () => {
-                const data = await fetch(`${API.BASE_URL}admin/wallets`, {
+                return await fetch(`${API.BASE_URL}admin/wallets`, {
                     headers: headers(token)
-                }).then(x => x.json());
-                return data as Wallet[];
+                })
+                    .then(json<Wallet[]>())
+                    .catch(reject);
             },
             get: async (id: string) => {
                 const data = await fetch(`${API.BASE_URL}admin/wallets/${id}`, {
@@ -441,7 +448,9 @@ export const API = {
                 return fetch(`${API.BASE_URL}hosting/servers/${id}`, {
                     method: 'DELETE',
                     headers: headers(token)
-                }).then(x => x.text());
+                })
+                    .then(none())
+                    .catch(reject);
             }
         }),
     }),

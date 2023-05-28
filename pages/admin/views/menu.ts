@@ -1,51 +1,95 @@
-import { API, count, HeavyList, LoadingSpinner, Menu } from "shared";
+import { API, count, HeavyList, Menu } from "shared";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Button, Color, Dialog, Grid, PlainText, Reactive, ref, refMap, State, StateHandler, TextInput } from "webgen/mod.ts";
-import { Server } from "../../../spec/music.ts";
-import { listView } from "../../hosting/views/list.ts";
+import { Box, Button, Color, Dialog, Entry, Grid, PlainText, Reactive, ref, refMap, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
+import { DropType, Server } from "../../../spec/music.ts";
+import { entryServer } from "../../hosting/views/list.ts";
 import { activeUser } from "../../manager/helper.ts";
-import { listPayouts } from "../../music/views/list.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
-import { UserPanel } from "../users.ts";
-import { entryOAuth, listFiles, listReviews, listWallets } from "./list.ts";
+import { ReviewEntry } from "./entryReview.ts";
+import { UserEntry } from "./entryUser.ts";
+import { entryFile, entryOAuth, entryWallet } from "./list.ts";
 
-export const adminMenu = Reactive(state, "loaded", () => Menu({
+export const adminMenu = Menu({
     title: ref`Hi ${activeUser.$username} 👋`,
     id: "/",
     categories: {
         "overview/": {
             title: `Overview`,
-            items: [
+            items: refMap(state.$payouts, it => it === "loading" || it.status === "rejected" ? [] : [
                 {
                     id: "streams/",
                     title: "Total Streams",
-                    subtitle: state.payouts ? `${sumOf(state.payouts, payout => sumOf(payout.entries, entry => sumOf(entry.data, data => data.quantity))).toLocaleString()} Streams` : "Loading..."
+                    subtitle: state.payouts ? `${sumOf(it.value, payout => sumOf(payout.entries, entry => sumOf(entry.data, data => data.quantity))).toLocaleString()} Streams` : "Loading..."
                 },
                 {
                     id: "revenue/",
                     title: "Calculated Revenue",
-                    subtitle: state.payouts ? `£ ${sumOf(state.payouts, payout => sumOf(payout.entries, entry => sumOf(entry.data, data => data.revenue))).toFixed(2)}` : "Loading..."
+                    subtitle: state.payouts ? `£ ${sumOf(it.value, payout => sumOf(payout.entries, entry => sumOf(entry.data, data => data.revenue))).toFixed(2)}` : "Loading..."
                 },
                 {
                     id: "gotten/",
                     title: "Gotten Revenue",
-                    subtitle: state.payouts ? `£ ${sumOf(state.payouts, payout => Number(payout.moneythisperiod.replace("£ ", "").replaceAll(',', ''))).toFixed(2)}` : "Loading..."
+                    subtitle: state.payouts ? `£ ${sumOf(it.value, payout => Number(payout.moneythisperiod.replace("£ ", "").replaceAll(',', ''))).toFixed(2)}` : "Loading..."
                 },
                 {
                     id: "bbnmoney/",
                     title: "BBN Revenue",
-                    subtitle: state.wallets ? `£ ${sumOf(Object.values(state.wallets.find(wallet => wallet.user === "62ea6fa5321b3702e93ca21c")?.balance!), e => e).toFixed(2) ?? 0}` : "Loading..."
+                    subtitle: refMap(state.$wallets,
+                        it => it == "loading"
+                            ? `---`
+                            : it.status == "rejected"
+                                ? "(failed)"
+                                : "£ " + sumOf(Object.values(it.value.find(wallet => wallet.user === "62ea6fa5321b3702e93ca21c")?.balance!), e => e).toFixed(2) ?? 0
+                    )
                 }
-            ]
+            ]),
+            custom: () => HeavyList(state.$payouts, () => Box())
         },
         "reviews/": {
             title: ref`Music Reviews ${count(state.$reviews)}`,
-            custom: listReviews
+            custom: refMap(state.$reviews, reviews =>
+                reviews === "loading" || reviews.status === "rejected"
+                    // Display Loading Spinner or Error
+                    ? () => HeavyList(reviews, () => Box())
+                    : () => Vertical(
+                        PlainText("Reviews")
+                            .addClass("list-title")
+                            .addClass("limited-width"),
+                        HeavyList(reviews.value.filter(x => x.type === DropType.UnderReview), it => ReviewEntry(it)),
+                        //
+                        PlainText("Publishing")
+                            .addClass("list-title")
+                            .addClass("limited-width"),
+                        HeavyList(reviews.value.filter(x => x.type === DropType.Publishing), it => ReviewEntry(it)),
+                        //
+                        PlainText("Published")
+                            .addClass("list-title")
+                            .addClass("limited-width"),
+                        HeavyList(reviews.value.filter(x => x.type === DropType.Published), it => ReviewEntry(it)),
+                        //
+                        PlainText("Private")
+                            .addClass("list-title")
+                            .addClass("limited-width"),
+                        HeavyList(reviews.value.filter(x => x.type === DropType.Private), it => ReviewEntry(it)),
+                        //
+                        PlainText("Rejected")
+                            .addClass("list-title")
+                            .addClass("limited-width"),
+                        HeavyList(reviews.value.filter(x => x.type === DropType.ReviewDeclined), it => ReviewEntry(it)),
+                        //
+                        PlainText("Drafts")
+                            .addClass("list-title")
+                            .addClass("limited-width"),
+                        HeavyList(reviews.value.filter(x => x.type === DropType.Unsubmitted), it => ReviewEntry(it)),
+                    )
+                        .setGap("var(--gap)")
+            )
+
         },
         "users/": {
             title: ref`User ${count(state.$users)}`,
-            custom: UserPanel
+            custom: () => HeavyList(state.$users, (val) => UserEntry(val))
         },
         "payouts/": {
             title: ref`Payout ${count(state.$payouts)}`,
@@ -65,7 +109,14 @@ export const adminMenu = Reactive(state, "loaded", () => Menu({
                     }
                 }
             ],
-            custom: () => listPayouts(state.payouts ?? [], true)
+            custom: () =>
+                HeavyList(state.$payouts, (x) => Entry({
+                    title: x.period,
+                    subtitle: x.moneythisperiod,
+                }).onClick(() => {
+                    location.href = `/music/payout?id=${x._id}&userid=${activeUser.id}`;
+                }))
+                    .setMargin("var(--gap)")
         },
         "oauth/": {
             title: ref`OAuth ${count(state.$oauth)}`,
@@ -78,26 +129,26 @@ export const adminMenu = Reactive(state, "loaded", () => Menu({
                     }
                 }
             ]),
-            custom: () => HeavyList(state.$oauth, entryOAuth).setMargin("var(--gap)")
+            custom: () =>
+                HeavyList(state.$oauth, entryOAuth)
+                    .setMargin("var(--gap)")
         },
         "files/": {
             title: ref`Files ${count(state.$files)}`,
-            custom: () => listFiles(state.files ?? [])
+            custom: () => HeavyList(state.$files, entryFile)
 
         },
         "servers/": {
             title: ref`Minecraft Servers ${count(state.$servers)}`,
-            custom: () => listView(state.servers as StateHandler<Server[]>)
+            custom: () => HeavyList(state.$servers, it => entryServer(it as StateHandler<Server>, true))
         },
         "wallets/": {
             title: ref`Wallets ${count(state.$wallets)}`,
-            custom: () => listWallets(state.wallets ?? [])
+            custom: () => HeavyList(state.$wallets, entryWallet)
         }
-    },
-    custom: () => LoadingSpinner()
+    }
 })
-    .setActivePath(refMap(state.$loaded, loaded => loaded ? '/overview/' : '/'))
-);
+    .setActivePath('/overview/');
 
 const oAuthData = State({
     name: "",
