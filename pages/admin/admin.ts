@@ -1,10 +1,10 @@
 import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
+import { RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { changeThemeColor } from "../manager/misc/common.ts";
 
-import '../../assets/css/admin.css';
 import '../../assets/css/main.css';
+import './admin.css';
 import { refreshState } from "./loading.ts";
 import { state } from "./state.ts";
 import { adminMenu } from "./views/menu.ts";

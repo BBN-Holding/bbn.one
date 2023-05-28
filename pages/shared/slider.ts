@@ -60,5 +60,4 @@ export const SliderInput = (label: string) => new class extends InputForm<number
     setColor(_color: Color): this {
         throw new Error("Method not implemented.");
     }
-
 };

@@ -134,13 +134,13 @@ export const payout = zod.object({
     moneythisperiod: zod.string(),
     entries: zod.object({
         isrc: zod.string(),
-        user: zod.string().optional(),
+        user: zod.string(),
         data: zod.array(
             zod.object({
                 store: zod.string(),
                 territory: zod.string(),
                 quantity: zod.number(),
-                revenue: zod.string()
+                revenue: zod.number()
             })
         )
     }).array()
@@ -181,6 +181,10 @@ export const wallet = zod.object({
     }).array(),
     cut: zod.number(),
     user: zod.string(),
+    balance: zod.object({
+        restrained: zod.number(),
+        unrestrained: zod.number()
+    }).optional()
 });
 
 export const limits = zod.object({

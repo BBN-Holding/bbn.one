@@ -7,7 +7,7 @@ import './details.css';
 export const migrationInfo = {
     title: "Welcome to our Beta Dashboard!",
     text0: "We're excited to have you on board as we unveil our new and improved platform.",
-    text1: "As we transition to this enhanced experience, we want to make sure you have a seamless migration process. To access your account on the old panel, simply click the button below to get access to your legacy password:",
+    text1: "As we transition to this enhanced experience, we want to make sure you have a seamless migration process. To access your account on the old panel (Pterodactyl), simply click the button below to get access to your legacy password:",
     button: "Get your legacy password"
 };
 
@@ -26,9 +26,7 @@ export const migrationDialog = () => Dialog(() => Vertical(
 
 export const migrationCredentials = () => Dialog(() =>
     Vertical(
-        PlainText("If you want to login to the legacy panel here is you migration password."),
-        PlainText("Notice: You can change your password in the legacy panel."),
-        PlainText("This is only the creation password of you migrated account."),
+        PlainText("If you want to login to the legacy panel (Pterodactyl) here is your migration password."),
         Grid(
             [
                 {
@@ -53,11 +51,11 @@ export const migrationCredentials = () => Dialog(() =>
 )
     .setTitle("View legacy password")
     .allowUserClose()
+    .addButton("Close", "remove", Color.Grayscaled, ButtonStyle.Inline)
     .addButton("Go to legacy panel", () => {
         open("https://panel.bbn.one/", "_blank");
         return "remove";
-    }, Color.Grayscaled, ButtonStyle.Inline)
-    .addButton("Close", "remove", Color.Grayscaled, ButtonStyle.Inline)
+    }, Color.Colored, ButtonStyle.Inline)
     .open();
 
 export const detailsView = () =>
@@ -80,8 +78,7 @@ export const detailsView = () =>
                         )
                     )
                         .addClass("details-item")
-                ).addClass("full-width")
-                ,
+                ).addClass("full-width"),
                 Card(
                     Grid(
                         PlainText(state.meta.coins.toLocaleString())
@@ -124,7 +121,7 @@ export const detailsView = () =>
                 ),
                 Card(
                     Grid(
-                        PlainText(state.meta.used.cpu + " % / " + state.meta.limits.cpu + " %")
+                        PlainText(state.meta.used.cpu + "% / " + state.meta.limits.cpu + "%")
                             .setFont(2, 700),
                         PlainText("CPU")
                             .setFont(1, 700)

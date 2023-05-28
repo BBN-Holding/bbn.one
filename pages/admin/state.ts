@@ -1,6 +1,6 @@
 import { External } from "shared";
 import { State } from "webgen/mod.ts";
-import { Drop, File, OAuthApp, Payout, Server } from "../../spec/music.ts";
+import { Drop, File, OAuthApp, Payout, Server, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
 
 export const state = State({
@@ -12,6 +12,5 @@ export const state = State({
     oauth: <External<OAuthApp[]>>"loading",
     files: <File[] | undefined>undefined,
     servers: <Server[] | undefined>undefined,
-
-    disableDialog: true
+    wallets: <Wallet[] | undefined>undefined,
 });

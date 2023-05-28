@@ -14,13 +14,15 @@ export async function refreshState() {
         (async () => state.users = State(await API.user(API.getToken()).list.get()))(),
         (async () => state.payouts = State(await API.admin(API.getToken()).payouts.get()))(),
         (async () => state.files = State(await API.admin(API.getToken()).files.list()))(),
-        (async () => state.servers = State(await API.admin(API.getToken()).servers.get()))()
+        (async () => state.servers = State(await API.admin(API.getToken()).servers.get()))(),
+        (async () => state.wallets = State(await API.admin(API.getToken()).wallets.list()))()
     ]);
+    state.loaded = true;
 }
 
 const urls = {
-    "isrc": [ "payment/payout/isrcsync", '.xlsx' ],
-    "manual": [ "payment/payouts/upload", '.xlsx' ],
+    "isrc": [ "admin/payout/isrcsync", '.xlsx' ],
+    "manual": [ "admin/payouts/upload", '.xlsx' ],
     "oauth": [ "oauth/applications/upload", 'image/*' ]
 };
 export function upload(type: keyof typeof urls): Promise<string> {
@@ -29,7 +31,6 @@ export function upload(type: keyof typeof urls): Promise<string> {
         UploadFilesDialog((list) => {
             StreamingUploadHandler(url, {
                 failure: () => {
-                    //state.loading = false;
                     alert("Your Upload has failed. Please try a different file or try again later");
                 },
                 uploadDone: () => {
@@ -37,7 +38,6 @@ export function upload(type: keyof typeof urls): Promise<string> {
                 },
                 credentials: () => API.getToken(),
                 backendResponse: (id) => {
-                    console.log(id);
                     resolve(id);
                 },
                 onUploadTick: async (percentage) => {

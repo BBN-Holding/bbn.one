@@ -52,7 +52,7 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
 }
 
 export function listPayouts(payouts: Payout[], admin = false) {
-    return payouts && payouts.length > 0 ? [
+    return Vertical(payouts && payouts.length > 0 ? [
         PlainText("Payouts")
             .addClass("list-title")
             .addClass("limited-width"),
@@ -70,7 +70,7 @@ export function listPayouts(payouts: Payout[], admin = false) {
             .addClass("limited-width"),
         PlainText("Release new Drops to earn money")
             .addClass("limited-width"),
-    ];
+    ])
 }
 
 export function ExplainerText(drop: Drop[], type: DropType) {

@@ -1,10 +1,10 @@
 import { API, StreamingUploadHandler, uploadFilesDialog } from "shared";
 import { delay } from "std/async/mod.ts";
 import { AdvancedImage, Box, Color, Grid, IconButton, Image, Page, PlainText, Reactive, TextInput, Vertical, Wizard, WizardComponent } from "webgen/mod.ts";
-import { activeUser, allowedImageFormats, forceRefreshToken } from "../helper.ts";
+import { activeUser, allowedImageFormats, forceRefreshToken, track } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { HandleSubmit, setErrorMessage } from "../misc/common.ts";
-import { returnFunction, ViewState } from "./helper.ts";
+import { ViewState, returnFunction } from "./helper.ts";
 
 export function ChangePersonal(update: (data: Partial<ViewState>) => void): WizardComponent {
     return Wizard({
@@ -39,9 +39,15 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                                     failure: () => {
                                         data.loading = false;
                                         data.profilePicture = activeUser.avatar;
+                                        track({
+                                            "event": "profile-picture-upload-failed",
+                                        });
                                         alert("Your Upload has failed. Please try a different file or try again later");
                                     },
                                     uploadDone: () => {
+                                        track({
+                                            "event": "profile-picture-uploaded",
+                                        });
                                         data.profilePicture = <AdvancedImage>{ type: "waiting-upload", filename: file.name, blobUrl };
                                     },
                                     backendResponse: async () => {

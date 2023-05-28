@@ -1,6 +1,6 @@
 import { createElement, custom, img, PlainText } from "webgen/mod.ts";
-import '../../../assets/css/components/opener.css';
 import heroImage from '../../../assets/img/hero-img.png';
+import './opener.css';
 
 // TODO: refactor this to Stack based layout
 export function renderOpener() {

@@ -4,6 +4,7 @@ import { Box, createElement, Custom, PlainText, Vertical } from "webgen/mod.ts";
 import { Drop } from "../../spec/music.ts";
 import './email.css';
 
+//TODO: Use better font instead of Open Sans
 export const rawTemplate = (data: string) => `
 <mjml>
     <mj-head>

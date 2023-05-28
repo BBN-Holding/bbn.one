@@ -1,9 +1,9 @@
-import { Box, ButtonStyle, Checkbox, Component, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, State, StateHandler, Table, View } from "webgen/mod.ts";
+import { Box, ButtonStyle, Checkbox, Color, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, State, StateHandler, Table, View } from "webgen/mod.ts";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
 import secondary from "../../../data/secondary.json" assert { type: "json" };
 import { Drop } from "../../../spec/music.ts";
-import { EditArtists, getSecondary, getYearList, stringToColour } from "../helper.ts";
+import { EditArtists, getSecondary, getYearList, ProfilePicture } from "../helper.ts";
 
 function Progress(progress: number) {
     return Box(
@@ -16,47 +16,41 @@ function Progress(progress: number) {
         })()).addClass("low-level"));
 }
 
-function ProfilePicture(component: Component, name: string) {
-    const ele = component.draw();
-    ele.style.backgroundColor = stringToColour(name);
-    return Custom(ele).addClass("profile-picture");
-}
-
-export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
+export function ManageSongs(state: StateHandler<{ songs: Drop["songs"]; }>) {
     const tableView = View(() =>
         Table([
-            [ "Title", "auto", ({ progress, title }, index) => progress !== undefined ? Progress(progress) : InlineTextInput("text", "blur").addClass("low-level").setValue(title).onChange(x => update(state, index, "title", x)) ],
-            [ "Artists", "max-content", ({ artists }, index) =>
+            ["Title", "auto", ({ progress, title }, index) => progress !== undefined ? Progress(progress) : InlineTextInput("text", "blur").addClass("low-level").setValue(title).onChange(x => update(state, index, "title", x))],
+            ["Artists", "max-content", ({ artists }, index) =>
                 Box(
-                    ...(artists ?? []).map(([ name, url, _type ]: string[]) =>
+                    ...(artists ?? []).map(([name, url, _type]: string[]) =>
                         ProfilePicture(url ? Image(url, "A profile picture") : PlainText(""), name)
                     ),
                     IconButton("add", "add")
                 )
                     .addClass("artists-list")
                     .onClick(() => {
-                        EditArtists(artists ?? [ [ "", "", "PRIMARY" ] ]).then((x) => {
+                        EditArtists(artists ?? [["", "", "PRIMARY"]]).then((x) => {
                             update(state, index, "artists", x?.map(x => x.map(x => x.trim())));
                         });
                     })
             ],
-            [ "Year", "max-content", ({ year }, index) =>
+            ["Year", "max-content", ({ year }, index) =>
                 DropDownInput("Year", getYearList())
                     .setValue(year.toString())
                     .onChange((data) => update(state, index, "year", data ? parseInt(data) : undefined))
                     .setStyle(ButtonStyle.Inline)
                     .addClass("low-level")
             ],
-            [ "Country", "max-content", (row, index) =>
+            ["Country", "max-content", (row, index) =>
                 DropDownInput("Country", Object.keys(language))
-                    .setRender((key) => language[ <keyof typeof language>key ])
+                    .setRender((key) => language[<keyof typeof language>key])
                     .setValue(row.country)
                     .onChange((data) => update(state, index, "country", data))
                     .setStyle(ButtonStyle.Inline)
                     .addClass("low-level")
             ],
             //TODO: Lock these components (greyed out), if only one song, since dependent on drop level values
-            [ "Primary Genre", "max-content", ({ primaryGenre }, index) =>
+            ["Primary Genre", "max-content", ({ primaryGenre }, index) =>
                 DropDownInput("Primary Genre", primary)
                     .setValue(primaryGenre)
                     .onChange((data) => {
@@ -66,20 +60,22 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
                     .setStyle(ButtonStyle.Inline)
                     .addClass("low-level")
             ],
-            [ "Secondary Genre", "max-content", ({ primaryGenre, secondaryGenre }, index) =>
+            ["Secondary Genre", "max-content", ({ primaryGenre, secondaryGenre }, index) =>
                 DropDownInput("Secondary Genre", getSecondary(secondary, primaryGenre) ?? [])
                     .setValue(secondaryGenre ? secondaryGenre : undefined)
                     .onChange((data) => update(state, index, "secondaryGenre", data))
                     .setStyle(ButtonStyle.Inline)
                     .addClass("low-level")
             ],
-            [ "Instrumental", "max-content", ({ instrumental }, index) =>
+            ["Instrumental", "max-content", ({ instrumental, explicit }, index) =>
                 Checkbox(instrumental ?? false)
+                    .setColor(explicit ? Color.Disabled : Color.Grayscaled)
                     .onClick((_, value) => update(state, index, "instrumental", !value))
                     .addClass("low-level")
             ],
-            [ "Explicit", "max-content", ({ explicit }, index) =>
+            ["Explicit", "max-content", ({ explicit, instrumental }, index) =>
                 Checkbox(explicit ?? false)
+                    .setColor(instrumental ? Color.Disabled : Color.Grayscaled)
                     .onClick((_, value) => update(state, index, "explicit", !value))
                     .addClass("low-level")
             ]
@@ -94,10 +90,10 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
 }
 
 // deno-lint-ignore no-explicit-any
-function update(state: StateHandler<{ songs: Drop[ "songs" ]; }>, index: number, key: keyof NonNullable<Drop[ "songs" ]>[ 0 ], value: any) {
+function update(state: StateHandler<{ songs: Drop["songs"]; }>, index: number, key: keyof NonNullable<Drop["songs"]>[0], value: any) {
     if (!state.songs)
         state.songs = State([]);
     // @ts-ignore errors due to any usage.
-    state.songs[ index ][ key ] = value;
-    state.songs = State([ ...state.songs ]);
+    state.songs[index][key] = value;
+    state.songs = State([...state.songs]);
 }

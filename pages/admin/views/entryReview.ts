@@ -9,7 +9,7 @@ import { refreshState } from "../loading.ts";
 export function ReviewEntry(x: Drop) {
     return Entry({
         title: x.title ?? "(no drop name)",
-        subtitle: `${x.release ?? "(no release date)"} - ${x.user} - ${x.upc ?? "(no upc number)"}`
+        subtitle: `${x.release ?? "(no release date)"} - ${x.user} - ${x.upc ?? "(no upc number)"} - ${x._id}`
     })
         .addClass("limited-width", "small")
         .addSuffix(Button("Edit")
@@ -45,6 +45,7 @@ function ReviewActions(x: Drop) {
             ),
         ] : [],
         ...x.type == "PUBLISHING" ? [
+            //TODO: Change this button to a dropdown with options to change the state of the drop.
             CenterV(
                 Button(Icon("bug_report"))
                     .setStyle(ButtonStyle.Inline)

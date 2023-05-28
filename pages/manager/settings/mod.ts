@@ -1,12 +1,12 @@
 import { Entry, MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
-import { RegisterAuthRefresh, logOut } from "../helper.ts";
 import '../../../assets/css/main.css';
-import { changeThemeColor } from "../misc/common.ts";
 import { DynaNavigation } from "../../../components/nav.ts";
+import { RegisterAuthRefresh, logOut } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
-import { ViewState } from "./helper.ts";
+import { changeThemeColor } from "../misc/common.ts";
 import { ChangePassword } from "./changePassword.ts";
 import { ChangePersonal } from "./changePersonal.ts";
+import { ViewState } from "./helper.ts";
 
 WebGen({
     icon: new MaterialIcons(),
@@ -17,7 +17,6 @@ WebGen({
 await RegisterAuthRefresh();
 View<ViewState>(({ state, update }) => Vertical(
     ...DynaNavigation("Settings"),
-
     ...{
         "landing-page": [
             ActionBar("Settings", undefined, undefined),

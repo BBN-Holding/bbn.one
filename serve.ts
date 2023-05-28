@@ -17,8 +17,7 @@ serve({
         "p/terms": "./pages/OldPagesPolyfill.ts",
         "p/imprint": "./pages/OldPagesPolyfill.ts",
         "p/distribution": "./pages/OldPagesPolyfill.ts",
-        "p/leadership": "./pages/leadership.ts",
-        "signin": "./pages/user/login.ts",
+        "signin": "./pages/user/signin.ts",
         "signin-google": "./pages/manager/misc/redirect.ts",
         "signin-discord": "./pages/manager/misc/redirect.ts",
         "signin-zendesk": "./pages/manager/misc/zendesk.ts",
@@ -35,6 +34,8 @@ serve({
         "settings": "./pages/manager/settings/mod.ts",
 
         "admin": "./pages/admin/admin.ts",
+
+        "wallet": "./pages/wallet/wallet.ts",
     },
     poylfills: [
         "https://unpkg.com/construct-style-sheets-polyfill@3.1.0",
