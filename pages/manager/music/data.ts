@@ -22,6 +22,7 @@ export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[];
             artists: drop.artists ?? [],
             // TODO: country should be real country
             country: drop.language!,
+            instrumental: false,
             explicit: false,
             primaryGenre: drop.primaryGenre!,
             secondaryGenre: drop.secondaryGenre!,
