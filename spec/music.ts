@@ -68,7 +68,7 @@ export const song = zod.object({
     country: zod.string().optional(),
     language: zod.string().optional(),
     explicit: zod.boolean(),
-    instrumental: zod.boolean().optional(),
+    instrumental: zod.boolean(),
     file: zod.string({ required_error: "a Song is missing its file." }),
     progress: zod.number().optional().transform(x => <typeof x>undefined)
 })
