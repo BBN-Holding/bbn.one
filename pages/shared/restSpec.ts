@@ -16,7 +16,7 @@ export const Permissions = [
 ] as const;
 
 export type Permission = typeof Permissions[ number ];
-export type External<T> = PromiseSettledResult<T> | "loading";
+export type External<T> = PromiseSettledResult<T>;
 
 async function settle<T>(promise: Promise<T>): Promise<PromiseSettledResult<T>> {
     try {
@@ -148,7 +148,7 @@ export const API = {
         },
         list: {
             get: async () => {
-                return await fetch(`${API.BASE_URL}user/users`, {
+                return await fetch(`${API.BASE_URL}admin/users`, {
                     headers: headers(token)
                 })
                     .then(json<ProfileData[]>())
@@ -333,6 +333,21 @@ export const API = {
                     .then(none())
                     .catch(reject);
             }
+        },
+        drops: {
+            list: async (type?: DropType, lastId: string | undefined = undefined) => {
+                const paging = new URLSearchParams();
+                if (type)
+                    paging.append("type", type);
+                if (lastId)
+                    paging.append("_lastId", lastId);
+                paging.append("_limit", "31");
+                return await fetch(`${API.BASE_URL}admin/drops?${paging}`, {
+                    headers: headers(token)
+                })
+                    .then(json<Drop[]>())
+                    .catch(reject);
+            },
         },
         reviews: {
             get: async () => {

@@ -1,11 +1,17 @@
 import { API, StreamingUploadHandler } from "shared";
 import { delay } from "std/async/delay.ts";
 import { UploadFilesDialog } from "webgen/mod.ts";
+import { DropType } from "../../spec/music.ts";
 import { state } from "./state.ts";
 
 export async function refreshState() {
     await Promise.all([
-        (async () => state.reviews = await API.admin(API.getToken()).reviews.get())(),
+        (async () => state.drops.reviews = await API.admin(API.getToken()).drops.list(DropType.UnderReview))(),
+        (async () => state.drops.publishing = await API.admin(API.getToken()).drops.list(DropType.Publishing))(),
+        (async () => state.drops.published = await API.admin(API.getToken()).drops.list(DropType.Published))(),
+        (async () => state.drops.private = await API.admin(API.getToken()).drops.list(DropType.Private))(),
+        (async () => state.drops.rejected = await API.admin(API.getToken()).drops.list(DropType.ReviewDeclined))(),
+        (async () => state.drops.drafts = await API.admin(API.getToken()).drops.list(DropType.Unsubmitted))(),
         (async () => state.users = await API.user(API.getToken()).list.get())(),
         (async () => state.payouts = await API.admin(API.getToken()).payouts.get())(),
         (async () => state.files = await API.admin(API.getToken()).files.list())(),

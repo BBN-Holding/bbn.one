@@ -1,6 +1,6 @@
-import { API, count, HeavyList, Menu } from "shared";
+import { API, count, HeavyList, loadMore, Menu, placeholder } from "shared";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Box, Button, Color, Dialog, Entry, Grid, PlainText, Reactive, ref, refMap, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, Color, Dialog, Entry, Grid, PlainText, Reactive, ref, refMap, State, StateHandler, TextInput } from "webgen/mod.ts";
 import { DropType, Server } from "../../../spec/music.ts";
 import { entryServer } from "../../hosting/views/list.ts";
 import { activeUser } from "../../manager/helper.ts";
@@ -47,45 +47,42 @@ export const adminMenu = Menu({
             custom: () => HeavyList(state.$payouts, () => Box())
         },
         "reviews/": {
-            title: ref`Music Reviews ${count(state.$reviews)}`,
-            custom: refMap(state.$reviews, reviews =>
-                reviews === "loading" || reviews.status === "rejected"
-                    // Display Loading Spinner or Error
-                    ? () => HeavyList(reviews, () => Box())
-                    : () => Vertical(
-                        PlainText("Reviews")
-                            .addClass("list-title")
-                            .addClass("limited-width"),
-                        HeavyList(reviews.value.filter(x => x.type === DropType.UnderReview), it => ReviewEntry(it)),
-                        //
-                        PlainText("Publishing")
-                            .addClass("list-title")
-                            .addClass("limited-width"),
-                        HeavyList(reviews.value.filter(x => x.type === DropType.Publishing), it => ReviewEntry(it)),
-                        //
-                        PlainText("Published")
-                            .addClass("list-title")
-                            .addClass("limited-width"),
-                        HeavyList(reviews.value.filter(x => x.type === DropType.Published), it => ReviewEntry(it)),
-                        //
-                        PlainText("Private")
-                            .addClass("list-title")
-                            .addClass("limited-width"),
-                        HeavyList(reviews.value.filter(x => x.type === DropType.Private), it => ReviewEntry(it)),
-                        //
-                        PlainText("Rejected")
-                            .addClass("list-title")
-                            .addClass("limited-width"),
-                        HeavyList(reviews.value.filter(x => x.type === DropType.ReviewDeclined), it => ReviewEntry(it)),
-                        //
-                        PlainText("Drafts")
-                            .addClass("list-title")
-                            .addClass("limited-width"),
-                        HeavyList(reviews.value.filter(x => x.type === DropType.Unsubmitted), it => ReviewEntry(it)),
-                    )
-                        .setGap("var(--gap)")
-            )
-
+            title: ref`Drops`,
+            items: [
+                {
+                    id: "reviews/",
+                    title: ref`Reviews ${count(state.drops.$reviews)}`,
+                    custom: () => HeavyList(state.drops.$reviews, it => ReviewEntry(it))
+                        .setPlaceholder(placeholder("No Servers", "Welcome! Create a server to get going. 🤖🛠️"))
+                        .enablePaging(() => loadMore(state.drops.$reviews, (last) => API.admin(API.getToken()).drops.list(DropType.UnderReview, last._id)))
+                },
+                {
+                    id: "publishing/",
+                    title: ref`Publishing ${count(state.drops.$publishing)}`,
+                    custom: () => HeavyList(state.drops.$publishing, it => ReviewEntry(it))
+                },
+                {
+                    id: "published/",
+                    title: ref`Published ${count(state.drops.$published)}`,
+                    custom: () => HeavyList(state.drops.$published, it => ReviewEntry(it))
+                        .enablePaging(() => loadMore(state.drops.$published, (last) => API.admin(API.getToken()).drops.list(DropType.Published, last._id)))
+                },
+                {
+                    id: "private/",
+                    title: ref`Private ${count(state.drops.$private)}`,
+                    custom: () => HeavyList(state.drops.$private, it => ReviewEntry(it))
+                },
+                {
+                    id: "rejected/",
+                    title: ref`Rejected ${count(state.drops.$rejected)}`,
+                    custom: () => HeavyList(state.drops.$rejected, it => ReviewEntry(it))
+                },
+                {
+                    id: "drafts/",
+                    title: ref`Drafts ${count(state.drops.$drafts)}`,
+                    custom: () => HeavyList(state.drops.$drafts, it => ReviewEntry(it))
+                },
+            ]
         },
         "users/": {
             title: ref`User ${count(state.$users)}`,
@@ -140,7 +137,7 @@ export const adminMenu = Menu({
         },
         "servers/": {
             title: ref`Minecraft Servers ${count(state.$servers)}`,
-            custom: () => HeavyList(state.$servers, it => entryServer(it as StateHandler<Server>, true))
+            custom: () => HeavyList(state.$servers, it => entryServer(State(it) as StateHandler<Server>, true))
         },
         "wallets/": {
             title: ref`Wallets ${count(state.$wallets)}`,

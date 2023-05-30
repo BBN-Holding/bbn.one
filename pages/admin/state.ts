@@ -4,11 +4,18 @@ import { Drop, File, OAuthApp, Payout, Server, Wallet } from "../../spec/music.t
 import { ProfileData } from "../manager/helper.ts";
 
 export const state = State({
-    reviews: <External<Drop[]>>"loading",
-    users: <External<ProfileData[]>>"loading",
-    payouts: <External<Payout[]>>"loading",
-    oauth: <External<OAuthApp[]>>"loading",
-    files: <External<File[]>>"loading",
-    servers: <External<Server[]>>"loading",
-    wallets: <External<Wallet[]>>"loading",
+    drops: {
+        reviews: <External<Drop[]> | "loading">"loading",
+        publishing: <External<Drop[]> | "loading">"loading",
+        published: <External<Drop[]> | "loading">"loading",
+        private: <External<Drop[]> | "loading">"loading",
+        rejected: <External<Drop[]> | "loading">"loading",
+        drafts: <External<Drop[]> | "loading">"loading",
+    },
+    users: <External<ProfileData[]> | "loading">"loading",
+    payouts: <External<Payout[]> | "loading">"loading",
+    oauth: <External<OAuthApp[]> | "loading">"loading",
+    files: <External<File[]> | "loading">"loading",
+    servers: <External<Server[]> | "loading">"loading",
+    wallets: <External<Wallet[]> | "loading">"loading",
 });
