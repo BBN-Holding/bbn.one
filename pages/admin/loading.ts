@@ -12,17 +12,17 @@ export async function refreshState() {
         (async () => state.drops.private = await API.admin(API.getToken()).drops.list(DropType.Private))(),
         (async () => state.drops.rejected = await API.admin(API.getToken()).drops.list(DropType.ReviewDeclined))(),
         (async () => state.drops.drafts = await API.admin(API.getToken()).drops.list(DropType.Unsubmitted))(),
-        (async () => state.users = await API.user(API.getToken()).list.get())(),
+        (async () => state.users = await API.admin(API.getToken()).users.list())(),
         (async () => state.payouts = await API.admin(API.getToken()).payouts.get())(),
         (async () => state.files = await API.admin(API.getToken()).files.list())(),
-        (async () => state.servers = await API.admin(API.getToken()).servers.get())(),
+        (async () => state.servers = await API.admin(API.getToken()).servers.list())(),
         (async () => state.wallets = await API.admin(API.getToken()).wallets.list())(),
         (async () => state.oauth = await API.oauth(API.getToken()).list())()
     ]);
 }
 
 const urls = {
-    "isrc": [ "admin/payout/isrcsync", '.xlsx' ],
+    "isrc": [ "admin/drops/upload", '.xlsx' ],
     "manual": [ "admin/payouts/upload", '.xlsx' ],
     "oauth": [ "oauth/applications/upload", 'image/*' ]
 };

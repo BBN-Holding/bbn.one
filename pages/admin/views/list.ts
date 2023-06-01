@@ -12,7 +12,7 @@ export function entryWallet(wallet: Wallet) {
     return Entry({
         title: ref`${userName(wallet.user)} - ${((wallet.balance?.restrained ?? 0) + (wallet.balance?.unrestrained ?? 0)).toString()}`,
         subtitle: `${wallet.user} - ${wallet._id} - ${wallet.cut}% - restrained: ${wallet.balance?.restrained} unrestrained: ${wallet.balance?.unrestrained}`,
-    });
+    }).addClass("small");
 }
 
 export function entryOAuth(app: OAuthApp) {
@@ -29,7 +29,7 @@ export function entryOAuth(app: OAuthApp) {
         API.oauth(API.getToken()).delete(app._id);
     })).addSuffix(Button("View").onClick(() => {
         oAuthViewDialog(app).open();
-    }));
+    })).addClass("small");
 }
 
 const oAuthViewDialog = (oauth: OAuthApp) => {

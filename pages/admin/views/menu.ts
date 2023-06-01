@@ -54,39 +54,45 @@ export const adminMenu = Menu({
                     title: ref`Reviews ${count(state.drops.$reviews)}`,
                     custom: () => HeavyList(state.drops.$reviews, it => ReviewEntry(it))
                         .setPlaceholder(placeholder("No Servers", "Welcome! Create a server to get going. 🤖🛠️"))
-                        .enablePaging(() => loadMore(state.drops.$reviews, (last) => API.admin(API.getToken()).drops.list(DropType.UnderReview, last._id)))
+                        .enablePaging((offset, limit) => loadMore(state.drops.$reviews, () => API.admin(API.getToken()).drops.list(DropType.UnderReview, offset, limit)))
                 },
                 {
                     id: "publishing/",
                     title: ref`Publishing ${count(state.drops.$publishing)}`,
                     custom: () => HeavyList(state.drops.$publishing, it => ReviewEntry(it))
+                        .enablePaging((offset, limit) => loadMore(state.drops.$publishing, () => API.admin(API.getToken()).drops.list(DropType.Publishing, offset, limit)))
                 },
                 {
                     id: "published/",
                     title: ref`Published ${count(state.drops.$published)}`,
                     custom: () => HeavyList(state.drops.$published, it => ReviewEntry(it))
-                        .enablePaging(() => loadMore(state.drops.$published, (last) => API.admin(API.getToken()).drops.list(DropType.Published, last._id)))
+                        .enablePaging((offset, limit) => loadMore(state.drops.$published, () => API.admin(API.getToken()).drops.list(DropType.Published, offset, limit)))
                 },
                 {
                     id: "private/",
                     title: ref`Private ${count(state.drops.$private)}`,
                     custom: () => HeavyList(state.drops.$private, it => ReviewEntry(it))
+                        .enablePaging((offset, limit) => loadMore(state.drops.$private, () => API.admin(API.getToken()).drops.list(DropType.Private, offset, limit)))
                 },
                 {
                     id: "rejected/",
                     title: ref`Rejected ${count(state.drops.$rejected)}`,
                     custom: () => HeavyList(state.drops.$rejected, it => ReviewEntry(it))
+                        .enablePaging((offset, limit) => loadMore(state.drops.$rejected, () => API.admin(API.getToken()).drops.list(DropType.ReviewDeclined, offset, limit)))
                 },
                 {
                     id: "drafts/",
                     title: ref`Drafts ${count(state.drops.$drafts)}`,
                     custom: () => HeavyList(state.drops.$drafts, it => ReviewEntry(it))
+                        .enablePaging((offset, limit) => loadMore(state.drops.$drafts, () => API.admin(API.getToken()).drops.list(DropType.Unsubmitted, offset, limit)))
                 },
             ]
         },
         "users/": {
             title: ref`User ${count(state.$users)}`,
             custom: () => HeavyList(state.$users, (val) => UserEntry(val))
+                .enablePaging((offset, limit) => loadMore(state.$users, () => API.admin(API.getToken()).users.list(offset, limit)))
+
         },
         "payouts/": {
             title: ref`Payout ${count(state.$payouts)}`,
@@ -113,7 +119,7 @@ export const adminMenu = Menu({
                 }).onClick(() => {
                     location.href = `/music/payout?id=${x._id}&userid=${activeUser.id}`;
                 }))
-                    .setMargin("var(--gap)")
+                    .addClass("limited-width")
         },
         "oauth/": {
             title: ref`OAuth ${count(state.$oauth)}`,
@@ -128,7 +134,7 @@ export const adminMenu = Menu({
             ]),
             custom: () =>
                 HeavyList(state.$oauth, entryOAuth)
-                    .setMargin("var(--gap)")
+                    .addClass("limited-width")
         },
         "files/": {
             title: ref`Files ${count(state.$files)}`,
@@ -138,10 +144,14 @@ export const adminMenu = Menu({
         "servers/": {
             title: ref`Minecraft Servers ${count(state.$servers)}`,
             custom: () => HeavyList(state.$servers, it => entryServer(State(it) as StateHandler<Server>, true))
+                .addClass("limited-width")
+                .enablePaging((offset, limit) => loadMore(state.$servers, () => API.admin(API.getToken()).servers.list(offset, limit)))
         },
         "wallets/": {
             title: ref`Wallets ${count(state.$wallets)}`,
             custom: () => HeavyList(state.$wallets, entryWallet)
+                .addClass("limited-width")
+                .enablePaging((offset, limit) => loadMore(state.$wallets, () => API.admin(API.getToken()).wallets.list(offset, limit)))
         }
     }
 })

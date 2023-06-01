@@ -86,6 +86,9 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
     .setPadding("1.6rem")
     .addClass(small ? "small" : "normal");
 
+/**
+ * @deprecated replace with HeavyList
+ */
 export const listView = (server: StateHandler<Server[]>) => MediaQuery("(max-width: 700px)", (small) => Reactive(state, "servers", () => Grid(
     ...server.map(server => entryServer(server, small)),
     ...[ ExplainerText(state.servers) ].filter(x => x) as Component[]

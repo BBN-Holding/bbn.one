@@ -146,15 +146,6 @@ export const API = {
 
             }
         },
-        list: {
-            get: async () => {
-                return await fetch(`${API.BASE_URL}admin/users`, {
-                    headers: headers(token)
-                })
-                    .then(json<ProfileData[]>())
-                    .catch(reject);
-            }
-        },
         zendesk: {
             post: async () => {
                 return await fetch(`${API.BASE_URL}user/zendesk`, {
@@ -311,8 +302,12 @@ export const API = {
     }),
     admin: (token: string) => ({
         files: {
-            list: async () => {
-                return await fetch(`${API.BASE_URL}admin/files`, {
+            list: async (offset: number | undefined = undefined) => {
+                const paging = new URLSearchParams();
+                if (offset)
+                    paging.append("_offset", offset.toString());
+                paging.append("_limit", "31");
+                return await fetch(`${API.BASE_URL}admin/files?${paging}`, {
                     headers: headers(token)
                 })
                     .then(json<File[]>())
@@ -335,13 +330,12 @@ export const API = {
             }
         },
         drops: {
-            list: async (type?: DropType, lastId: string | undefined = undefined) => {
+            list: async (type?: DropType, offset = 0, limit = 31) => {
                 const paging = new URLSearchParams();
                 if (type)
                     paging.append("type", type);
-                if (lastId)
-                    paging.append("_lastId", lastId);
-                paging.append("_limit", "31");
+                paging.append("_offset", offset.toString());
+                paging.append("_limit", limit.toString());
                 return await fetch(`${API.BASE_URL}admin/drops?${paging}`, {
                     headers: headers(token)
                 })
@@ -376,17 +370,35 @@ export const API = {
             })
         },
         servers: {
-            get: async () => {
-                return await fetch(`${API.BASE_URL}admin/servers`, {
+            list: async (offset = 0, limit = 31) => {
+                const paging = new URLSearchParams();
+                paging.append("_offset", offset.toString());
+                paging.append("_limit", limit.toString());
+                return await fetch(`${API.BASE_URL}admin/servers?${paging}`, {
                     headers: headers(token)
                 })
                     .then(json<Server[]>())
                     .catch(reject);
             }
         },
+        users: {
+            list: async (offset = 0, limit = 31) => {
+                const paging = new URLSearchParams();
+                paging.append("_offset", offset.toString());
+                paging.append("_limit", limit.toString());
+                return await fetch(`${API.BASE_URL}admin/users?${paging}`, {
+                    headers: headers(token)
+                })
+                    .then(json<ProfileData[]>())
+                    .catch(reject);
+            }
+        },
         wallets: {
-            list: async () => {
-                return await fetch(`${API.BASE_URL}admin/wallets`, {
+            list: async (offset = 0, limit = 31) => {
+                const paging = new URLSearchParams();
+                paging.append("_offset", offset.toString());
+                paging.append("_limit", limit.toString());
+                return await fetch(`${API.BASE_URL}admin/wallets?${paging}`, {
                     headers: headers(token)
                 })
                     .then(json<Wallet[]>())
