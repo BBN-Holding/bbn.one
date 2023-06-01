@@ -2,6 +2,7 @@
     "deno.enable": true,
     "deno.lint": true,
     "deno.unstable": true,
+    "deno.maxTsServerMemory": 4072,
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.patterns": {
         "*.ts": "${capture}.js, ${capture}.css",

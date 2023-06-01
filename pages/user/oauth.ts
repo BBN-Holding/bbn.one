@@ -1,9 +1,9 @@
-import { API, LoadingSpinner } from "shared";
-import { Button, ButtonStyle, Color, Custom, Grid, Horizontal, Icon, Image, MediaQuery, PlainText, Reactive, Spacer, State, Vertical, View, WebGen, img } from "webgen/mod.ts";
+import { API, LoadingSpinner, stupidErrorAlert } from "shared";
+import { Button, ButtonStyle, Color, Custom, Grid, Horizontal, Icon, Image, img, MediaQuery, PlainText, Reactive, Spacer, State, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { dots, templateArtwork } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { ProfilePicture, RegisterAuthRefresh, activeUser, getNameInital, logOut } from "../manager/helper.ts";
+import { activeUser, getNameInital, logOut, ProfilePicture, RegisterAuthRefresh } from "../manager/helper.ts";
 import './oauth.css';
 import './signin.css';
 
@@ -104,8 +104,10 @@ View(() => Vertical(
 ))
     .appendOn(document.body);
 
-API.oauth(API.getToken()).get(params.clientId!).then(async (e) => {
-    state.name = e.name;
-    state.icon = e.icon ? URL.createObjectURL(await API.oauth(API.getToken()).icon(params.clientId!)) : "";
-    state.loaded = true;
-});
+API.oauth(API.getToken()).get(params.clientId!)
+    .then(stupidErrorAlert)
+    .then(async (e) => {
+        state.name = e.name;
+        state.icon = e.icon ? URL.createObjectURL(await API.oauth(API.getToken()).icon(params.clientId!).then(stupidErrorAlert)) : "";
+        state.loaded = true;
+    });

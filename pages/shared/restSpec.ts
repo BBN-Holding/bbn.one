@@ -2,14 +2,6 @@ import { assert } from "std/testing/asserts.ts";
 import { Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
 
-export type ErrorObject = {
-    error: true,
-    type: 'assert' | 'client-side' | string,
-    message?: string;
-
-    // Only visable when running in verbose
-    stack?: string;
-};
 export const Permissions = [
     "/hmsys",
     "/hmsys/user",
@@ -24,13 +16,87 @@ export const Permissions = [
 ] as const;
 
 export type Permission = typeof Permissions[ number ];
+export type External<T> = PromiseSettledResult<T>;
+
+async function settle<T>(promise: Promise<T>): Promise<PromiseSettledResult<T>> {
+    try {
+        return {
+            status: "fulfilled",
+            value: await promise
+        };
+    } catch (e) {
+        return {
+            status: "rejected",
+            reason: e
+        };
+    }
+}
+
+function json<T>() {
+    return async (rsp: Response) => {
+        if (!rsp.ok)
+            return await settle(Promise.reject(await rsp.text()));
+        return await settle(rsp.json() as Promise<T>);
+    };
+}
+
+function none() {
+    return async (rsp: Response) => {
+        if (!rsp.ok)
+            return await settle(Promise.reject(await rsp.text()));
+        return await settle(Promise.resolve(true));
+    };
+}
+
+function blob() {
+    return async (rsp: Response) => {
+        if (!rsp.ok)
+            return await settle(Promise.reject(await rsp.text()));
+        return await settle(rsp.blob());
+    };
+}
+
+export function stupidErrorAlert<T>(data: PromiseSettledResult<T>): T {
+    if (data.status === "fulfilled")
+        return data.value;
+    alert(displayError(data.reason));
+    throw data.reason;
+}
+
+
+function reject(rsp: unknown) {
+    return settle(Promise.reject(rsp));
+}
+
+export const defaultError = "Something happend unexpectedly. Please try again later.";
+
+// This is very limited make error handling more useful.
+export function displayError(data: unknown) {
+    console.error("displayError", data);
+    if (data instanceof Error) {
+        if (data.message === "Failed to fetch")
+            return "Error: Can't load. Please try again later.";
+
+        return `Error: ${data.message || defaultError}`;
+    }
+    if (typeof data === "string") {
+        try {
+            const jdata = JSON.parse(data) as unknown;
+            // display assert errors that have a message
+            if (jdata && typeof jdata === "object" && 'type' in jdata && 'message' in jdata && jdata.type === "assert") {
+                return `Error: ${jdata.message || defaultError}`;
+            }
+        } catch (_e) {
+            return "Error: " + defaultError;
+        }
+    }
+    return "Error: " + defaultError;
+}
 
 export const API = {
     getToken: () => localStorage[ "access-token" ],
     BASE_URL: <string>localStorage.OVERRIDE_BASE_URL || (location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/"),
     WS_URL: <string>localStorage.OVERRIDE_BASE_URL || (location.hostname == "bbn.one" ? "wss://bbn.one/ws" : "ws://localhost:8443/ws"),
-    // deno-lint-ignore no-explicit-any
-    isError: (data: any): data is ErrorObject => typeof data === "object" && data.error,
     permission: Permissions,
     _legacyPermissionFromGroups: (group: string) => {
         const admin = "6293b146d55350d24e6da542";
@@ -57,7 +123,7 @@ export const API = {
                 post: (emailToken: string) => fetch(`${API.BASE_URL}user/mail/validate/` + emailToken, {
                     method: "POST",
                     headers: headers(token),
-                }).then(x => x.text())
+                }).then(none())
 
             },
             resendVerifyEmail: {
@@ -65,26 +131,19 @@ export const API = {
                     return fetch(`${API.BASE_URL}user/mail/resend-verify-email`, {
                         method: "POST",
                         headers: headers(token),
-                    }).then(x => x.text());
+                    }).then(none());
                 }
             }
         },
         setMe: {
-            post: async (para: Partial<{ name: string, password: string; }>) => {
-                const data = await fetch(`${API.BASE_URL}user/set-me`, {
+            post: (para: Partial<{ name: string, password: string; }>) => {
+                return fetch(`${API.BASE_URL}user/set-me`, {
                     method: "POST",
                     headers: headers(token),
                     body: JSON.stringify(para)
-                }).then(x => x.text());
-                return data;
-            }
-        },
-        list: {
-            get: async () => {
-                const data = await fetch(`${API.BASE_URL}user/users`, {
-                    headers: headers(token)
-                }).then(x => x.json());
-                return data.users as ProfileData[];
+                })
+                    .then(none());
+
             }
         },
         zendesk: {
@@ -97,43 +156,58 @@ export const API = {
         },
     }),
     auth: {
-        fromUserInteractionLinkGoogle: () => `${API.BASE_URL}auth/google-redirect?redirect=${localStorage.getItem('goal') ?? '/music'}&type=google-auth`,
-        fromUserInteractionLinkDiscord: () => `${API.BASE_URL}auth/discord-redirect?redirect=${localStorage.getItem('goal') ?? '/music'}&type=discord-auth`,
+        oauthRedirect: (type: "discord" | "google" | "microsoft") => `${API.BASE_URL}auth/redirect/${type}?goal=${localStorage.getItem('goal') ?? '/music'}`,
         refreshAccessToken: {
-            post: async ({ refreshToken }: { refreshToken: string; }) => {
+            post: async (refreshToken: string) => {
                 return await fetch(`${API.BASE_URL}auth/refresh-access-token`, {
                     method: "POST",
                     headers: {
                         "Authorization": "JWT " + refreshToken
                     }
-                }).then(x => x.json()) as { token: string; };
+                })
+                    .then(x => x.json()) as { token: string; };
             }
         },
         google: {
-            post: async ({ code, state }: { code: string, state: string; }) => {
-                const param = new URLSearchParams({ code, state });
-                return await fetch(`${API.BASE_URL}auth/google?${param.toString()}`, {
+            post: (code: string) => {
+                const param = new URLSearchParams({ code });
+                return fetch(`${API.BASE_URL}auth/google?${param.toString()}`, {
                     method: "POST"
-                }).then(x => x.json()) as { token: string; };
+                })
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
             }
         },
         discord: {
-            post: async ({ code, state }: { code: string, state: string; }) => {
-                const param = new URLSearchParams({ code, state });
+            post: async (code: string) => {
+                const param = new URLSearchParams({ code });
                 return await fetch(`${API.BASE_URL}auth/discord?${param.toString()}`, {
                     method: "POST"
-                }).then(x => x.json()) as { token: string; };
+                })
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
+            }
+        },
+        microsoft: {
+            post: async (code: string) => {
+                const param = new URLSearchParams({ code });
+                return await fetch(`${API.BASE_URL}auth/microsoft?${param.toString()}`, {
+                    method: "POST"
+                })
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
             }
         },
         fromUserInteraction: {
-            get: async (id: string) => {
-                const data = await fetch(`${API.BASE_URL}auth/from-user-interaction/${id}`, {
+            get: (id: string) => {
+                return fetch(`${API.BASE_URL}auth/from-user-interaction/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
                     }
-                }).then(x => x.json());
-                return data;
+                })
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
             }
         },
         forgotPassword: {
@@ -145,10 +219,11 @@ export const API = {
                 body: JSON.stringify({
                     email
                 })
-            }).then(x => x.text())
+            })
+                .then(none())
         },
         register: {
-            post: async ({ email, password, name }: { email: string, password: string, name: string; }): Promise<{ token: string; } | ErrorObject> => {
+            post: async ({ email, password, name }: { email: string, password: string, name: string; }) => {
                 return await fetch(`${API.BASE_URL}auth/register`, {
                     method: "POST",
                     headers: {
@@ -160,28 +235,24 @@ export const API = {
                         name
                     })
                 })
-                    .then(x => x.json())
-                    .catch(() => <ErrorObject>{ error: true, type: "client-side" });
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
             }
         },
         email: {
-            post: async ({ email, password }: { email: string, password: string; }): Promise<{ token: string; } | ErrorObject> => {
-                try {
-
-                    const data = await fetch(`${API.BASE_URL}auth/email`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            email,
-                            password
-                        })
-                    }).then(x => x.json());
-                    return data;
-                } catch (_error) {
-                    return <ErrorObject>{ error: true, type: "client-side" };
-                }
+            post: ({ email, password }: { email: string, password: string; }) => {
+                return fetch(`${API.BASE_URL}auth/email`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                })
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
             }
         }
     },
@@ -201,76 +272,102 @@ export const API = {
         }
     }),
     oauth: (token: string) => ({
-        get: async (clientid: string): Promise<OAuthApp> => {
-            const data = await fetch(`${API.BASE_URL}oauth/applications/${clientid}`, {
+        get: (clientid: string) => {
+            return fetch(`${API.BASE_URL}oauth/applications/${clientid}`, {
                 headers: headers(token)
-            }).then(x => x.json());
-            return data;
+            })
+                .then(json<OAuthApp>())
+                .catch(reject);
         },
-        list: async (): Promise<OAuthApp[]> => {
-            const data = await fetch(`${API.BASE_URL}oauth/applications`, {
+        list: () => {
+            return fetch(`${API.BASE_URL}oauth/applications`, {
                 headers: headers(token)
-            }).then(x => x.json());
-            return data;
+            })
+                .then(json<OAuthApp[]>())
+                .catch(reject);
         },
-        post: async (name: string, redirect: string, icon: string): Promise<{ id: string, secret: string; }> => {
-            const data = await fetch(`${API.BASE_URL}oauth/applications`, {
+        post: (name: string, redirect: string, icon: string) => {
+            return fetch(`${API.BASE_URL}oauth/applications`, {
                 method: "POST",
                 headers: headers(token),
                 body: JSON.stringify({ name, redirect, icon })
-            }).then(x => x.json());
-            return data;
+            })
+                .then(json<{ id: string, secret: string; }>())
+                .catch(reject);
         },
-        icon: async (clientid: string) => {
-            const data = await fetch(`${API.BASE_URL}oauth/applications/${clientid}/download`, {
+        icon: (clientid: string) => {
+            return fetch(`${API.BASE_URL}oauth/applications/${clientid}/download`, {
                 headers: headers(token)
-            }).then(x => x.blob());
-            return data;
+            })
+                .then(blob());
         },
-        delete: async (clientid: string) => {
-            const data = await fetch(`${API.BASE_URL}oauth/applications/${clientid}`, {
+        delete: (clientid: string) => {
+            return fetch(`${API.BASE_URL}oauth/applications/${clientid}`, {
                 method: "DELETE",
                 headers: headers(token)
-            }).then(x => x.json());
-            return data;
+            })
+                .then(none());
         }
     }),
     admin: (token: string) => ({
         files: {
-            list: async (): Promise<File[]> => {
-                const data = await fetch(`${API.BASE_URL}admin/files`, {
+            list: async (offset: number | undefined = undefined) => {
+                const paging = new URLSearchParams();
+                if (offset)
+                    paging.append("_offset", offset.toString());
+                paging.append("_limit", "31");
+                return await fetch(`${API.BASE_URL}admin/files?${paging}`, {
                     headers: headers(token)
-                }).then(x => x.json());
-                return data;
+                })
+                    .then(json<File[]>())
+                    .catch(reject);
             },
             download: async (id: string) => {
-                const data = await fetch(`${API.BASE_URL}admin/files/${id}/download`, {
+                return await fetch(`${API.BASE_URL}admin/files/${id}/download`, {
                     headers: headers(token)
-                }).then(x => x.blob());
-                return data;
+                })
+                    .then(blob())
+                    .catch(reject);
             },
             delete: async (id: string) => {
-                const data = await fetch(`${API.BASE_URL}admin/files/${id}`, {
+                return await fetch(`${API.BASE_URL}admin/files/${id}`, {
                     method: "DELETE",
                     headers: headers(token)
-                }).then(x => x.json());
-                return data;
+                })
+                    .then(none())
+                    .catch(reject);
             }
+        },
+        drops: {
+            list: async (type?: DropType, offset = 0, limit = 31) => {
+                const paging = new URLSearchParams();
+                if (type)
+                    paging.append("type", type);
+                paging.append("_offset", offset.toString());
+                paging.append("_limit", limit.toString());
+                return await fetch(`${API.BASE_URL}admin/drops?${paging}`, {
+                    headers: headers(token)
+                })
+                    .then(json<Drop[]>())
+                    .catch(reject);
+            },
         },
         reviews: {
             get: async () => {
-                const data = await fetch(`${API.BASE_URL}admin/reviews`, {
+                return await fetch(`${API.BASE_URL}admin/reviews`, {
                     headers: headers(token)
-                }).then(x => x.json());
-                return data as Drop[];
+                })
+                    .then(json<Drop[]>())
+                    .catch(reject);
             },
         },
         payouts: {
             get: async () => {
-                const data = await fetch(`${API.BASE_URL}admin/payouts`, {
+                return await fetch(`${API.BASE_URL}admin/payouts`, {
                     headers: headers(token)
-                }).then(x => x.json());
-                return data as Payout[];
+                })
+                    .then(json<Payout[]>())
+                    .catch(reject);
             },
             id: (id: string) => ({
                 get: async () => {
@@ -282,19 +379,39 @@ export const API = {
             })
         },
         servers: {
-            get: async () => {
-                const data = await fetch(`${API.BASE_URL}admin/servers`, {
+            list: async (offset = 0, limit = 31) => {
+                const paging = new URLSearchParams();
+                paging.append("_offset", offset.toString());
+                paging.append("_limit", limit.toString());
+                return await fetch(`${API.BASE_URL}admin/servers?${paging}`, {
                     headers: headers(token)
-                }).then(x => x.json());
-                return data as Server[];
+                })
+                    .then(json<Server[]>())
+                    .catch(reject);
+            }
+        },
+        users: {
+            list: async (offset = 0, limit = 31) => {
+                const paging = new URLSearchParams();
+                paging.append("_offset", offset.toString());
+                paging.append("_limit", limit.toString());
+                return await fetch(`${API.BASE_URL}admin/users?${paging}`, {
+                    headers: headers(token)
+                })
+                    .then(json<ProfileData[]>())
+                    .catch(reject);
             }
         },
         wallets: {
-            list: async () => {
-                const data = await fetch(`${API.BASE_URL}admin/wallets`, {
+            list: async (offset = 0, limit = 31) => {
+                const paging = new URLSearchParams();
+                paging.append("_offset", offset.toString());
+                paging.append("_limit", limit.toString());
+                return await fetch(`${API.BASE_URL}admin/wallets?${paging}`, {
                     headers: headers(token)
-                }).then(x => x.json());
-                return data as Wallet[];
+                })
+                    .then(json<Wallet[]>())
+                    .catch(reject);
             },
             get: async (id: string) => {
                 const data = await fetch(`${API.BASE_URL}admin/wallets/${id}`, {
@@ -367,7 +484,9 @@ export const API = {
                 return fetch(`${API.BASE_URL}hosting/servers/${id}`, {
                     method: 'DELETE',
                     headers: headers(token)
-                }).then(x => x.text());
+                })
+                    .then(none())
+                    .catch(reject);
             }
         }),
     }),

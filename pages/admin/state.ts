@@ -1,15 +1,21 @@
+import { External } from "shared";
 import { State } from "webgen/mod.ts";
 import { Drop, File, OAuthApp, Payout, Server, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
 
 export const state = State({
-    loaded: false,
-
-    reviews: <Drop[] | undefined>undefined,
-    users: <ProfileData[] | undefined>undefined,
-    payouts: <Payout[] | undefined>undefined,
-    oauth: <OAuthApp[] | undefined>undefined,
-    files: <File[] | undefined>undefined,
-    servers: <Server[] | undefined>undefined,
-    wallets: <Wallet[] | undefined>undefined,
+    drops: {
+        reviews: <External<Drop[]> | "loading">"loading",
+        publishing: <External<Drop[]> | "loading">"loading",
+        published: <External<Drop[]> | "loading">"loading",
+        private: <External<Drop[]> | "loading">"loading",
+        rejected: <External<Drop[]> | "loading">"loading",
+        drafts: <External<Drop[]> | "loading">"loading",
+    },
+    users: <External<ProfileData[]> | "loading">"loading",
+    payouts: <External<Payout[]> | "loading">"loading",
+    oauth: <External<OAuthApp[]> | "loading">"loading",
+    files: <External<File[]> | "loading">"loading",
+    servers: <External<Server[]> | "loading">"loading",
+    wallets: <External<Wallet[]> | "loading">"loading",
 });

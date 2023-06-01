@@ -1,11 +1,11 @@
 import { HeavyList, HeavyReRender } from "shared";
-import { Box, ButtonComponent, Component, Entry, Pointable, Reactive, State, Vertical, isPointer } from "webgen/mod.ts";
+import { Box, ButtonComponent, Component, Entry, isPointer, Pointable, Reactive, State, Vertical } from "webgen/mod.ts";
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
 
 export interface MenuItem {
     title: Pointable<string>;
     id: `${string}/`;
-    subtitle?: string;
+    subtitle?: Pointable<string>;
 
     items?: Pointable<MenuItem[]>;
     action?: (clickPath: string, item: MenuItem) => Promise<void> | void;
