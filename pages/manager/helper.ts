@@ -2,7 +2,7 @@
 // This code Will be ported to webgen
 
 import { API, Permission } from "shared";
-import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, ReCache, Reactive, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, ReCache, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -136,7 +136,7 @@ export const tokens = State({
 });
 export async function forceRefreshToken() {
     try {
-        const access = await API.auth.refreshAccessToken.post({ refreshToken: localStorage[ "refresh-token" ] });
+        const access = await API.auth.refreshAccessToken.post(localStorage[ "refresh-token" ]);
         localStorage[ "access-token" ] = access.token;
         tokens.accessToken = access.token;
         console.log("Refreshed token");

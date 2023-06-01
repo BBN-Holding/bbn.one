@@ -94,20 +94,27 @@ View(() => Vertical(
                     return Form(Grid(
                         Button("Sign in with Google")
                             .setJustify("center")
-                            .asLinkButton(API.auth.fromUserInteractionLinkGoogle())
+                            .asLinkButton(API.auth.oauthRedirect("google"))
                             .addPrefix(
                                 Custom(img(googleLogo))
                                     .addClass("prefix-logo")
                             )
                             .setMargin("0 0 .6rem"),
                         Button("Sign in with Discord")
-                            .setMargin("0 0 .8rem")
                             .setJustify("center")
-                            .asLinkButton(API.auth.fromUserInteractionLinkDiscord())
+                            .asLinkButton(API.auth.oauthRedirect("discord"))
                             .addPrefix(
                                 Custom(img(discordLogo))
                                     .addClass("prefix-logo")
                             )
+                            // .setMargin("0 0 .6rem"),
+                            // Button("Sign in with Microsoft")
+                            // .setJustify("center")
+                            // .asLinkButton(API.auth.oauthRedirect("microsoft"))
+                            // .addPrefix(
+                            //     Image(discordLogo, "logo")
+                            //         .addClass("prefix-logo")
+                            // )
                             .setMargin("0 0 2rem"),
 
                         TextInput("email", "Email")

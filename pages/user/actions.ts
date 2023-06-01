@@ -46,7 +46,7 @@ export async function registerUser() {
 
 export async function logIn(data: { token: string; }, mode: "email" | "0auth") {
     localStorage.removeItem("type");
-    const access = await API.auth.refreshAccessToken.post({ refreshToken: data.token });
+    const access = await API.auth.refreshAccessToken.post(data.token);
     localStorage[ "access-token" ] = access.token;
     localStorage[ "refresh-token" ] = data!.token;
     localStorage[ "type" ] = mode;
@@ -57,20 +57,25 @@ export async function handleStateChange() {
     const params = {
         token: para.get("token"),
         type: para.get("type"),
-        stateCode: para.get("state"),
         code: para.get("code")
     };
 
-
-    if (params.type == "google" && params.stateCode && params.code) {
-        const rsp = await API.auth.google.post({ code: params.code, state: params.stateCode });
+    if (params.type == "google" && params.code) {
+        const rsp = await API.auth.google.post(params.code);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
         await logIn(rsp.value, "0auth");
         gotoGoal();
     }
-    else if (params.type == "discord" && params.stateCode && params.code) {
-        const rsp = await API.auth.discord.post({ code: params.code, state: params.stateCode });
+    else if (params.type == "discord" && params.code) {
+        const rsp = await API.auth.discord.post(params.code);
+        if (rsp.status === "rejected")
+            return state.error = displayError(rsp.reason);
+        logIn(rsp.value, "0auth");
+        gotoGoal();
+    }
+    else if (params.type == "microsoft" && params.code) {
+        const rsp = await API.auth.microsoft.post(params.code);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
         logIn(rsp.value, "0auth");

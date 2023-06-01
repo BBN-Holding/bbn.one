@@ -156,10 +156,9 @@ export const API = {
         },
     }),
     auth: {
-        fromUserInteractionLinkGoogle: () => `${API.BASE_URL}auth/google-redirect?redirect=${localStorage.getItem('goal') ?? '/music'}&type=google-auth`,
-        fromUserInteractionLinkDiscord: () => `${API.BASE_URL}auth/discord-redirect?redirect=${localStorage.getItem('goal') ?? '/music'}&type=discord-auth`,
+        oauthRedirect: (type: "discord" | "google" | "microsoft") => `${API.BASE_URL}auth/redirect/${type}?goal=${localStorage.getItem('goal') ?? '/music'}`,
         refreshAccessToken: {
-            post: async ({ refreshToken }: { refreshToken: string; }) => {
+            post: async (refreshToken: string) => {
                 return await fetch(`${API.BASE_URL}auth/refresh-access-token`, {
                     method: "POST",
                     headers: {
@@ -170,8 +169,8 @@ export const API = {
             }
         },
         google: {
-            post: ({ code, state }: { code: string, state: string; }) => {
-                const param = new URLSearchParams({ code, state });
+            post: (code: string) => {
+                const param = new URLSearchParams({ code });
                 return fetch(`${API.BASE_URL}auth/google?${param.toString()}`, {
                     method: "POST"
                 })
@@ -180,9 +179,19 @@ export const API = {
             }
         },
         discord: {
-            post: async ({ code, state }: { code: string, state: string; }) => {
-                const param = new URLSearchParams({ code, state });
+            post: async (code: string) => {
+                const param = new URLSearchParams({ code });
                 return await fetch(`${API.BASE_URL}auth/discord?${param.toString()}`, {
+                    method: "POST"
+                })
+                    .then(json<{ token: string; }>())
+                    .catch(reject);
+            }
+        },
+        microsoft: {
+            post: async (code: string) => {
+                const param = new URLSearchParams({ code });
+                return await fetch(`${API.BASE_URL}auth/microsoft?${param.toString()}`, {
                     method: "POST"
                 })
                     .then(json<{ token: string; }>())

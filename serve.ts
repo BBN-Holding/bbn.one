@@ -18,9 +18,8 @@ serve({
         "p/imprint": "./pages/OldPagesPolyfill.ts",
         "p/distribution": "./pages/OldPagesPolyfill.ts",
         "signin": "./pages/user/signin.ts",
-        "signin-google": "./pages/manager/misc/redirect.ts",
-        "signin-discord": "./pages/manager/misc/redirect.ts",
         "signin-zendesk": "./pages/manager/misc/zendesk.ts",
+        "callback": "./pages/manager/misc/callback.ts",
         "oauth": "./pages/user/oauth.ts",
 
         "music": "./pages/music/main.ts",
