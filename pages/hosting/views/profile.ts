@@ -2,7 +2,7 @@ import { format } from "std/fmt/bytes.ts";
 import { Button, ButtonStyle, Card, Color, Dialog, Grid, Horizontal, MediaQuery, PlainText, Reactive, Spacer, TextInput, Vertical } from "webgen/mod.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { MB, state } from "../data.ts";
-import './details.css';
+import './profile.css';
 
 export const migrationInfo = {
     title: "Welcome to our Beta Dashboard!",
@@ -58,7 +58,7 @@ export const migrationCredentials = () => Dialog(() =>
     }, Color.Colored, ButtonStyle.Inline)
     .open();
 
-export const detailsView = () =>
+export const profileView = () =>
     MediaQuery("(max-width: 700px)", (small) =>
         Reactive(state, "meta", () =>
             Grid(
