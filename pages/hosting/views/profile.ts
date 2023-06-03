@@ -1,5 +1,5 @@
 import { format } from "std/fmt/bytes.ts";
-import { Button, ButtonStyle, Card, Color, Dialog, Grid, Horizontal, MediaQuery, PlainText, Reactive, Spacer, TextInput, Vertical } from "webgen/mod.ts";
+import { Button, ButtonStyle, Color, Dialog, Entry, Grid, Horizontal, MediaQuery, PlainText, Reactive, Spacer, TextInput, Vertical } from "webgen/mod.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { MB, state } from "../data.ts";
 import './profile.css';
@@ -62,7 +62,7 @@ export const profileView = () =>
     MediaQuery("(max-width: 700px)", (small) =>
         Reactive(state, "meta", () =>
             Grid(
-                Card(
+                Entry(
                     Grid(
                         PlainText(migrationInfo.title)
                             .setFont(2, 700),
@@ -79,7 +79,7 @@ export const profileView = () =>
                     )
                         .addClass("details-item")
                 ).addClass("full-width"),
-                Card(
+                Entry(
                     Grid(
                         PlainText(state.meta.coins.toLocaleString())
                             .setFont(2, 700),
@@ -89,7 +89,7 @@ export const profileView = () =>
                     )
                         .addClass("details-item")
                 ),
-                Card(
+                Entry(
                     Grid(
                         PlainText(state.meta.used.slots + " / " + state.meta.limits.slots)
                             .setFont(2, 700),
@@ -99,7 +99,7 @@ export const profileView = () =>
                     )
                         .addClass("details-item")
                 ),
-                Card(
+                Entry(
                     Grid(
                         PlainText(format(state.meta.used.memory * MB) + " / " + format(state.meta.limits.memory * MB))
                             .setFont(2, 700),
@@ -109,7 +109,7 @@ export const profileView = () =>
                     )
                         .addClass("details-item")
                 ),
-                Card(
+                Entry(
                     Grid(
                         PlainText(format(state.meta.used.disk * MB) + " / " + format(state.meta.limits.disk * MB))
                             .setFont(2, 700),
@@ -119,7 +119,7 @@ export const profileView = () =>
                     )
                         .addClass("details-item")
                 ),
-                Card(
+                Entry(
                     Grid(
                         PlainText(state.meta.used.cpu + "% / " + state.meta.limits.cpu + "%")
                             .setFont(2, 700),

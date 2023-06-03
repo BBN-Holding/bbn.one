@@ -1,5 +1,4 @@
 .details-item {
-    padding: calc(var(--gap) * .5) calc(var(--gap) * 0.8);
     width: 100%;
 }
 
