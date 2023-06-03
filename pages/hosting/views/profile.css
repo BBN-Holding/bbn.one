@@ -14,3 +14,56 @@
     max-width: 30rem;
     gap: var(--gap);
 }
+
+.shop-stack {
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0 0 10px 10px;
+    font-weight: bold;
+    padding: 10px var(--gap);
+    background-color: #2424241F;
+    color: var(--color, #5B5B5B);
+}
+
+.shop-stack.available {
+    background-color: #00FF1A1F;
+    --color: #00ff1a;
+    --color-colored-hue: 126deg;
+}
+
+.shop-stack.recommended {
+    background-color: #FF8A001f;
+    --color: #FF8A00;
+    --button-color: #FF8A0061;
+    --color-colored-hue: 32deg;
+}
+
+.shop-stack .group {
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+}
+
+.shop-stack .sublabel {
+    font-size: 10px;
+}
+
+.shop-stack .wbutton {
+    border-radius: 18px;
+    height: 22px;
+    padding: 1px 12px 0;
+    line-height: 0;
+    --color-colored-saturation: 100%;
+    --color-colored-lightness: 50%;
+}
+
+.docked .wlayer-inner {
+    /* Custom styling allows to remove bottom border radius */
+    border-radius: .8rem .8rem 0 0 !important;
+}
+
+.shop {
+    display: grid;
+    grid-template-rows: max-content auto;
+}

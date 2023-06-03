@@ -1,5 +1,5 @@
 import { format } from "std/fmt/bytes.ts";
-import { Button, ButtonStyle, Color, Dialog, Entry, Grid, Horizontal, MediaQuery, PlainText, Reactive, Spacer, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Color, Dialog, Entry, Grid, Horizontal, MediaQuery, PlainText, Reactive, Spacer, TextInput, Vertical } from "webgen/mod.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { MB, state } from "../data.ts";
 import './profile.css';
@@ -88,50 +88,108 @@ export const profileView = () =>
                             .addClass("gray-color")
                     )
                         .addClass("details-item")
-                ),
-                Entry(
-                    Grid(
-                        PlainText(state.meta.used.slots + " / " + state.meta.limits.slots)
-                            .setFont(2, 700),
-                        PlainText("Servers")
-                            .setFont(1, 700)
-                            .addClass("gray-color")
+                ).addClass("full-width"),
+                Box(
+                    Entry(
+                        Grid(
+                            PlainText(state.meta.used.slots + " / " + state.meta.limits.slots)
+                                .setFont(2, 700),
+                            PlainText("Servers")
+                                .setFont(1, 700)
+                                .addClass("gray-color")
+                        )
+                            .addClass("details-item")
                     )
-                        .addClass("details-item")
-                ),
-                Entry(
-                    Grid(
-                        PlainText(format(state.meta.used.memory * MB) + " / " + format(state.meta.limits.memory * MB))
-                            .setFont(2, 700),
-                        PlainText("Memory")
-                            .setFont(1, 700)
-                            .addClass("gray-color")
+                        .addClass("docked"),
+                    ShopStack("Upgrade available", {
+                        type: "available",
+                        label: "Add 1x Server",
+                        sublabel: "Requires 100 Coins",
+                        action: async () => {
+                            //
+                        }
+                    })
+                )
+                    .addClass("shop"),
+                Box(
+                    Entry(
+                        Grid(
+                            PlainText(format(state.meta.used.memory * MB) + " / " + format(state.meta.limits.memory * MB))
+                                .setFont(2, 700),
+                            PlainText("Memory")
+                                .setFont(1, 700)
+                                .addClass("gray-color")
+                        )
+                            .addClass("details-item")
                     )
-                        .addClass("details-item")
-                ),
-                Entry(
-                    Grid(
-                        PlainText(format(state.meta.used.disk * MB) + " / " + format(state.meta.limits.disk * MB))
-                            .setFont(2, 700),
-                        PlainText("Disk")
-                            .setFont(1, 700)
-                            .addClass("gray-color")
+                        .addClass("docked"),
+                    ShopStack("Not enough Coins", {
+                        type: "blocked",
+                        sublabel: "Requires 100 Coins",
+                    })
+                )
+                    .addClass("shop"),
+                Box(
+                    Entry(
+                        Grid(
+                            PlainText(format(state.meta.used.disk * MB) + " / " + format(state.meta.limits.disk * MB))
+                                .setFont(2, 700),
+                            PlainText("Disk")
+                                .setFont(1, 700)
+                                .addClass("gray-color")
+                        )
+                            .addClass("details-item")
                     )
-                        .addClass("details-item")
-                ),
-                Entry(
-                    Grid(
-                        PlainText(state.meta.used.cpu + "% / " + state.meta.limits.cpu + "%")
-                            .setFont(2, 700),
-                        PlainText("CPU")
-                            .setFont(1, 700)
-                            .addClass("gray-color")
+                        .addClass("docked"),
+                    ShopStack("Recommended Upgrade", {
+                        type: "recommended",
+                        label: "Add 1x Server",
+                        sublabel: "Requires 100 Coins",
+                        action: async () => {
+                            //
+                        }
+                    })
+                )
+                    .addClass("shop"),
+                Box(
+                    Entry(
+                        Grid(
+                            PlainText(state.meta.used.cpu + "% / " + state.meta.limits.cpu + "%")
+                                .setFont(2, 700),
+                            PlainText("CPU")
+                                .setFont(1, 700)
+                                .addClass("gray-color")
+                        )
+                            .addClass("details-item")
                     )
-                        .addClass("details-item")
-                ),
+                        .addClass("docked"),
+                    ShopStack("Not enough Coins", {
+                        type: "blocked",
+                        sublabel: "Requires 100 Coins",
+                    })
+                )
+                    .addClass("shop")
             )
                 .setEvenColumns(small ? 1 : 2)
                 .setGap("var(--gap)")
                 .addClass("limited-width", "details-grid")
         )
     );
+
+type ShopVariant =
+    | { type: 'available', label: string, sublabel: string, action: () => Promise<void>; }
+    | { type: 'recommended', label: string, sublabel: string, action: () => Promise<void>; }
+    | { type: 'blocked', sublabel: string, };
+
+const ShopStack = (actionText: string, variant: ShopVariant) => Grid(
+    PlainText(actionText),
+    Vertical(
+        variant.type != "blocked"
+            ? Button(variant.label)
+                .setStyle(ButtonStyle.Secondary)
+                .setColor(Color.Colored)
+                .onPromiseClick(variant.action)
+            : null,
+        PlainText(variant.sublabel).addClass("sublabel")
+    ).addClass("group")
+).addClass(variant.type, "shop-stack");
