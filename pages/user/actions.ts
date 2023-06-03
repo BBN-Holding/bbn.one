@@ -71,14 +71,14 @@ export async function handleStateChange() {
         const rsp = await API.auth.discord.post(params.code);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
-        logIn(rsp.value, "0auth");
+        await logIn(rsp.value, "0auth");
         gotoGoal();
     }
     else if (params.type == "microsoft" && params.code) {
         const rsp = await API.auth.microsoft.post(params.code);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
-        logIn(rsp.value, "0auth");
+        await logIn(rsp.value, "0auth");
         gotoGoal();
     }
     else if (params.type == "forgot-password" && params.token) {
