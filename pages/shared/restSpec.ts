@@ -471,6 +471,15 @@ export const API = {
                     headers: headers(token)
                 }).then(x => x.json());
             },
+            edit: (data: { name?: string, memory?: number, disk?: number, cpu?: number; }) => {
+                return fetch(`${API.BASE_URL}hosting/servers/${id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify(data),
+                    headers: headers(token)
+                })
+                    .then(none())
+                    .catch(reject);
+            },
             power: (data: PowerState) => {
                 return fetch(`${API.BASE_URL}hosting/${id}/power`, {
                     method: 'POST',
