@@ -49,15 +49,15 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
                                     .setRender(location => locations[ location as keyof typeof locations ])
                                     .sync(server, "location"),
                                 SliderInput("Memory (RAM)")
-                                    .setMax(state.meta.limits.memory - state.meta.used.memory)
+                                    .setMax(state.meta.limits.memory - state.meta.used.memory + server.limits.memory)
                                     .sync(data, "memory")
                                     .setRender((val) => format(val * MB)),
                                 SliderInput("Storage (Disk)")
-                                    .setMax(state.meta.limits.disk - state.meta.used.disk)
+                                    .setMax(state.meta.limits.disk - state.meta.used.disk + server.limits.disk)
                                     .sync(data, "disk")
                                     .setRender((val) => format(val * MB)),
                                 SliderInput("Processor (CPU)")
-                                    .setMax(state.meta.limits.cpu - state.meta.used.cpu)
+                                    .setMax(state.meta.limits.cpu - state.meta.used.cpu + server.limits.cpu)
                                     .sync(data, "cpu")
                                     .setRender((val) => `${val.toString()} %`),
 
