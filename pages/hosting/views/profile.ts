@@ -1,9 +1,21 @@
+// @deno-types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/canvas-confetti/index.d.ts"
+import confetti from "https://unpkg.com/canvas-confetti@1.6.0/src/confetti.js";
 import { format } from "std/fmt/bytes.ts";
-import { Box, Button, ButtonStyle, Color, Dialog, Entry, Grid, Horizontal, MediaQuery, PlainText, Reactive, Spacer, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Color, Dialog, Entry, Grid, Horizontal, MediaQuery, PlainText, Pointable, Reactive, Spacer, TextInput, Vertical } from "webgen/mod.ts";
 import { activeUser } from "../../manager/helper.ts";
+import { HeavyReRender } from "../../shared/list.ts";
+import { API, stupidErrorAlert } from "../../shared/mod.ts";
 import { MB, state } from "../data.ts";
+import { refreshState } from "../loading.ts";
 import './profile.css';
 
+function confettiFromElement(element: MouseEvent, opts: confetti.Options = {}) {
+    const { top, height, left, width, } = (<HTMLElement>element.target!).getBoundingClientRect();
+    const x = (left + width / 2) / window.innerWidth;
+    const y = (top + height / 2) / window.innerHeight;
+    const origin = { x, y };
+    confetti({ origin, ...opts });
+}
 export const migrationInfo = {
     title: "Welcome to our Beta Dashboard!",
     text0: "We're excited to have you on board as we unveil our new and improved platform.",
@@ -71,7 +83,7 @@ export const profileView = () =>
                         Horizontal(
                             Spacer(),
                             Button(migrationInfo.button)
-                                .setStyle(ButtonStyle.Inline)
+                                .setStyle(ButtonStyle.Secondary)
                                 .onClick(() => {
                                     migrationCredentials();
                                 })
@@ -101,14 +113,19 @@ export const profileView = () =>
                             .addClass("details-item")
                     )
                         .addClass("docked"),
-                    ShopStack("Upgrade available", {
-                        type: "available",
-                        label: "Add 1x Server",
-                        sublabel: "Requires 100 Coins",
-                        action: async () => {
-                            //
-                        }
-                    })
+                    HeavyReRender(state.meta.pricing.slots, slots => !slots ? Box() :
+                        ShopStack(slots.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
+                            type: slots.price > state.meta.coins ? "blocked" : "available",
+                            label: `Add x${slots.ammount} Servers`,
+                            sublabel: `Requires ${slots.price} Coins`,
+                            action: async (ev) => {
+                                await API.hosting(API.getToken()).store.create("slots")
+                                    .then(stupidErrorAlert);
+                                confettiFromElement(ev);
+                                refreshState();
+                            }
+                        })
+                    ).removeFromLayout()
                 )
                     .addClass("shop"),
                 Box(
@@ -123,10 +140,19 @@ export const profileView = () =>
                             .addClass("details-item")
                     )
                         .addClass("docked"),
-                    ShopStack("Not enough Coins", {
-                        type: "blocked",
-                        sublabel: "Requires 100 Coins",
-                    })
+                    HeavyReRender(state.meta.pricing.memory, memory => !memory ? Box() :
+                        ShopStack(memory.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
+                            type: memory.price > state.meta.coins ? "blocked" : "available",
+                            label: `Add ${format((memory.ammount ?? 0) * MB)}`,
+                            sublabel: `Requires ${memory.price} Coins`,
+                            action: async (ev) => {
+                                await API.hosting(API.getToken()).store.create("memory")
+                                    .then(stupidErrorAlert);
+                                confettiFromElement(ev);
+                                refreshState();
+                            }
+                        })
+                    ).removeFromLayout()
                 )
                     .addClass("shop"),
                 Box(
@@ -141,14 +167,19 @@ export const profileView = () =>
                             .addClass("details-item")
                     )
                         .addClass("docked"),
-                    ShopStack("Recommended Upgrade", {
-                        type: "recommended",
-                        label: "Add 1x Server",
-                        sublabel: "Requires 100 Coins",
-                        action: async () => {
-                            //
-                        }
-                    })
+                    HeavyReRender(state.meta.pricing.disk, disk => !disk ? Box() :
+                        ShopStack(disk.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
+                            type: disk.price > state.meta.coins ? "blocked" : "available",
+                            label: `Add ${format(disk.ammount * MB)}`,
+                            sublabel: `Requires ${disk.price} Coins`,
+                            action: async (ev) => {
+                                await API.hosting(API.getToken()).store.create("disk")
+                                    .then(stupidErrorAlert);
+                                confettiFromElement(ev);
+                                refreshState();
+                            }
+                        })
+                    ).removeFromLayout()
                 )
                     .addClass("shop"),
                 Box(
@@ -163,10 +194,19 @@ export const profileView = () =>
                             .addClass("details-item")
                     )
                         .addClass("docked"),
-                    ShopStack("Not enough Coins", {
-                        type: "blocked",
-                        sublabel: "Requires 100 Coins",
-                    })
+                    HeavyReRender(state.meta.pricing.cpu, cpu => !cpu ? Box() :
+                        ShopStack(cpu.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
+                            type: cpu.price > state.meta.coins ? "blocked" : "available",
+                            label: `Add ${cpu.ammount} %`,
+                            sublabel: `Requires ${cpu.price} Coins`,
+                            action: async (ev) => {
+                                await API.hosting(API.getToken()).store.create("cpu")
+                                    .then(stupidErrorAlert);
+                                confettiFromElement(ev);
+                                refreshState();
+                            }
+                        })
+                    ).removeFromLayout()
                 )
                     .addClass("shop")
             )
@@ -177,13 +217,11 @@ export const profileView = () =>
     );
 
 type ShopVariant =
-    | { type: 'available', label: string, sublabel: string, action: () => Promise<void>; }
-    | { type: 'recommended', label: string, sublabel: string, action: () => Promise<void>; }
-    | { type: 'blocked', sublabel: string, };
+    { type: 'available' | 'recommended' | 'blocked', label: Pointable<string>, sublabel: Pointable<string>, action: (env: MouseEvent) => Promise<void>; };
 
-const ShopStack = (actionText: string, variant: ShopVariant) => Grid(
+const ShopStack = (actionText: string, _variant: ShopVariant) => Grid(
     PlainText(actionText),
-    Vertical(
+    HeavyReRender(_variant, (variant) => Vertical(
         variant.type != "blocked"
             ? Button(variant.label)
                 .setStyle(ButtonStyle.Secondary)
@@ -191,5 +229,5 @@ const ShopStack = (actionText: string, variant: ShopVariant) => Grid(
                 .onPromiseClick(variant.action)
             : null,
         PlainText(variant.sublabel).addClass("sublabel")
-    ).addClass("group")
-).addClass(variant.type, "shop-stack");
+    ).addClass("group"))
+).addClass(_variant.type, "shop-stack");

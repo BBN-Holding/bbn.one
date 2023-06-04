@@ -1,5 +1,5 @@
 import { assert } from "std/testing/asserts.ts";
-import { Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, Wallet } from "../../spec/music.ts";
+import { Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, StoreItems, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
 
 export const Permissions = [
@@ -489,6 +489,17 @@ export const API = {
                     .catch(reject);
             }
         }),
+        store: ({
+            create: (type: StoreItems) => {
+                return fetch(`${API.BASE_URL}hosting/store`, {
+                    method: 'POST',
+                    body: JSON.stringify(type),
+                    headers: headers(token)
+                })
+                    .then(none())
+                    .catch(reject);
+            }
+        })
     }),
     music: (token: string) => ({
         list: {

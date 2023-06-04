@@ -274,3 +274,4 @@ export type PowerState = zod.infer<typeof powerState>;
 export type ServerCreate = zod.infer<typeof serverCreate>;
 export type Limits = zod.infer<typeof limits>;
 export type Meta = zod.infer<typeof meta>;
+export type StoreItems = zod.infer<typeof storeItems>;
