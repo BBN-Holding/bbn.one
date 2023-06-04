@@ -1,9 +1,10 @@
-import { API, LoadingSpinner, stupidErrorAlert } from "shared";
-import { Box, Color, CommonIconType, Component, Dialog, DropDownInput, Entry, Grid, Horizontal, IconButton, IconButtonComponent, MaterialIcons, MediaQuery, PlainText, Reactive, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
+import { format } from "https://deno.land/std@0.188.0/fmt/bytes.ts";
+import { API, LoadingSpinner, SliderInput, stupidErrorAlert } from "shared";
+import { Box, Color, CommonIconType, Component, Dialog, DropDownInput, Entry, Grid, Horizontal, IconButton, IconButtonComponent, MaterialIcons, MediaQuery, PlainText, Reactive, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import servers from "../../../data/eggs.json" assert { type: "json" };
 import locations from "../../../data/locations.json" assert { type: "json" };
 import { PowerState, Server } from "../../../spec/music.ts";
-import { state } from "../data.ts";
+import { MB, state } from "../data.ts";
 import './list.css';
 
 new MaterialIcons();
@@ -26,6 +27,12 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
                 }),
             IconButton(CommonIconType.Edit, "edit")
                 .onClick(() => {
+                    const data = State({
+                        name: server.name,
+                        memory: server.limits.memory,
+                        disk: server.limits.disk,
+                        cpu: server.limits.cpu,
+                    });
                     Dialog(() =>
                         Vertical(
                             PlainText(`A ${servers[ server.type ].name} Server.`),
@@ -35,16 +42,28 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
                                         width: 2
                                     },
                                     TextInput("text", "Friendly Name")
-                                        .setColor(Color.Disabled)
                                         .sync(server, "name")
                                 ],
                                 DropDownInput("Location", Object.keys(locations))
                                     .setColor(Color.Disabled)
                                     .setRender(location => locations[ location as keyof typeof locations ])
-                                    .sync(server, "location")
+                                    .sync(server, "location"),
+                                SliderInput("Memory (RAM)")
+                                    .setMax(state.meta.limits.memory - state.meta.used.memory)
+                                    .sync(data, "memory")
+                                    .setRender((val) => format(val * MB)),
+                                SliderInput("Storage (Disk)")
+                                    .setMax(state.meta.limits.disk - state.meta.used.disk)
+                                    .sync(data, "disk")
+                                    .setRender((val) => format(val * MB)),
+                                SliderInput("Processor (CPU)")
+                                    .setMax(state.meta.limits.cpu - state.meta.used.cpu)
+                                    .sync(data, "cpu")
+                                    .setRender((val) => `${val.toString()} %`),
+
                             )
                                 .setGap("var(--gap)")
-                                .setEvenColumns(2)
+                                .setEvenColumns(3)
                         )
                             .setGap("var(--gap)")
                     )
@@ -55,7 +74,12 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
                             return "remove";
                         }, Color.Critical)
                         .addButton("Close", "remove")
-                        .addButton("Save", "remove")
+                        .addButton("Save", async () => {
+                            await API.hosting(API.getToken()).serverId(server._id)
+                                .edit(data)
+                                .then(stupidErrorAlert);
+                            return "remove" as const;
+                        })
                         .open();
 
                 }),

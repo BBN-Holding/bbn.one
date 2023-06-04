@@ -2,9 +2,8 @@ import { count, LoadingSpinner, Menu } from "shared";
 import { Color, Reactive, ref, refMap } from "webgen/mod.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { state } from "../data.ts";
-import { detailsView } from "../views/details.ts";
 import { listView } from "../views/list.ts";
-import { storeView } from "../views/store.ts";
+import { profileView } from "../views/profile.ts";
 
 export const hostingMenu = Menu({
     title: ref`Hi ${activeUser.$username} 👋`,
@@ -16,18 +15,12 @@ export const hostingMenu = Menu({
                 listView(state.servers ?? [])
             )
         },
-        "details/": {
-            title: "Details",
+        "profile/": {
+            title: "Profile",
             custom: () => Reactive(state, "meta", () =>
-                state.meta ? detailsView() : LoadingSpinner()
+                state.meta ? profileView() : LoadingSpinner()
             )
         },
-        "store/": {
-            title: "Store",
-            custom: () => Reactive(state, "meta", () =>
-                storeView
-            )
-        }
     },
     menuBarAction: {
         title: "Start new Server",
@@ -38,4 +31,4 @@ export const hostingMenu = Menu({
     },
     custom: () => LoadingSpinner()
 })
-    .setActivePath(refMap(state.$loaded, loaded => loaded ? (state.servers.length == 0 ? '/details/' : '/servers/') : '/'));
+    .setActivePath(refMap(state.$loaded, loaded => loaded ? (state.servers.length == 0 ? '/profile/' : '/servers/') : '/'));

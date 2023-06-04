@@ -226,7 +226,7 @@ export const pteroServer = server.extend({
         container: zod.object({
             image: zod.string(),
             startup_command: zod.string(),
-            environment: zod.record(zod.string(), zod.union([ zod.string(), zod.number(), zod.boolean() ])),
+            environment: zod.record(zod.string(), zod.union([ zod.string(), zod.number(), zod.boolean(), zod.null() ])),
         }),
         egg: zod.number(),
         identifier: zod.string(),
@@ -245,6 +245,8 @@ export const metaLimti = limits.extend({
     slots: zod.number()
 });
 
+export const storeItems = zod.enum([ "memory", "disk", "cpu", "slots" ]);
+
 export const meta = zod.object({
     _id: zod.string(),
     owner: zod.string(),
@@ -253,6 +255,10 @@ export const meta = zod.object({
     coins: zod.number(),
     limits: metaLimti,
     used: metaLimti,
+    pricing: zod.record(storeItems, zod.object({
+        price: zod.number(),
+        ammount: zod.number()
+    }))
 });
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
@@ -268,3 +274,4 @@ export type PowerState = zod.infer<typeof powerState>;
 export type ServerCreate = zod.infer<typeof serverCreate>;
 export type Limits = zod.infer<typeof limits>;
 export type Meta = zod.infer<typeof meta>;
+export type StoreItems = zod.infer<typeof storeItems>;

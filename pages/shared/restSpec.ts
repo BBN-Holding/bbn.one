@@ -1,5 +1,5 @@
 import { assert } from "std/testing/asserts.ts";
-import { Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, Wallet } from "../../spec/music.ts";
+import { Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, StoreItems, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
 
 export const Permissions = [
@@ -471,6 +471,15 @@ export const API = {
                     headers: headers(token)
                 }).then(x => x.json());
             },
+            edit: (data: { name?: string, memory?: number, disk?: number, cpu?: number; }) => {
+                return fetch(`${API.BASE_URL}hosting/servers/${id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify(data),
+                    headers: headers(token)
+                })
+                    .then(none())
+                    .catch(reject);
+            },
             power: (data: PowerState) => {
                 return fetch(`${API.BASE_URL}hosting/${id}/power`, {
                     method: 'POST',
@@ -489,6 +498,17 @@ export const API = {
                     .catch(reject);
             }
         }),
+        store: ({
+            create: (type: StoreItems) => {
+                return fetch(`${API.BASE_URL}hosting/store`, {
+                    method: 'POST',
+                    body: JSON.stringify(type),
+                    headers: headers(token)
+                })
+                    .then(none())
+                    .catch(reject);
+            }
+        })
     }),
     music: (token: string) => ({
         list: {
