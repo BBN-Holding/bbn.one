@@ -54,6 +54,11 @@ export function entryFile(file: File) {
             : Image(templateArtwork, "A Placeholder Artwork.");
         return Box(imageSource)
             .addClass("image-square");
+    })).addSuffix(IconButton(CommonIconType.Download, "download").onClick(async () => {
+        const blob = await API.admin(API.getToken()).files.download(file._id);
+        if (blob.status !== "fulfilled") return;
+        const url  = window.URL.createObjectURL(blob.value);
+        window.open(url, '_blank');
     })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
         API.admin(API.getToken()).files.delete(file._id);
     })).addClass("limited-width");
