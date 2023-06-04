@@ -245,6 +245,8 @@ export const metaLimti = limits.extend({
     slots: zod.number()
 });
 
+export const storeItems = zod.enum([ "memory", "disk", "cpu", "slots" ]);
+
 export const meta = zod.object({
     _id: zod.string(),
     owner: zod.string(),
@@ -253,6 +255,10 @@ export const meta = zod.object({
     coins: zod.number(),
     limits: metaLimti,
     used: metaLimti,
+    pricing: zod.record(storeItems, zod.object({
+        price: zod.number(),
+        ammount: zod.number()
+    }))
 });
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
