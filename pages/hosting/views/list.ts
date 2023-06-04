@@ -36,10 +36,10 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
                     Dialog(() =>
                         Vertical(
                             PlainText(`A ${servers[ server.type ].name} Server.`),
-                            Grid(
+                            MediaQuery("(max-width: 700px)", (small) => Grid(
                                 [
                                     {
-                                        width: 2
+                                        width: small ? 1 : 2
                                     },
                                     TextInput("text", "Friendly Name")
                                         .sync(server, "name")
@@ -63,7 +63,8 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
 
                             )
                                 .setGap("var(--gap)")
-                                .setEvenColumns(3)
+                                .setEvenColumns(small ?1:3)
+).removeFromLayout()
                         )
                             .setGap("var(--gap)")
                     )
