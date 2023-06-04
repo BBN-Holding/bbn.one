@@ -226,7 +226,7 @@ export const pteroServer = server.extend({
         container: zod.object({
             image: zod.string(),
             startup_command: zod.string(),
-            environment: zod.record(zod.string(), zod.union([ zod.string(), zod.number(), zod.boolean() ])),
+            environment: zod.record(zod.string(), zod.union([ zod.string(), zod.number(), zod.boolean(), zod.null() ])),
         }),
         egg: zod.number(),
         identifier: zod.string(),
