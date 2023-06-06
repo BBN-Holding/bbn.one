@@ -103,7 +103,7 @@
         "docker_image": "ghcr.io/parkervcp/yolks:debian",
         "startup": "./bin/php7/bin/php ./PocketMine-MP.phar --no-wizard --disable-ansi",
         "environment": {
-            "VERSION": "pm4"
+            "VERSION": "PM5"
         }
     },
     "/minecraft/legacy/magma/": {
