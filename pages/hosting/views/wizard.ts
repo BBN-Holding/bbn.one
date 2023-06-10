@@ -46,7 +46,7 @@ export const creationView = () => Reactive(creationState, "loading", () => {
                 Page(<ServerCreate>{
                     name: "",
                     type: creationState.type,
-                    location: "cluster1",
+                    location: "bbn-hel1",
                     limits: state.meta.limits
                 }, (data) => [
                     Box(
