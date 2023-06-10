@@ -1,6 +1,6 @@
 import { format } from "https://deno.land/std@0.188.0/fmt/bytes.ts";
 import { API, LoadingSpinner, SliderInput, stupidErrorAlert } from "shared";
-import { Box, Color, CommonIconType, Component, Dialog, DropDownInput, Entry, Grid, Horizontal, IconButton, IconButtonComponent, MaterialIcons, MediaQuery, PlainText, Reactive, ref, refMap, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Color, CommonIconType, Component, Dialog, DropDownInput, Entry, Grid, Horizontal, IconButton, IconButtonComponent, MaterialIcons, MediaQuery, PlainText, Reactive, State, StateHandler, TextInput, Vertical, ref, refMap } from "webgen/mod.ts";
 import servers from "../../../data/eggs.json" assert { type: "json" };
 import locations from "../../../data/locations.json" assert { type: "json" };
 import { Location, PowerState, Server } from "../../../spec/music.ts";
@@ -58,7 +58,7 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
                                 ],
                                 DropDownInput("Location", Object.keys(locations))
                                     .setRender(location => locations[ location as keyof typeof locations ])
-                                    .sync(server, "location"),
+                                    .sync(data, "location"),
                                 SliderInput("Memory (RAM)")
                                     .setMax(state.meta.limits.memory - state.meta.used.memory + server.limits.memory)
                                     .sync(data, "memory")
