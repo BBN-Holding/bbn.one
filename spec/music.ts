@@ -206,15 +206,17 @@ export enum ServerTypes {
     LegacyPGF = "/minecraft/legacy/pgf/",
 }
 
-export const powerState = zod.enum([ "offline", "starting", "stopping", "running", "installing", "start", "stop", "kill", "restart" ]);
+export const serverState = zod.enum([ "offline", "starting", "stopping", "running", "installing", "start", "stop", "kill", "restart", "moving" ]);
+
+export const location = zod.enum([ "bbn-fsn1", "bbn-hel1", "bbn-sgp1" ]);
 
 export const server = zod.object({
     _id: zod.string(),
     name: zod.string(),
     type: zod.nativeEnum(ServerTypes),
-    location: zod.enum([ "cluster1" ]),
+    location: location,
     limits: limits,
-    state: powerState,
+    state: serverState,
     user: zod.string(),
 });
 
@@ -270,8 +272,9 @@ export type File = zod.infer<typeof file>;
 export type Wallet = zod.infer<typeof wallet>;
 export type Server = zod.infer<typeof server>;
 export type PteroServer = zod.infer<typeof pteroServer>;
-export type PowerState = zod.infer<typeof powerState>;
+export type PowerState = zod.infer<typeof serverState>;
 export type ServerCreate = zod.infer<typeof serverCreate>;
 export type Limits = zod.infer<typeof limits>;
 export type Meta = zod.infer<typeof meta>;
 export type StoreItems = zod.infer<typeof storeItems>;
+export type Location = zod.infer<typeof location>;

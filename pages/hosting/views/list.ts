@@ -1,9 +1,9 @@
 import { format } from "https://deno.land/std@0.188.0/fmt/bytes.ts";
 import { API, LoadingSpinner, SliderInput, stupidErrorAlert } from "shared";
-import { Box, Color, CommonIconType, Component, Dialog, DropDownInput, Entry, Grid, Horizontal, IconButton, IconButtonComponent, MaterialIcons, MediaQuery, PlainText, Reactive, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Color, CommonIconType, Component, Dialog, DropDownInput, Entry, Grid, Horizontal, IconButton, IconButtonComponent, MaterialIcons, MediaQuery, PlainText, Reactive, ref, refMap, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import servers from "../../../data/eggs.json" assert { type: "json" };
 import locations from "../../../data/locations.json" assert { type: "json" };
-import { PowerState, Server } from "../../../spec/music.ts";
+import { Location, PowerState, Server } from "../../../spec/music.ts";
 import { MB, state } from "../data.ts";
 import './list.css';
 
@@ -13,9 +13,20 @@ type StateActions = {
     [ type in PowerState ]: Component | IconButtonComponent;
 };
 
+export const moveDialog = (name: string, from: Location, to: Location) => Dialog(() => Vertical(
+    PlainText(`We are moving your Server '${name}' to a diffrent location.`)
+        .setFont(1, 400),
+    PlainText(`This could take some time. Moving form ${locations[ from ]} to ${locations[ to ]}.`)
+        .setFont(1, 400),
+))
+    .setTitle("Moving your Server!")
+    .addButton("Okay", "remove")
+    .open();
+
+
 export const entryServer = (server: StateHandler<Server>, small: boolean) => Entry({
     title: server.name,
-    subtitle: `${servers[ server.type ].name} @ ${locations[ server.location ]}`
+    subtitle: ref`${refMap(server.$type, it => servers[ it ].name)} @ ${refMap(server.$state, it => it == "moving" ? "Moving to " : "")}${refMap(server.$location, it => locations[ it ])}`
 })
     .addPrefix(Reactive(server, "state", () => Box().addClass("dot", server.state)).removeFromLayout())
     .addSuffix(
@@ -32,6 +43,7 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
                         memory: server.limits.memory,
                         disk: server.limits.disk,
                         cpu: server.limits.cpu,
+                        location: server.location,
                     });
                     Dialog(() =>
                         Vertical(
@@ -45,7 +57,6 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
                                         .sync(server, "name")
                                 ],
                                 DropDownInput("Location", Object.keys(locations))
-                                    .setColor(Color.Disabled)
                                     .setRender(location => locations[ location as keyof typeof locations ])
                                     .sync(server, "location"),
                                 SliderInput("Memory (RAM)")
@@ -63,8 +74,8 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
 
                             )
                                 .setGap("var(--gap)")
-                                .setEvenColumns(small ?1:3)
-).removeFromLayout()
+                                .setEvenColumns(small ? 1 : 3)
+                            ).removeFromLayout()
                         )
                             .setGap("var(--gap)")
                     )
@@ -76,6 +87,9 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
                         }, Color.Critical)
                         .addButton("Close", "remove")
                         .addButton("Save", async () => {
+                            if (data.location != server.location)
+                                moveDialog(data.name, server.location, data.location);
+
                             await API.hosting(API.getToken()).serverId(server._id)
                                 .edit(data)
                                 .then(stupidErrorAlert);
