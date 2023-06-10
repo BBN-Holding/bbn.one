@@ -260,9 +260,6 @@ export const meta = zod.object({
         ammount: zod.number()
     }))
 });
-
-export const locations = zod.enum([ "bbn-fsn1", "bbn-hel1", "bbn-sgp1" ]);
-
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Artist = zod.infer<typeof artist>;
