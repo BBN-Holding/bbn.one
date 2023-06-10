@@ -239,7 +239,7 @@ export const pteroServer = server.extend({
 export const serverCreate = zod.object({
     name: zod.string().min(3),
     type: zod.nativeEnum(ServerTypes),
-    location: zod.enum([ "cluster1" ]),
+    location: location,
     limits: limits,
 });
 
