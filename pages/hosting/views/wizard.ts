@@ -1,6 +1,6 @@
 import { API, LoadingSpinner, SliderInput } from "shared";
 import { format } from "std/fmt/bytes.ts";
-import { Box, Color, Dialog, DropDownInput, Grid, Page, PlainText, Reactive, TextInput, Vertical, Wizard } from "webgen/mod.ts";
+import { Box, Dialog, DropDownInput, Grid, Page, PlainText, Reactive, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import { ServerCreate, serverCreate } from "../../../spec/music.ts";
 import { MB, creationState, state } from "../data.ts";
@@ -56,7 +56,6 @@ export const creationView = () => Reactive(creationState, "loading", () => {
                             TextInput("text", "Friendly Name")
                                 .sync(data, "name"),
                             DropDownInput("Location", Object.keys(locations))
-                                .setColor(Color.Disabled)
                                 .setRender((val) => locations[ val as keyof typeof locations ])
                                 .sync(data, "location"),
                             /*DropDownInput("Version", Object.keys(locations))

@@ -57,6 +57,7 @@ export const entryServer = (server: StateHandler<Server>, small: boolean) => Ent
                                         .sync(server, "name")
                                 ],
                                 DropDownInput("Location", Object.keys(locations))
+                                    .setColor(Color.Disabled)
                                     .setRender(location => locations[ location as keyof typeof locations ])
                                     .sync(data, "location"),
                                 SliderInput("Memory (RAM)")
