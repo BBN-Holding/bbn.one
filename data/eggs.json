@@ -13,7 +13,7 @@
     "/minecraft/default/": {
         "name": "Minecraft (Purpur)",
         "egg": 42,
-        "docker_image": "ghcr.io/software-noob/pterodactyl-images:java_17_shenandoah",
+        "docker_image": "ghcr.io/software-noob/pterodactyl-images:java_17",
         "startup": "./msh_server.bin -port {{SERVER_PORT}} -d {{DEBUG_LVL}} -file {{SERVER_JARFILE}} -allowkill {{KILL_TIME}} -timeout {{TBSES}} -suspendrefresh {{SUSPEND_REFRESH}} $( [[ ${WL_IMPORT} -eq 1 ]] && echo \" -wlimport\") $( [[ ${SUSPEND_ALLOW} -eq 1 ]] && echo \" -suspendallow\")",
         "environment": {
             "MINECRAFT_VERSION": "latest",
