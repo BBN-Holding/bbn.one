@@ -1,5 +1,5 @@
 import { assert } from "std/testing/asserts.ts";
-import { BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, StoreItems, Wallet } from "../../spec/music.ts";
+import { BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
 
 export const Permissions = [
@@ -433,6 +433,18 @@ export const API = {
                     body: JSON.stringify(data)
                 });
                 return res;
+            }
+        },
+        transcripts: {
+            list: async (offset = 0, limit = 31) => {
+                const paging = new URLSearchParams();
+                paging.append("_offset", offset.toString());
+                paging.append("_limit", limit.toString());
+                return await fetch(`${API.BASE_URL}admin/transcripts?${paging}`, {
+                    headers: headers(token)
+                })
+                    .then(json<Transcript[]>())
+                    .catch(reject);
             }
         }
     }),

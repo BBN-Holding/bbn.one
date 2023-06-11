@@ -1,5 +1,5 @@
 import { HeavyList, HeavyReRender } from "shared";
-import { Box, ButtonComponent, Component, Entry, isPointer, Pointable, Reactive, State, Vertical } from "webgen/mod.ts";
+import { Box, ButtonComponent, Component, Entry, Pointable, Reactive, State, Vertical, isPointer } from "webgen/mod.ts";
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
 
 export interface MenuItem {
@@ -23,6 +23,81 @@ interface RootMenuItem extends MenuItem {
 }
 
 const FilterLastItem = (_: MenuItem, index: number, list: MenuItem[]): boolean => index != list.length - 1;
+
+export const ListNavigation = (list: Pointable<MenuItem[]>) => new class extends Component {
+    nav = State({
+        active: "/",
+        listItems: <MenuItem[]>[]
+    });
+
+    constructor() {
+        super();
+        this.wrapper.append(HeavyList(this.nav.$listItems, it => {
+            const entry = Entry(
+                it,
+            );
+            const click = this.createClickHandler(it);
+            if (click)
+                entry.onPromiseClick(click);
+            return entry;
+        }).draw());
+
+        if (isPointer(list)) {
+            this.nav.listItems = State(list.value());
+        } else 
+            this.nav.listItems = State(list);
+        
+        this.nav.$active.on((val) => {
+            let current: Pointable<MenuItem | MenuItem[]> = list;
+            console.log(val, val.match(/(\w+\/)/g) ?? []);
+            for (const item of val.match(/(\w+\/)/g) ?? []) {
+                console.warn("SEARCHING", item)
+                const lis: MenuItem | MenuItem[] = (isPointer(current) ? current.value() : current);
+                console.debug("FOUND", lis, item);
+                if (Array.isArray(lis)) {
+                    const target = lis.find(x => x.id == item);
+                    if(target)
+                    current = target;
+                }
+                
+            }
+            console.log(current);
+            if (isPointer(current)) {
+                console.log("Val", current.value())
+                current.on(val =>
+                    this.nav.listItems = val)
+            
+            } else
+                 {
+                    if(Array.isArray(current))
+                        this.nav.listItems = State(current);
+                    else {
+                        if (isPointer(current.items)) {
+                            current.items.on((val: MenuItem[]) => {
+                            this.nav.listItems = State(val!);
+                            })
+                        } else
+                            this.nav.listItems = State(current.items!);
+                    }
+                }
+            
+        })
+    }
+
+    private createClickHandler(menu: MenuItem) {
+        if (menu.items) return async () => {
+            await true;
+            this.nav.active = this.nav.active + menu.id;
+        };
+        if (menu.action || menu.custom) return async () => {
+            await menu.action?.(this.nav.active + menu.id, menu);
+            if (menu.custom)
+                this.nav.active = this.nav.active + menu.id;
+        };
+        return undefined;
+    }
+} 
+
 
 /**
  * # Declarative Tree Navigation
@@ -63,10 +138,11 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
     getActivePath() {
         const list: (MenuItem | RootMenuItem)[] = [ rootMenu ];
         for (const iterator of this.nav.active.match(/(\w+\/)/g) ?? []) {
-            const last = list.at(-1)!;
+            const _last = list.at(-1)! as Pointable<MenuItem | RootMenuItem>;
+            const last = isPointer(_last) ? _last.value() : _last;
             if (isCategoryMenu(last) && last.id != iterator) {
                 // deno-lint-ignore no-explicit-any
-                const item = last.categories?.[ iterator as any ];
+                const item = last.categories?.[iterator as any];
                 if (!item) continue;
                 list.push({ ...item, id: "+" + iterator } as MenuItem);
             }
@@ -85,7 +161,6 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
     private walkMenu() {
         const activeEntries = this.getActivePath();
         const active = activeEntries.at(-1)!;
-
         const list = this.isRootNav() ? undefined : activeEntries.filter(FilterLastItem).map((x, i) => (<Link>{
             title: x.title,
             onclick: () => {

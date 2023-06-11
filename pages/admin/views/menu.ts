@@ -1,4 +1,4 @@
-import { API, count, HeavyList, loadMore, Menu, placeholder } from "shared";
+import { API, count, HeavyList, ListNavigation, loadMore, Menu, placeholder } from "shared";
 import { sumOf } from "std/collections/sum_of.ts";
 import { Box, Button, Color, Dialog, Entry, Grid, PlainText, Reactive, ref, refMap, State, StateHandler, TextInput } from "webgen/mod.ts";
 import { DropType, Server } from "../../../spec/music.ts";
@@ -8,7 +8,7 @@ import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
 import { UserEntry } from "./entryUser.ts";
-import { entryFile, entryOAuth, entryWallet } from "./list.ts";
+import { entryFile, entryOAuth, entryWallet, transcriptMenu } from "./list.ts";
 
 export const adminMenu = Menu({
     title: ref`Hi ${activeUser.$username} 👋`,
@@ -152,7 +152,11 @@ export const adminMenu = Menu({
             custom: () => HeavyList(state.$wallets, entryWallet)
                 .addClass("limited-width")
                 .enablePaging((offset, limit) => loadMore(state.$wallets, () => API.admin(API.getToken()).wallets.list(offset, limit)))
-        }
+        },
+        "transcripts/": {
+            title: ref`Tickets ${count(state.$transcripts)}`,
+            custom: () => ListNavigation(refMap(state.$transcripts, it => transcriptMenu(it))).addClass("limited-width")
+        },
     }
 })
     .setActivePath('/overview/');

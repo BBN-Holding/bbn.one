@@ -1,7 +1,7 @@
-import { API } from "shared";
-import { Box, Button, Color, CommonIconType, Dialog, Entry, Grid, IconButton, Image, ReCache, ref, refMap, TextInput } from "webgen/mod.ts";
+import { API, External, MenuItem } from "shared";
+import { Box, Button, Color, CommonIconType, Dialog, Entry, Grid, IconButton, Image, ReCache, TextInput, ref, refMap } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
-import { File, OAuthApp, Wallet } from "../../../spec/music.ts";
+import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
 import { state } from "../state.ts";
 
 export function userName(id: string) {
@@ -13,6 +13,35 @@ export function entryWallet(wallet: Wallet) {
         title: ref`${userName(wallet.user)} - ${((wallet.balance?.restrained ?? 0) + (wallet.balance?.unrestrained ?? 0)).toString()}`,
         subtitle: `${wallet.user} - ${wallet._id} - ${wallet.cut}% - restrained: ${wallet.balance?.restrained} unrestrained: ${wallet.balance?.unrestrained}`,
     }).addClass("small");
+}
+
+/* export function entryTranscript(transcript: Transcript) {
+    return Entry({
+        title: ref`Ticket with ${transcript.with}`,
+        subtitle: `${transcript.closed} - ${new Date(transcript.messages[0].timestamp).toISOString()}`,
+    }).addClass("small");
+} */
+
+export function transcriptMenu(transcripts: External<Transcript[]> | "loading"): MenuItem[] {
+    if (transcripts === "loading" || transcripts.status !== 'fulfilled') return [{
+        title: "Loading...",
+        id: "loading/",
+    }];
+    const data = transcripts.value;
+    return data.map(transcript => ({
+        title: `Ticket with ${transcript.with}`,
+        id: `${transcript._id}/`,
+        items: [
+            {
+                title: "Close" + transcript.with,
+                id: "close/",
+            },
+            ...transcript.messages.map(x => (<MenuItem>{
+                title: `${x.author}`,
+                subtitle: x.content
+            }))
+        ]
+    }))
 }
 
 export function entryOAuth(app: OAuthApp) {
