@@ -116,7 +116,7 @@ export const API = {
         return [];
     },
     bugReport: async (bugReport: BugReport) => {
-        await fetch(`${API.BASE_URL}bug-track`, {
+        await fetch(`${API.BASE_URL}bug-track/`, {
             method: "POST",
             body: JSON.stringify(bugReport)
         });
