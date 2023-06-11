@@ -266,10 +266,13 @@ export const meta = zod.object({
 export const bugReport = zod.object({
     type: zod.literal("web-frontend"),
     error: zod.string(),
-    platform: zod.string(),
-    platformVersion: zod.string(),
-    browserVersion: zod.string(),
-    userId: zod.string().optional()
+    errorStack: zod.string(),
+    platform: zod.string().optional(),
+    platformVersion: zod.string().optional(),
+    browserVersion: zod.string().optional(),
+    browser: zod.string().optional(),
+    userId: zod.string().optional(),
+    location: zod.string()
 });
 
 export const transcript = zod.object({

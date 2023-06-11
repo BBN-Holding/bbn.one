@@ -102,15 +102,7 @@ View(() => Vertical(
                             .setMargin("0 0 .6rem"),
                         Button("Sign in with Discord")
                             .setJustify("center")
-                            // .asLinkButton(() => {
-                            //     API.auth.oauthRedirect("discord");
-
-                            // })
-                            .onPromiseClick(() => {
-                                (async () => {
-                                    throw "hi";
-                                })();
-                            })
+                            .asLinkButton(API.auth.oauthRedirect("discord"))
                             .addPrefix(
                                 Custom(img(discordLogo))
                                     .addClass("prefix-logo")
