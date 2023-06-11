@@ -20,7 +20,7 @@ export function listener() {
     ws.onmessage = ({ data }) => {
         const json = JSON.parse(data);
         if (json.login === "require authentication") {
-            tokens.$accessToken.on((val) => val && ws.send(JSON.stringify(<LoginRequest>{
+            tokens.$accessToken.listen((val) => val && ws.send(JSON.stringify(<LoginRequest>{
                 action: MessageType.Login,
                 type: "client",
                 token: API.getToken(),

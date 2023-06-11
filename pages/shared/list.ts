@@ -1,4 +1,4 @@
-import { Box, Button, Component, Horizontal, Icon, isPointer, PlainText, Pointable, Pointer, Reactive, State, Vertical } from "webgen/mod.ts";
+import { Box, Button, Component, Horizontal, Icon, PlainText, Pointable, Pointer, Reactive, State, Vertical } from "webgen/mod.ts";
 import { LoadingSpinner } from "./components.ts";
 import { displayError, External } from "./restSpec.ts";
 
@@ -11,9 +11,9 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
     constructor() {
         super();
         console.debug("HeavyList got constructed");
-        const list = isPointer(items) ? items : State({ items }).$items as Pointer<T[]>;
+        const list = Pointer.of(items);
 
-        list.on((val: External<T[]> | 'loading' | T[]) => {
+        list.listen((val: External<T[]> | 'loading' | T[]) => {
             this.wrapper.textContent = '';
             if (val === "loading")
                 this.wrapper.append(
@@ -91,7 +91,7 @@ export const placeholder = (title: string, subtitle: string) => Vertical(
 ).setGap("1rem");
 
 export async function loadMore<T>(source: Pointer<External<T[]> | 'loading'>, func: () => Promise<External<T[]>>) {
-    const data = source.value();
+    const data = source.getValue();
     if (data !== "loading" && data.status !== "rejected") {
         const rsp = await func();
         if (rsp.status == "rejected")
@@ -108,8 +108,8 @@ export const HeavyReRender = <T>(item: Pointable<T>, map: (val: T) => Component)
     constructor() {
         super();
         console.debug("HeavyReRender got constructed");
-        const it = isPointer(item) ? item : State({ item }).$item as Pointer<T>;
-        it.on((val: T) => {
+        const it = Pointer.of(item);
+        it.listen((val: T) => {
             this.wrapper.textContent = '';
             this.wrapper.append(map(val).draw());
         });

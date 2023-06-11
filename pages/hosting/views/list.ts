@@ -1,6 +1,6 @@
 import { format } from "https://deno.land/std@0.188.0/fmt/bytes.ts";
 import { API, LoadingSpinner, SliderInput, stupidErrorAlert } from "shared";
-import { Box, Color, CommonIconType, Component, Dialog, DropDownInput, Entry, Grid, Horizontal, IconButton, IconButtonComponent, MaterialIcons, MediaQuery, PlainText, Reactive, State, StateHandler, TextInput, Vertical, ref, refMap } from "webgen/mod.ts";
+import { Box, Color, CommonIconType, Component, Dialog, DropDownInput, Entry, Grid, Horizontal, IconButton, IconButtonComponent, MaterialIcons, MediaQuery, PlainText, Reactive, ref, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import servers from "../../../data/eggs.json" assert { type: "json" };
 import locations from "../../../data/locations.json" assert { type: "json" };
 import { Location, PowerState, Server } from "../../../spec/music.ts";
@@ -26,7 +26,7 @@ export const moveDialog = (name: string, from: Location, to: Location) => Dialog
 
 export const entryServer = (server: StateHandler<Server>, small: boolean) => Entry({
     title: server.name,
-    subtitle: ref`${refMap(server.$type, it => servers[ it ].name)} @ ${refMap(server.$state, it => it == "moving" ? "Moving to " : "")}${refMap(server.$location, it => locations[ it ])}`
+    subtitle: ref`${server.$type.map(it => servers[ it ].name)} @ ${server.$state.map(it => it == "moving" ? "Moving to " : "")}${server.$location.map(it => locations[ it ])}`
 })
     .addPrefix(Reactive(server, "state", () => Box().addClass("dot", server.state)).removeFromLayout())
     .addSuffix(

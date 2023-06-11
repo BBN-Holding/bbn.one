@@ -1,6 +1,6 @@
 import { API, count, HeavyList, loadMore, Menu, placeholder } from "shared";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Box, Button, Color, Dialog, Entry, Grid, PlainText, Reactive, ref, refMap, State, StateHandler, TextInput } from "webgen/mod.ts";
+import { Box, Button, Color, Dialog, Entry, Grid, PlainText, Reactive, ref, State, StateHandler, TextInput } from "webgen/mod.ts";
 import { DropType, Server } from "../../../spec/music.ts";
 import { entryServer } from "../../hosting/views/list.ts";
 import { activeUser } from "../../manager/helper.ts";
@@ -16,7 +16,7 @@ export const adminMenu = Menu({
     categories: {
         "overview/": {
             title: `Overview`,
-            items: refMap(state.$payouts, it => it === "loading" || it.status === "rejected" ? [] : [
+            items: state.$payouts.map(it => it === "loading" || it.status === "rejected" ? [] : [
                 {
                     id: "streams/",
                     title: "Total Streams",
@@ -35,12 +35,11 @@ export const adminMenu = Menu({
                 {
                     id: "bbnmoney/",
                     title: "BBN Revenue",
-                    subtitle: refMap(state.$wallets,
-                        it => it == "loading"
-                            ? `---`
-                            : it.status == "rejected"
-                                ? "(failed)"
-                                : "£ " + sumOf(Object.values(it.value.find(wallet => wallet.user === "62ea6fa5321b3702e93ca21c")?.balance!), e => e).toFixed(2) ?? 0
+                    subtitle: state.$wallets.map(it => it == "loading"
+                        ? `---`
+                        : it.status == "rejected"
+                            ? "(failed)"
+                            : "£ " + sumOf(Object.values(it.value.find(wallet => wallet.user === "62ea6fa5321b3702e93ca21c")?.balance!), e => e).toFixed(2) ?? 0
                     )
                 }
             ]),
@@ -123,7 +122,7 @@ export const adminMenu = Menu({
         },
         "oauth/": {
             title: ref`OAuth ${count(state.$oauth)}`,
-            items: refMap(state.$oauth, it => it === "loading" || it.status === "rejected" ? [] : [
+            items: state.$oauth.map(it => it === "loading" || it.status === "rejected" ? [] : [
                 {
                     title: "Create new OAuth Application",
                     id: "add+oauth/",

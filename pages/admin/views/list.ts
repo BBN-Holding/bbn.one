@@ -1,11 +1,11 @@
 import { API } from "shared";
-import { Box, Button, Color, CommonIconType, Dialog, Entry, Grid, IconButton, Image, ReCache, ref, refMap, TextInput } from "webgen/mod.ts";
+import { Box, Button, Color, CommonIconType, Dialog, Entry, Grid, IconButton, Image, ReCache, ref, TextInput } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Wallet } from "../../../spec/music.ts";
 import { state } from "../state.ts";
 
 export function userName(id: string) {
-    return refMap(state.$users, it => it === "loading" || it.status === "rejected" ? "(TODO: Load me)" : it.value.find(x => x._id == id)?.profile.username ?? "Unknown User");
+    return state.$users.map(it => it === "loading" || it.status === "rejected" ? "(TODO: Load me)" : it.value.find(x => x._id == id)?.profile.username ?? "Unknown User");
 }
 
 export function entryWallet(wallet: Wallet) {
@@ -57,7 +57,7 @@ export function entryFile(file: File) {
     })).addSuffix(IconButton(CommonIconType.Download, "download").onClick(async () => {
         const blob = await API.admin(API.getToken()).files.download(file._id);
         if (blob.status !== "fulfilled") return;
-        const url  = window.URL.createObjectURL(blob.value);
+        const url = window.URL.createObjectURL(blob.value);
         window.open(url, '_blank');
     })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
         API.admin(API.getToken()).files.delete(file._id);

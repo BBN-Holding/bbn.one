@@ -1,5 +1,5 @@
 import { HeavyList, HeavyReRender } from "shared";
-import { Box, ButtonComponent, Component, Entry, isPointer, Pointable, Reactive, State, Vertical } from "webgen/mod.ts";
+import { Box, ButtonComponent, Component, Entry, Pointable, Pointer, Reactive, State, Vertical } from "webgen/mod.ts";
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
 
 export interface MenuItem {
@@ -44,14 +44,14 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
         super();
         this.wrapper.append(Reactive(this.nav, "active", () => this.walkMenu()).draw());
         if (rootMenu.categories)
-            this.nav.$activeCategory.on((val) => {
+            this.nav.$activeCategory.listen((val) => {
                 this.nav.active = rootMenu.id + Object.keys(rootMenu.categories!)[ val ];
             });
     }
 
     setActivePath(clickPath: Pointable<string>) {
-        if (isPointer(clickPath)) {
-            clickPath.on((val) => this.setActivePath(val));
+        if (clickPath instanceof Pointer) {
+            clickPath.listen((val) => this.setActivePath(val));
             return this;
         }
         this.nav.active = clickPath;
