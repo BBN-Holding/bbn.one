@@ -262,6 +262,16 @@ export const meta = zod.object({
         ammount: zod.number()
     }))
 });
+
+export const bugReport = zod.object({
+    type: zod.literal("web-frontend"),
+    error: zod.string(),
+    platform: zod.string(),
+    platformVersion: zod.string(),
+    browserVersion: zod.string(),
+    userId: zod.string().optional()
+});
+
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Artist = zod.infer<typeof artist>;
@@ -278,3 +288,4 @@ export type Limits = zod.infer<typeof limits>;
 export type Meta = zod.infer<typeof meta>;
 export type StoreItems = zod.infer<typeof storeItems>;
 export type Location = zod.infer<typeof location>;
+export type BugReport = zod.infer<typeof bugReport>;

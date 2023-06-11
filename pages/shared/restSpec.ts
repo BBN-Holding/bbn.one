@@ -1,5 +1,5 @@
 import { assert } from "std/testing/asserts.ts";
-import { Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, StoreItems, Wallet } from "../../spec/music.ts";
+import { BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, StoreItems, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
 
 export const Permissions = [
@@ -76,18 +76,19 @@ export function displayError(data: unknown) {
     if (data instanceof Error) {
         if (data.message === "Failed to fetch")
             return "Error: Can't load. Please try again later.";
-
-        return `Error: ${data.message || defaultError}`;
+        if (data.message)
+            return `Error: ${data.message}`;
     }
     if (typeof data === "string") {
         try {
             const jdata = JSON.parse(data) as unknown;
             // display assert errors that have a message
             if (jdata && typeof jdata === "object" && 'type' in jdata && 'message' in jdata && jdata.type === "assert") {
-                return `Error: ${jdata.message || defaultError}`;
+                if (jdata.message)
+                    return `Error: ${jdata.message}`;
             }
         } catch (_e) {
-            return "Error: " + defaultError;
+            //
         }
     }
     return "Error: " + defaultError;
@@ -113,6 +114,12 @@ export const API = {
                 "/hmsys"
             ];
         return [];
+    },
+    bugReport: async (bugReport: BugReport) => {
+        await fetch(`${API.BASE_URL}bug-track`, {
+            method: "POST",
+            body: JSON.stringify(bugReport)
+        });
     },
     isPermited: (requiredPermissions: Permission[], userPermission: Permission[]) => {
         return requiredPermissions.every(required => userPermission.find(user => required.startsWith(user)));

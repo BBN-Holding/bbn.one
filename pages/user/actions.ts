@@ -6,7 +6,7 @@ import { state } from "./state.ts";
 
 export async function loginUser() {
     try {
-        assert(state.email && state.password, "Error: Please try again later");
+        assert(state.email && state.password, "Missing Email or Password");
         const rsp = await API.auth.email.post({
             email: state.email,
             password: state.password

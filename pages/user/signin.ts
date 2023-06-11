@@ -14,7 +14,7 @@ await RegisterAuthRefresh();
 WebGen();
 
 const ErrorMessage = () => Reactive(state, "error", () => state.error != undefined
-    ? PlainText(state.error ?? "Error: Please try again later.").addClass("error-message").setMargin("1rem 0 0")
+    ? PlainText(state.error ?? "Please try again later.").addClass("error-message").setMargin("1rem 0 0")
     : Box()
 )
     .removeFromLayout();
@@ -102,7 +102,15 @@ View(() => Vertical(
                             .setMargin("0 0 .6rem"),
                         Button("Sign in with Discord")
                             .setJustify("center")
-                            .asLinkButton(API.auth.oauthRedirect("discord"))
+                            // .asLinkButton(() => {
+                            //     API.auth.oauthRedirect("discord");
+
+                            // })
+                            .onPromiseClick(() => {
+                                (async () => {
+                                    throw "hi";
+                                })();
+                            })
                             .addPrefix(
                                 Custom(img(discordLogo))
                                     .addClass("prefix-logo")
