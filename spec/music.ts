@@ -206,9 +206,9 @@ export enum ServerTypes {
     LegacyPGF = "/minecraft/legacy/pgf/",
 }
 
-export const serverState = zod.enum(["offline", "starting", "stopping", "running", "installing", "start", "stop", "kill", "restart", "moving"]);
+export const serverState = zod.enum([ "offline", "starting", "stopping", "running", "installing", "start", "stop", "kill", "restart", "moving" ]);
 
-export const location = zod.enum(["bbn-fsn1", "bbn-hel1", "bbn-sgp1"]);
+export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-sgp" ]);
 
 export const server = zod.object({
     _id: zod.string(),
@@ -228,7 +228,7 @@ export const pteroServer = server.extend({
         container: zod.object({
             image: zod.string(),
             startup_command: zod.string(),
-            environment: zod.record(zod.string(), zod.union([zod.string(), zod.number(), zod.boolean(), zod.null()])),
+            environment: zod.record(zod.string(), zod.union([ zod.string(), zod.number(), zod.boolean(), zod.null() ])),
         }),
         egg: zod.number(),
         identifier: zod.string(),
@@ -247,7 +247,7 @@ export const metaLimti = limits.extend({
     slots: zod.number()
 });
 
-export const storeItems = zod.enum(["memory", "disk", "cpu", "slots"]);
+export const storeItems = zod.enum([ "memory", "disk", "cpu", "slots" ]);
 
 export const meta = zod.object({
     _id: zod.string(),
