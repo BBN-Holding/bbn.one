@@ -11,7 +11,7 @@ export function ReviewEntry(x: Drop) {
         title: x.title ?? "(no drop name)",
         subtitle: `${x.release ?? "(no release date)"} - ${x.user} - ${x.upc ?? "(no upc number)"} - ${x._id}`
     })
-        .addClass("limited-width", "small")
+        .addClass("small")
         .addSuffix(Button("Edit")
             .setStyle(ButtonStyle.Inline)
             .setColor(Color.Colored)

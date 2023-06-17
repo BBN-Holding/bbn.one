@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 // This code Will be ported to webgen
 
-import { API, Permission } from "shared";
+import { API, fileCache, Permission } from "shared";
 import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, ReCache, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
@@ -300,8 +300,14 @@ export function showPreviewImage(x: Drop, big = false) {
 }
 
 export async function loadImage(x: Drop) {
+    const cache = await fileCache();
+    if (await cache.has(x._id + x.artwork))
+        return cache.get(x._id + x.artwork);
+
     if (!x.artwork) return fetch(artwork).then(x => x.blob());
-    return await API.music(API.getToken()).id(x._id).artworkPreview();
+    const blob = await API.music(API.getToken()).id(x._id).artworkPreview();
+    await cache.set(x._id + x.artwork, blob);
+    return blob;
 }
 
 function update(state: StateHandler<{ list: [ name: string, img: string, type: ArtistTypes ][] | undefined; }>, index: number, key: number, value: any) {

@@ -1,4 +1,4 @@
-import { API } from "shared";
+import { API, asExternal, fileCache } from "shared";
 import { Box, Button, Color, CommonIconType, Dialog, Entry, Grid, IconButton, Image, ReCache, ref, TextInput } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Wallet } from "../../../spec/music.ts";
@@ -19,17 +19,21 @@ export function entryOAuth(app: OAuthApp) {
     return Entry({
         title: app.name,
         subtitle: app._id,
-    }).addPrefix(ReCache("appicon-" + app._id, () => API.admin(API.getToken()).files.download(app.icon), (type, val) => {
-        const imageSource = type == "loaded" && app.icon !== "" && val && val.status == "fulfilled"
-            ? Image({ type: "direct", source: () => Promise.resolve(val.value) }, "O-Auth Icon")
-            : Image(templateArtwork, "A Placeholder Artwork.");
-        return Box(imageSource)
-            .addClass("image-square");
-    })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
-        API.oauth(API.getToken()).delete(app._id);
-    })).addSuffix(Button("View").onClick(() => {
-        oAuthViewDialog(app).open();
-    })).addClass("small");
+    })
+        .addPrefix(ReCache("appicon-" + app._id, () => API.admin(API.getToken()).files.download(app.icon), (type, val) => {
+            const imageSource = type == "loaded" && app.icon !== "" && val && val.status == "fulfilled"
+                ? Image({ type: "direct", source: () => Promise.resolve(val.value) }, "O-Auth Icon")
+                : Image(templateArtwork, "A Placeholder Artwork.");
+            return Box(imageSource)
+                .addClass("image-square");
+        }))
+        .addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
+            API.oauth(API.getToken()).delete(app._id);
+        }))
+        .addSuffix(Button("View").onClick(() => {
+            oAuthViewDialog(app).open();
+        }))
+        .addClass("small");
 }
 
 const oAuthViewDialog = (oauth: OAuthApp) => {
@@ -48,7 +52,9 @@ export function entryFile(file: File) {
     return Entry({
         title: file.metadata.filename,
         subtitle: file._id,
-    }).addPrefix(ReCache("fileicon-" + file._id, () => API.admin(API.getToken()).files.download(file._id), (type, val) => {
+    }).addPrefix(ReCache("fileicon-" + file._id, () => loadFilePreview(file._id), (type, val) => {
+        if (type == "cache")
+            return Image({ type: "loading" }, "Loading");
         const imageSource = type == "loaded" && file.metadata.type.startsWith("image/") && val?.status === "fulfilled"
             ? Image({ type: "direct", source: () => Promise.resolve(val.value) }, "A Song Artwork")
             : Image(templateArtwork, "A Placeholder Artwork.");
@@ -61,5 +67,14 @@ export function entryFile(file: File) {
         window.open(url, '_blank');
     })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
         API.admin(API.getToken()).files.delete(file._id);
-    })).addClass("limited-width");
+    }));
+}
+
+export async function loadFilePreview(id: string) {
+    const cache = await fileCache();
+    if (await cache.has(id)) return await asExternal(cache.get(id));
+    const blob = await API.admin(API.getToken()).files.download(id);
+    if (blob.status == "fulfilled")
+        cache.set(id, blob.value);
+    return blob;
 }

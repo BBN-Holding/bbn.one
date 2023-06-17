@@ -12,7 +12,6 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
         super();
         console.debug("HeavyList got constructed");
         const list = asPointer(items);
-
         list.listen((val: External<T[]> | 'loading' | T[]) => {
             this.wrapper.textContent = '';
             if (val === "loading")
@@ -67,7 +66,6 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
         });
     }
     private canLoadMore(length: number) {
-        console.log(length);
         return this.paging.enabled && (length % this.paging.limit == 1);
     }
     enablePaging(loadMore: (offset: number, limit: number) => Promise<void>, limit = 30) {

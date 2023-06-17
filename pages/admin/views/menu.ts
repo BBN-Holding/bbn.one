@@ -1,17 +1,16 @@
-import { API, count, HeavyList, loadMore, placeholder } from "shared";
+import { API, count, HeavyList, loadMore, Navigation, placeholder } from "shared";
 import { sumOf } from "std/collections/sum_of.ts";
 import { Box, Button, Color, Dialog, Entry, Grid, PlainText, Reactive, ref, State, StateHandler, TextInput } from "webgen/mod.ts";
 import { DropType, Server } from "../../../spec/music.ts";
 import { entryServer } from "../../hosting/views/list.ts";
 import { activeUser } from "../../manager/helper.ts";
-import { Menu2 } from "../../shared/menu2.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
 import { UserEntry } from "./entryUser.ts";
 import { entryFile, entryOAuth, entryWallet } from "./list.ts";
 
-export const adminMenu = Menu2({
+export const adminMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     categories: [
         {
@@ -134,15 +133,13 @@ export const adminMenu = Menu2({
                 }).onClick(() => {
                     location.href = `/music/payout?id=${x._id}&userid=${activeUser.id}`;
                 }))
-                    .addClass("limited-width")
             ],
         },
         {
             id: "oauth",
             title: ref`OAuth ${count(state.$oauth)}`,
             children: state.$oauth.map(it => it === "loading" || it.status === "rejected"
-                ? [ HeavyList(state.$oauth, entryOAuth)
-                    .addClass("limited-width") ]
+                ? [ HeavyList(state.$oauth, entryOAuth) ]
                 : [
                     {
                         title: "Create new OAuth Application",
@@ -150,7 +147,8 @@ export const adminMenu = Menu2({
                         action: () => {
                             addOAuthDialog.open();
                         }
-                    }
+                    },
+                    HeavyList(state.$oauth, entryOAuth)
                 ])
         },
         {
@@ -163,7 +161,6 @@ export const adminMenu = Menu2({
             id: "servers",
             title: ref`Minecraft Servers ${count(state.$servers)}`,
             children: [ HeavyList(state.$servers, it => entryServer(State(it) as StateHandler<Server>, true))
-                .addClass("limited-width")
                 .enablePaging((offset, limit) => loadMore(state.$servers, () => API.admin(API.getToken()).servers.list(offset, limit)))
             ]
         },
@@ -171,12 +168,11 @@ export const adminMenu = Menu2({
             id: "wallets",
             title: ref`Wallets ${count(state.$wallets)}`,
             children: [ HeavyList(state.$wallets, entryWallet)
-                .addClass("limited-width")
                 .enablePaging((offset, limit) => loadMore(state.$wallets, () => API.admin(API.getToken()).wallets.list(offset, limit)))
             ]
         }
     ]
-});
+}).addClass("limited-width").setMargin("4rem auto 1rem");
 
 const oAuthData = State({
     name: "",

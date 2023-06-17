@@ -1,5 +1,5 @@
 import { HeavyList, HeavyReRender } from "shared";
-import { Box, ButtonComponent, Component, Entry, Pointable, Pointer, Reactive, State, Vertical } from "webgen/mod.ts";
+import { Box, ButtonComponent, Component, Entry, isPointer, Pointable, Reactive, State, Vertical } from "webgen/mod.ts";
 import { ActionBar, Link } from "../manager/misc/actionbar.ts";
 
 export interface MenuItem {
@@ -33,7 +33,9 @@ const FilterLastItem = (_: MenuItem, index: number, list: MenuItem[]): boolean =
  *
  * - ActionBar should be put in WebGen first (requires rewrite)
  *
- * - Add URL Router
+ * - Add URL Route
+ *
+ * @deprecated
  */
 export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
     nav = State({
@@ -50,7 +52,7 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
     }
 
     setActivePath(clickPath: Pointable<string>) {
-        if (clickPath instanceof Pointer) {
+        if (isPointer(clickPath)) {
             clickPath.listen((val) => this.setActivePath(val));
             return this;
         }
