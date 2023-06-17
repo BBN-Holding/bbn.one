@@ -58,7 +58,7 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
                 this.wrapper.append(
                     Vertical(
                         ...val.length == 0 ? [ this.placeholder ] : val.map(x => map(x)),
-                        Reactive(this.paging, "enabled", () => this.paging.enabled ? Button("Load More").setMargin("0 0 var(--gap)").onPromiseClick(() => this.loadMore(val.length - 2, this.paging.limit + 1)) : Box()),
+                        Reactive(this.paging, "enabled", () => this.paging.enabled ? Button("Load More").setMargin("0 0 var(--gap)").onPromiseClick(() => this.loadMore(val.length - 2, this.paging.limit + 1)) : Box().removeFromLayout()).removeFromLayout(),
                     )
                         .setGap("var(--gap)")
                         .draw()

@@ -1,6 +1,7 @@
 import { assert } from "std/testing/asserts.ts";
 import { asPointer, Box, Component, Entry, Grid, Icon, isMobile, isPointer, PlainText, Pointable, Pointer, Taglist, Vertical } from "webgen/mod.ts";
 import { HeavyList, HeavyReRender } from "./list.ts";
+import './navigation.css';
 
 interface ClickHandler {
     (path: string, node: MenuNode): void | Promise<void>;
@@ -22,6 +23,7 @@ interface CategoryNode extends MenuNode {
 
 type RootNode = Omit<MenuNode, "id"> & {
     categories?: CategoryNode[];
+    actions?: Pointable<Component[]>;
 };
 
 function traverseToMenuNode(rootNode: RootNode, path: string): MenuNode | null {
@@ -86,6 +88,7 @@ class MenuImpl extends Component {
     path: Pointer<string>;
     displayed = asPointer([]) as Pointer<RenderItem[]>;
     #header: Pointer<(data: this) => Component> = asPointer(defaultHeader);
+    #footer: Pointer<(data: this) => Component> = asPointer(defaultFooter);
 
     constructor(rootNode: RootNode) {
         super();
@@ -93,7 +96,7 @@ class MenuImpl extends Component {
         this.path = asPointer(rootNode.categories?.at(0) ? `${rootNode.categories.at(0)!.id}/` : "-/");
         // Renderer
         this.wrapper.append(Vertical(
-            HeavyReRender(this.#header, it => it(this)),
+            HeavyReRender(this.#header, it => it(this)).removeFromLayout(),
             HeavyList(this.displayed, item => {
                 if (item instanceof Component)
                     return item;
@@ -103,14 +106,14 @@ class MenuImpl extends Component {
                 if (click)
                     entry.onPromiseClick(async () => await click());
                 return entry;
-            })
+            }),
+            HeavyReRender(this.#footer, it => it(this)).removeFromLayout(),
         ).setGap("var(--gap)").draw());
 
         // Listener
         this.path.listen((val) => {
             const [ rootId ] = val.split("/");
             const unprefixed = val.replace(rootId, "");
-            console.log(val, rootId, unprefixed);
             const root = getMenuNodeByPrefix(rootNode, rootId);
             assert(root);
             const item = traverseToMenuNode(root, unprefixed);
@@ -141,6 +144,10 @@ class MenuImpl extends Component {
     setHeader(header: (data: this) => Component) {
         this.#header.setValue(header);
     }
+
+    setFooter(footer: (data: this) => Component) {
+        this.#footer.setValue(footer);
+    }
 }
 
 /**
@@ -151,10 +158,25 @@ class MenuImpl extends Component {
 export const Navigation = (rootNode: RootNode) => new MenuImpl(rootNode);
 
 function defaultHeader(menu: MenuImpl) {
-    return Vertical(
-        createBreadcrumb(menu),
-        createTagList(menu)
-    ).setGap("var(--gap)");
+    return HeavyReRender(isMobile, mobile => {
+        const list = Vertical(
+            createBreadcrumb(menu),
+            createTagList(menu)
+        ).setGap("var(--gap)");
+        if (!mobile) return Grid(
+            list,
+            createActionList(menu)
+        ).setRawColumns("auto max-content").setGap("var(--gap)").setAlign("center");
+        return list;
+    });
+}
+
+function defaultFooter(menu: MenuImpl) {
+    return HeavyReRender(isMobile, mobile => mobile ? Box(createActionList(menu)).addClass("sticky-footer") : Box().removeFromLayout()).removeFromLayout();
+}
+
+function createActionList(menu: MenuImpl) {
+    return HeavyReRender(menu.rootNode.actions, it => Grid(...(it ?? [])).addClass("action-list-bar"));
 }
 
 function createTagList(menu: MenuImpl) {
@@ -169,10 +191,7 @@ function createTagList(menu: MenuImpl) {
         const [ rootId ] = path.split("/");
         const unprefixed = path.replace(rootId, "");
         return unprefixed == "/";
-    }), visable => {
-        console.log("LOL");
-        return visable && menu.rootNode.categories ? Taglist(menu.rootNode.categories.map(it => it.title), index) : Box().removeFromLayout();
-    }).removeFromLayout();
+    }), visable => visable && menu.rootNode.categories ? Taglist(menu.rootNode.categories.map(it => it.title), index) : Box().removeFromLayout()).removeFromLayout();
 }
 
 function createBreadcrumb(menu: MenuImpl) {
@@ -187,45 +206,38 @@ function createBreadcrumb(menu: MenuImpl) {
             return [ root, ...items ];
         });
         function moveToPath(index: number) {
-            menu.path.setValue(history.getValue().filter((_, i) => i > index).map(it => it.id).join("/") + "/");
+            menu.path.setValue(history.getValue().filter((_, i) => index >= i).map(it => it.id).join("/") + "/");
         }
 
         if (mobile)
             return HeavyReRender(history, it => {
                 const last = it.at(-2);
                 if (!last) return PlainText(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
-                    .addClass("label")
-                    .setFont(2.260625, 700);
+                    .addClass("label");
                 return Box(
                     // TODO: Make this a bit smaller
                     Grid(
                         Icon("arrow_back_ios_new"),
-                        PlainText('displayTextInHeader' in last && (<CategoryNode>last).displayTextInHeader != "same" ? menu.rootNode.title : last.title)
-                            .addClass("label")
-                            .setFont(2.260625, 700),
+                        PlainText(parseTitle(menu.rootNode, last, it.indexOf(last) + 1)).addClass("label"),
                     )
                         .addClass("history-entry", "mobile")
-                        .onClick(() => moveToPath(it.length - 2)),
+                        .onClick(() => moveToPath(it.indexOf(last))),
                     PlainText(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
-                        .addClass("label")
-                        .setFont(2.260625, 700),
+                        .addClass("label"),
                 );
-            }).removeFromLayout();
+            }).addClass("history-list").removeFromLayout();
         return HeavyReRender(history, it => {
             return Grid(
                 ...it.map((entry, index) =>
                     Box(
-                        PlainText(entry.title)
-                            .addClass("label")
-                            .setFont(2.260625, 700),
+                        PlainText(entry.title).addClass("label"),
                         Icon("arrow_forward_ios")
                     )
                         .addClass("history-entry")
                         .onClick(() => moveToPath(index))
                 ).filter((_, i) => i != it.length - 1),
                 PlainText(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
-                    .addClass("label")
-                    .setFont(2.260625, 700),
+                    .addClass("label"),
             ).addClass("history-list");
         }).removeFromLayout();
     }
