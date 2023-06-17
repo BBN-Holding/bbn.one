@@ -23,5 +23,7 @@ function report(msg: any) {
         userId: localStorage[ "access-token" ]?.split(".").filter((_: string, i: number) => i <= 1).map((x: string) => JSON.parse(atob(x))).filter((_: string, i: number) => i == 1).map((it: any) => it.userId).join(),
         browserVersion: browser.version,
         location: location.toString()
+    }).catch(() => {
+        //
     });
 }

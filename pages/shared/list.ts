@@ -1,4 +1,4 @@
-import { Box, Button, Component, Horizontal, Icon, PlainText, Pointable, Pointer, Reactive, State, Vertical } from "webgen/mod.ts";
+import { asPointer, Box, Button, Component, Horizontal, Icon, PlainText, Pointable, Pointer, Reactive, State, Vertical } from "webgen/mod.ts";
 import { LoadingSpinner } from "./components.ts";
 import { displayError, External } from "./restSpec.ts";
 
@@ -11,7 +11,7 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
     constructor() {
         super();
         console.debug("HeavyList got constructed");
-        const list = Pointer.of(items);
+        const list = asPointer(items);
 
         list.listen((val: External<T[]> | 'loading' | T[]) => {
             this.wrapper.textContent = '';
@@ -108,7 +108,7 @@ export const HeavyReRender = <T>(item: Pointable<T>, map: (val: T) => Component)
     constructor() {
         super();
         console.debug("HeavyReRender got constructed");
-        const it = Pointer.of(item);
+        const it = asPointer(item);
         it.listen((val: T) => {
             this.wrapper.textContent = '';
             this.wrapper.append(map(val).draw());
