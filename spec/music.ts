@@ -159,8 +159,8 @@ export const file = zod.object({
     length: zod.number(),
     chunkSize: zod.number(),
     uploadDate: zod.string(),
+    filename: zod.string(),
     metadata: zod.object({
-        filename: zod.string(),
         type: zod.string(),
     })
 });

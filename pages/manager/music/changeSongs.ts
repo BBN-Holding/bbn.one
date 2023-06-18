@@ -15,7 +15,7 @@ export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) =
             data.map(x => x.data.data).forEach(x => obj = { ...obj, ...x });
 
             // deno-lint-ignore no-explicit-any
-            await API.music(API.getToken()).id(drop._id).post(<any>obj);
+            await API.music(API.getToken()).id(drop._id).update(<any>obj);
 
             location.reload(); // Handle this Smarter => Make it a Reload Event.
         },

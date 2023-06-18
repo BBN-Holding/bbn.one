@@ -23,10 +23,10 @@ export function entryWallet(wallet: Wallet) {
 } */
 
 export function transcriptMenu(transcripts: External<Transcript[]> | "loading"): MenuItem[] {
-    if (transcripts === "loading" || transcripts.status !== 'fulfilled') return [{
+    if (transcripts === "loading" || transcripts.status !== 'fulfilled') return [ {
         title: "Loading...",
         id: "loading/",
-    }];
+    } ];
     const data = transcripts.value;
     return data.map(transcript => ({
         title: `Ticket with ${transcript.with}`,
@@ -75,7 +75,7 @@ const oAuthViewDialog = (oauth: OAuthApp) => {
 
 export function entryFile(file: File) {
     return Entry({
-        title: file.metadata.filename,
+        title: file.filename,
         subtitle: file._id,
     }).addPrefix(ReCache("fileicon-" + file._id, () => API.admin(API.getToken()).files.download(file._id), (type, val) => {
         const imageSource = type == "loaded" && file.metadata.type.startsWith("image/") && val?.status === "fulfilled"
@@ -86,7 +86,7 @@ export function entryFile(file: File) {
     })).addSuffix(IconButton(CommonIconType.Download, "download").onClick(async () => {
         const blob = await API.admin(API.getToken()).files.download(file._id);
         if (blob.status !== "fulfilled") return;
-        const url  = window.URL.createObjectURL(blob.value);
+        const url = window.URL.createObjectURL(blob.value);
         window.open(url, '_blank');
     })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
         API.admin(API.getToken()).files.delete(file._id);
