@@ -1,5 +1,5 @@
 import { count, LoadingSpinner, Menu } from "shared";
-import { Color, Reactive, ref, refMap } from "webgen/mod.ts";
+import { Color, Reactive, ref } from "webgen/mod.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { state } from "../data.ts";
 import { listView } from "../views/list.ts";
@@ -24,11 +24,11 @@ export const hostingMenu = Menu({
     },
     menuBarAction: {
         title: "Start new Server",
-        color: refMap(state.$meta, () => !state.meta || (state.meta.used.slots >= state.meta.limits.slots) ? Color.Disabled : Color.Grayscaled),
+        color: state.$meta.map(() => !state.meta || (state.meta.used.slots >= state.meta.limits.slots) ? Color.Disabled : Color.Grayscaled),
         onclick: () => {
             location.href = "/hosting/create";
         }
     },
     custom: () => LoadingSpinner()
 })
-    .setActivePath(refMap(state.$loaded, loaded => loaded ? (state.servers.length == 0 ? '/profile/' : '/servers/') : '/'));
+    .setActivePath(state.$loaded.map(loaded => loaded ? (state.servers.length == 0 ? '/profile/' : '/servers/') : '/'));

@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 import { API } from "./pages/shared/restSpec.ts";
 // @deno-types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/platform/index.d.ts"
-import * as browser from "https://unpkg.com/platform@1.3.6/platform.js";
+import browser from "https://unpkg.com/platform@1.3.6/platform.js";
 
 globalThis.onunhandledrejection = (e) => {
     report(e.reason);
@@ -23,5 +23,7 @@ function report(msg: any) {
         userId: localStorage[ "access-token" ]?.split(".").filter((_: string, i: number) => i <= 1).map((x: string) => JSON.parse(atob(x))).filter((_: string, i: number) => i == 1).map((it: any) => it.userId).join(),
         browserVersion: browser.version,
         location: location.toString()
+    }).catch(() => {
+        //
     });
 }

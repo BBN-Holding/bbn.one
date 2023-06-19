@@ -6,6 +6,6 @@ export function UserEntry(x: ProfileData) {
         title: x.profile.username,
         subtitle: `${x._id} - ${x.profile.email}`
     })
-        .addClass("limited-width", "small")
+        .addClass("small")
         .addPrefix(Box(showProfilePicture(x)));
 }

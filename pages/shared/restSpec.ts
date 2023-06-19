@@ -18,7 +18,7 @@ export const Permissions = [
 export type Permission = typeof Permissions[ number ];
 export type External<T> = PromiseSettledResult<T>;
 
-async function settle<T>(promise: Promise<T>): Promise<PromiseSettledResult<T>> {
+export async function asExternal<T>(promise: Promise<T>): Promise<PromiseSettledResult<T>> {
     try {
         return {
             status: "fulfilled",
@@ -35,24 +35,24 @@ async function settle<T>(promise: Promise<T>): Promise<PromiseSettledResult<T>> 
 function json<T>() {
     return async (rsp: Response) => {
         if (!rsp.ok)
-            return await settle(Promise.reject(await rsp.text()));
-        return await settle(rsp.json() as Promise<T>);
+            return await asExternal(Promise.reject(await rsp.text()));
+        return await asExternal(rsp.json() as Promise<T>);
     };
 }
 
 function none() {
     return async (rsp: Response) => {
         if (!rsp.ok)
-            return await settle(Promise.reject(await rsp.text()));
-        return await settle(Promise.resolve(true));
+            return await asExternal(Promise.reject(await rsp.text()));
+        return await asExternal(Promise.resolve(true));
     };
 }
 
 function blob() {
     return async (rsp: Response) => {
         if (!rsp.ok)
-            return await settle(Promise.reject(await rsp.text()));
-        return await settle(rsp.blob());
+            return await asExternal(Promise.reject(await rsp.text()));
+        return await asExternal(rsp.blob());
     };
 }
 
@@ -65,7 +65,7 @@ export function stupidErrorAlert<T>(data: PromiseSettledResult<T>): T {
 
 
 function reject(rsp: unknown) {
-    return settle(Promise.reject(rsp));
+    return asExternal(Promise.reject(rsp));
 }
 
 export const defaultError = "Something happend unexpectedly. Please try again later.";

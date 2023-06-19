@@ -1,5 +1,5 @@
 import { API, count, LoadingSpinner, Menu } from "shared";
-import { Reactive, ref, refMap, Vertical } from "webgen/mod.ts";
+import { Reactive, ref, Vertical } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { state } from "../state.ts";
@@ -38,7 +38,7 @@ export const musicMenu = Menu({
     },
     custom: () => LoadingSpinner()
 })
-    .setActivePath(refMap(state.$loaded, loaded => loaded
+    .setActivePath(state.$loaded.map(loaded => loaded
         ? ((state.drafts?.length ?? 0) > 0 ? "/drafts/" : "/published/")
         : "/"
     ));
