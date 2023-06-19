@@ -1,0 +1,23 @@
+.split-list {
+    align-content: start;
+}
+
+.terminal-card {
+    padding: 0.7rem;
+    --color-grayscaled-lightness: 10%;
+    --color-grayscaled-font: white;
+}
+
+.terminal-card.shadow .wlayer-inner {
+    background: black;
+    opacity: 1;
+}
+
+.terminal-card .internal-grid {
+    grid-template-rows: auto max-content;
+    z-index: 1;
+}
+
+.stats-list>.wggrid {
+    grid-auto-flow: column;
+}

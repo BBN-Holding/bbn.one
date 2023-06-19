@@ -4,14 +4,13 @@ import { Box, createElement, Custom, PlainText, Vertical } from "webgen/mod.ts";
 import { Drop } from "../../spec/music.ts";
 import './email.css';
 
-//TODO: Use better font instead of Open Sans
 export const rawTemplate = (data: string) => `
 <mjml>
     <mj-head>
-        <mj-font name="Open Sans" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+        <mj-font name="Open Sans" href="https://fonts.googleapis.com/css?family=Red+Hat+Display" />
         <mj-attributes>
             <mj-text line-height="1.3"/>
-            <mj-all font-family="Open Sans"/>
+            <mj-all font-family="Red Hat Display, Helvetica"/>
             <mj-button background-color=\"#F19D2D\" color=\"black\">
         </mj-attributes>
     </mj-head>

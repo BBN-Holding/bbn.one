@@ -8,7 +8,7 @@ export function DropEntry(x: Drop, small: boolean) {
         title: x.title ?? "(no drop name)",
         subtitle: `${x.release ?? "(no release date)"} - ${x.upc ?? "(no upc number)"}`
     })
-        .addClass("limited-width", small ? "small" : "normal")
+        .addClass(small ? "small" : "normal")
         .addPrefix(ReCache("image-preview-" + x._id + small, () => Promise.resolve(), (type) => {
             const imageSource = type == "loaded" && x.artwork
                 ? Image({ type: "direct", source: async () => await loadImage(x) ?? fetch(templateArtwork).then(x => x.blob()) }, "A Song Artwork")

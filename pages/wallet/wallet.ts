@@ -1,10 +1,9 @@
-import { API } from "shared";
-import { Card, Color, Grid, MaterialIcons, MediaQuery, PlainText, Reactive, State, Table, Vertical, View, WebGen } from "webgen/mod.ts";
+import { API, Navigation } from "shared";
+import { Button, Card, Color, Grid, isMobile, MaterialIcons, MediaQuery, PlainText, Reactive, State, Table, Vertical, View, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
 import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { changeThemeColor } from "../manager/misc/common.ts";
-import { Menu } from "../shared/menu.ts";
 import './wallet.css';
 
 await RegisterAuthRefresh();
@@ -24,18 +23,20 @@ const state = State({
 View(() => Vertical(
     DynaNavigation("Wallet"),
     Reactive(state, "loaded", () => Vertical(
-        Menu({
+        Navigation({
             title: "Your Wallet",
-            id: "/",
-            menuBarAction: {
-                title: "Request Payout",
-                color: state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained! > 0 ? Color.Grayscaled : Color.Disabled,
-                onclick: async () => {
-                    await API.wallet(API.getToken()).requestPayout();
-                    alert(`Your payout request has been submitted.`)
-                }
-            },
-        }),
+            actions: [
+                Button("Request Payout")
+                    .onPromiseClick(async () => {
+                        await API.wallet(API.getToken()).requestPayout();
+                        alert(`Your payout request has been submitted.`);
+                    })
+                    .setColor(state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained! > 0 ? Color.Grayscaled : Color.Disabled)
+            ]
+        }).addClass(
+            isMobile.map(mobile => mobile ? "mobile-navigation" : "navigation"),
+            "limited-width"
+        ),
         MediaQuery("(max-width: 700px)", (small) =>
             Reactive(state, "wallet", () =>
                 Vertical(

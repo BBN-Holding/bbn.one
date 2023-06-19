@@ -25,8 +25,7 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
         return null;
     return [
         PlainText(title)
-            .addClass("list-title")
-            .addClass("limited-width"),
+            .addClass("list-title"),
         MediaQuery("(max-width: 700px)",
             (matches) =>
                 Vertical(...dropList.map(x =>
@@ -40,21 +39,21 @@ export function listPayouts(payouts: Payout[], admin = false) {
     return Vertical(payouts && payouts.length > 0 ? [
         PlainText("Payouts")
             .addClass("list-title")
-            .addClass("limited-width"),
+            .addClass("limited-width")
+            .setMargin("0 auto 1rem"),
         Vertical(sortBy(payouts, e => e.period).reverse().map(x =>
             Entry({
                 title: x.period,
                 subtitle: x.moneythisperiod,
             }).onClick(() => {
                 location.href = `/music/payout?id=${x._id}${(!admin && permCheck("/hmsys/user/manage", "/bbn/manage")) ? `&userid=${activeUser.id}` : ""}`;
-            }).addClass("limited-width")
+            })
         )).setGap("1rem"),
     ] : [
         PlainText("No Payouts")
             .addClass("list-title")
             .addClass("limited-width"),
-        PlainText("Release new Drops to earn money")
-            .addClass("limited-width"),
+        PlainText("Release new Drops to earn money"),
     ]);
 }
 
