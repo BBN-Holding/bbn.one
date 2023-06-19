@@ -361,3 +361,11 @@ cardlist {
     height: 100%;
     width: 100%;
 }
+
+.mobile-navigation {
+    margin: 1rem auto 1rem;
+}
+
+.navigation {
+    margin: 5rem auto 1rem;
+}

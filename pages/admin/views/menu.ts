@@ -1,6 +1,6 @@
 import { API, count, HeavyList, loadMore, Navigation, placeholder } from "shared";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Box, Button, Color, Dialog, Entry, Grid, PlainText, Reactive, ref, State, StateHandler, TextInput } from "webgen/mod.ts";
+import { Box, Button, Color, Dialog, Entry, Grid, isMobile, PlainText, Reactive, ref, State, StateHandler, TextInput } from "webgen/mod.ts";
 import { DropType, Server } from "../../../spec/music.ts";
 import { entryServer } from "../../hosting/views/list.ts";
 import { activeUser } from "../../manager/helper.ts";
@@ -178,7 +178,11 @@ export const adminMenu = Navigation({
                 state.$transcripts.map(it => transcriptMenu(it))
         },
     ]
-}).addClass("limited-width").setMargin("4rem auto 1rem");
+})
+    .addClass(
+        isMobile.map(mobile => mobile ? "mobile-navigation" : "navigation"),
+        "limited-width"
+    );
 
 const oAuthData = State({
     name: "",
