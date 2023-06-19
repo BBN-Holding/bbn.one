@@ -1,4 +1,4 @@
-import { serve } from "../esbuild_serve/mod.ts";
+import { serve } from "https://deno.land/x/esbuild_serve@1.3.0/mod.ts";
 
 const title = new Map(Object.entries({
     admin: "BBN Admin Panel",
