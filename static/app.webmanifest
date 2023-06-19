@@ -3,7 +3,7 @@
     "short_name": "BBN",
     "theme_color": "#db9321",
     "background_color": "#000000",
-    "display": "minimal-ui",
+    "display": "standalone",
     "orientation": "portrait",
     "scope": "/",
     "start_url": "/",
