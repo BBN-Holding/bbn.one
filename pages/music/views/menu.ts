@@ -11,7 +11,7 @@ export const musicMenu = Menu({
     menuBarAction: {
         title: "Submit new Drop",
         onclick: async () => {
-            const id = await API.music(API.getToken()).post();
+            const id = await API.music(API.getToken()).drops.create();
             location.href = `/music/new-drop?id=${id}`;
         }
     },
