@@ -153,7 +153,7 @@ export function serverDetails(server: StateHandler<Server>) {
 
     const terminal = new TerminalComponent();
 
-    terminal.write("Hello World\r\n");
+    terminal.write("Connecting...\r\n");
 
     terminal.connected.listen((val) => {
         console.log(server._id, val);
