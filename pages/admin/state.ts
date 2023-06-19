@@ -1,6 +1,6 @@
 import { External } from "shared";
 import { State } from "webgen/mod.ts";
-import { Drop, File, OAuthApp, Payout, Server, Wallet } from "../../spec/music.ts";
+import { Drop, File, OAuthApp, Payout, Server, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
 
 export const state = State({
@@ -18,4 +18,5 @@ export const state = State({
     files: <External<File[]> | "loading">"loading",
     servers: <External<Server[]> | "loading">"loading",
     wallets: <External<Wallet[]> | "loading">"loading",
+    transcripts: <External<Transcript[]> | "loading">"loading",
 });

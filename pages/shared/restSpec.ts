@@ -1,5 +1,5 @@
 import { assert } from "std/testing/asserts.ts";
-import { BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, StoreItems, Wallet } from "../../spec/music.ts";
+import { BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../manager/helper.ts";
 
 export const Permissions = [
@@ -434,6 +434,18 @@ export const API = {
                 });
                 return res;
             }
+        },
+        transcripts: {
+            list: async (offset = 0, limit = 31) => {
+                const paging = new URLSearchParams();
+                paging.append("_offset", offset.toString());
+                paging.append("_limit", limit.toString());
+                return await fetch(`${API.BASE_URL}admin/transcripts?${paging}`, {
+                    headers: headers(token)
+                })
+                    .then(json<Transcript[]>())
+                    .catch(reject);
+            }
         }
     }),
     payment: (token: string) => ({
@@ -518,23 +530,38 @@ export const API = {
         })
     }),
     music: (token: string) => ({
-        list: {
-            get: async () => {
-                const data = await fetch(`${API.BASE_URL}music/list`, {
+        drops: {
+            list: async () => {
+                const data = await fetch(`${API.BASE_URL}music/drops`, {
                     headers: headers(token)
                 }).then(x => x.json());
-                return data.drops as Drop[];
+                return data as Drop[];
+            },
+            create: async () => {
+                const data = await fetch(`${API.BASE_URL}music/`, {
+                    method: "POST",
+                    headers: headers(token)
+                }).then(x => x.json());
+                assert(typeof data.id == "string");
+                return data.id as string;
             }
         },
-        post: async () => {
-            const data = await fetch(`${API.BASE_URL}music/`, {
-                method: "POST",
-                headers: headers(token)
-            }).then(x => x.json());
-            assert(typeof data.id == "string");
-            return data.id as string;
-        },
         id: (id: string) => ({
+            get: async () => {
+                return (await fetch(`${API.BASE_URL}music/drops/${id}`, {
+                    method: "GET",
+                    headers: headers(token)
+                }).then(x => x.json()));
+            },
+            update: async (data: Drop) => {
+                const fetchData = await fetch(`${API.BASE_URL}music/drops/${id}`, {
+                    method: "PATCH",
+                    body: JSON.stringify(data),
+                    headers: headers(token)
+                });
+                await fetchData.text();
+                assert(fetchData.ok);
+            },
             review: {
                 post: (data: { title: string, reason: string[], body: string; denyEdits?: boolean; }) => {
                     return fetch(`${API.BASE_URL}music/${id}/review`, {
@@ -552,15 +579,6 @@ export const API = {
                         body: data ? JSON.stringify(data) : null
                     }).then(x => x.text());
                 },
-            },
-            post: async (data: Drop) => {
-                const fetchData = await fetch(`${API.BASE_URL}music/${id}`, {
-                    method: "POST",
-                    body: JSON.stringify(data),
-                    headers: headers(token)
-                });
-                await fetchData.text();
-                assert(fetchData.ok);
             },
             dropDownload: async (): Promise<{ code: string; }> => {
                 return await fetch(`${API.BASE_URL}music/${id}/drop-download`, {
@@ -585,13 +603,7 @@ export const API = {
                     method: "GET",
                     headers: headers(token)
                 }).then(x => x.blob());
-            },
-            get: async () => {
-                return (await fetch(`${API.BASE_URL}music/${id}`, {
-                    method: "GET",
-                    headers: headers(token)
-                }).then(x => x.json()));
-            },
+            }
         })
     })
 };

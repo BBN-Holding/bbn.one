@@ -63,7 +63,7 @@ const wizard = (restore?: Drop) => Wizard({
             data.map(x => x.data.data).forEach(x => obj = { ...obj, ...x });
 
             // deno-lint-ignore no-explicit-any
-            await API.music(API.getToken()).id(dropId).post(<any>obj);
+            await API.music(API.getToken()).id(dropId).update(<any>obj);
 
             await API.music(API.getToken()).id(dropId).type.post(DropType.UnderReview);
             location.href = "/music";
@@ -77,7 +77,7 @@ const wizard = (restore?: Drop) => Wizard({
         _data.map(x => x.success == true ? x.data : ({})).forEach(x => obj = { ...obj, ...x });
         try {
             // deno-lint-ignore no-explicit-any
-            await API.music(API.getToken()).id(dropId).post(<any>obj);
+            await API.music(API.getToken()).id(dropId).update(<any>obj);
         } catch (_) {
             alert("Unexpected Error happend while updating your Drop\nPlease try again later...");
         }

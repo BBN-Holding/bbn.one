@@ -31,7 +31,7 @@ export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[];
             file: undefined!
         } ] as Drop[ "songs" ]);
 
-        StreamingUploadHandler(`music/${drop._id}/upload`, {
+        StreamingUploadHandler(`music/drops/${drop._id}/upload`, {
             failure: () => {
                 state.uploadingSongs = <StateHandler<string[]>>state.uploadingSongs.filter(x => x != uploadId);
                 if (state.songs)
@@ -70,7 +70,7 @@ export function uploadArtwork(state: StateHandler<{ artworkClientData: AdvancedI
     state.loading = true;
 
     setTimeout(() => {
-        StreamingUploadHandler(`music/${params.get("id")!}/upload`, {
+        StreamingUploadHandler(`music/drops/${params.get("id")!}/upload`, {
             failure: () => {
                 state.loading = false;
                 state.artworkClientData = undefined;

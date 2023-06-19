@@ -8,7 +8,7 @@ import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
 import { UserEntry } from "./entryUser.ts";
-import { entryFile, entryOAuth, entryWallet } from "./list.ts";
+import { entryFile, entryOAuth, entryWallet, transcriptMenu } from "./list.ts";
 
 export const adminMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
@@ -144,7 +144,7 @@ export const adminMenu = Navigation({
                     {
                         title: "Create new OAuth Application",
                         id: "add+oauth",
-                        action: () => {
+                        clickHandler: () => {
                             addOAuthDialog.open();
                         }
                     },
@@ -170,7 +170,13 @@ export const adminMenu = Navigation({
             children: [ HeavyList(state.$wallets, entryWallet)
                 .enablePaging((offset, limit) => loadMore(state.$wallets, () => API.admin(API.getToken()).wallets.list(offset, limit)))
             ]
-        }
+        },
+        {
+            id: "transcripts",
+            title: ref`Tickets ${count(state.$transcripts)}`,
+            children:
+                state.$transcripts.map(it => transcriptMenu(it))
+        },
     ]
 }).addClass("limited-width").setMargin("4rem auto 1rem");
 

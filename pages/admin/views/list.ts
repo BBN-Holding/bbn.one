@@ -1,7 +1,7 @@
-import { API, asExternal, fileCache } from "shared";
+import { API, asExternal, External, fileCache, RenderItem } from "shared";
 import { Box, Button, Color, CommonIconType, Dialog, Entry, Grid, IconButton, Image, ReCache, ref, TextInput } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
-import { File, OAuthApp, Wallet } from "../../../spec/music.ts";
+import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
 import { state } from "../state.ts";
 
 export function userName(id: string) {
@@ -13,6 +13,36 @@ export function entryWallet(wallet: Wallet) {
         title: ref`${userName(wallet.user)} - ${((wallet.balance?.restrained ?? 0) + (wallet.balance?.unrestrained ?? 0)).toString()}`,
         subtitle: `${wallet.user} - ${wallet._id} - ${wallet.cut}% - restrained: ${wallet.balance?.restrained} unrestrained: ${wallet.balance?.unrestrained}`,
     }).addClass("small");
+}
+
+/* export function entryTranscript(transcript: Transcript) {
+    return Entry({
+        title: ref`Ticket with ${transcript.with}`,
+        subtitle: `${transcript.closed} - ${new Date(transcript.messages[0].timestamp).toISOString()}`,
+    }).addClass("small");
+} */
+
+export function transcriptMenu(transcripts: External<Transcript[]> | "loading"): RenderItem[] {
+    if (transcripts === "loading" || transcripts.status !== 'fulfilled') return [ {
+        title: "Loading...",
+        id: "loading",
+    } ];
+    const data = transcripts.value;
+    return data.map(transcript => ({
+        title: `${transcript.with}`,
+        id: transcript._id,
+        children: [
+            {
+                title: "Close" + transcript.with,
+                id: "close",
+            },
+            ...transcript.messages.map((x, i) => (<RenderItem>{
+                id: i.toString(),
+                title: `${x.author}`,
+                subtitle: x.content
+            }))
+        ]
+    }));
 }
 
 export function entryOAuth(app: OAuthApp) {
@@ -50,7 +80,7 @@ const oAuthViewDialog = (oauth: OAuthApp) => {
 
 export function entryFile(file: File) {
     return Entry({
-        title: file.metadata.filename,
+        title: file.filename,
         subtitle: file._id,
     }).addPrefix(ReCache("fileicon-" + file._id, () => loadFilePreview(file._id), (type, val) => {
         if (type == "cache")

@@ -3,13 +3,13 @@ import { asPointer, Box, Component, Entry, Grid, Icon, isMobile, isPointer, Plai
 import { HeavyList, HeavyReRender } from "./list.ts";
 import './navigation.css';
 
-interface ClickHandler {
+export interface ClickHandler {
     (path: string, node: MenuNode): void | Promise<void>;
 }
 
-type RenderItem = Component | MenuNode;
+export type RenderItem = Component | MenuNode;
 
-interface MenuNode {
+export interface MenuNode {
     id: string;
     title: Pointable<string>;
     children?: Pointable<RenderItem[]>;
@@ -17,11 +17,11 @@ interface MenuNode {
     firstRenderHandler?: ClickHandler;
 }
 
-interface CategoryNode extends MenuNode {
+export interface CategoryNode extends MenuNode {
     displayTextInHeader?: "same" | "useRoot";
 }
 
-type RootNode = Omit<MenuNode, "id"> & {
+export type RootNode = Omit<MenuNode, "id"> & {
     categories?: CategoryNode[];
     actions?: Pointable<Component[]>;
 };

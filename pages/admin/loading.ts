@@ -17,8 +17,10 @@ export async function refreshState() {
         (async () => state.files = await API.admin(API.getToken()).files.list())(),
         (async () => state.servers = await API.admin(API.getToken()).servers.list())(),
         (async () => state.wallets = await API.admin(API.getToken()).wallets.list())(),
-        (async () => state.oauth = await API.oauth(API.getToken()).list())()
+        (async () => state.oauth = await API.oauth(API.getToken()).list())(),
+        (async () => state.transcripts = await API.admin(API.getToken()).transcripts.list())(),
     ]);
+    console.log(state.transcripts)
 }
 
 const urls = {

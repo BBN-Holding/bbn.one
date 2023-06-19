@@ -159,8 +159,8 @@ export const file = zod.object({
     length: zod.number(),
     chunkSize: zod.number(),
     uploadDate: zod.string(),
+    filename: zod.string(),
     metadata: zod.object({
-        filename: zod.string(),
         type: zod.string(),
     })
 });
@@ -208,7 +208,7 @@ export enum ServerTypes {
 
 export const serverState = zod.enum([ "offline", "starting", "stopping", "running", "installing", "start", "stop", "kill", "restart", "moving" ]);
 
-export const location = zod.enum([ "bbn-fsn1", "bbn-hel1", "bbn-sgp1" ]);
+export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-sgp" ]);
 
 export const server = zod.object({
     _id: zod.string(),
@@ -237,7 +237,7 @@ export const pteroServer = server.extend({
 });
 
 export const serverCreate = zod.object({
-    name: zod.string().min(3),
+    name: userString,
     type: zod.nativeEnum(ServerTypes),
     location: location,
     limits: limits,
@@ -275,6 +275,21 @@ export const bugReport = zod.object({
     location: zod.string()
 });
 
+export const transcript = zod.object({
+    messages: zod.object({
+        author: zod.string(),
+        authorid: zod.string(),
+        content: zod.string(),
+        timestamp: zod.string(),
+        avatar: zod.string(),
+        attachments: zod.array(zod.string()).optional(),
+        embeds: zod.array(zod.any()).optional(),
+    }).array(),
+    closed: zod.string(),
+    with: zod.string(),
+    _id: zod.string(),
+});
+export type Transcript = zod.infer<typeof transcript>;
 export type Drop = zod.infer<typeof drop>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Artist = zod.infer<typeof artist>;

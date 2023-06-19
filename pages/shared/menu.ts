@@ -24,6 +24,7 @@ interface RootMenuItem extends MenuItem {
 
 const FilterLastItem = (_: MenuItem, index: number, list: MenuItem[]): boolean => index != list.length - 1;
 
+
 /**
  * # Declarative Tree Navigation
  *
@@ -65,7 +66,8 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
     getActivePath() {
         const list: (MenuItem | RootMenuItem)[] = [ rootMenu ];
         for (const iterator of this.nav.active.match(/(\w+\/)/g) ?? []) {
-            const last = list.at(-1)!;
+            const _last = list.at(-1)! as Pointable<MenuItem | RootMenuItem>;
+            const last = isPointer(_last) ? _last.value() : _last;
             if (isCategoryMenu(last) && last.id != iterator) {
                 // deno-lint-ignore no-explicit-any
                 const item = last.categories?.[ iterator as any ];
@@ -87,7 +89,6 @@ export const Menu = (rootMenu: RootMenuItem) => new class extends Component {
     private walkMenu() {
         const activeEntries = this.getActivePath();
         const active = activeEntries.at(-1)!;
-
         const list = this.isRootNav() ? undefined : activeEntries.filter(FilterLastItem).map((x, i) => (<Link>{
             title: x.title,
             onclick: () => {
