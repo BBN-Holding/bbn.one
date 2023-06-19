@@ -20,7 +20,6 @@ export async function refreshState() {
         (async () => state.oauth = await API.oauth(API.getToken()).list())(),
         (async () => state.transcripts = await API.admin(API.getToken()).transcripts.list())(),
     ]);
-    console.log(state.transcripts)
 }
 
 const urls = {

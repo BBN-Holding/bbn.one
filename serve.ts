@@ -1,6 +1,6 @@
 import { serve } from "../esbuild_serve/mod.ts";
 
-const display = new Map(Object.entries({
+const title = new Map(Object.entries({
     admin: "BBN Admin Panel",
     "hosting": "BBN Hosting",
     "hosting/create": "BBN Hosting",
@@ -22,7 +22,16 @@ serve({
         "robots.txt": "./static/robots.txt",
         "favicon.ico": "./static/favicon.ico",
         "email-header.png": "./static/email-header.png",
-        "app.webmanifest": "./static/app.webmanifest"
+        "app.webmanifest": "./static/app.webmanifest",
+        "images/icons/icon-72x72.png": "./static/images/icons/icon-72x72.png",
+        "images/icons/icon-96x96.png": "./static/images/icons/icon-96x96.png",
+        "images/icons/icon-128x128.png": "./static/images/icons/icon-128x128.png",
+        "images/icons/icon-144x144.png": "./static/images/icons/icon-144x144.png",
+        "images/icons/icon-152x152.png": "./static/images/icons/icon-152x152.png",
+        "images/icons/icon-192x192.png": "./static/images/icons/icon-192x192.png",
+        "images/icons/icon-384x384.png": "./static/images/icons/icon-384x384.png",
+        "images/icons/icon-512x512.png": "./static/images/icons/icon-512x512.png",
+        "images/apple.png": "./static/images/apple.png",
     },
     pages: {
         "index": "./pages/holding/index.ts",
@@ -62,12 +71,15 @@ function createTemplate(name: string, path: string) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>${display.get(path) ?? "BBN One"}</title>
+    <title>${title.get(path) ?? "BBN One"}</title>
     <link rel="manifest" href="/app.webmanifest">
     <meta charset='UTF-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name='theme-color' content='black'>
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="BBN One">
+    <link rel="apple-touch-icon" href="/images/apple.png">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="${name}.css">
     <script>(function (w, d, s, l, i) {
