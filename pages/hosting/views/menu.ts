@@ -3,10 +3,10 @@ import { format } from "std/fmt/bytes.ts";
 import { asPointer, BasicLabel, Box, Button, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, MaterialIcons, MediaQuery, PlainText, Reactive, ref, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import serverTypes from "../../../data/eggs.json" assert { type: "json" };
 import locations from "../../../data/locations.json" assert { type: "json" };
-import { PowerState, Server } from "../../../spec/music.ts";
+import { PowerState, Server, ServerDetails } from "../../../spec/music.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { MB, state } from "../data.ts";
-import { detailsSession } from "../loading.ts";
+import { currentDetailsSource, currentDetailsTarget, streamingPool } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import './details.css';
 import './list.css';
@@ -72,6 +72,9 @@ export const hostingMenu = Navigation({
                             await API.hosting(API.getToken()).serverId(server._id).power("stop");
                         })
                 })[ server.state ] ?? Box())).addClass(isMobile.map(it => it ? "small" : "normal"), "icon-buttons-list", "action-list"),
+                clickHandler: async () => {
+                    await streamingPool();
+                },
                 children: [
                     serverDetails(server),
                     {
@@ -153,24 +156,6 @@ type GridItem = Component | [ settings: {
 export function serverDetails(server: StateHandler<Server>) {
     const terminal = new TerminalComponent();
 
-    const socket = new WebSocket(`ws:localhost:8443/api/@bbn/hosting/details/648f6069ee8ce2782157fe1a`);
-
-    socket.onopen = () => {
-        console.log("WS OPENED");
-        const auth = JSON.stringify({ event: "auth", token: `${API.getToken()}` });
-        socket.send(auth);
-    };
-
-    socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.event === "console output") {
-            terminal.write(data.args + "\n");
-        }
-        else if (data.event === "status") {
-            //update status
-        }
-    };
-
     const input = State({
         uptime: undefined,
         address: undefined,
@@ -181,7 +166,6 @@ export function serverDetails(server: StateHandler<Server>) {
         message: ""
     });
 
-    detailsSession(server._id);
 
     const uptime = BasicLabel({
         title: input.$uptime.map(it => it ?? "---"),
@@ -204,6 +188,20 @@ export function serverDetails(server: StateHandler<Server>) {
     const disk = BasicLabel({
         title: input.$disk.map(it => `${it ?? "---"} %`),
         subtitle: "disk",
+    });
+
+    terminal.connected.listen(val => {
+        if (val) {
+            currentDetailsTarget.setValue(server._id);
+
+            currentDetailsSource.setValue((data: ServerDetails) => {
+                if (data.type == "stdout") {
+                    terminal.write(data.chunk + "\n");
+                } else
+                    console.log("Unhandled Info", data);
+            });
+        } else
+            currentDetailsTarget.setValue(undefined);
     });
 
     return HeavyReRender(isMobile, mobile => {

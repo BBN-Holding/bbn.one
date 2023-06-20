@@ -292,25 +292,39 @@ export const transcript = zod.object({
 
 export const serverDetails = zod.union([
     zod.object({
+        type: zod.literal("features"),
+        enabled: zod.enum([
+            "stdin",
+            "stdout",
+            "mc-java-players",
+            // "mc-java-files",
+            // "mc-java-settings"
+        ]).array()
+    }),
+    zod.object({
         type: zod.literal("deleted"),
     }),
     zod.object({
         type: zod.literal("unreachable"),
     }),
     zod.object({
-        type: zod.literal("console"),
+        type: zod.literal("stdout"),
         chunk: zod.string(),
         clearConsole: zod.literal(true).optional()
     }),
     zod.object({
-        type: zod.literal("stats"),
-        address: zod.string(),
-        name: zod.string(),
-        cpu: zod.string(),
-        memory: zod.string(),
-        disk: zod.string(),
+        type: zod.literal("mc-java-players"),
+        // TODO: Add spec data
     }),
-]);
+    zod.object({
+        type: zod.literal("stats"),
+        cpu: zod.number(),
+        memory: zod.number(),
+        disk: zod.number(),
+    }),
+]).and(zod.object({
+    _id: zod.string()
+}));
 
 export type Artist = zod.infer<typeof artist>;
 export type BugReport = zod.infer<typeof bugReport>;

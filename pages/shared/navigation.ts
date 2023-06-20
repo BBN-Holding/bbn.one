@@ -140,13 +140,13 @@ class MenuImpl extends Component {
     }
 
     private createClickHandler(menu: MenuNode): undefined | (() => Promise<void> | void) {
-        if (menu.children) return () => {
-            this.path.setValue(this.path.getValue() + menu.id + "/");
-        };
         if (menu.clickHandler) return async () => {
             await menu.clickHandler?.(this.path.getValue() + menu.id + "/", menu);
             if (menu.children)
                 this.path.setValue(this.path.getValue() + menu.id + "/");
+        };
+        if (menu.children) return () => {
+            this.path.setValue(this.path.getValue() + menu.id + "/");
         };
         return undefined;
     }
