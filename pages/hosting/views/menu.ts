@@ -150,14 +150,26 @@ type GridItem = Component | [ settings: {
     heigth?: number | undefined;
 }, element: Component ];
 export function serverDetails(server: StateHandler<Server>) {
-
     const terminal = new TerminalComponent();
 
-    terminal.write("Connecting...\r\n");
+    const socket = new WebSocket(`ws:localhost:8443/api/@bbn/hosting/details/648f6069ee8ce2782157fe1a`);
 
-    terminal.connected.listen((val) => {
-        console.log(server._id, val);
-    });
+    socket.onopen = () => {
+        console.log("WS OPENED");
+        const auth = JSON.stringify({ event: "auth", token: `${API.getToken()}` });
+        socket.send(auth);
+    };
+
+    socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log(data);
+        if (data.event === "console output") {
+            terminal.write(data.args + "\n");
+        }
+        else if (data.event === "status") {
+            //update status
+        }
+    };
 
     const input = State({
         uptime: undefined,
