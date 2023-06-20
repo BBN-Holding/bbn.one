@@ -289,21 +289,45 @@ export const transcript = zod.object({
     with: zod.string(),
     _id: zod.string(),
 });
-export type Transcript = zod.infer<typeof transcript>;
-export type Drop = zod.infer<typeof drop>;
-export type PureDrop = zod.infer<typeof pureDrop>;
+
+export const serverDetails = zod.union([
+    zod.object({
+        type: zod.literal("deleted"),
+    }),
+    zod.object({
+        type: zod.literal("unreachable"),
+    }),
+    zod.object({
+        type: zod.literal("console"),
+        chunk: zod.string(),
+        clearConsole: zod.literal(true).optional()
+    }),
+    zod.object({
+        type: zod.literal("stats"),
+        address: zod.string(),
+        name: zod.string(),
+        cpu: zod.string(),
+        memory: zod.string(),
+        disk: zod.string(),
+    }),
+]);
+
 export type Artist = zod.infer<typeof artist>;
-export type Song = zod.infer<typeof song>;
-export type Payout = zod.infer<typeof payout>;
-export type OAuthApp = zod.infer<typeof oauthapp>;
-export type File = zod.infer<typeof file>;
-export type Wallet = zod.infer<typeof wallet>;
-export type Server = zod.infer<typeof server>;
-export type PteroServer = zod.infer<typeof pteroServer>;
-export type PowerState = zod.infer<typeof serverState>;
-export type ServerCreate = zod.infer<typeof serverCreate>;
-export type Limits = zod.infer<typeof limits>;
-export type Meta = zod.infer<typeof meta>;
-export type StoreItems = zod.infer<typeof storeItems>;
-export type Location = zod.infer<typeof location>;
 export type BugReport = zod.infer<typeof bugReport>;
+export type Drop = zod.infer<typeof drop>;
+export type File = zod.infer<typeof file>;
+export type Limits = zod.infer<typeof limits>;
+export type Location = zod.infer<typeof location>;
+export type Meta = zod.infer<typeof meta>;
+export type OAuthApp = zod.infer<typeof oauthapp>;
+export type Payout = zod.infer<typeof payout>;
+export type PowerState = zod.infer<typeof serverState>;
+export type PteroServer = zod.infer<typeof pteroServer>;
+export type PureDrop = zod.infer<typeof pureDrop>;
+export type Server = zod.infer<typeof server>;
+export type ServerCreate = zod.infer<typeof serverCreate>;
+export type ServerDetails = zod.infer<typeof serverDetails>;
+export type Song = zod.infer<typeof song>;
+export type StoreItems = zod.infer<typeof storeItems>;
+export type Transcript = zod.infer<typeof transcript>;
+export type Wallet = zod.infer<typeof wallet>;

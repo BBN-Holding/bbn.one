@@ -24,6 +24,7 @@ export class TerminalComponent extends HTMLElement {
         this.terminal = new Terminal({
             cursorBlink: true,
             convertEol: true,
+            fontSize: 10
         });
 
         const addon = new FitAddon();

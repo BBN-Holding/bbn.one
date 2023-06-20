@@ -6,6 +6,7 @@ import locations from "../../../data/locations.json" assert { type: "json" };
 import { PowerState, Server } from "../../../spec/music.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { MB, state } from "../data.ts";
+import { detailsSession } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import './details.css';
 import './list.css';
@@ -162,7 +163,6 @@ export function serverDetails(server: StateHandler<Server>) {
 
     socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log(data);
         if (data.event === "console output") {
             terminal.write(data.args + "\n");
         }
@@ -181,6 +181,7 @@ export function serverDetails(server: StateHandler<Server>) {
         message: ""
     });
 
+    detailsSession(server._id);
 
     const uptime = BasicLabel({
         title: input.$uptime.map(it => it ?? "---"),
@@ -273,7 +274,7 @@ export function serverDetails(server: StateHandler<Server>) {
             .setGap("var(--gap)");
 
         if (!mobile)
-            items.setRawColumns("65% auto");
+            items.setRawColumns("69% auto");
 
         return items;
     });
