@@ -27,7 +27,7 @@ export class TerminalComponent extends HTMLElement {
     connectedCallback() {
         this.terminal = new Terminal({
             useStyle: true,
-            fontSize: 10,
+            fontSize: 11,
             disableStdin: true
         });
 

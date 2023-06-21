@@ -193,8 +193,11 @@ function createTagList(menu: MenuImpl) {
     if (!menu.rootNode.categories) return Box().removeFromLayout();
     const index = asPointer(0);
     index.listen((val, oldVal) => {
-        if (oldVal != undefined)
-            menu.path.setValue(menu.rootNode.categories![ val ].id + "/");
+        if (oldVal != undefined) {
+            const path = menu.rootNode.categories![ val ];
+            if (path)
+                menu.path.setValue(path.id + "/");
+        }
     });
 
     menu.path.listen(path => {
@@ -220,7 +223,7 @@ function createBreadcrumb(menu: MenuImpl) {
             return [ root, ...items ];
         });
         function moveToPath(index: number) {
-            menu.path.setValue(history.getValue().filter((_, i) => index >= i).map(it => it.id).join("/") + "/");
+            menu.path.setValue(history.getValue().filter((_, i) => index >= i).map(it => it.id ?? "-").join("/") + "/");
         }
 
         if (mobile)

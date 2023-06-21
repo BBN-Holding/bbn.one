@@ -1,24 +1,16 @@
 import { API, StreamingUploadHandler, uploadFilesDialog } from "shared";
 import { delay } from "std/async/mod.ts";
-import { AdvancedImage, Box, Color, Grid, IconButton, Image, Page, PlainText, Reactive, TextInput, Vertical, Wizard, WizardComponent } from "webgen/mod.ts";
+import { AdvancedImage, Box, Color, Grid, IconButton, Image, Page, PlainText, Reactive, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import { activeUser, allowedImageFormats, forceRefreshToken, track } from "../helper.ts";
-import { ActionBar } from "../misc/actionbar.ts";
-import { HandleSubmit, setErrorMessage } from "../misc/common.ts";
-import { ViewState, returnFunction } from "./helper.ts";
 
-export function ChangePersonal(update: (data: Partial<ViewState>) => void): WizardComponent {
+export function ChangePersonal() {
     return Wizard({
         submitAction: async ([ { data: { data } } ]) => {
             await API.user(API.getToken()).setMe.post(data);
             await delay(300);
             await forceRefreshToken();
         },
-        buttonArrangement: ({ PageValid, Submit }) => {
-            setErrorMessage();
-            return ActionBar("Personal", undefined, {
-                title: "Update", onclick: HandleSubmit(PageValid, Submit)
-            }, returnFunction(update));
-        },
+        buttonArrangement: "flex-end",
         buttonAlignment: "top",
     }, () => [
         Page({
@@ -50,10 +42,9 @@ export function ChangePersonal(update: (data: Partial<ViewState>) => void): Wiza
                                         });
                                         data.profilePicture = <AdvancedImage>{ type: "waiting-upload", filename: file.name, blobUrl };
                                     },
-                                    backendResponse: async () => {
-                                        await forceRefreshToken();
-                                        data.profilePicture = activeUser.avatar;
+                                    backendResponse: () => {
                                         data.loading = false;
+                                        data.profilePicture = <AdvancedImage>{ type: "direct", source: async () => await file };
                                     },
                                     credentials: () => API.getToken(),
                                     onUploadTick: async (percentage) => {

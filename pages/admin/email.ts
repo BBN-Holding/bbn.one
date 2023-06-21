@@ -7,7 +7,7 @@ import './email.css';
 export const rawTemplate = (data: string) => `
 <mjml>
     <mj-head>
-        <mj-font name="Open Sans" href="https://fonts.googleapis.com/css?family=Red+Hat+Display" />
+        <mj-font name="Red Hat Display" href="https://fonts.googleapis.com/css?family=Red+Hat+Display" />
         <mj-attributes>
             <mj-text line-height="1.3"/>
             <mj-all font-family="Red Hat Display, Helvetica"/>

@@ -130,7 +130,7 @@ cardlist {
 }
 
 .limited-width {
-    max-width: 69rem;
+    max-width: 80rem;
     width: calc(100% - 2rem);
     margin: 0 auto 0;
 }

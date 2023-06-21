@@ -1,5 +1,5 @@
-import { Navigation } from "shared";
-import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
+import { HeavyReRender, LoadingSpinner, Navigation } from "shared";
+import { isMobile, MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../../assets/css/hosting.css';
 import '../../../assets/css/main.css';
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -14,9 +14,9 @@ WebGen({
     icon: new MaterialIcons()
 });
 
-const navigation = Navigation({
+const navigation = state.$loaded.map(loaded => loaded ? Navigation({
     title: "New Server",
-    categories: [
+    children: [
         {
             title: "Minecraft",
             id: "minecraft",
@@ -24,7 +24,7 @@ const navigation = Navigation({
             children: [
                 {
                     title: "Recommended",
-                    id: "default/",
+                    id: "default",
                     subtitle: "Play on Efficiency-First Servers with Plugins (Paper/Purpur).",
                     clickHandler: (serverType) => { creationState.type = serverType as ServerTypes; },
                     children: [
@@ -33,7 +33,7 @@ const navigation = Navigation({
                 },
                 {
                     title: "Vanilla",
-                    id: "vanilla/",
+                    id: "vanilla",
                     subtitle: "Playing on Snapshots? Play on the Vanilla Server.",
                     clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
                     children: [
@@ -42,12 +42,12 @@ const navigation = Navigation({
                 },
                 {
                     title: "Modded",
-                    id: "modded/",
+                    id: "modded",
                     subtitle: "Start a Fabric or Forge Server.",
                     children: [
                         {
                             title: "Fabric",
-                            id: "fabric/",
+                            id: "fabric",
                             subtitle: "Lightweight modding, customization, and optimized performance.",
                             clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
                             children: [
@@ -56,7 +56,7 @@ const navigation = Navigation({
                         },
                         {
                             title: "Forge",
-                            id: "forge/",
+                            id: "forge",
                             subtitle: "Extensive modding capabilities and customization options.",
                             clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
                             children: [
@@ -67,7 +67,7 @@ const navigation = Navigation({
                 },
                 {
                     title: "Bedrock",
-                    id: "bedrock/",
+                    id: "bedrock",
                     subtitle: "Bedrock Edition (also known as the Bedrock Version or just Bedrock)",
                     clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
                     children: [
@@ -76,7 +76,7 @@ const navigation = Navigation({
                 },
                 {
                     title: "PocketMineMP",
-                    id: "pocketmine/",
+                    id: "pocketmine",
                     subtitle: "Bedrock server, providing customization and plugin support.",
                     clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
                     children: [
@@ -88,14 +88,17 @@ const navigation = Navigation({
         {
             title: "Cancel",
             subtitle: "Return back to Home",
-            id: "exit/",
+            id: "exit",
             clickHandler: () => { location.href = location.href.replace("/create", ""); }
         }
     ]
-});
+}).addClass(
+    isMobile.map(mobile => mobile ? "mobile-navigation" : "navigation"),
+    "limited-width"
+) : LoadingSpinner());
 
 
-View(() => Vertical(...DynaNavigation("Hosting"), navigation)).appendOn(document.body);
+View(() => Vertical(...DynaNavigation("Hosting"), HeavyReRender(navigation, it => it))).appendOn(document.body);
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())

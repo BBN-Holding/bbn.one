@@ -20,4 +20,22 @@
 
 .stats-list>.wggrid {
     grid-auto-flow: column;
+    justify-content: left;
+    gap: 1.5rem;
+}
+
+.stats-list .basic-text .title {
+    grid-row: 2;
+    font-size: 23px;
+    font-variant-numeric: tabular-nums;
+}
+
+.stats-list .basic-text .subtitle {
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.05rem;
+}
+
+.terminal-window {
+    height: 30rem;
 }

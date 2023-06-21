@@ -1,12 +1,9 @@
 import { API } from "shared";
 import { delay } from "std/async/mod.ts";
-import { Grid, Page, TextInput, Vertical, Wizard, WizardComponent } from "webgen/mod.ts";
+import { Grid, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import { logOut, track } from "../helper.ts";
-import { ActionBar } from "../misc/actionbar.ts";
-import { HandleSubmit, setErrorMessage } from "../misc/common.ts";
-import { returnFunction, ViewState } from "./helper.ts";
 
-export function ChangePassword(update: (data: Partial<ViewState>) => void): WizardComponent {
+export function ChangePassword() {
     return Wizard({
         submitAction: async ([ { data: { data } } ]) => {
             await API.user(API.getToken()).setMe.post({
@@ -18,12 +15,7 @@ export function ChangePassword(update: (data: Partial<ViewState>) => void): Wiza
             await delay(300);
             logOut();
         },
-        buttonArrangement: ({ PageValid, Submit }) => {
-            setErrorMessage();
-            return ActionBar("Change Password", undefined, {
-                title: "Change", onclick: HandleSubmit(PageValid, Submit)
-            }, returnFunction(update));
-        },
+        buttonArrangement: "flex-end",
         buttonAlignment: "top",
     }, () => [
         Page({

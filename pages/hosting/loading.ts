@@ -1,4 +1,4 @@
-import { LoginRequest, MessageType, PublishResponse, SubscribeRequest, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
+import { HmRequest, LoginRequest, MessageType, PublishResponse, SubscribeRequest, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
 import { asPointer, lazyInit, State } from "webgen/mod.ts";
 import { Server, ServerDetails } from "../../spec/music.ts";
@@ -58,6 +58,8 @@ export function listener() {
 
 export const currentDetailsTarget = asPointer(<string | undefined>undefined);
 export const currentDetailsSource = asPointer((data: ServerDetails) => { data; });
+
+export const messageQueue = <HmRequest[]>[];
 // deno-lint-ignore require-await
 export const streamingPool = lazyInit(async () => {
     function connect() {
@@ -108,6 +110,12 @@ export const streamingPool = lazyInit(async () => {
         ws.onerror = () => {
 
         };
+        setInterval(() => {
+            if (ws.readyState != ws.OPEN) return;
+            if (messageQueue.length == 0) return;
+
+            ws.send(JSON.stringify(messageQueue.shift()));
+        }, 100);
         ws.onclose = () => setTimeout(() => connect(), 1000);
     }
     connect();

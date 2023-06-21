@@ -208,7 +208,7 @@ export enum ServerTypes {
 
 export const serverState = zod.enum([ "offline", "starting", "stopping", "running", "installing", "start", "stop", "kill", "restart", "moving" ]);
 
-export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-sgp" ]);
+export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-mum" ]);
 
 export const server = zod.object({
     _id: zod.string(),
@@ -217,7 +217,10 @@ export const server = zod.object({
     location: location,
     limits: limits,
     state: serverState,
+    address: zod.string().optional(),
+    ports: zod.number().array().optional(),
     user: zod.string(),
+    stateSince: zod.number().describe("unix timestamp").optional()
 });
 
 export const pteroServer = server.extend({

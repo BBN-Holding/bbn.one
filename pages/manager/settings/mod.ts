@@ -1,12 +1,11 @@
-import { Entry, MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
+import { isMobile, MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../../assets/css/main.css';
 import { DynaNavigation } from "../../../components/nav.ts";
-import { RegisterAuthRefresh, logOut } from "../helper.ts";
-import { ActionBar } from "../misc/actionbar.ts";
+import { Navigation } from "../../shared/mod.ts";
+import { logOut, RegisterAuthRefresh } from "../helper.ts";
 import { changeThemeColor } from "../misc/common.ts";
 import { ChangePassword } from "./changePassword.ts";
 import { ChangePersonal } from "./changePersonal.ts";
-import { ViewState } from "./helper.ts";
 
 WebGen({
     icon: new MaterialIcons(),
@@ -15,38 +14,37 @@ WebGen({
     }
 });
 await RegisterAuthRefresh();
-View<ViewState>(({ state, update }) => Vertical(
-    ...DynaNavigation("Settings"),
-    ...{
-        "landing-page": [
-            ActionBar("Settings", undefined, undefined),
-            Vertical(
-                Entry({
-                    title: "Personal",
-                    subtitle: "Username, Email, Profile Picture...",
-                }).addClass("limited-width").onClick(() => {
-                    update({ mode: "change-personal" });
-                }),
-                localStorage.type != "email" ? null :
-                    Entry({
-                        title: "Change Password",
-                    }).addClass("limited-width").onClick(() => {
-                        update({ mode: "change-password" });
-                    }),
-                Entry({
-                    title: "Logout"
-                }).addClass("limited-width").onClick(() => {
-                    logOut();
-                }),
-            ).setGap("20px")
-        ],
-        "change-password": [
-            ChangePassword(update)
-        ],
-        "change-personal": [
-            ChangePersonal(update)
-        ]
-    }[ state.mode ?? "landing-page" ]
 
+export const settingsMenu = Navigation({
+    title: "Settings",
+    children: [
+        {
+            id: "personal",
+            title: "Personal",
+            subtitle: "Username, Email, Profile Picture...",
+            children: [
+                ChangePersonal()
+            ]
+        },
+        ...localStorage.type == "email" ? [ {
+            id: "change-password",
+            title: "Change Password",
+            children: [
+                ChangePassword()
+            ]
+        } ] : [],
+        {
+            id: "logout",
+            title: "Logout",
+            clickHandler: () => logOut()
+        }
+    ]
+}).addClass(
+    isMobile.map(mobile => mobile ? "mobile-navigation" : "navigation"),
+    "limited-width"
+);
+View(() => Vertical(
+    DynaNavigation("Settings"),
+    settingsMenu
 ))
     .appendOn(document.body);

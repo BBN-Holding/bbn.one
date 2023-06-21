@@ -1,3 +1,4 @@
+import { MessageType } from "https://deno.land/x/hmsys_connector@0.9.0/spec/ws.ts";
 import { API, count, HeavyReRender, LoadingSpinner, Navigation, RenderItem, SliderInput, stupidErrorAlert } from "shared";
 import { format } from "std/fmt/bytes.ts";
 import { asPointer, BasicLabel, Box, Button, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, MaterialIcons, MediaQuery, PlainText, Reactive, ref, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
@@ -6,7 +7,7 @@ import locations from "../../../data/locations.json" assert { type: "json" };
 import { PowerState, Server, ServerDetails } from "../../../spec/music.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { MB, state } from "../data.ts";
-import { currentDetailsSource, currentDetailsTarget, streamingPool } from "../loading.ts";
+import { currentDetailsSource, currentDetailsTarget, messageQueue, streamingPool } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import './details.css';
 import './list.css';
@@ -14,7 +15,6 @@ import { moveDialog } from "./list.ts";
 import { TerminalComponent } from "./terminal.ts";
 
 new MaterialIcons();
-
 
 type StateActions = {
     [ type in PowerState ]: Component | IconButtonComponent;
@@ -50,30 +50,10 @@ export const hostingMenu = Navigation({
                     .setRawColumns("max-content auto")
                     .setGap("1rem")
                     .setAlign("center"),
-                suffix: Reactive(server, "state", () => ((<StateActions>{
-                    "offline": IconButton("play_arrow", "delete")
-                        .addClass("color-green")
-                        .setColor(Color.Colored)
-                        .onClick(async (e) => {
-                            e.stopPropagation();
-                            await API.hosting(API.getToken()).serverId(server._id).power("start");
-                            // This actually works when we a have better change stream system
-                            server.state = "starting";
-                        }),
-                    // TODO: make this better (labels or something)
-                    "installing": LoadingSpinner(),
-                    "stopping": LoadingSpinner(),
-                    "starting": LoadingSpinner(),
-                    "running": IconButton("stop", "delete")
-                        .setColor(Color.Critical)
-                        .onClick(async (e) => {
-                            e.stopPropagation();
-                            server.state = "stopping";
-                            await API.hosting(API.getToken()).serverId(server._id).power("stop");
-                        })
-                })[ server.state ] ?? Box())).addClass(isMobile.map(it => it ? "small" : "normal"), "icon-buttons-list", "action-list"),
+                suffix: ChangeStateButton(server),
                 clickHandler: async () => {
                     await streamingPool();
+                    // TODO wait until first data is showing to prevent blinking
                 },
                 children: [
                     serverDetails(server),
@@ -110,6 +90,30 @@ export const hostingMenu = Navigation({
                                 title: "Ptero Settings",
                                 subtitle: "Legacy Settings Options",
                                 clickHandler: () => editServer(server)
+                            },
+                            {
+                                id: "extenions",
+                                title: "Download Content",
+                                subtitle: "Get access to Mods, Plugins or Databacks!",
+                                suffix: PlainText("Coming Soon")
+                                    .setFont(1, 500)
+                                    .setMargin("0 1rem")
+                            },
+                            {
+                                id: "worlds",
+                                title: "Manage Worlds",
+                                subtitle: "Download, Reset or Upload your worlds.",
+                                suffix: PlainText("Coming Soon")
+                                    .setFont(1, 500)
+                                    .setMargin("0 1rem")
+                            },
+                            {
+                                id: "core",
+                                title: "Server Settings",
+                                subtitle: "All your Settings in one place.",
+                                suffix: PlainText("Coming Soon")
+                                    .setFont(1, 500)
+                                    .setMargin("0 1rem")
                             }
                         ]
                     }
@@ -127,11 +131,20 @@ export const hostingMenu = Navigation({
             ]
         }
     ],
-    // custom: () => LoadingSpinner()
+    children: [
+        LoadingSpinner()
+    ]
 }).addClass(
     isMobile.map(mobile => mobile ? "mobile-navigation" : "navigation"),
     "limited-width"
 );
+
+state.$loaded.listen(loaded => {
+    if (loaded)
+        hostingMenu.path.setValue((state.servers.length == 0 ? 'profile/' : 'servers/'));
+    else
+        hostingMenu.path.setValue("-/");
+});
 // .setActivePath(state.$loaded.map(loaded => loaded ? (state.servers.length == 0 ? '/profile/' : '/servers/') : '/'));
 
 hostingMenu.path.listen(path => {
@@ -153,27 +166,69 @@ type GridItem = Component | [ settings: {
     width?: number | undefined;
     heigth?: number | undefined;
 }, element: Component ];
+
+function ChangeStateButton(server: StateHandler<Server>): Component {
+    return Reactive(server, "state", () => ((<StateActions>{
+        "offline": IconButton("play_arrow", "delete")
+            .addClass("color-green")
+            .setColor(Color.Colored)
+            .onClick(async (e) => {
+                e.stopPropagation();
+                await API.hosting(API.getToken()).serverId(server._id).power("start");
+                // This actually works when we a have better change stream system
+                server.state = "starting";
+            }),
+        // TODO: make this better (labels or something)
+        "installing": LoadingSpinner(),
+        "stopping": LoadingSpinner(),
+        "starting": LoadingSpinner(),
+        "running": IconButton("stop", "delete")
+            .setColor(Color.Critical)
+            .onClick(async (e) => {
+                e.stopPropagation();
+                server.state = "stopping";
+                await API.hosting(API.getToken()).serverId(server._id).power("stop");
+            })
+    })[ server.state ] ?? Box())).addClass(isMobile.map(it => it ? "small" : "normal"), "icon-buttons-list", "action-list");
+}
+
+function getTimeDifference(startDate: number) {
+    const timeDiffMs = Math.abs(new Date().getTime() - new Date(startDate).getTime());
+    console.log(startDate);
+
+    const days = Math.floor(timeDiffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDiffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    let formattedTimeDiff = "";
+
+    if (days > 0 && timeDiffMs >= 72 * 60 * 60 * 1000) {
+        formattedTimeDiff += `${days}d `;
+    }
+
+    formattedTimeDiff += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+    return formattedTimeDiff;
+}
+
 export function serverDetails(server: StateHandler<Server>) {
     const terminal = new TerminalComponent();
 
     const input = State({
-        uptime: undefined,
-        address: undefined,
         cpu: <number | undefined>undefined,
         memory: <number | undefined>undefined,
         disk: <number | undefined>undefined,
-
         message: ""
     });
 
 
     const uptime = BasicLabel({
-        title: input.$uptime.map(it => it ?? "---"),
-        subtitle: "uptime",
+        title: server.$stateSince!.map(it => it ? getTimeDifference(it) : "---"),
+        subtitle: server.$state.map(it => it == "running" ? "uptime" : "since"),
     });
 
     const address = BasicLabel({
-        title: input.$address.map(it => it ?? "---"),
+        title: server.$address!.map(it => it ?? "---"),
         subtitle: "address",
     });
 
@@ -182,11 +237,11 @@ export function serverDetails(server: StateHandler<Server>) {
         subtitle: "cpu",
     });
     const ram = BasicLabel({
-        title: input.$memory.map(it => `${it ? format(it * MB) : "---"} / ${format(server.limits.memory * MB)}`),
+        title: input.$memory.map(it => `${it ? format(it * MB) : "0 MB"} / ${format(server.limits.memory * MB)}`),
         subtitle: "memory",
     });
     const disk = BasicLabel({
-        title: input.$disk.map(it => `${it ? format(it * MB) : "---"} / ${format(server.limits.disk * MB)}`),
+        title: input.$disk.map(it => `${it ? (server.limits.disk / it).toFixed(0) + " %" : "---"}`),
         subtitle: "disk",
     });
 
@@ -219,6 +274,7 @@ export function serverDetails(server: StateHandler<Server>) {
         const items = Grid(
             ...(mobile ? <Component[]>[
                 Entry(Grid(
+                    ChangeStateButton(server),
                     uptime
                 ))
                     .addClass("stats-list"),
@@ -236,6 +292,7 @@ export function serverDetails(server: StateHandler<Server>) {
                 [
                     { width: 2 },
                     Entry(Grid(
+                        ChangeStateButton(server),
                         uptime,
                         address,
                         cpu,
@@ -247,14 +304,25 @@ export function serverDetails(server: StateHandler<Server>) {
             ]),
             Entry(
                 Grid(
-                    Box(Custom(terminal)).removeFromLayout(),
+                    Box(Custom(terminal).addClass("terminal-window")).removeFromLayout(),
                     Form(Grid(
                         TextInput("text", "Send a Command")
                             .sync(input, "message"),
                         Button("Send")
                             .setId("submit-button")
                             .onClick(() => {
-                                terminal.write(input.message + "\r\n");
+                                messageQueue.push({
+                                    action: MessageType.Trigger,
+                                    type: "@bbn/hosting/stdin",
+                                    data: {
+                                        id: server._id,
+                                        message: input.message
+                                    },
+                                    auth: {
+                                        token: API.getToken(),
+                                        id: activeUser.id
+                                    }
+                                });
                                 input.message = "";
                             })
                     )
@@ -266,7 +334,7 @@ export function serverDetails(server: StateHandler<Server>) {
             Grid(
                 Entry({
                     title: "Storage",
-                    subtitle: "Manage your Persistence",
+                    subtitle: "Manage your persistence",
                 }).onClick(() => {
                     hostingMenu.path.setValue(hostingMenu.path.getValue() + "/storage");
                 }),
@@ -275,6 +343,13 @@ export function serverDetails(server: StateHandler<Server>) {
                     subtitle: "Update your Server"
                 }).onClick(() => {
                     hostingMenu.path.setValue(hostingMenu.path.getValue() + "/settings");
+                }),
+                Entry({
+                    title: "Legacy",
+                    subtitle: "Go to the legacy panel"
+                }).onClick(async () => {
+                    const thing = await API.hosting(API.getToken()).serverId(server._id).get();
+                    open(`https://panel.bbn.one/server/${thing.ptero.identifier}`, "_blank");
                 })
             )
                 .addClass("split-list")
