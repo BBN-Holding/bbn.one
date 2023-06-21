@@ -194,11 +194,11 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
 
 function getTimeDifference(startDate: number) {
     const timeDiffMs = Math.abs(new Date().getTime() - new Date(startDate).getTime());
-    console.log(startDate);
 
     const days = Math.floor(timeDiffMs / (1000 * 60 * 60 * 24));
     const hours = Math.floor((timeDiffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((timeDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDiffMs % (1000 * 60)) / (1000));
 
     let formattedTimeDiff = "";
 
@@ -206,10 +206,16 @@ function getTimeDifference(startDate: number) {
         formattedTimeDiff += `${days}d `;
     }
 
-    formattedTimeDiff += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    if (timeDiffMs > 1000 * 60 * 60 * 24)
+        formattedTimeDiff += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    else
+        formattedTimeDiff += `${minutes.toString()}min ${seconds.toString()}s`;
 
     return formattedTimeDiff;
 }
+
+const time = asPointer(new Date().getTime());
+setInterval(() => time.setValue(new Date().getTime()), 200);
 
 export function serverDetails(server: StateHandler<Server>) {
     const terminal = new TerminalComponent();
@@ -222,10 +228,10 @@ export function serverDetails(server: StateHandler<Server>) {
     });
 
 
-    const uptime = BasicLabel({
+    const uptime = HeavyReRender(time, () => BasicLabel({
         title: server.$stateSince!.map(it => it ? getTimeDifference(it) : "---"),
         subtitle: server.$state.map(it => it == "running" ? "uptime" : "since"),
-    });
+    }));
 
     const address = BasicLabel({
         title: server.$address!.map(it => it ?? "---"),
