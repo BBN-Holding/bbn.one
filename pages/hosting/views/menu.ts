@@ -247,7 +247,7 @@ export function serverDetails(server: StateHandler<Server>) {
         subtitle: "memory",
     });
     const disk = BasicLabel({
-        title: input.$disk.map(it => `${it ? (server.limits.disk / it).toFixed(0) + " %" : "---"}`),
+        title: input.$disk.map(it => `${it ? ((it / server.limits.disk) * 100).toFixed(0) + " %" : "---"}`),
         subtitle: "disk",
     });
 
