@@ -26,7 +26,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                     title: "Recommended",
                     id: "default",
                     subtitle: "Play on Efficiency-First Servers with Plugins (Paper/Purpur).",
-                    clickHandler: (serverType) => { creationState.type = serverType as ServerTypes; },
+                    clickHandler: (serverType) => { creationState.type = serverType.replace("-", "") as ServerTypes; },
                     children: [
                         creationView()
                     ]
@@ -35,7 +35,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                     title: "Vanilla",
                     id: "vanilla",
                     subtitle: "Playing on Snapshots? Play on the Vanilla Server.",
-                    clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
+                    clickHandler: (clickPath) => { creationState.type = clickPath.replace("-", "") as ServerTypes; },
                     children: [
                         creationView()
                     ]
@@ -49,7 +49,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                             title: "Fabric",
                             id: "fabric",
                             subtitle: "Lightweight modding, customization, and optimized performance.",
-                            clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
+                            clickHandler: (clickPath) => { creationState.type = clickPath.replace("-", "") as ServerTypes; },
                             children: [
                                 creationView()
                             ]
@@ -58,7 +58,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                             title: "Forge",
                             id: "forge",
                             subtitle: "Extensive modding capabilities and customization options.",
-                            clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
+                            clickHandler: (clickPath) => { creationState.type = clickPath.replace("-", "") as ServerTypes; },
                             children: [
                                 creationView()
                             ]
@@ -69,7 +69,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                     title: "Bedrock",
                     id: "bedrock",
                     subtitle: "Bedrock Edition (also known as the Bedrock Version or just Bedrock)",
-                    clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
+                    clickHandler: (clickPath) => { creationState.type = clickPath.replace("-", "") as ServerTypes; },
                     children: [
                         creationView()
                     ]
@@ -78,7 +78,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                     title: "PocketMineMP",
                     id: "pocketmine",
                     subtitle: "Bedrock server, providing customization and plugin support.",
-                    clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
+                    clickHandler: (clickPath) => { creationState.type = clickPath.replace("-", "") as ServerTypes; },
                     children: [
                         creationView()
                     ]
