@@ -197,11 +197,17 @@ export function serverDetails(server: StateHandler<Server>) {
             currentDetailsSource.setValue((data: ServerDetails) => {
                 if (data.type == "stdout") {
                     terminal.write(data.chunk + "\r\n");
+                    if (data.clearConsole)
+                        terminal.reset();
                 }
                 else if (data.type == "stats") {
                     input.cpu = data.cpu;
                     input.disk = data.disk;
                     input.memory = data.memory;
+                }
+                else if (data.type == "features") {
+                    // TODO remove this when backend sends clearConsole flag
+                    terminal.reset();
                 }
                 else console.log("Unhandled Info", data);
             });

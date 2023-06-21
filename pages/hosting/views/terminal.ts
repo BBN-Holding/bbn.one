@@ -59,6 +59,10 @@ export class TerminalComponent extends HTMLElement {
 
     }
 
+    reset() {
+        this.terminal.reset();
+    }
+
     write(data: string) {
         this.heap.push(data);
         if (this.isConnected) {
