@@ -3,6 +3,10 @@
     padding-top: 8px;
 }
 
+.icon-buttons-list {
+    z-index: 2;
+}
+
 .icon-buttons-list .wiconbutton {
     background-color: transparent;
     color: hsla(var(--background-color-h), var(--background-color-s), var(--background-color-l));
@@ -77,7 +81,7 @@
     width: 39px;
 }
 
-
 .action-list .loading {
     width: 51px;
+    height: 50px;
 }

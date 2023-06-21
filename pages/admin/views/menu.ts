@@ -1,8 +1,7 @@
 import { API, count, HeavyList, loadMore, Navigation, placeholder } from "shared";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Box, Button, Color, Dialog, Entry, Grid, isMobile, PlainText, Reactive, ref, State, StateHandler, TextInput } from "webgen/mod.ts";
-import { DropType, Server } from "../../../spec/music.ts";
-import { entryServer } from "../../hosting/views/list.ts";
+import { Box, Button, Color, Dialog, Entry, Grid, isMobile, PlainText, Reactive, ref, State, TextInput } from "webgen/mod.ts";
+import { DropType } from "../../../spec/music.ts";
 import { activeUser } from "../../manager/helper.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
@@ -131,7 +130,7 @@ export const adminMenu = Navigation({
                     title: x.period,
                     subtitle: x.moneythisperiod,
                 }).onClick(() => {
-                    location.href = `/music/payout?id=${x._id}&userid=${activeUser.id}`;
+                    location.href = `/music/payout?id=${x._id}`;
                 }))
             ],
         },
@@ -160,8 +159,9 @@ export const adminMenu = Navigation({
         {
             id: "servers",
             title: ref`Minecraft Servers ${count(state.$servers)}`,
-            children: [ HeavyList(state.$servers, it => entryServer(State(it) as StateHandler<Server>, true))
-                .enablePaging((offset, limit) => loadMore(state.$servers, () => API.admin(API.getToken()).servers.list(offset, limit)))
+            children: [
+                // HeavyList(state.$servers, it => entryServer(State(it) as StateHandler<Server>, true))
+                // .enablePaging((offset, limit) => loadMore(state.$servers, () => API.admin(API.getToken()).servers.list(offset, limit)))
             ]
         },
         {

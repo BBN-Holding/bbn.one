@@ -1,0 +1,32 @@
+name: Deploy to Prod
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Update bbn.one
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull Project
+        uses: actions/checkout@v3.5.2
+
+      - name: Set Up Deno
+        uses: denoland/setup-deno@v1.1.2
+        with:
+          deno-version: v1.x
+
+      - name: Building bbn.one
+        run: deno run --no-check -A serve.ts build
+
+      - name: Publish to bbn.one
+        uses: garygrossgarten/github-action-scp@v0.8.0
+        with:
+          local: ./dist
+          remote: /root/bbn/bbn.one
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}
+          username: ${{ secrets.USERNAME }}
+          privateKey: ${{ secrets.KEY }}

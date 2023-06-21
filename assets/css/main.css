@@ -130,7 +130,7 @@ cardlist {
 }
 
 .limited-width {
-    max-width: 69rem;
+    max-width: 80rem;
     width: calc(100% - 2rem);
     margin: 0 auto 0;
 }
@@ -341,6 +341,7 @@ cardlist {
 }
 
 .list-title {
+    width: 100%;
     margin: 0 auto;
     padding-top: 22px;
     font-weight: 700;

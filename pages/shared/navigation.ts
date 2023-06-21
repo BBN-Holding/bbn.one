@@ -11,8 +11,12 @@ export type RenderItem = Component | MenuNode;
 
 export interface MenuNode {
     id: string;
+    hidden?: boolean;
     title: Pointable<string>;
+    subtitle?: Pointable<string>;
     children?: Pointable<RenderItem[]>;
+    replacement?: Pointable<Component>;
+    suffix?: Pointable<Component>;
     clickHandler?: ClickHandler;
     firstRenderHandler?: ClickHandler;
 }
@@ -101,8 +105,13 @@ class MenuImpl extends Component {
                 if (item instanceof Component)
                     return item;
 
-                const entry = Entry(item);
+                if (item.hidden)
+                    return Box().removeFromLayout();
+
+                const entry = Entry(item.replacement ? asPointer(item.replacement).getValue() : item);
                 const click = this.createClickHandler(item);
+                if (item.suffix)
+                    entry.addSuffix(asPointer(item.suffix).getValue());
                 if (click)
                     entry.onPromiseClick(async () => await click());
                 return entry;
@@ -131,11 +140,12 @@ class MenuImpl extends Component {
     }
 
     private createClickHandler(menu: MenuNode): undefined | (() => Promise<void> | void) {
-        if (menu.children) return () => {
-            this.path.setValue(this.path.getValue() + menu.id + "/");
-        };
         if (menu.clickHandler) return async () => {
             await menu.clickHandler?.(this.path.getValue() + menu.id + "/", menu);
+            if (menu.children)
+                this.path.setValue(this.path.getValue() + menu.id + "/");
+        };
+        if (menu.children) return () => {
             this.path.setValue(this.path.getValue() + menu.id + "/");
         };
         return undefined;
@@ -172,19 +182,26 @@ function defaultHeader(menu: MenuImpl) {
 }
 
 function defaultFooter(menu: MenuImpl) {
-    return HeavyReRender(isMobile, mobile => mobile ? Box(createActionList(menu)).addClass("sticky-footer") : Box().removeFromLayout()).removeFromLayout();
+    return HeavyReRender(isMobile, mobile => mobile && menu.rootNode.actions ? Box(createActionList(menu)).addClass(asPointer(menu.rootNode.actions).map(it => it.length == 0 ? "remove-from-layout" : "normal"), "sticky-footer") : Box().removeFromLayout()).removeFromLayout();
 }
 
 function createActionList(menu: MenuImpl) {
-    return HeavyReRender(menu.rootNode.actions, it => Grid(...(it ?? [])).addClass("action-list-bar"));
+    return HeavyReRender(menu.rootNode.actions, it => Grid(...(it ?? [])).addClass("action-list-bar")).removeFromLayout();
 }
 
 function createTagList(menu: MenuImpl) {
     if (!menu.rootNode.categories) return Box().removeFromLayout();
-    const index = asPointer(menu.rootNode.categories.findIndex(it => it.id == menu.path.getValue().split("/").at(0)));
+    const index = asPointer(0);
     index.listen((val, oldVal) => {
-        if (oldVal != undefined)
-            menu.path.setValue(menu.rootNode.categories![ val ].id + "/");
+        if (oldVal != undefined) {
+            const path = menu.rootNode.categories![ val ];
+            if (path)
+                menu.path.setValue(path.id + "/");
+        }
+    });
+
+    menu.path.listen(path => {
+        index.setValue(menu.rootNode.categories!.findIndex(it => it.id == path.split("/").at(0)));
     });
 
     return HeavyReRender(menu.path.map(path => {
@@ -206,7 +223,7 @@ function createBreadcrumb(menu: MenuImpl) {
             return [ root, ...items ];
         });
         function moveToPath(index: number) {
-            menu.path.setValue(history.getValue().filter((_, i) => index >= i).map(it => it.id).join("/") + "/");
+            menu.path.setValue(history.getValue().filter((_, i) => index >= i).map(it => it.id ?? "-").join("/") + "/");
         }
 
         if (mobile)

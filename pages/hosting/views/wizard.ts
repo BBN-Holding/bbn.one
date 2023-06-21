@@ -3,7 +3,7 @@ import { format } from "std/fmt/bytes.ts";
 import { Box, Dialog, DropDownInput, Grid, Page, PlainText, Reactive, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import { ServerCreate, serverCreate } from "../../../spec/music.ts";
-import { MB, creationState, state } from "../data.ts";
+import { creationState, MB, state } from "../data.ts";
 
 export const creationView = () => Reactive(creationState, "loading", () => {
     if (creationState.loading)

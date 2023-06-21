@@ -1,3 +1,7 @@
+.remove-from-layout {
+    display: contents;
+}
+
 .sticky-footer {
     height: 37px;
 }

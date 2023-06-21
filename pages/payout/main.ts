@@ -1,13 +1,13 @@
-import { API, LoadingSpinner, Menu, MenuItem } from "shared";
+import { API, MenuNode, Navigation, stupidErrorAlert } from "shared";
 import { groupBy } from "std/collections/group_by.ts";
 import { sortBy } from "std/collections/sort_by.ts";
 import { sumOf } from "std/collections/sum_of.ts";
-import { MaterialIcons, Reactive, State, Vertical, View, WebGen } from "webgen/mod.ts";
+import { asPointer, isMobile, MaterialIcons, State, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { Drop, Payout } from "../../spec/music.ts";
-import { RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
+import { permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { changeThemeColor } from "../manager/misc/common.ts";
 
 await RegisterAuthRefresh();
@@ -34,34 +34,39 @@ const state = State({
 
 View(() => Vertical(
     DynaNavigation("Music"),
-    Reactive(state, "loaded", () => Menu({
+    Navigation({
         title: "View Payout",
-        id: "/",
-        categories: {
-            "drop/": {
+        categories: [
+            {
+                id: "drop",
                 title: `Drop`,
-                items: sortBy((state.music?.map(drop => {
-                    const entries = state.payout?.entries.filter(entry => drop.songs?.some(song => song.isrc === entry.isrc)) ?? [];
-                    if (entries.length === 0) return undefined;
-                    return {
-                        title: drop.title,
-                        subtitle: "£ " + sumOf(entries.map((entry) => sumOf(entry.data, (data) => Number(data.revenue))), e => e).toFixed(2) + " - " + sumOf(entries.map((entry) => sumOf(entry.data, (data) => Number(data.quantity))), e => e) + " streams",
-                        id: `${drop._id}/`,
-                        items: drop.songs?.length > 1 ? drop.songs.filter(song => song.isrc).filter(song => entries.some(e => e.isrc === song.isrc)).map(song => {
-                            const entry = entries.find(entry => entry.isrc === song.isrc)!;
-                            return {
-                                title: song.title,
-                                subtitle: "£ " + sumOf(entry.data ?? [], e => Number(e.revenue)).toFixed(2) + " - " + sumOf(entry.data ?? [], e => Number(e.quantity)) + " streams",
-                                id: `${song.isrc}/`,
-                                items: generateStores(entry.data ?? [])
-                            };
-                        }) : generateStores(entries[ 0 ].data ?? [])
-                    };
-                }) ?? []).filter(Boolean) as MenuItem[], e => Number(e.subtitle!.split(" ")[ 1 ])).reverse()
+                children: state.$music.map(() => {
+                    const list = sortBy((state.music?.map(drop => {
+                        const entries = state.payout?.entries.filter(entry => drop.songs?.some(song => song.isrc === entry.isrc)) ?? [];
+                        if (entries.length === 0) return undefined;
+                        return {
+                            title: drop.title,
+                            subtitle: "£ " + sumOf(entries.map((entry) => sumOf(entry.data, (data) => Number(data.revenue))), e => e).toFixed(2) + " - " + sumOf(entries.map((entry) => sumOf(entry.data, (data) => Number(data.quantity))), e => e) + " streams",
+                            id: `${drop._id}`,
+                            children: drop.songs?.length > 1 ? drop.songs.filter(song => song.isrc).filter(song => entries.some(e => e.isrc === song.isrc)).map(song => {
+                                const entry = entries.find(entry => entry.isrc === song.isrc)!;
+                                return {
+                                    title: song.title,
+                                    subtitle: "£ " + sumOf(entry.data ?? [], e => Number(e.revenue)).toFixed(2) + " - " + sumOf(entry.data ?? [], e => Number(e.quantity)) + " streams",
+                                    id: `${song.isrc}`,
+                                    children: generateStores(entry.data ?? [])
+                                };
+                            }) : generateStores(entries[ 0 ].data ?? [])
+                        };
+                    }) ?? []).filter(Boolean) as MenuNode[], e => Number(asPointer(e.subtitle!).getValue().split(" ")[ 1 ])).reverse();
+                    console.log("2", list, state.music);
+                    return list;
+                })
             },
-            "store/": {
+            {
+                id: "store",
                 title: `Store`,
-                items: state.payout ? sortBy(Object.entries(state.payout.entries.map(entry => groupBy(entry.data, e => e.store)).reduce((a, b) => {
+                children: state.$payout ? state.$payout.map(payout => payout ? sortBy(Object.entries(payout.entries.map(entry => groupBy(entry.data, e => e.store)).reduce((a, b) => {
                     Object.entries(b).forEach(([ key, value ]) => {
                         if (!a[ key ]) {
                             a[ key ] = [ 0, 0 ];
@@ -74,13 +79,14 @@ View(() => Vertical(
                     return {
                         title: key,
                         subtitle: "£ " + value[ 0 ].toFixed(2) + " - " + value[ 1 ] + " streams",
-                        id: `${key}/`
+                        id: `${key}`
                     };
-                }) : [] as MenuItem[]
+                }) : []) : []
             },
-            "country/": {
+            {
+                id: "country",
                 title: `Country`,
-                items: state.payout ? sortBy(Object.entries(state.payout.entries.map(entry => groupBy(entry.data, e => e.territory)).reduce((a, b) => {
+                children: state.$payout ? state.$payout.map(payout => payout ? sortBy(Object.entries(payout.entries.map(entry => groupBy(entry.data, e => e.territory)).reduce((a, b) => {
                     Object.entries(b).forEach(([ key, value ]) => {
                         if (!a[ key ]) {
                             a[ key ] = [ 0, 0 ];
@@ -93,14 +99,19 @@ View(() => Vertical(
                     return {
                         title: key,
                         subtitle: "£ " + value[ 0 ].toFixed(2) + " - " + value[ 1 ] + " streams",
-                        id: `${key}/`
+                        id: `${key}`
                     };
-                }) : [] as MenuItem[]
+                }) : []) : []
             },
-        },
-        custom: () => LoadingSpinner()
-    }).setActivePath(state.loaded ? "/drop/" : "/"))
-)).appendOn(document.body);
+        ],
+        // custom: () => LoadingSpinner()
+    }).addClass(
+        isMobile.map(mobile => mobile ? "mobile-navigation" : "navigation"),
+        "limited-width"
+    )
+    // .setActivePath(state.loaded ? "/drop/" : "/")
+)
+).appendOn(document.body);
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())
@@ -111,7 +122,7 @@ async function refreshState() {
     if (data.userid) {
         state.payout.entries = state.payout.entries.filter(entry => entry.user === data.userid);
     }
-    state.music = permCheck("/hmsys/user/manage", "/bbn/manage") ? await API.admin(API.getToken()).reviews.get() : await API.music(API.getToken()).list.get();
+    state.music = permCheck("/hmsys/user/manage", "/bbn/manage") ? await API.admin(API.getToken()).drops.list(undefined, undefined, 50000).then(stupidErrorAlert) : await API.music(API.getToken()).drops.list();
     state.loaded = true;
 }
 
@@ -122,5 +133,5 @@ function generateStores(datalist: Payout[ "entries" ][ 0 ][ "data" ]) {
             subtitle: "£ " + Number(data.revenue).toFixed(2) + " - " + data.quantity + " streams",
             id: `${index}/`
         };
-    }) as MenuItem[], e => Number(e.subtitle!.split(" ")[ 1 ])).reverse();
+    }) as MenuNode[], e => Number(asPointer(e.subtitle!).getValue().split(" ")[ 1 ])).reverse();
 }

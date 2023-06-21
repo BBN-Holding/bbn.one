@@ -1,5 +1,5 @@
-import { Menu } from "shared";
-import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
+import { HeavyReRender, LoadingSpinner, Navigation } from "shared";
+import { isMobile, MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../../assets/css/hosting.css';
 import '../../../assets/css/main.css';
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -14,77 +14,91 @@ WebGen({
     icon: new MaterialIcons()
 });
 
-const menu = Menu({
+const navigation = state.$loaded.map(loaded => loaded ? Navigation({
     title: "New Server",
-    id: "/",
-    items: [
+    children: [
         {
             title: "Minecraft",
-            id: "minecraft/",
+            id: "minecraft",
             subtitle: "Quickly start a Vanilla, Modded or Bedrock Server",
-            items: [
+            children: [
                 {
                     title: "Recommended",
-                    id: "default/",
+                    id: "default",
                     subtitle: "Play on Efficiency-First Servers with Plugins (Paper/Purpur).",
-                    action: (serverType) => { creationState.type = serverType as ServerTypes; },
-                    custom: creationView
+                    clickHandler: (serverType) => { creationState.type = serverType as ServerTypes; },
+                    children: [
+                        creationView()
+                    ]
                 },
                 {
                     title: "Vanilla",
-                    id: "vanilla/",
+                    id: "vanilla",
                     subtitle: "Playing on Snapshots? Play on the Vanilla Server.",
-                    action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
-                    custom: creationView
+                    clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
+                    children: [
+                        creationView()
+                    ]
                 },
                 {
                     title: "Modded",
-                    id: "modded/",
+                    id: "modded",
                     subtitle: "Start a Fabric or Forge Server.",
-                    items: [
+                    children: [
                         {
                             title: "Fabric",
-                            id: "fabric/",
+                            id: "fabric",
                             subtitle: "Lightweight modding, customization, and optimized performance.",
-                            action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
-                            custom: creationView
+                            clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
+                            children: [
+                                creationView()
+                            ]
                         },
                         {
                             title: "Forge",
-                            id: "forge/",
+                            id: "forge",
                             subtitle: "Extensive modding capabilities and customization options.",
-                            action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
-                            custom: creationView
+                            clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
+                            children: [
+                                creationView()
+                            ]
                         }
                     ]
                 },
                 {
                     title: "Bedrock",
-                    id: "bedrock/",
-                    subtitle: "Bedrock Edition (also known as the Bedrock Version, Bedrock Codebase, Bedrock Engine or just Bedrock)",
-                    action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
-                    custom: creationView
+                    id: "bedrock",
+                    subtitle: "Bedrock Edition (also known as the Bedrock Version or just Bedrock)",
+                    clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
+                    children: [
+                        creationView()
+                    ]
                 },
                 {
                     title: "PocketMineMP",
-                    id: "pocketmine/",
-                    subtitle: "Bedrock server, providing customization, plugin support, and optimal performance.",
-                    action: (clickPath) => { creationState.type = clickPath as ServerTypes; },
-                    custom: creationView
+                    id: "pocketmine",
+                    subtitle: "Bedrock server, providing customization and plugin support.",
+                    clickHandler: (clickPath) => { creationState.type = clickPath as ServerTypes; },
+                    children: [
+                        creationView()
+                    ]
                 }
             ]
         },
         {
             title: "Cancel",
             subtitle: "Return back to Home",
-            id: "exit/",
-            action: () => { location.href = location.href.replace("/create", ""); }
+            id: "exit",
+            clickHandler: () => { location.href = location.href.replace("/create", ""); }
         }
     ]
-});
+}).addClass(
+    isMobile.map(mobile => mobile ? "mobile-navigation" : "navigation"),
+    "limited-width"
+) : LoadingSpinner());
 
 
-View(() => Vertical(...DynaNavigation("Hosting"), menu)).appendOn(document.body);
+View(() => Vertical(...DynaNavigation("Hosting"), HeavyReRender(navigation, it => it))).appendOn(document.body);
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())

@@ -50,7 +50,7 @@ View(() => Vertical(
                             }),
                         PlainText(!state.token ? "Error: Link is invalid" : "").addClass("error-message"),
                         ErrorMessage()
-                    ));
+                    )).activeSubmitTo("#submit-button");
                 if (state.type == "request-reset-password")
                     return Form(Grid(
                         TextInput("email", "Email")

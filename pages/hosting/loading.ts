@@ -1,7 +1,7 @@
-import { LoginRequest, MessageType, PublishResponse, SubscribeRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
+import { HmRequest, LoginRequest, MessageType, PublishResponse, SubscribeRequest, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
-import { State } from "webgen/mod.ts";
-import { Server } from "../../spec/music.ts";
+import { asPointer, lazyInit, State } from "webgen/mod.ts";
+import { Server, ServerDetails } from "../../spec/music.ts";
 import { activeUser, tokens } from "../manager/helper.ts";
 import { state } from "./data.ts";
 
@@ -12,6 +12,8 @@ export async function refreshState() {
 
 /**
  * me waiting for hmsys_connector@0.10 to fix this bloat code down under
+ *
+ * TODO: Move this the the pool down below
  */
 export function listener() {
     const ws = new WebSocket(API.WS_URL);
@@ -53,3 +55,68 @@ export function listener() {
     // my fancy reconnect
     ws.onclose = () => setTimeout(() => listener(), 1000);
 }
+
+export const currentDetailsTarget = asPointer(<string | undefined>undefined);
+export const currentDetailsSource = asPointer((data: ServerDetails) => { data; });
+
+export const messageQueue = <HmRequest[]>[];
+// deno-lint-ignore require-await
+export const streamingPool = lazyInit(async () => {
+    function connect() {
+        const ws = new WebSocket(API.WS_URL);
+        console.log("Starting Streaming Pool");
+        let firstTime = true;
+        ws.onmessage = ({ data }) => {
+            const json = JSON.parse(data);
+
+            if (json.login === "require authentication") {
+                if (tokens.accessToken)
+                    ws.send(JSON.stringify(<LoginRequest>{
+                        action: MessageType.Login,
+                        type: "client",
+                        token: API.getToken(),
+                        id: activeUser.id
+                    }));
+            }
+
+            if (json.login === true && firstTime === true) {
+                firstTime = false;
+                currentDetailsTarget.listen((id, _oldId) => {
+                    if (id)
+                        ws.send(JSON.stringify(<TriggerRequest>{
+                            action: MessageType.Trigger,
+                            type: "@bbn/hosting/details",
+                            data: {
+                                id
+                            },
+                            auth: {
+                                token: API.getToken(),
+                                id: activeUser.id
+                            }
+                        }));
+                    else if (_oldId != undefined) {
+                        console.log(_oldId);
+                        // Else somehow unregister the oldId
+                        // Can't current unregister the conversation. Thats why we just restart the pool.
+                        ws.close();
+                    }
+
+                });
+            }
+            if (json.type == "sync" && json.data.type == "@bbn/hosting/details") {
+                currentDetailsSource.getValue()?.(json.data.data);
+            }
+        };
+        ws.onerror = () => {
+
+        };
+        setInterval(() => {
+            if (ws.readyState != ws.OPEN) return;
+            if (messageQueue.length == 0) return;
+
+            ws.send(JSON.stringify(messageQueue.shift()));
+        }, 100);
+        ws.onclose = () => setTimeout(() => connect(), 1000);
+    }
+    connect();
+});

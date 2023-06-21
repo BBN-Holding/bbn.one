@@ -23,7 +23,7 @@ View(() => Vertical(
     Horizontal(
         Custom(img(asset.bbnMusic)).onClick(() => location.href = "/music"),
         Spacer(),
-        Custom(img(asset.bbnHosting)),
+        Custom(img(asset.bbnHosting)).onClick(() => location.href = "/hosting"),
         Spacer(),
         Custom(img(asset.bbnPublishing)),
         Spacer(),
@@ -46,8 +46,6 @@ View(() => Vertical(
         .addClass("limited-width")
         .setDynamicColumns(7)
         .setGap("var(--gap)"),
-    //renderTeam(6)
-    //    .setId("team"),
     PlainText("FREQUENTLY ASKED QUESTIONS", "h2")
         .setId("faq"),
     PlainText("Get advice and answers from BBN Holding", "h4")

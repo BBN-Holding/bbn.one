@@ -212,7 +212,7 @@ export const profileView = () =>
             )
                 .setEvenColumns(small ? 1 : 2)
                 .setGap("var(--gap)")
-                .addClass("limited-width", "details-grid")
+                .addClass("details-grid")
         )
     );
 
