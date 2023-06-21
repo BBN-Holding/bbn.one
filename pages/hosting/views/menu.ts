@@ -196,9 +196,9 @@ export function serverDetails(server: StateHandler<Server>) {
 
             currentDetailsSource.setValue((data: ServerDetails) => {
                 if (data.type == "stdout") {
-                    terminal.write(data.chunk + "\n");
+                    terminal.write(data.chunk + "\r\n");
                 }
-                if (data.type == "stats") {
+                else if (data.type == "stats") {
                     input.cpu = data.cpu;
                     input.disk = data.disk;
                     input.memory = data.memory;
