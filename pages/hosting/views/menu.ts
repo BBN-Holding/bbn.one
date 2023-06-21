@@ -159,9 +159,9 @@ export function serverDetails(server: StateHandler<Server>) {
     const input = State({
         uptime: undefined,
         address: undefined,
-        cpu: undefined,
-        ram: undefined,
-        disk: undefined,
+        cpu: <number | undefined>undefined,
+        memory: <number | undefined>undefined,
+        disk: <number | undefined>undefined,
 
         message: ""
     });
@@ -178,15 +178,15 @@ export function serverDetails(server: StateHandler<Server>) {
     });
 
     const cpu = BasicLabel({
-        title: input.$cpu.map(it => `${it ?? "---"} %`),
+        title: ref`${input.$cpu.map(it => `${it?.toFixed(2) ?? "---"} %`)} / ${server.limits.cpu.toString()} %`,
         subtitle: "cpu",
     });
     const ram = BasicLabel({
-        title: input.$ram.map(it => `${it ?? "---"} %`),
-        subtitle: "ram",
+        title: input.$memory.map(it => `${it ? format(it * MB) : "---"} / ${format(server.limits.memory * MB)}`),
+        subtitle: "memory",
     });
     const disk = BasicLabel({
-        title: input.$disk.map(it => `${it ?? "---"} %`),
+        title: input.$disk.map(it => `${it ? format(it * MB) : "---"} / ${format(server.limits.disk * MB)}`),
         subtitle: "disk",
     });
 
@@ -197,8 +197,13 @@ export function serverDetails(server: StateHandler<Server>) {
             currentDetailsSource.setValue((data: ServerDetails) => {
                 if (data.type == "stdout") {
                     terminal.write(data.chunk + "\n");
-                } else
-                    console.log("Unhandled Info", data);
+                }
+                if (data.type == "stats") {
+                    input.cpu = data.cpu;
+                    input.disk = data.disk;
+                    input.memory = data.memory;
+                }
+                else console.log("Unhandled Info", data);
             });
         } else
             currentDetailsTarget.setValue(undefined);

@@ -22,9 +22,13 @@ export class TerminalComponent extends HTMLElement {
 
     connectedCallback() {
         this.terminal = new Terminal({
-            cursorBlink: true,
             convertEol: true,
-            fontSize: 10
+            fontSize: 10,
+            disableStdin: true,
+            minimumContrastRatio: 7,
+            theme: {
+                selection: "#27abf1"
+            }
         });
 
         const addon = new FitAddon();
