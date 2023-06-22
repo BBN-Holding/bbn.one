@@ -47,7 +47,11 @@ export const creationView = () => Reactive(creationState, "loading", () => {
                     name: "",
                     type: creationState.type,
                     location: "bbn-fsn",
-                    limits: state.meta.limits
+                    limits: {
+                        memory: state.meta.limits.memory - state.meta.used.memory,
+                        disk: state.meta.limits.disk - state.meta.used.disk,
+                        cpu: state.meta.limits.cpu - state.meta.used.cpu
+                    }
                 }, (data) => [
                     Box(
                         PlainText("About your Server")
