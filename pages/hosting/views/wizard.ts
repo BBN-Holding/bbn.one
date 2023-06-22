@@ -1,4 +1,4 @@
-import { API, LoadingSpinner, SliderInput } from "shared";
+import { API, displayError, LoadingSpinner, SliderInput } from "shared";
 import { format } from "std/fmt/bytes.ts";
 import { Box, Dialog, DropDownInput, Grid, Page, PlainText, Reactive, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
@@ -36,7 +36,7 @@ export const creationView = () => Reactive(creationState, "loading", () => {
                             .onClose(() => location.href = "/hosting")
                             .open();
                     } catch (error) {
-                        alert(JSON.stringify(error));
+                        alert(displayError(error));
                         location.reload();
                     }
                 },
