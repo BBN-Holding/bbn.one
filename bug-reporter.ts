@@ -13,7 +13,7 @@ globalThis.onerror = (e) => {
 
 function report(msg: any) {
     if (msg === "ResizeObserver loop limit exceeded") return;
-    if (msg === "aborting javascript here") return;
+    if (msg === "Uncaught aborting javascript here") return;
 
     API.bugReport({
         type: "web-frontend",
