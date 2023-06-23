@@ -192,26 +192,35 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
     })[ server.state ] ?? Box())).addClass(isMobile.map(it => it ? "small" : "normal"), "icon-buttons-list", "action-list");
 }
 
-function getTimeDifference(startDate: number) {
-    const timeDiffMs = Math.abs(new Date().getTime() - new Date(startDate).getTime());
+const SECOND = 1000; // Milliseconds
+const MINUTE = 60 * SECOND;
+const HOUR = 60 * MINUTE;
+const DAY = 24 * HOUR;
 
-    const days = Math.floor(timeDiffMs / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeDiffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDiffMs % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeDiffMs % (1000 * 60)) / (1000));
-
-    let formattedTimeDiff = "";
-
-    if (days > 0 && timeDiffMs >= 72 * 60 * 60 * 1000) {
-        formattedTimeDiff += `${days}d `;
+function formatTime(duration: number): string {
+    if (duration < 5 * SECOND) {
+        return 'now';
+    } else if (duration < MINUTE) {
+        return Math.floor(duration / SECOND) + 's';
+    } else if (duration < 20 * MINUTE) {
+        const minutes = Math.floor(duration / MINUTE);
+        const seconds = Math.floor((duration % MINUTE) / SECOND);
+        return `${minutes}min ${seconds}s`;
+    } else if (duration < HOUR) {
+        return Math.floor(duration / MINUTE) + 'min';
+    } else if (duration < 72 * HOUR) {
+        return Math.floor(duration / HOUR) + 'h';
+    } else {
+        const days = Math.floor(duration / DAY);
+        const hours = Math.floor((duration % DAY) / HOUR);
+        return `${days}d ${hours}h`;
     }
+}
 
-    if (timeDiffMs > 1000 * 60 * 60 * 24)
-        formattedTimeDiff += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    else
-        formattedTimeDiff += `${minutes.toString()}min ${seconds.toString()}s`;
-
-    return formattedTimeDiff;
+function calculateUptime(startDate: Date): string {
+    const currentTime = new Date();
+    const duration = currentTime.getTime() - startDate.getTime();
+    return formatTime(duration);
 }
 
 const time = asPointer(new Date().getTime());
@@ -229,7 +238,7 @@ export function serverDetails(server: StateHandler<Server>) {
 
 
     const uptime = HeavyReRender(time, () => BasicLabel({
-        title: server.$stateSince!.map(it => it ? getTimeDifference(it) : "---"),
+        title: server.$stateSince!.map(it => it ? calculateUptime(new Date(it)) : "---"),
         subtitle: server.$state.map(it => it == "running" ? "uptime" : "since"),
     }));
 
