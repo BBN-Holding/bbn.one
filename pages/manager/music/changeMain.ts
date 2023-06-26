@@ -1,11 +1,11 @@
 import { API } from "shared";
 import { Entry, Grid, Horizontal, Page, PlainText, Spacer, Vertical, Wizard } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
+import { DropTypeToText } from "../../music/views/list.ts";
 import { permCheck, showPreviewImage } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage } from "../misc/common.ts";
 import { DownloadDrop } from "../misc/drop.ts";
-import { DropTypeToText } from "./text.ts";
 import { EditViewState } from "./types.ts";
 
 export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) => void) {

@@ -340,7 +340,7 @@ export function track(data: any) {
 export function ProfilePicture(component: Component, name: string) {
     const ele = component.draw();
     ele.style.backgroundColor = stringToColor(name);
-    return Custom(ele);
+    return Custom(ele).addClass("profile-picture");
 }
 
 export function getNameInital(raw: string) {
