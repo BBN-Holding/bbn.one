@@ -8,11 +8,30 @@ nav {
     z-index: 5;
     padding: 0 1rem;
     user-select: none;
-    background: #37517e;
 }
 
 nav.settings {
     background: black;
+}
+
+nav.home {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.00) 100%);
+    position: fixed;
+}
+
+[data-theme="light"] nav.home {
+    color: black;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 100%);
+
+}
+
+[data-theme="light"] nav.home .vertical-stack>img {
+    filter: invert();
+}
+
+.wbutton.grayscaled.inline,
+.wbutton.grayscaled.secondary {
+    color: inherit;
 }
 
 nav.music {
@@ -42,35 +61,34 @@ nav>div {
 }
 
 .profile-picture {
-    width: 38px;
-    height: 38px;
+    width: 29px;
+    height: 29px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 8px;
+    border-radius: 3px;
+    border-radius: 9px;
+
     font-weight: 800;
+    overflow: hidden;
+}
+
+.profile-button {
+    padding: 0 10px 0 4px;
+    border-radius: 12px;
 }
 
 .profile-picture img {
-    width: 38px;
-    height: 38px;
+    width: 29px;
+    height: 29px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 8px;
     font-weight: 800;
 }
 
 nav img {
     height: 1.7rem;
-}
-
-nav .wbutton {
-    font-weight: 500;
-    font-size: 1rem;
-    padding: 0 0.7rem;
-    /* TODO: Clean up this */
-    --color-grayscaled-inline-font: white;
 }
 
 nav .wbutton.normal.contact {
@@ -124,12 +142,6 @@ nav .wbutton.contact:is(:hover, :focus) {
     }
 }
 
-@media(max-width:360px) {
-    nav {
-        position: absolute;
-    }
-}
-
 nav.email-banner {
     top: 0;
     background: black !important;
@@ -144,6 +156,8 @@ nav.email-banner a {
     position: absolute;
     left: 0;
     top: 0;
+    color: white;
+    z-index: 2;
     background: #212121;
     border-radius: 0.3rem;
     padding: .4rem .8rem;

@@ -15,7 +15,8 @@ const title = new Map(Object.entries({
 serve({
     port: 6969,
     extraLoaders: {
-        ".webp": "file"
+        ".webp": "file",
+        ".jpg": "file"
     },
     assets: {
         "sitemap.xml": "./static/sitemap.xml",

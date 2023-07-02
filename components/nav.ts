@@ -1,7 +1,7 @@
 import { API } from "shared";
 import { delay } from "std/async/delay.ts";
-import { Box, Button, ButtonStyle, CenterV, Color, Component, Custom, Horizontal, Icon, Image, MaterialIcons, PlainText, Reactive, Spacer, Vertical, createElement, img } from "webgen/mod.ts";
-import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/manager/helper.ts";
+import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Grid, Horizontal, Icon, Image, img, MaterialIcons, PlainText, Reactive, Spacer, Vertical } from "webgen/mod.ts";
+import { activeUser, IsLoggedIn, permCheck, showProfilePicture } from "../pages/manager/helper.ts";
 import './nav.css';
 import { activeLogo, pages } from "./pages.ts";
 new MaterialIcons();
@@ -67,18 +67,20 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                         dropOver.focus();
                     }),
                 Spacer(),
-                [
-                    [ "Home", "/#" ],
-                    [ "Services", "/#services" ],
-                    [ "FAQ", "/#faq" ],
-                    [ "News", "https://blog.bbn.one" ]
-                ].map(([ text, link ]) =>
-                    Button(text)
-                        .asLinkButton(link)
-                        .setStyle(ButtonStyle.Inline)
-                ),
                 (user
-                    ? showProfilePicture(user).onClick(() => { location.href = "/settings"; })
+                    ? Button(
+                        Grid(
+                            showProfilePicture(user),
+                            PlainText(activeUser.$username),
+                        )
+                            .setRawColumns("max-content max-content")
+                            .setAlign("center")
+                            .setGap(".7rem")
+
+                    )
+                        .addClass("profile-button")
+                        .setStyle(ButtonStyle.Inline)
+                        .asLinkButton("/settings")
                     : (type == "Home" && !location.pathname.startsWith("/signin") ?
                         Button("Sign in")
                             .setColor(Color.Colored)
