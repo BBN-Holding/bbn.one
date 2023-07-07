@@ -3,6 +3,7 @@ import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../manager/helper.ts";
 import './landing.css';
+import { data, streamingPool } from "./loading.ts";
 // Main
 import bbnHosting from "./resources/bbnHosting.svg";
 import bbnMusic from "./resources/bbnMusic.svg";
@@ -11,6 +12,8 @@ import bbnMusic from "./resources/bbnMusic.svg";
 import bbnCard from "./resources/bbnCard.svg";
 import bbnGameStudios from "./resources/bbnGameStudios.svg";
 import bbnPublishing from "./resources/bbnPublishing.svg";
+
+import { Counter } from "../shared/counter.ts";
 WebGen({ icon: new MaterialIcons() });
 await RegisterAuthRefresh();
 
@@ -50,14 +53,34 @@ View(() => Vertical(
             .addClass("bbn-one-services")
             .setRawColumns("max-content max-content"),
         Box(
-            PlainText("Grown no.", "h2"),
+            PlainText("Grown now.", "h2"),
             PlainText("Our BBN One platform is focused on building your projects.", "h3")
         ).addClass("section"),
-        // Stats
         Grid(
+            Grid(
+                Counter(data.stats.$drops)
+                    .addClass("title"),
+                PlainText("drops")
+                    .addClass("subtitle")
+            ),
+            Grid(
+                Counter(data.stats.$servers)
+                    .addClass("title"),
+                PlainText("servers")
+                    .addClass("subtitle")
+            ),
+            Grid(
+                Counter(data.stats.$users)
+                    .addClass("title"),
+                PlainText("users")
+                    .addClass("subtitle")
+            ),
+        )
+            .addClass("live-stats")
+            .setRawColumns("auto auto auto"),
 
-        ),
-        Button("Join and grow these numbers!"),
+        Button("Join and grow these numbers!")
+            .asLinkButton("/hosting"),
         Box(
             PlainText("Other things we do", "h2"),
             PlainText("Special goals? We are here for you.", "h3")
@@ -77,3 +100,4 @@ View(() => Vertical(
 
 
 import("https://raw.githubusercontent.com/micku7zu/vanilla-tilt.js/master/dist/vanilla-tilt.min.js");
+await streamingPool();

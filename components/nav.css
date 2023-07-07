@@ -107,41 +107,6 @@ nav .wbutton.contact:is(:hover, :focus) {
     background: #47b2e4;
 }
 
-@media(max-width:780px) {
-    nav .wbutton {
-        padding: 0 0.5rem;
-        font-size: 0.8rem;
-    }
-
-    nav .contact {
-        padding: 4px 9px;
-        border-width: 1.5px;
-    }
-}
-
-@media(max-width:780px) {
-    nav img {
-        height: 1.3rem;
-    }
-
-    nav>div {
-        height: 2.5rem;
-        gap: 1.2rem;
-        font-size: .8rem;
-    }
-
-    nav .wbutton.normal.contact {
-        padding: 4px 8px;
-        font-size: .7rem;
-    }
-}
-
-@media(max-width:530px) {
-    nav>div .wbutton {
-        display: none;
-    }
-}
-
 nav.email-banner {
     top: 0;
     background: black !important;

@@ -120,8 +120,8 @@ export function gotoGoal() {
     location.href = localStorage.goal || "/music";
 }
 export async function renewAccessTokenIfNeeded() {
-    const { exp } = rawAccessToken();
     if (!localStorage.getItem("type")) return;
+    const { exp } = rawAccessToken();
     if (!exp) return logOut();
     // We should renew the token 30s before it expires
     if (isExpired(exp)) {

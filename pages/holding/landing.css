@@ -1,5 +1,5 @@
 .big-title {
-    font-size: clamp(2rem, -16.4681rem + 59.5745vw, 5.5rem);
+    font-size: clamp(2rem, -2.1481rem + 20.7407vw, 5.5rem);
     font-weight: bold;
     display: block;
     text-align: center;
@@ -138,4 +138,58 @@ h3 {
 
 [data-theme=dark] {
     --background-color: #000;
+}
+
+.live-stats {
+    gap: 38px;
+    margin: 50px 0;
+}
+
+.live-stats .title {
+    font-size: 36.6px;
+    font-weight: 900;
+}
+
+.live-stats .subtitle {
+    font-size: 13.6px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+@keyframes fade-in {
+    from {
+        filter: blur(10px);
+        opacity: 0;
+    }
+}
+
+@keyframes fade-out {
+    to {
+        filter: blur(2px);
+        opacity: 0;
+    }
+}
+
+@keyframes slide-from-right {
+    from {
+        transform: translateX(30px);
+    }
+}
+
+@keyframes slide-to-left {
+    to {
+        transform: translateX(-30px);
+    }
+}
+
+@keyframes slide-from-bottom {
+    from {
+        transform: translateY(30px);
+    }
+}
+
+@keyframes slide-to-top {
+    to {
+        transform: translateY(-30px);
+    }
 }
