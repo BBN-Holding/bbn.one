@@ -10,13 +10,13 @@ export function Counter(value: Pointer<string | number>) {
         ::view-transition-old(${"counter-" + id}) {
             animation: 90ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
                 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-top;
-            object-fit: contain;
+            display: inline-block;
         }
 
         ::view-transition-new(${"counter-" + id}) {
             animation: 210ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
                 300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-bottom;
-            object-fit: cover;
+            display: inline-block;
         }
     `);
 
