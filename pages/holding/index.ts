@@ -29,6 +29,7 @@ View(() => Vertical(
             PlainText("BBN One", "h2"),
             PlainText("Your all in one solution. Everything in “One” place.", "h3")
         ).addClass("section"),
+        Box(Box()).addClass("glowbs", "orange"),
         Grid(
             Box(
                 Image(bbnMusic, "An orange logo of BBN Music")
@@ -56,6 +57,7 @@ View(() => Vertical(
             PlainText("Grown now.", "h2"),
             PlainText("Our BBN One platform is focused on building your projects.", "h3")
         ).addClass("section"),
+        Box(Box()).addClass("glowbs", "blue"),
         Grid(
             Grid(
                 Counter(data.stats.$drops)
@@ -92,8 +94,11 @@ View(() => Vertical(
         )
             .setGap("4rem")
             .addClass("other-services-images")
-            .setRawColumns("max-content max-content max-content")
-    ).setAlign("center"),
+            .setRawColumns("max-content max-content max-content"),
+        Box(Box()).addClass("glowbs", "purple"),
+    )
+        .addClass("content")
+        .setAlign("center"),
     // renderFooter()
 ))
     .appendOn(document.body);

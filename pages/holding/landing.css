@@ -1,3 +1,11 @@
+.content {
+    overflow: hidden;
+}
+
+.content>* {
+    z-index: 2;
+}
+
 .big-title {
     font-size: clamp(2rem, -2.1481rem + 20.7407vw, 5.5rem);
     font-weight: bold;
@@ -11,6 +19,7 @@
     place-items: end center;
     position: relative;
     overflow: hidden;
+    z-index: 1;
 }
 
 .big-title .background-image {
@@ -192,4 +201,45 @@ h3 {
     to {
         transform: translateY(-30px);
     }
+}
+
+.glowbs {
+    width: 100vw;
+    max-width: 38rem;
+    display: grid;
+    height: 0;
+    z-index: 1;
+}
+
+.glowbs>div {
+    width: 81.25rem;
+    height: 81.25rem;
+    margin: calc(-81.25rem / 2);
+    border-radius: 100%;
+    background:
+        radial-gradient(50% 50.00% at 50% 50.00%,
+            rgba(var(--r), var(--g), var(--b), 0.20) 5%,
+            rgba(var(--r), var(--g), var(--b), 0.04) 75%,
+            rgba(var(--r), var(--g), var(--b), 0.00) 87.50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.glowbs.orange>div {
+    --r: 241;
+    --g: 157;
+    --b: 45;
+}
+
+.glowbs.blue>div {
+    --r: 40;
+    --g: 169;
+    --b: 241;
+    justify-self: end;
+}
+
+.glowbs.purple>div {
+    --r: 146;
+    --g: 46;
+    --b: 182;
 }
