@@ -72,7 +72,7 @@ function createTemplate(name: string, path: string) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>${title.get(path) ?? "BBN One"}</title>
+    <title>${title.get(path) ?? "BBN Holding"}</title>
     <link rel="manifest" href="/app.webmanifest">
     <meta charset='UTF-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1">
