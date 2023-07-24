@@ -208,7 +208,7 @@ export enum ServerTypes {
 
 export const serverState = zod.enum([ "offline", "starting", "stopping", "running", "installing", "start", "stop", "kill", "restart", "moving" ]);
 
-export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-mum" ]);
+export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-mum", "bbn-sgp" ]);
 
 export const server = zod.object({
     _id: zod.string(),
