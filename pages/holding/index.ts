@@ -1,7 +1,7 @@
 import { Box, Button, Grid, Image, Label, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
-import { RegisterAuthRefresh } from "../manager/helper.ts";
+import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import './landing.css';
 import { data, streamingPool } from "./loading.ts";
 // Main

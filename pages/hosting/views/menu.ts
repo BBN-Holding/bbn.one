@@ -5,7 +5,7 @@ import { asPointer, BasicLabel, Box, Button, Color, Component, Custom, Dialog, D
 import serverTypes from "../../../data/eggs.json" assert { type: "json" };
 import locations from "../../../data/locations.json" assert { type: "json" };
 import { PowerState, Server, ServerDetails } from "../../../spec/music.ts";
-import { activeUser } from "../../manager/helper.ts";
+import { activeUser } from "../../_legacy/helper.ts";
 import { MB, state } from "../data.ts";
 import { currentDetailsSource, currentDetailsTarget, messageQueue, streamingPool } from "../loading.ts";
 import { profileView } from "../views/profile.ts";

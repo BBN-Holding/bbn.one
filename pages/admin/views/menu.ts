@@ -2,7 +2,7 @@ import { API, count, HeavyList, loadMore, Navigation, placeholder } from "shared
 import { sumOf } from "std/collections/sum_of.ts";
 import { Box, Button, Color, Dialog, Entry, Grid, isMobile, Label, ref, State, TextInput } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
-import { activeUser } from "../../manager/helper.ts";
+import { activeUser } from "../../_legacy/helper.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";

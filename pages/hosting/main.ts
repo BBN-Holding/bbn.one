@@ -1,8 +1,8 @@
 import { Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
-import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
-import { changeThemeColor } from "../manager/misc/common.ts";
+import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
+import { changeThemeColor } from "../_legacy/misc/common.ts";
 import { state } from "./data.ts";
 import { listener, refreshState } from "./loading.ts";
 import { hostingMenu } from "./views/menu.ts";

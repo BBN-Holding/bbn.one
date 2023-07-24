@@ -1,7 +1,7 @@
 import { API } from "shared";
 import { delay } from "std/async/delay.ts";
 import { Box, Button, ButtonStyle, CenterV, Color, Component, Custom, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement, img } from "webgen/mod.ts";
-import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/manager/helper.ts";
+import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/_legacy/helper.ts";
 import './nav.css';
 import { activeLogo, pages } from "./pages.ts";
 

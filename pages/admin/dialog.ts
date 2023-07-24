@@ -2,7 +2,7 @@ import { API } from "shared";
 import { Box, Checkbox, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, Vertical, Wizard, createElement } from "webgen/mod.ts";
 import reviewTexts from "../../data/reviewTexts.json" assert { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
-import { showPreviewImage } from "../manager/helper.ts";
+import { showPreviewImage } from "../_legacy/helper.ts";
 import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
 function css(data: TemplateStringsArray, ...expr: string[]) {
     const merge = data.map((x, i) => x + (expr[ i ] || ''));

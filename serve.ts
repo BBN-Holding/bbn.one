@@ -41,19 +41,19 @@ serve({
         "p/imprint": "./pages/holding/imprint.ts",
         "p/distribution-agreement": "./pages/holding/distributionAgreement.ts",
         "signin": "./pages/user/signin.ts",
-        "signin-zendesk": "./pages/manager/misc/zendesk.ts",
-        "callback": "./pages/manager/misc/callback.ts",
+        "signin-zendesk": "./pages/_legacy/misc/zendesk.ts",
+        "callback": "./pages/_legacy/misc/callback.ts",
         "oauth": "./pages/user/oauth.ts",
 
         "music": "./pages/music/main.ts",
-        "music/new-drop": "./pages/manager/newDrop.ts",
-        "music/edit": "./pages/manager/music/edit.ts",
+        "music/new-drop": "./pages/_legacy/newDrop.ts",
+        "music/edit": "./pages/_legacy/music/edit.ts",
         "music/payout": "./pages/payout/main.ts",
 
         "hosting": "./pages/hosting/main.ts",
         "hosting/create": "./pages/hosting/views/create.ts",
 
-        "settings": "./pages/manager/settings/mod.ts",
+        "settings": "./pages/_legacy/settings/mod.ts",
 
         "admin": "./pages/admin/admin.ts",
 

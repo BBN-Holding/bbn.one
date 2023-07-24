@@ -2,8 +2,8 @@ import { API, Navigation } from "shared";
 import { Button, Card, Color, Grid, Label, MediaQuery, State, Table, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
-import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
-import { changeThemeColor } from "../manager/misc/common.ts";
+import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
+import { changeThemeColor } from "../_legacy/misc/common.ts";
 import './wallet.css';
 
 await RegisterAuthRefresh();

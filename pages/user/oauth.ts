@@ -3,7 +3,7 @@ import { Button, ButtonStyle, Color, Custom, Grid, Horizontal, Image, Label, MIc
 import '../../assets/css/main.css';
 import { dots, templateArtwork } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { ProfilePicture, RegisterAuthRefresh, activeUser, getNameInital, logOut } from "../manager/helper.ts";
+import { ProfilePicture, RegisterAuthRefresh, activeUser, getNameInital, logOut } from "../_legacy/helper.ts";
 import './oauth.css';
 import './signin.css';
 

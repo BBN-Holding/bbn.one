@@ -2,7 +2,7 @@ import { API } from "shared";
 import { Box, Button, ButtonStyle, Cache, CenterV, Color, Entry, Image, MIcon } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
-import { loadImage } from "../../manager/helper.ts";
+import { loadImage } from "../../_legacy/helper.ts";
 import { ReviewDialog } from "../dialog.ts";
 import { refreshState } from "../loading.ts";
 

@@ -1,7 +1,7 @@
 import { API, displayError } from "shared";
 import { delay } from "std/async/delay.ts";
 import { assert } from "std/testing/asserts.ts";
-import { forceRefreshToken, gotoGoal } from "../manager/helper.ts";
+import { forceRefreshToken, gotoGoal } from "../_legacy/helper.ts";
 import { state } from "./state.ts";
 
 export async function loginUser() {

@@ -1,6 +1,6 @@
 import { Box, Button, ButtonStyle, Horizontal, Label, Spacer, View, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { RegisterAuthRefresh } from "../manager/helper.ts";
+import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import { Footer } from "../shared/footer.ts";
 import './flowText.css';
 WebGen();

@@ -1,7 +1,7 @@
 import { sortBy } from "std/collections/sort_by.ts";
 import { CenterV, Component, Entry, Label, MediaQuery, Vertical } from "webgen/mod.ts";
 import { Drop, DropType, Payout } from "../../../spec/music.ts";
-import { activeUser, permCheck } from "../../manager/helper.ts";
+import { activeUser, permCheck } from "../../_legacy/helper.ts";
 import { DropEntry } from "./entry.ts";
 
 export const musicList = (list: Drop[], type: DropType) => Vertical(

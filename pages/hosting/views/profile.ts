@@ -2,7 +2,7 @@
 import confetti from "https://unpkg.com/canvas-confetti@1.6.0/src/confetti.js";
 import { format } from "std/fmt/bytes.ts";
 import { Box, Button, ButtonStyle, Color, Dialog, Entry, Grid, Horizontal, Label, MediaQuery, Pointable, Spacer, TextInput, Vertical } from "webgen/mod.ts";
-import { activeUser } from "../../manager/helper.ts";
+import { activeUser } from "../../_legacy/helper.ts";
 import { HeavyReRender } from "../../shared/list.ts";
 import { API, stupidErrorAlert } from "../../shared/mod.ts";
 import { MB, state } from "../data.ts";

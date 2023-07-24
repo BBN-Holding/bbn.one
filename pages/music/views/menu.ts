@@ -1,7 +1,7 @@
 import { API, count, LoadingSpinner, Navigation } from "shared";
 import { Button, isMobile, ref, Vertical } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
-import { activeUser } from "../../manager/helper.ts";
+import { activeUser } from "../../_legacy/helper.ts";
 import { state } from "../state.ts";
 import { listPayouts, musicList } from "./list.ts";
 
