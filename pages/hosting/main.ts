@@ -1,4 +1,4 @@
-import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
@@ -12,7 +12,6 @@ import '../../assets/css/hosting.css';
 await RegisterAuthRefresh();
 
 WebGen({
-    icon: new MaterialIcons(),
     events: {
         themeChanged: changeThemeColor()
     }

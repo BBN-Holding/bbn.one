@@ -1,6 +1,6 @@
-import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Vertical, View, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
+import { RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { changeThemeColor } from "../manager/misc/common.ts";
 
 import '../../assets/css/main.css';
@@ -18,7 +18,6 @@ if (!permCheck(
 }
 
 WebGen({
-    icon: new MaterialIcons(),
     events: {
         themeChanged: changeThemeColor()
     }

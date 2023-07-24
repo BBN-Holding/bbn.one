@@ -173,11 +173,11 @@ cardlist {
     opacity: 70%;
 }
 
-.history-entry:not(.mobile) .webgen-icon {
+.history-entry:not(.mobile) .wicon {
     margin: 0 .5rem;
 }
 
-.history-entry.mobile .webgen-icon {
+.history-entry.mobile .wicon {
     font-size: 1.5rem;
     margin-left: -0.4rem;
 }

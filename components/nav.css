@@ -15,7 +15,6 @@ nav.settings {
 }
 
 nav.home {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.00) 100%);
     position: fixed;
 }
 
@@ -164,7 +163,7 @@ nav.email-banner a {
     opacity: 0.8;
 }
 
-.drop-over .small-entry .webgen-icon {
+.drop-over .small-entry .wicon {
     font-size: 0.9rem;
     margin-left: 2rem;
 

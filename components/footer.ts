@@ -1,4 +1,4 @@
-import { createElement, Custom, custom, img, PlainText } from "webgen/mod.ts";
+import { createElement, Custom, custom, img, Label } from "webgen/mod.ts";
 import bbnLogo from '../assets/img/bbnSmall.svg';
 import { actions, link, renderAction } from "./actions.ts";
 import './footer.css';
@@ -8,10 +8,10 @@ export function renderFooter() {
     const data = custom('article', undefined, "footer");
     const shell = custom("div", data, "footer-background");
     const colOne = createElement('div');
-    const label = PlainText("Cluster wie ein Laster").draw();
+    const label = Label("Cluster wie ein Laster").draw();
     label.style.display = "block";
     label.style.marginTop = ".5rem";
-    colOne.append(img(bbnLogo), custom('b', "E-Mail: "), PlainText("support@bbn.one").draw(), label);
+    colOne.append(img(bbnLogo), custom('b', "E-Mail: "), Label("support@bbn.one").draw(), label);
 
     const colTwo = createElement('div');
 
@@ -25,13 +25,13 @@ export function renderFooter() {
         [ "Distribution Agreement", "/p/distribution.html" ],
         [ "Imprint", "/p/imprint.html" ]
     ];
-    colTwo.append(PlainText("Useful Links").draw(), ...list.map(entry => link(entry[ 0 ], entry[ 1 ])));
+    colTwo.append(Label("Useful Links").draw(), ...list.map(entry => link(entry[ 0 ], entry[ 1 ])));
 
     const colThree = createElement('div');
 
     colThree.append(
-        PlainText("Our Social Networks").draw(),
-        PlainText("Stay connected!").draw(),
+        Label("Our Social Networks").draw(),
+        Label("Stay connected!").draw(),
         ...renderAction([
             [ actions.twitter, 'https://twitter.com/BBN_Holding' ],
             [ actions.github, 'https://github.com/bbn-holding/' ],

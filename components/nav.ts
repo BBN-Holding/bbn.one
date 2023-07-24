@@ -1,34 +1,34 @@
 import { API } from "shared";
 import { delay } from "std/async/delay.ts";
-import { Box, Button, ButtonStyle, CenterV, Color, Component, createElement, Custom, Grid, Horizontal, Icon, Image, img, MaterialIcons, PlainText, Reactive, Spacer, Vertical } from "webgen/mod.ts";
-import { activeUser, IsLoggedIn, permCheck, showProfilePicture } from "../pages/manager/helper.ts";
+import { Box, Button, ButtonStyle, CenterV, Color, Component, Custom, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement, img } from "webgen/mod.ts";
+import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/manager/helper.ts";
 import './nav.css';
 import { activeLogo, pages } from "./pages.ts";
-new MaterialIcons();
+
 const Nav = (component: Component) => {
     const nav = createElement("nav");
     nav.append(component.draw());
     return Custom(nav);
 };
 
-const dropOver = Reactive(activeUser, "permission", () => Vertical(
-    PlainText("SWITCH TO").addClass("title"),
+const dropOver = activeUser.$permission.map(() => Vertical(
+    Label("SWITCH TO").addClass("title"),
     pages.map(([ logo, permission, route ]) => permCheck(...permission) ? Horizontal(
         Image(logo, "Logo"),
         Spacer(),
-        Icon("arrow_forward_ios")
+        MIcon("arrow_forward_ios")
     )
         .addClass("small-entry")
         .onClick(() => location.href = route) : null
     ),
     Horizontal(
-        PlainText("Go to Settings"),
+        Label("Go to Settings"),
         Spacer(),
-        Icon("arrow_forward_ios")
+        MIcon("arrow_forward_ios")
     ).addClass("small-entry", "settings")
         .onClick(() => location.href = "/settings")
-)
-)
+))
+    .asRefComponent()
     .addClass("drop-over")
     .setId("drop-over")
     .draw();
@@ -39,7 +39,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
     return [
         user && user.profile.verified?.email != true ? Nav(Horizontal(
             CenterV(
-                PlainText("Your Email is not verified. Please check your Inbox."),
+                Label("Your Email is not verified. Please check your Inbox."),
             ),
             Spacer(),
             Button("Resend Verify Email")
@@ -53,7 +53,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
             Horizontal(
                 Custom(dropOver),
                 Vertical(
-                    Icon("apps"),
+                    MIcon("apps"),
                     Vertical(
                         Custom(img(activeLogo(type)))
                     ),
@@ -71,7 +71,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     ? Button(
                         Grid(
                             showProfilePicture(user),
-                            PlainText(activeUser.$username),
+                            Label(activeUser.$username),
                         )
                             .setRawColumns("max-content max-content")
                             .setAlign("center")

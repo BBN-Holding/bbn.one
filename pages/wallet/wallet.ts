@@ -1,5 +1,5 @@
 import { API, Navigation } from "shared";
-import { Button, Card, Color, Grid, isMobile, MaterialIcons, MediaQuery, PlainText, Reactive, State, Table, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Button, Card, Color, Grid, Label, MediaQuery, State, Table, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
 import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
@@ -9,7 +9,6 @@ import './wallet.css';
 await RegisterAuthRefresh();
 
 WebGen({
-    icon: new MaterialIcons(),
     events: {
         themeChanged: changeThemeColor()
     }
@@ -22,7 +21,7 @@ const state = State({
 
 View(() => Vertical(
     DynaNavigation("Wallet"),
-    Reactive(state, "loaded", () => Vertical(
+    state.$loaded.map(() => Vertical(
         Navigation({
             title: "Your Wallet",
             actions: [
@@ -38,14 +37,14 @@ View(() => Vertical(
             "limited-width"
         ),
         MediaQuery("(max-width: 700px)", (small) =>
-            Reactive(state, "wallet", () =>
+            state.$wallet.map(() =>
                 Vertical(
                     Grid(
                         Card(
                             Grid(
-                                PlainText(Number(state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained!).toFixed(2) + " £")
+                                Label(Number(state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained!).toFixed(2) + " £")
                                     .setFont(2, 700),
-                                PlainText("Balance")
+                                Label("Balance")
                                     .setFont(1, 700)
                                     .addClass("gray-color")
                             )
@@ -53,9 +52,9 @@ View(() => Vertical(
                         ),
                         Card(
                             Grid(
-                                PlainText(state.wallet?.cut + "%")
+                                Label(state.wallet?.cut + "%")
                                     .setFont(2, 700),
-                                PlainText("Your Cut")
+                                Label("Your Cut")
                                     .setFont(1, 700)
                                     .addClass("gray-color")
                             )
@@ -66,15 +65,15 @@ View(() => Vertical(
                         .setGap("var(--gap)")
                         .addClass("limited-width", "details-grid"),
                     Table([
-                        [ "Amount", "auto", ({ amount }) => PlainText(amount.toFixed(2) + " £") ],
-                        [ "Description", "auto", ({ description }) => PlainText(description) ],
-                        [ "Counterparty", "auto", ({ counterParty }) => PlainText(counterParty) ],
-                        [ "Date", "auto", ({ timestamp }) => PlainText(new Date(Number(timestamp)).toDateString()) ],
+                        [ "Amount", "auto", ({ amount }) => Label(amount.toFixed(2) + " £") ],
+                        [ "Description", "auto", ({ description }) => Label(description) ],
+                        [ "Counterparty", "auto", ({ counterParty }) => Label(counterParty) ],
+                        [ "Date", "auto", ({ timestamp }) => Label(new Date(Number(timestamp)).toDateString()) ],
                     ], state.wallet?.transactions ?? [])
                 ).setGap("var(--gap)")
-            )
+            ).asRefComponent()
         )
-    )).addClass("limited-width")
+    )).asRefComponent().addClass("limited-width")
 )).appendOn(document.body);
 
 renewAccessTokenIfNeeded()

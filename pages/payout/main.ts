@@ -2,18 +2,17 @@ import { API, MenuNode, Navigation, stupidErrorAlert } from "shared";
 import { groupBy } from "std/collections/group_by.ts";
 import { sortBy } from "std/collections/sort_by.ts";
 import { sumOf } from "std/collections/sum_of.ts";
-import { asPointer, isMobile, MaterialIcons, State, Vertical, View, WebGen } from "webgen/mod.ts";
+import { State, Vertical, View, WebGen, asPointer, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { Drop, Payout } from "../../spec/music.ts";
-import { permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../manager/helper.ts";
+import { RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../manager/helper.ts";
 import { changeThemeColor } from "../manager/misc/common.ts";
 
 await RegisterAuthRefresh();
 
 WebGen({
-    icon: new MaterialIcons(),
     events: {
         themeChanged: changeThemeColor()
     }

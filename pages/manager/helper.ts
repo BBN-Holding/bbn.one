@@ -2,7 +2,7 @@
 // This code Will be ported to webgen
 
 import { API, fileCache, Permission } from "shared";
-import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, ReCache, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, Cache, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -234,8 +234,8 @@ export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: F
         upload(Array.from(ev.dataTransfer?.files ?? []).filter(x => allowedAudioFormats.includes(x.type)));
     };
     table.append(Vertical(
-        PlainText("Nothing here yet").addClass("droptitle"),
-        PlainText("Drag & Drop your Files here").addClass("dropsubtitle")
+        Label("Nothing here yet").addClass("droptitle"),
+        Label("Drag & Drop your Files here").addClass("dropsubtitle")
     ).setGap("2.5rem").addClass("drop-area-label").draw());
     return Custom(table);
 }
@@ -244,7 +244,7 @@ export function EditArtists(list: Artist[]) {
     const form = Page({
         list: list
     }, (state) => [
-        Reactive(state, "list", () =>
+        state.$list.map(() =>
             Vertical(
                 Table([
                     [ "Type", "10rem", (_, index) =>
@@ -273,7 +273,7 @@ export function EditArtists(list: Artist[]) {
                 .setGap("var(--gap)")
                 .setWidth("clamp(0rem, 100vw, 60vw)")
                 .setMargin("0 -.6rem 0 0")
-        )
+        ).asRefComponent()
     ]);
     return new Promise<Drop[ "artists" ]>((done) => {
         const dialog = Dialog(() => Box(...form.getComponents()))
@@ -293,7 +293,7 @@ export function EditArtists(list: Artist[]) {
     });
 }
 export function showPreviewImage(x: Drop, big = false) {
-    return ReCache("image-preview-" + x._id + big, () => Promise.resolve(),
+    return Cache("image-preview-" + x._id + big, () => Promise.resolve(),
         (type) => type == "loaded" && x.artwork
             ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork")
             : Image(artwork, "A Placeholder Artwork.")).addClass("image-preview");
@@ -357,7 +357,7 @@ export function getNameInital(raw: string) {
 export function showProfilePicture(x: ProfileData) {
     return ProfilePicture(
         x.profile.avatar ?
-            ReCache(x.profile.avatar, () => Promise.resolve(), (type) => type == "loaded" ? Image(x.profile.avatar!, "") : Box()) : PlainText(getNameInital(x.profile.username)),
+            Cache(x.profile.avatar, () => Promise.resolve(), (type) => type == "loaded" ? Image(x.profile.avatar!, "") : Box()) : Label(getNameInital(x.profile.username)),
         x.profile.username
     ).addClass("profile-picture");
 }

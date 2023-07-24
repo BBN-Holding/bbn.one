@@ -1,6 +1,6 @@
 import { API } from "shared";
 import { assert } from "std/testing/asserts.ts";
-import { Box, Button, ButtonStyle, Color, Custom, Form, Grid, Horizontal, img, loadingWheel, MediaQuery, PlainText, Reactive, Spacer, TextInput, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Color, Custom, Form, Grid, Horizontal, Label, MediaQuery, Spacer, TextInput, Vertical, View, WebGen, img, loadingWheel } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { discordLogo, googleLogo, heroImage } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -13,10 +13,11 @@ await RegisterAuthRefresh();
 
 WebGen();
 
-const ErrorMessage = () => Reactive(state, "error", () => state.error != undefined
-    ? PlainText(state.error ?? "Please try again later.").addClass("error-message").setMargin("1rem 0 0")
+const ErrorMessage = () => state.$error.map(() => state.error != undefined
+    ? Label(state.error ?? "Please try again later.").addClass("error-message").setMargin("1rem 0 0")
     : Box()
 )
+    .asRefComponent()
     .removeFromLayout();
 
 View(() => Vertical(
@@ -24,12 +25,12 @@ View(() => Vertical(
     Grid(
         Vertical(
             MediaQuery("(max-width: 700px)", (small) =>
-                PlainText("Welcome back!")
+                Label("Welcome back!")
                     .setMargin("5rem 0 .8rem")
                     .addClass(small ? "no-custom" : "line-header", "header")
                     .setFont(small ? 4 : 5.375, 800)
             ).removeFromLayout(),
-            Reactive(state, "type", () => {
+            state.$type.map(() => {
                 if (state.type == "reset-password-from-email")
                     return Form(Grid(
                         TextInput("password", "New Password")
@@ -48,7 +49,7 @@ View(() => Vertical(
                                     state.error = "Failed: Please try again later";
                                 }
                             }),
-                        PlainText(!state.token ? "Error: Link is invalid" : "").addClass("error-message"),
+                        Label(!state.token ? "Error: Link is invalid" : "").addClass("error-message"),
                         ErrorMessage()
                     )).activeSubmitTo("#submit-button");
                 if (state.type == "request-reset-password")
@@ -79,7 +80,7 @@ View(() => Vertical(
                         ErrorMessage(),
 
                         Horizontal(
-                            PlainText("Known here?"),
+                            Label("Known here?"),
                             Button("Sign in")
                                 .setStyle(ButtonStyle.Inline)
                                 .onClick(() => state.type = "login")
@@ -139,7 +140,7 @@ View(() => Vertical(
                         ErrorMessage(),
 
                         Horizontal(
-                            PlainText("New here?"),
+                            Label("New here?"),
                             Button("Create a Account")
                                 .setStyle(ButtonStyle.Inline)
                                 .onClick(() => state.type = "register")
@@ -150,7 +151,7 @@ View(() => Vertical(
                             .setMargin("1.3rem 0 0"),
 
                         Horizontal(
-                            PlainText("Forgot your Password?"),
+                            Label("Forgot your Password?"),
                             Button("Reset it here")
                                 .setStyle(ButtonStyle.Inline)
                                 .setColor(Color.Colored)
@@ -192,7 +193,7 @@ View(() => Vertical(
                         ErrorMessage(),
 
                         Horizontal(
-                            PlainText("Known here?"),
+                            Label("Known here?"),
                             Button("Sign in")
                                 .setStyle(ButtonStyle.Inline)
                                 .onClick(() => state.type = "login")
@@ -206,10 +207,10 @@ View(() => Vertical(
 
                 return Box(
                     Custom(loadingWheel() as Element as HTMLElement),
-                    PlainText("Loading..."),
+                    Label("Loading..."),
                     ErrorMessage(),
                 ).addClass("loading", "loader");
-            }),
+            }).asRefComponent(),
         ),
         Spacer()
     ).addClass("limited-width").setJustify("start"),

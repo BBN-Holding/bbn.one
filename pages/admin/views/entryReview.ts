@@ -1,5 +1,5 @@
 import { API } from "shared";
-import { Box, Button, ButtonStyle, CenterV, Color, Entry, Icon, Image, ReCache } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Cache, CenterV, Color, Entry, Image, MIcon } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { loadImage } from "../../manager/helper.ts";
@@ -18,7 +18,7 @@ export function ReviewEntry(x: Drop) {
             .addClass("tag")
             .onClick(() => location.href = "/music/edit?id=" + x._id))
         .addSuffix(Box(...ReviewActions(x)))
-        .addPrefix(ReCache("image-preview-" + x._id, () => Promise.resolve(), (type) => {
+        .addPrefix(Cache("image-preview-" + x._id, () => Promise.resolve(), (type) => {
             const imageSource = type == "loaded" && x.artwork
                 ? Image({ type: "direct", source: async () => await loadImage(x) ?? fetch(templateArtwork).then(x => x.blob()) }, "A Song Artwork")
                 : Image(templateArtwork, "A Placeholder Artwork.");
@@ -32,7 +32,7 @@ function ReviewActions(x: Drop) {
     return [
         ...x.type == "UNDER_REVIEW" ? [
             CenterV(
-                Button(Icon("done_all"))
+                Button(MIcon("done_all"))
                     .setStyle(ButtonStyle.Inline)
                     .setColor(Color.Colored)
                     .addClass("tag")
@@ -47,7 +47,7 @@ function ReviewActions(x: Drop) {
         ...x.type == "PUBLISHING" ? [
             //TODO: Change this button to a dropdown with options to change the state of the drop.
             CenterV(
-                Button(Icon("bug_report"))
+                Button(MIcon("bug_report"))
                     .setStyle(ButtonStyle.Inline)
                     .setColor(Color.Colored)
                     .addClass("tag")

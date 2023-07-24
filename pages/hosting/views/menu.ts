@@ -1,7 +1,7 @@
 import { MessageType } from "https://deno.land/x/hmsys_connector@0.9.0/spec/ws.ts";
 import { API, count, HeavyReRender, LoadingSpinner, Navigation, RenderItem, SliderInput, stupidErrorAlert } from "shared";
 import { format } from "std/fmt/bytes.ts";
-import { asPointer, BasicLabel, Box, Button, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, MaterialIcons, MediaQuery, PlainText, Reactive, ref, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
+import { asPointer, BasicLabel, Box, Button, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, MediaQuery, MIcon, ref, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import serverTypes from "../../../data/eggs.json" assert { type: "json" };
 import locations from "../../../data/locations.json" assert { type: "json" };
 import { PowerState, Server, ServerDetails } from "../../../spec/music.ts";
@@ -13,8 +13,6 @@ import './details.css';
 import './list.css';
 import { moveDialog } from "./list.ts";
 import { TerminalComponent } from "./terminal.ts";
-
-new MaterialIcons();
 
 type StateActions = {
     [ type in PowerState ]: Component | IconButtonComponent;
@@ -66,7 +64,7 @@ export const hostingMenu = Navigation({
                                 id: "files",
                                 title: "Files",
                                 subtitle: "Upload and manage your files.",
-                                suffix: PlainText("Coming Soon")
+                                suffix: Label("Coming Soon")
                                     .setFont(1, 500)
                                     .setMargin("0 1rem")
                             },
@@ -74,7 +72,7 @@ export const hostingMenu = Navigation({
                                 id: "database",
                                 title: "Database",
                                 subtitle: "Enabled a MariaDB Database",
-                                suffix: PlainText("Coming Soon")
+                                suffix: Label("Coming Soon")
                                     .setFont(1, 500)
                                     .setMargin("0 1rem")
                             }
@@ -95,7 +93,7 @@ export const hostingMenu = Navigation({
                                 id: "extenions",
                                 title: "Download Content",
                                 subtitle: "Get access to Mods, Plugins or Databacks!",
-                                suffix: PlainText("Coming Soon")
+                                suffix: Label("Coming Soon")
                                     .setFont(1, 500)
                                     .setMargin("0 1rem")
                             },
@@ -103,7 +101,7 @@ export const hostingMenu = Navigation({
                                 id: "worlds",
                                 title: "Manage Worlds",
                                 subtitle: "Download, Reset or Upload your worlds.",
-                                suffix: PlainText("Coming Soon")
+                                suffix: Label("Coming Soon")
                                     .setFont(1, 500)
                                     .setMargin("0 1rem")
                             },
@@ -111,7 +109,7 @@ export const hostingMenu = Navigation({
                                 id: "core",
                                 title: "Server Settings",
                                 subtitle: "All your Settings in one place.",
-                                suffix: PlainText("Coming Soon")
+                                suffix: Label("Coming Soon")
                                     .setFont(1, 500)
                                     .setMargin("0 1rem")
                             }
@@ -125,9 +123,10 @@ export const hostingMenu = Navigation({
             id: "profile",
             title: "Profile",
             children: [
-                Reactive(state, "meta", () =>
-                    state.meta ? profileView() : LoadingSpinner()
+                state.$meta.map((meta) =>
+                    meta ? profileView() : LoadingSpinner()
                 )
+                    .asRefComponent()
             ]
         }
     ],
@@ -168,8 +167,8 @@ type GridItem = Component | [ settings: {
 }, element: Component ];
 
 function ChangeStateButton(server: StateHandler<Server>): Component {
-    return Reactive(server, "state", () => ((<StateActions>{
-        "offline": IconButton("play_arrow", "delete")
+    return server.$state.map((state) => ((<StateActions>{
+        "offline": IconButton(MIcon("play_arrow"), "delete")
             .addClass("color-green")
             .setColor(Color.Colored)
             .onClick(async (e) => {
@@ -182,14 +181,16 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
         "installing": LoadingSpinner(),
         "stopping": LoadingSpinner(),
         "starting": LoadingSpinner(),
-        "running": IconButton("stop", "delete")
+        "running": IconButton(MIcon("stop"), "delete")
             .setColor(Color.Critical)
             .onClick(async (e) => {
                 e.stopPropagation();
                 server.state = "stopping";
                 await API.hosting(API.getToken()).serverId(server._id).power("stop");
             })
-    })[ server.state ] ?? Box())).addClass(isMobile.map(it => it ? "small" : "normal"), "icon-buttons-list", "action-list");
+    })[ state ] ?? Box()))
+        .asRefComponent()
+        .addClass(isMobile.map(it => it ? "small" : "normal"), "icon-buttons-list", "action-list");
 }
 
 const SECOND = 1000; // Milliseconds
@@ -389,7 +390,7 @@ function editServer(server: StateHandler<Server>) {
     });
     Dialog(() =>
         Vertical(
-            PlainText(`A ${serverTypes[ server.type ].name} Server.`),
+            Label(`A ${serverTypes[ server.type ].name} Server.`),
             MediaQuery("(max-width: 700px)", (small) => Grid(
                 [
                     {
@@ -444,7 +445,7 @@ function editServer(server: StateHandler<Server>) {
 }
 
 function deleteServer(serverId: string) {
-    Dialog(() => Box(PlainText("Deleting this Server, will result in data loss.\nAfter this point there is no going back.")).setMargin("0 0 1.5rem"))
+    Dialog(() => Box(Label("Deleting this Server, will result in data loss.\nAfter this point there is no going back.")).setMargin("0 0 1.5rem"))
         .setTitle("Are you sure?")
         .addButton("Cancel", "remove")
         .addButton("Delete", async () => {

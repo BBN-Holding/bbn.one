@@ -1,7 +1,3 @@
-.content {
-    overflow: hidden;
-}
-
 .content>* {
     z-index: 2;
 }
@@ -59,6 +55,7 @@
     display: grid;
     place-items: center;
     align-content: center;
+    margin: 0 1.3rem;
 }
 
 /* background: linear-gradient(180deg, rgba(0, 0, 0, 0.61) 0%, #000 77.08%, #000 100%), url(<path-to-image>), lightgray 50% / cover no-repeat;
@@ -117,6 +114,14 @@ h3 {
     margin-bottom: -1rem;
 }
 
+.other-services-images {
+    display: flex;
+    flex-wrap: wrap;
+    width: calc(100vw - 2rem);
+    justify-content: space-between;
+    max-width: 45rem;
+    gap: 1rem;
+}
 .bbn-one-services :is(.wimage, img),
 .other-services-images :is(.wimage, img) {
     width: unset !important;
@@ -155,8 +160,14 @@ h3 {
 }
 
 .live-stats .title {
-    font-size: 36.6px;
+    font-size: 4rem;
     font-weight: 900;
+}
+
+@media (max-width: 900px) {
+.live-stats .title {
+    font-size: 36.6px;
+}
 }
 
 .live-stats .subtitle {

@@ -1,5 +1,5 @@
 import { randomInteger } from "https://deno.land/std@0.193.0/collections/_utils.ts";
-import { asPointer, Box, css, PlainText, Pointer } from "webgen/mod.ts";
+import { asPointer, Box, css, Label, Pointer } from "webgen/mod.ts";
 import { HeavyReRender } from "./list.ts";
 
 export function Counter(value: Pointer<string | number>) {
@@ -54,24 +54,25 @@ export function Counter(value: Pointer<string | number>) {
 
         function update() {
             counter.setValue(Box(
-                PlainText(unchangedPart),
-                PlainText(changedPart).addClass("updating-" + id),
+                Label(unchangedPart),
+                Label(changedPart).addClass("updating-" + id),
             ));
         }
 
-        if ('startViewTransition' in document) {
-            // deno-lint-ignore no-explicit-any
-            const item = document.querySelector(".updating-" + id) as any;
-            if (item)
-                item.style.viewTransitionName = "counter-" + id;
-            // deno-lint-ignore no-explicit-any
-            (<any>document).startViewTransition(() => {
-                // if we don't cleanup we could trigger all view transitions. i don't know if we can make this unique (ShadowDOM!?)
-                if (item) item.style.viewTransitionName = "";
-                update();
-            });
-            // TODO: Make some polyfill, or just wait until all browsers catch on.
-        } else update();
+        // if ('startViewTransition' in document) {
+        //     // deno-lint-ignore no-explicit-any
+        //     const item = document.querySelector(".updating-" + id) as any;
+        //     if (item)
+        //         item.style.viewTransitionName = "counter-" + id;
+        //     // deno-lint-ignore no-explicit-any
+        //     // (<any>document).startViewTransition(() => {
+        //     // if we don't cleanup we could trigger all view transitions. i don't know if we can make this unique (ShadowDOM!?)
+        //     // if (item) item.style.viewTransitionName = "";
+        //     // update();
+        //     // });
+        //     // TODO: Make some polyfill, or just wait until all browsers catch on.
+        // } else
+        update();
     });
 
     return HeavyReRender(counter, it => it);

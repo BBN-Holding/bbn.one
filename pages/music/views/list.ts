@@ -1,5 +1,5 @@
 import { sortBy } from "std/collections/sort_by.ts";
-import { CenterV, Component, Entry, MediaQuery, PlainText, Vertical } from "webgen/mod.ts";
+import { CenterV, Component, Entry, Label, MediaQuery, Vertical } from "webgen/mod.ts";
 import { Drop, DropType, Payout } from "../../../spec/music.ts";
 import { activeUser, permCheck } from "../../manager/helper.ts";
 import { DropEntry } from "./entry.ts";
@@ -24,7 +24,7 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
     if (dropList.length == 0)
         return null;
     return [
-        PlainText(title)
+        Label(title)
             .addClass("list-title"),
         MediaQuery("(max-width: 700px)",
             (matches) =>
@@ -37,7 +37,7 @@ function CategoryRender(dropList: Drop[], title: string): Component | (Component
 
 export function listPayouts(payouts: Payout[], admin = false) {
     return Vertical(payouts && payouts.length > 0 ? [
-        PlainText("Payouts")
+        Label("Payouts")
             .addClass("list-title")
             .addClass("limited-width")
             .setMargin("0 auto 1rem"),
@@ -50,19 +50,19 @@ export function listPayouts(payouts: Payout[], admin = false) {
             })
         )).setGap("1rem"),
     ] : [
-        PlainText("No Payouts")
+        Label("No Payouts")
             .addClass("list-title")
             .addClass("limited-width"),
-        PlainText("Release new Drops to earn money"),
+        Label("Release new Drops to earn money"),
     ]);
 }
 
 export function ExplainerText(drop: Drop[], type: DropType) {
     return drop.length == 0 ?
         MediaQuery("(min-width: 540px)", (large) => large ? CenterV(
-            PlainText(`You don’t have any ${EnumToDisplay(type)} Drops`)
+            Label(`You don’t have any ${EnumToDisplay(type)} Drops`)
                 .setFont(1.6, 700)
-        ).setMargin("100px 0 0") : PlainText(`You don’t have any ${EnumToDisplay(type)} Drops`)
+        ).setMargin("100px 0 0") : Label(`You don’t have any ${EnumToDisplay(type)} Drops`)
             .setFont(1.6, 700))
             .setMargin("100px auto 0")
             .addClass("explainer-text")

@@ -1,4 +1,4 @@
-import { MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -10,7 +10,6 @@ import { musicMenu } from "./views/menu.ts";
 
 await RegisterAuthRefresh();
 WebGen({
-    icon: new MaterialIcons(),
     events: {
         themeChanged: changeThemeColor()
     }

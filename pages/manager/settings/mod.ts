@@ -1,4 +1,4 @@
-import { isMobile, MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
+import { isMobile, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../../assets/css/main.css';
 import { DynaNavigation } from "../../../components/nav.ts";
 import { Navigation } from "../../shared/mod.ts";
@@ -8,7 +8,6 @@ import { ChangePassword } from "./changePassword.ts";
 import { ChangePersonal } from "./changePersonal.ts";
 
 WebGen({
-    icon: new MaterialIcons(),
     events: {
         themeChanged: changeThemeColor()
     }

@@ -1,6 +1,6 @@
 // @deno-types="https://cdn.jsdelivr.net/npm/@types/mjml-core@4.7.0/index.d.ts"
 import mjml from "https://cdn.jsdelivr.net/npm/mjml-browser@4.13.0/+esm";
-import { Box, createElement, Custom, PlainText, Vertical } from "webgen/mod.ts";
+import { Box, createElement, Custom, Label, Vertical } from "webgen/mod.ts";
 import { Drop } from "../../spec/music.ts";
 import './email.css';
 
@@ -35,7 +35,7 @@ export function clientRender(data: string) {
     return Box(
         Custom(shell).addClass("emailPreview").setMargin("0 0 calc(var(--gap) / 2)"),
         Vertical(
-            Array.from(new Set(mjmlrsp.errors.map(x => x.tagName + ": " + x.message))).map(x => PlainText("⚠️ " + x))
+            Array.from(new Set(mjmlrsp.errors.map(x => x.tagName + ": " + x.message))).map(x => Label("⚠️ " + x))
         )
     );
 }

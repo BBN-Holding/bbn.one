@@ -1,12 +1,12 @@
 import { API, uploadFilesDialog } from "shared";
-import { AdvancedImage, Box, Button, ButtonStyle, Center, CenterV, Color, Custom, DropAreaInput, DropDownInput, Grid, Horizontal, Image, loadingWheel, MaterialIcons, MediaQuery, Page, PlainText, Reactive, Spacer, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard } from "webgen/mod.ts";
+import { AdvancedImage, Box, Button, ButtonStyle, Center, CenterV, Color, Custom, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard, loadingWheel } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import language from "../../data/language.json" assert { type: "json" };
 import primary from "../../data/primary.json" assert { type: "json" };
 import secondary from "../../data/secondary.json" assert { type: "json" };
 import { ArtistTypes, Drop, DropType, pageFive, pageFour, pageOne, pageThree, pageTwo } from "../../spec/music.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtists, getDropFromPages, getSecondary, IsLoggedIn, ProfileData, RegisterAuthRefresh } from "./helper.ts";
+import { CenterAndRight, EditArtists, IsLoggedIn, ProfileData, RegisterAuthRefresh, allowedAudioFormats, allowedImageFormats, getDropFromPages, getSecondary } from "./helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
 import { ManageSongs } from "./music/table.ts";
 
@@ -14,8 +14,7 @@ import '../../assets/css/wizard.css';
 
 await RegisterAuthRefresh();
 WebGen({
-    theme: SupportedThemes.dark,
-    icon: new MaterialIcons()
+    theme: SupportedThemes.dark
 });
 
 const params = new URLSearchParams(location.search);
@@ -91,7 +90,7 @@ const wizard = (restore?: Drop) => Wizard({
         MediaQuery(
             "(max-width: 500px)",
             (small) =>
-                PlainText("Lets make your Drop hit!")
+                Label("Lets make your Drop hit!")
                     .setWidth(small ? "max(1rem, 15rem)" : "max(1rem, 25rem)")
                     .setFont(small ? 2 : 3.448125, 800),
         ),
@@ -99,7 +98,7 @@ const wizard = (restore?: Drop) => Wizard({
         Horizontal(
             Spacer(),
             Vertical(
-                Center(PlainText("Do you have an UPC/EAN number?").addClass("title")),
+                Center(Label("Do you have an UPC/EAN number?").addClass("title")),
                 TextInput("text", "UPC/EAN").sync(state, "upc")
                     .setWidth(inputWidth)
                     .addClass("max-width"),
@@ -125,7 +124,7 @@ const wizard = (restore?: Drop) => Wizard({
         Spacer(),
         MediaQuery("(max-width: 450px)", (small) =>
             Grid(
-                Center(PlainText("Enter your Album details.").addClass("title")),
+                Center(Label("Enter your Album details.").addClass("title")),
                 TextInput("text", "Title").sync(state, "title"),
                 Grid(
                     TextInput("date", "Release Date", "live").sync(state, "release"),
@@ -144,20 +143,20 @@ const wizard = (restore?: Drop) => Wizard({
                                 state.artists = <any>x?.map(x => x.map(x => x.trim()));
                             });
                     }),
-                Center(PlainText("Set your target Audience").addClass("title")),
+                Center(Label("Set your target Audience").addClass("title")),
                 Grid(
                     DropDownInput("Primary Genre", primary)
                         .sync(state, "primaryGenre")
                         .onChange(() => {
                             state.secondaryGenre = undefined;
                         }),
-                    Reactive(state, "primaryGenre", () =>
+                    state.$primaryGenre.map(() =>
                         DropDownInput("Secondary Genre", getSecondary(secondary, state.primaryGenre) ?? [])
                             .sync(state, "secondaryGenre")
                             .setColor(getSecondary(secondary, state.primaryGenre) ? Color.Grayscaled : Color.Disabled)
                             .addClass("border-box")
                             .setWidth("100%")
-                    ),
+                    ).asRefComponent(),
                 )
                     .setGap(gapSize)
                     .setEvenColumns(small ? 1 : 2),
@@ -173,7 +172,7 @@ const wizard = (restore?: Drop) => Wizard({
     }, (state) => [
         Spacer(),
         Grid(
-            Center(PlainText("Display the Copyright").addClass("title")),
+            Center(Label("Display the Copyright").addClass("title")),
             TextInput("text", "Composition Copyright").sync(state, "compositionCopyright"),
             TextInput("text", "Sound Recording Copyright").sync(state, "soundRecordingCopyright"),
         )
@@ -188,9 +187,9 @@ const wizard = (restore?: Drop) => Wizard({
     }, (data) => [
         Spacer(),
         Center(
-            Reactive(data, "artworkClientData", () => Vertical(
+            data.$artworkClientData.map(() => Vertical(
                 CenterAndRight(
-                    PlainText("Upload your Cover").addClass("title"),
+                    Label("Upload your Cover").addClass("title"),
                     Button("Manual Upload")
                         .onClick(() => uploadFilesDialog(([ file ]) => {
                             uploadArtwork(data, file);
@@ -201,7 +200,7 @@ const wizard = (restore?: Drop) => Wizard({
                     allowedImageFormats,
                     ([ { file } ]) => uploadArtwork(data, file)
                 ).addClass("drop-area")
-            ).setGap(gapSize))
+            ).setGap(gapSize)).asRefComponent()
         ),
     ]).setValidator(() => pageFour),
     Page({
@@ -213,7 +212,7 @@ const wizard = (restore?: Drop) => Wizard({
             Spacer(),
             Vertical(
                 CenterAndRight(
-                    PlainText("Manage your Music").addClass("title"),
+                    Label("Manage your Music").addClass("title"),
                     Button("Manual Upload")
                         .onClick(() => uploadFilesDialog((list) => uploadSongToDrop(state, getDropFromPages(PageData(), restore), list), allowedAudioFormats.join(",")))
                 ),
@@ -228,7 +227,7 @@ const wizard = (restore?: Drop) => Wizard({
         Spacer(),
         Horizontal(
             Spacer(),
-            PlainText("Thanks! That's everything we need.").addClass("ending-title"),
+            Label("Thanks! That's everything we need.").addClass("ending-title"),
             Spacer(),
         ),
         Horizontal(
