@@ -1,8 +1,7 @@
-import { BIcon, Box, Button, ButtonStyle, Grid, IconButton, Image, Label, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Box, Button, Grid, Image, Label, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../manager/helper.ts";
-import './footer.css';
 import './landing.css';
 import { data, streamingPool } from "./loading.ts";
 // Main
@@ -11,10 +10,10 @@ import bbnMusic from "./resources/bbnMusic.svg";
 
 // External
 import { Counter } from "../shared/counter.ts";
+import { Footer } from "../shared/footer.ts";
 import bbnCard from "./resources/bbnCard.svg";
 import bbnGameStudios from "./resources/bbnGameStudios.svg";
 import bbnPublishing from "./resources/bbnPublishing.svg";
-import splash from "./resources/splash.png";
 WebGen();
 await RegisterAuthRefresh();
 
@@ -99,84 +98,7 @@ View(() => Box(
         .addClass("content")
         .setAlign("center"),
 
-    Box(
-        Image(splash, "Splash Image").addClass("splash-image"),
-        Box(
-            Box(
-                Label("Looks Dope?\nJoin now!").addClass("title"),
-                Label("Delivering Excellence. Empowering Businesses and\nIndividuals with Premium Services")
-                    .addClass("subtitle")
-            ).addClass("text-section"),
-            Button("Get started")
-                .asLinkButton("/signin")
-                .addClass("round-button", "large-button"),
-        ).addClass("area-fg"),
-        Box(
-            Box(
-                ...[
-                    [ "Company", [
-                        [ "About Us", "https://bbn.one" ],
-                        [ "FAQs", "https://bbn.one" ],
-                        [ "Teams", "https://bbn.one" ],
-                        [ "Contact Us", "mailto:support@bbn.one" ],
-                    ] ] as const,
-
-                    [ "Product", [
-                        [ "Music", "https://bbn.one/music" ],
-                        [ "Hosting", "https://bbn.one/hosting" ],
-                    ] ] as const,
-
-                    [ "Use Cases", [
-                        [ "Newcomers", "https://bbn.one/music" ],
-                        [ "Personal", "https://bbn.one/hosting" ],
-                        [ "Small Business", "https://bbn.one/hosting" ],
-                    ] ] as const,
-
-                    [ "Resources", [
-                        [ "Blog", "https://blog.bbn.one/" ],
-                        [ "Status Page", "https://status.bbn.one/" ],
-                        [ "Open Source", "https://github.com/bbn-holding/" ],
-                        [ "Support", "mailto:support@bbn.one" ],
-                    ] ] as const,
-                ].map(([ text, items ]) => Grid(
-                    Label(text)
-                        .addClass("title"),
-                    ...items.map(([ title, link ]) =>
-                        Button(title)
-                            .addClass("link")
-                            .setStyle(ButtonStyle.Inline)
-                            .asLinkButton(link)
-                    )
-                ).addClass("column")),
-            ).addClass("grouped-links"),
-            Grid(
-                Grid(
-                    ...[
-                        [ "youtube", "Youtube", "https://twitch.tv/gd_bbn" ],
-                        [ "twitch", "Twitch", "https://twitch.tv/gd_bbn" ],
-                        [ "twitter", "Twiter", "https://twitter.com/BBN_Holding" ],
-                        [ "facebook", "Facebook", "https://twitch.tv/gd_bbn" ],
-                        [ "discord", "Discord", "https://discord.gg/dJevjw2fCe" ],
-                        [ "instagram", "Instagram", "https://twitch.tv/gd_bbn" ],
-                        [ "github", "GitHub", "https://github.com/bbn-holding/" ],
-                    ]
-                        .map(([ icon, aria, link ]) =>
-                            IconButton(BIcon(icon), aria)
-                                .addClass("icon")
-                                .asLinkButton(link)
-                        )
-                ).addClass("icons"),
-                Button("Join Now")
-                    .setStyle(ButtonStyle.Secondary)
-                    .asLinkButton("/signin")
-                    .addClass("round-button"),
-                Button("Contact Us")
-                    .asLinkButton("mailto:support@bbn.one")
-                    .addClass("round-button")
-            )
-                .addClass("icon-bar")
-        ).addClass("area-bg")
-    ).addClass("footer")
+    Footer()
 ))
     .appendOn(document.body);
 

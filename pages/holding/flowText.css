@@ -1,0 +1,22 @@
+.flow-text {
+    max-width: 77rem;
+    width: calc(100vw - 2rem);
+    margin: 5rem auto 0;
+}
+
+.list {
+    display: grid;
+    grid-template-columns: 100%;
+    margin: 1rem 0;
+
+}
+
+.list>*::before {
+    content: '•';
+    margin-right: 1rem;
+}
+
+.block {
+    display: block;
+    margin: 0.5rem 0;
+}

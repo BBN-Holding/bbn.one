@@ -16,6 +16,7 @@ nav.settings {
 
 nav.home {
     position: fixed;
+    backdrop-filter: blur(3px);
 }
 
 [data-theme="light"] nav.home {
