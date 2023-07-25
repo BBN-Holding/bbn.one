@@ -1,23 +1,31 @@
 :root {
     --color-colored-hue: 31deg !important;
-    /** TODO: Fix me */
 }
 
-body {
-    background-color: var(--bbn-primary);
+[data-theme=dark] {
+    --background-color: #000;
+}
+
+.background-image {
+    position: absolute;
+    inset: -0.5rem;
+    --image: url('../holding/resources/background.jpg');
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.61) 0%, #000 77.08%, #000 100%),
+        var(--image) no-repeat center center;
+    background-size: cover;
+    filter: blur(4.5px);
+    z-index: -1;
+}
+
+.auth-area {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
 }
 
 .line-header {
     line-height: 94px;
-}
-
-.background-image {
-    position: fixed;
-    top: 57%;
-    width: 50%;
-    left: 66%;
-    z-index: -1;
-    transform: translate(-50%, -50%);
 }
 
 .prefix-logo {

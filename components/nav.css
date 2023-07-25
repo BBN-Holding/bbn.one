@@ -10,6 +10,12 @@ nav {
     user-select: none;
 }
 
+.login-button {
+    border-radius: 12px;
+    padding: 0 1.3rem 0.01rem;
+    height: 2rem;
+}
+
 nav.settings {
     background: black;
 }
@@ -89,22 +95,6 @@ nav>div {
 
 nav img {
     height: 1.7rem;
-}
-
-nav .wbutton.normal.contact {
-    border: 2px solid #47b2e4;
-    background: transparent;
-    color: white;
-    border-radius: 100px;
-    font-size: 14px;
-    padding: 6px 25px 7px;
-    transition: box-shadow 0.3s, background-color 0.3s;
-    height: unset;
-    line-height: 1.5;
-}
-
-nav .wbutton.contact:is(:hover, :focus) {
-    background: #47b2e4;
 }
 
 nav.email-banner {

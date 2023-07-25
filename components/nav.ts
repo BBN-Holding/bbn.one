@@ -1,6 +1,6 @@
 import { API } from "shared";
 import { delay } from "std/async/delay.ts";
-import { Box, Button, ButtonStyle, CenterV, Color, Component, Custom, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement, img } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, CenterV, Component, Custom, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement, img } from "webgen/mod.ts";
 import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/_legacy/helper.ts";
 import './nav.css';
 import { activeLogo, pages } from "./pages.ts";
@@ -83,8 +83,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                         .asLinkButton("/settings")
                     : (type == "Home" && !location.pathname.startsWith("/signin") ?
                         Button("Sign in")
-                            .setColor(Color.Colored)
-                            .addClass("contact")
+                            .addClass("login-button")
                             .onClick(() => { location.href = "/signin"; })
                         : null)
 

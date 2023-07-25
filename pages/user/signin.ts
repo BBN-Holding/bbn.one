@@ -1,10 +1,11 @@
 import { API } from "shared";
 import { assert } from "std/testing/asserts.ts";
-import { Box, Button, ButtonStyle, Color, Custom, Form, Grid, Horizontal, Label, MediaQuery, Spacer, TextInput, Vertical, View, WebGen, img, loadingWheel } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Color, Custom, Form, Grid, Horizontal, Label, Spacer, TextInput, Vertical, View, WebGen, img, isMobile, loadingWheel } from "webgen/mod.ts";
 import '../../assets/css/main.css';
-import { discordLogo, googleLogo, heroImage } from "../../assets/imports.ts";
+import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
+import { Footer } from "../shared/footer.ts";
 import { handleStateChange, loginUser, registerUser } from "./actions.ts";
 import './signin.css';
 import { state } from "./state.ts";
@@ -22,14 +23,15 @@ const ErrorMessage = () => state.$error.map(() => state.error != undefined
 
 View(() => Vertical(
     ...DynaNavigation("Home"),
-    Grid(
-        Vertical(
-            MediaQuery("(max-width: 700px)", (small) =>
+    Box().addClass("background-image"),
+    Box(
+        Grid(
+            isMobile.map((small) =>
                 Label("Welcome back!")
                     .setMargin("5rem 0 .8rem")
                     .addClass(small ? "no-custom" : "line-header", "header")
                     .setFont(small ? 4 : 5.375, 800)
-            ).removeFromLayout(),
+            ).asRefComponent().removeFromLayout(),
             state.$type.map(() => {
                 if (state.type == "reset-password-from-email")
                     return Form(Grid(
@@ -211,10 +213,10 @@ View(() => Vertical(
                     ErrorMessage(),
                 ).addClass("loading", "loader");
             }).asRefComponent(),
-        ),
-        Spacer()
-    ).addClass("limited-width").setJustify("start"),
-    Custom(img(heroImage)).addClass("background-image")
+        )
+    )
+        .addClass("auth-area"),
+    Footer()
 ))
     .appendOn(document.body);
 
