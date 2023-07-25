@@ -3,9 +3,11 @@
     font-size: 0.8rem;
     margin: 8px 0;
 }
+
 .label-center {
     justify-self: center;
 }
+
 .linkage {
     width: 100%;
     grid-template-columns: 115px 50px 115px;
@@ -13,6 +15,7 @@
     align-items: center;
     justify-content: space-between;
 }
+
 .permission {
     font-weight: bold;
     grid-template-columns: max-content auto;
@@ -24,12 +27,12 @@
     max-width: 27rem;
 }
 
-.area-space .profile-picture {
+.auth-area .profile-picture {
     width: 100%;
     height: 100%;
     border-radius: 1.5rem;
 }
 
-.area-space .wimage {
+.auth-area .wimage {
     border-radius: 1.5rem;
 }
