@@ -27,7 +27,7 @@ export function Footer() {
                         [ "Distribution Agreement", "/p/distribution-agreement" ],
                     ] ] as const,
 
-                    [ "Product", [
+                    [ "Products", [
                         [ "Music", "/music" ],
                         [ "Hosting", "/hosting" ],
                     ] ] as const,
@@ -58,12 +58,12 @@ export function Footer() {
             Grid(
                 Grid(
                     ...[
-                        [ "youtube", "Youtube", "https://twitch.tv/gd_bbn" ],
+                        [ "youtube", "Youtube", "https://www.youtube.com/@bbn6775" ],
                         [ "twitch", "Twitch", "https://twitch.tv/gd_bbn" ],
                         [ "twitter", "Twiter", "https://twitter.com/BBN_Holding" ],
-                        [ "facebook", "Facebook", "https://twitch.tv/gd_bbn" ],
+                        [ "facebook", "Facebook", "https://www.facebook.com/bbn.holding/" ],
                         [ "discord", "Discord", "https://discord.gg/dJevjw2fCe" ],
-                        [ "instagram", "Instagram", "https://twitch.tv/gd_bbn" ],
+                        [ "instagram", "Instagram", "https://www.instagram.com/bbn.music/" ],
                         [ "github", "GitHub", "https://github.com/bbn-holding/" ],
                     ]
                         .map(([ icon, aria, link ]) =>
