@@ -92,7 +92,7 @@ export const hostingMenu = Navigation({
                             {
                                 id: "extenions",
                                 title: "Download Content",
-                                subtitle: "Get access to Mods, Plugins or Databacks!",
+                                subtitle: "Get access to Mods, Plugins or Datapacks!",
                                 suffix: Label("Coming Soon")
                                     .setFont(1, 500)
                                     .setMargin("0 1rem")
