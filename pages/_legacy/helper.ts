@@ -2,7 +2,7 @@
 // This code Will be ported to webgen
 
 import { API, fileCache, Permission } from "shared";
-import { Box, Button, Cache, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, Cache, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -198,18 +198,19 @@ export function stringToColor(str: string) {
     for (let i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
-    let colour = '#';
+    let color = '#';
     for (let i = 0; i < 3; i++) {
         const value = (hash >> (i * 8)) & 0xFF;
-        colour += ('00' + value.toString(16)).substr(-2);
+        color += ('00' + value.toString(16)).substr(-2);
     }
-    return colour;
+    return color;
 }
 
 const a = document.createElement('a');
 document.body.appendChild(a);
 a.setAttribute('style', 'display: none');
 
+//TODO: mby make use of this function
 export function saveBlob(blob: Blob, fileName: string) {
     const url = window.URL.createObjectURL(blob);
     a.href = url;
@@ -218,27 +219,6 @@ export function saveBlob(blob: Blob, fileName: string) {
     window.URL.revokeObjectURL(url);
 }
 
-
-export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: File[]) => void) {
-    const table = Table(_columns, []).draw();
-    table.ondragleave = (ev) => {
-        ev.preventDefault();
-        table.classList.remove("hover");
-    };
-    table.ondragover = (ev) => {
-        ev.preventDefault();
-        table.classList.add("hover");
-    };
-    table.ondrop = (ev) => {
-        ev.preventDefault();
-        upload(Array.from(ev.dataTransfer?.files ?? []).filter(x => allowedAudioFormats.includes(x.type)));
-    };
-    table.append(Vertical(
-        Label("Nothing here yet").addClass("droptitle"),
-        Label("Drag & Drop your Files here").addClass("dropsubtitle")
-    ).setGap("2.5rem").addClass("drop-area-label").draw());
-    return Custom(table);
-}
 const ARTIST_ARRAY = <ArtistTypes[]>[ "PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER" ];
 export function EditArtists(list: Artist[]) {
     const form = Page({

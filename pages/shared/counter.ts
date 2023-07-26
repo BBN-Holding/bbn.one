@@ -1,4 +1,4 @@
-import { randomInteger } from "https://deno.land/std@0.193.0/collections/_utils.ts";
+import { randomInteger } from "std/collections/_utils.ts";
 import { asPointer, Box, css, Label, Pointer } from "webgen/mod.ts";
 import { HeavyReRender } from "./list.ts";
 

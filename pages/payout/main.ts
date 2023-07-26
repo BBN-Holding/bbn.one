@@ -102,8 +102,7 @@ View(() => Vertical(
                     };
                 }) : []) : []
             },
-        ],
-        // custom: () => LoadingSpinner()
+        ]
     }).addClass(
         isMobile.map(mobile => mobile ? "mobile-navigation" : "navigation"),
         "limited-width"

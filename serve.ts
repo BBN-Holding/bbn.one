@@ -9,7 +9,11 @@ const title = new Map(Object.entries({
     "music": "BBN Music",
     "music/new-drop": "BBN Music - New Drop",
     "music/edit": "BBN Music - Edit Drop",
-    "music/payout": "BBN Music - Payout"
+    "music/payout": "BBN Music - Payout",
+    "p/privacy-policy": "BBN One - Privacy Policy",
+    "p/terms-of-use": "BBN One - Terms of Use",
+    "p/imprint": "BBN One - Imprint",
+    "p/distribution-agreement": "BBN One - Distribution Agreement",
 }));
 
 serve({
