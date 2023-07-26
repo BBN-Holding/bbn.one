@@ -353,20 +353,20 @@ export function serverDetails(server: StateHandler<Server>) {
                     subtitle: "Manage your persistence",
                 }).onClick(() => {
                     hostingMenu.path.setValue(hostingMenu.path.getValue() + "/storage");
-                }),
+                }).addClass("small"),
                 Entry({
                     title: "Settings",
                     subtitle: "Update your Server"
                 }).onClick(() => {
                     hostingMenu.path.setValue(hostingMenu.path.getValue() + "/settings");
-                }),
+                }).addClass("small"),
                 Entry({
                     title: "Legacy",
                     subtitle: "Go to the legacy panel"
                 }).onClick(async () => {
                     const thing = await API.hosting(API.getToken()).serverId(server._id).get();
                     open(`https://panel.bbn.one/server/${thing.ptero.identifier}`, "_blank");
-                })
+                }).addClass("small")
             )
                 .addClass("split-list")
                 .setGap("var(--gap)")
