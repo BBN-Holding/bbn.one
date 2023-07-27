@@ -1,9 +1,10 @@
 import { API, LoadingSpinner, stupidErrorAlert } from "shared";
-import { Button, ButtonStyle, Color, Custom, Grid, Horizontal, Icon, Image, img, MediaQuery, PlainText, Reactive, Spacer, State, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Color, Custom, Grid, Horizontal, Image, Label, MIcon, Spacer, State, Vertical, View, WebGen, img, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { dots, templateArtwork } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { activeUser, getNameInital, logOut, ProfilePicture, RegisterAuthRefresh } from "../manager/helper.ts";
+import { ProfilePicture, RegisterAuthRefresh, activeUser, getNameInital, logOut } from "../_legacy/helper.ts";
+import { Footer } from "../shared/footer.ts";
 import './oauth.css';
 import './signin.css';
 
@@ -27,80 +28,81 @@ const state = State({
     icon: ""
 });
 
-const list = Reactive(state, "loaded", () => {
+const list = state.$loaded.map(() => {
     if (state.loaded)
-        return Grid(
-            MediaQuery("(max-width: 700px)", (small) =>
-                PlainText("Connect Now!")
-                    .setMargin("5rem 0 .8rem")
-                    .addClass(small ? "no-custom" : "line-header", "header")
-                    .setFont(small ? 4 : 5.375, 800)
-            ).removeFromLayout(),
-            PlainText("CONNECTION")
-                .addClass("label-small"),
+        return Box(
             Grid(
+                isMobile.map((small) =>
+                    Label("Connect Now!")
+                        .setMargin("5rem 0 .8rem")
+                        .addClass(small ? "no-custom" : "line-header", "header")
+                        .setFont(small ? 4 : 5.375, 800)
+                ).asRefComponent().removeFromLayout(),
+                Label("CONNECTION")
+                    .addClass("label-small"),
                 Grid(
-                    Image(state.icon || templateArtwork, "New Connection"),
-                    PlainText(state.name || "---")
-                        .addClass("label-small", "label-center")
-                ),
-                Image(dots, "dots"),
-                Grid(
-                    ProfilePicture(
-                        activeUser.avatar ?
-                            Custom(img(activeUser.avatar))
-                            : PlainText(getNameInital(activeUser.username ?? "")),
-                        activeUser.username ?? ""
+                    Grid(
+                        Image(state.icon || templateArtwork, "New Connection"),
+                        Label(state.name || "---")
+                            .addClass("label-small", "label-center")
                     ),
-                    PlainText(activeUser.username ?? "")
-                        .addClass("label-small", "label-center")
+                    Image(dots, "dots"),
+                    Grid(
+                        ProfilePicture(
+                            activeUser.avatar ?
+                                Custom(img(activeUser.avatar))
+                                : Label(getNameInital(activeUser.username ?? "")),
+                            activeUser.username ?? ""
+                        ),
+                        Label(activeUser.username ?? "")
+                            .addClass("label-small", "label-center")
+                    )
+                ).addClass("linkage"),
+                Label("PERMISSIONS")
+                    .addClass("label-small"),
+                Grid(
+                    MIcon("check"),
+                    Label("Access to view your ID and Picture")
                 )
-            ).addClass("linkage"),
-            PlainText("PERMISSIONS")
-                .addClass("label-small"),
-            Grid(
-                Icon("check"),
-                PlainText("Access to view your ID and Picture")
-            )
-                .addClass("permission"),
-            Grid(
-                Icon("check"),
-                PlainText("Access to view your Email address")
-            )
-                .addClass("permission"),
-            Button("Connect")
-                .setWidth("100%")
-                .setJustify("center")
-                .setMargin("1rem 0 0")
-                .onClick(() => {
-                    //TODO: VALIDATE FIRST
-                    const url = new URL(params.redirectUri ? params.redirectUri : "https://bbn.one");
-                    url.searchParams.set("code", API.getToken());
-                    url.searchParams.set("state", params.state!);
-                    window.location.href = url.toString();
-                }),
-            Horizontal(
-                PlainText("Wrong account?"),
-                Button("Switch it here")
-                    .setStyle(ButtonStyle.Inline)
-                    .setColor(Color.Colored)
+                    .addClass("permission"),
+                Grid(
+                    MIcon("check"),
+                    Label("Access to view your Email address")
+                )
+                    .addClass("permission"),
+                Button("Connect")
+                    .setWidth("100%")
+                    .setJustify("center")
+                    .setMargin("1rem 0 0")
                     .onClick(() => {
-                        logOut();
-                    })
-                    .addClass("link"),
-                Spacer()
+                        //TODO: VALIDATE FIRST
+                        const url = new URL(params.redirectUri ? params.redirectUri : "https://bbn.one");
+                        url.searchParams.set("code", API.getToken());
+                        url.searchParams.set("state", params.state!);
+                        window.location.href = url.toString();
+                    }),
+                Horizontal(
+                    Label("Wrong account?"),
+                    Button("Switch it here")
+                        .setStyle(ButtonStyle.Inline)
+                        .setColor(Color.Colored)
+                        .onClick(() => {
+                            logOut();
+                        })
+                        .addClass("link"),
+                    Spacer()
+                )
+                    .setMargin("1rem 0 0"),
             )
-                .setMargin("1rem 0 0"),
-        )
-            .addClass("limited-width")
-            .addClass("area-space")
-            .setJustify("start");
+        );
     return LoadingSpinner();
-});
+}).asRefComponent();
 
 View(() => Vertical(
     ...DynaNavigation("Home"),
-    list
+    Box().addClass("background-image"),
+    list.addClass("auth-area"),
+    Footer()
 ))
     .appendOn(document.body);
 

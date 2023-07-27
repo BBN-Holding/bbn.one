@@ -1,5 +1,5 @@
 import { API, asExternal, External, fileCache, RenderItem } from "shared";
-import { Box, Button, Color, CommonIconType, Dialog, Entry, Grid, IconButton, Image, ReCache, ref, TextInput } from "webgen/mod.ts";
+import { Box, Button, Cache, Color, Dialog, Entry, Grid, IconButton, Image, MIcon, ref, TextInput } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
 import { state } from "../state.ts";
@@ -50,14 +50,14 @@ export function entryOAuth(app: OAuthApp) {
         title: app.name,
         subtitle: app._id,
     })
-        .addPrefix(ReCache("appicon-" + app._id, () => API.admin(API.getToken()).files.download(app.icon), (type, val) => {
+        .addPrefix(Cache("appicon-" + app._id, () => API.admin(API.getToken()).files.download(app.icon), (type, val) => {
             const imageSource = type == "loaded" && app.icon !== "" && val && val.status == "fulfilled"
                 ? Image({ type: "direct", source: () => Promise.resolve(val.value) }, "O-Auth Icon")
                 : Image(templateArtwork, "A Placeholder Artwork.");
             return Box(imageSource)
                 .addClass("image-square");
         }))
-        .addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
+        .addSuffix(IconButton(MIcon("delete"), "delete").setColor(Color.Critical).onClick(() => {
             API.oauth(API.getToken()).delete(app._id);
         }))
         .addSuffix(Button("View").onClick(() => {
@@ -82,7 +82,7 @@ export function entryFile(file: File) {
     return Entry({
         title: file.filename,
         subtitle: file._id,
-    }).addPrefix(ReCache("fileicon-" + file._id, () => loadFilePreview(file._id), (type, val) => {
+    }).addPrefix(Cache("fileicon-" + file._id, () => loadFilePreview(file._id), (type, val) => {
         if (type == "cache")
             return Image({ type: "loading" }, "Loading");
         const imageSource = type == "loaded" && file.metadata.type.startsWith("image/") && val?.status === "fulfilled"
@@ -90,12 +90,12 @@ export function entryFile(file: File) {
             : Image(templateArtwork, "A Placeholder Artwork.");
         return Box(imageSource)
             .addClass("image-square");
-    })).addSuffix(IconButton(CommonIconType.Download, "download").onClick(async () => {
+    })).addSuffix(IconButton(MIcon("download"), "download").onClick(async () => {
         const blob = await API.admin(API.getToken()).files.download(file._id);
         if (blob.status !== "fulfilled") return;
         const url = window.URL.createObjectURL(blob.value);
         window.open(url, '_blank');
-    })).addSuffix(IconButton(CommonIconType.Delete, "delete").setColor(Color.Critical).onClick(() => {
+    })).addSuffix(IconButton(MIcon("delete"), "delete").setColor(Color.Critical).onClick(() => {
         API.admin(API.getToken()).files.delete(file._id);
     }));
 }

@@ -1,4 +1,4 @@
-import { Box, ButtonStyle, Checkbox, Color, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, PlainText, State, StateHandler, Table, View } from "webgen/mod.ts";
+import { Box, ButtonStyle, Checkbox, Color, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, State, StateHandler, Table, View } from "webgen/mod.ts";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
 import secondary from "../../../data/secondary.json" assert { type: "json" };
@@ -8,7 +8,7 @@ import { EditArtists, getSecondary, getYearList, ProfilePicture } from "../helpe
 function Progress(progress: number) {
     return Box(
         Custom((() => {
-            if (progress == -1) return PlainText("⚠️ Failed to upload!").addClass("error-message").setFont(0.8).draw();
+            if (progress == -1) return Label("⚠️ Failed to upload!").addClass("error-message").setFont(0.8).draw();
             const element = createElement("progress");
             element.max = 110;
             element.value = progress;
@@ -23,9 +23,9 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
             [ "Artists", "max-content", ({ artists }, index) =>
                 Box(
                     ...artists.map(([ name, url, _type ]: string[]) =>
-                        ProfilePicture(url ? Image(url, "A profile picture") : PlainText(""), name)
+                        ProfilePicture(url ? Image(url, "A profile picture") : Label(""), name)
                     ),
-                    IconButton("add", "add")
+                    IconButton(MIcon("add"), "add")
                 )
                     .addClass("artists-list")
                     .onClick(() => {

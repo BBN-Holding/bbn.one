@@ -1,8 +1,8 @@
 // @deno-types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/canvas-confetti/index.d.ts"
 import confetti from "https://unpkg.com/canvas-confetti@1.6.0/src/confetti.js";
 import { format } from "std/fmt/bytes.ts";
-import { Box, Button, ButtonStyle, Color, Dialog, Entry, Grid, Horizontal, MediaQuery, PlainText, Pointable, Reactive, Spacer, TextInput, Vertical } from "webgen/mod.ts";
-import { activeUser } from "../../manager/helper.ts";
+import { Box, Button, ButtonStyle, Color, Dialog, Entry, Grid, Horizontal, Label, MediaQuery, Pointable, Spacer, TextInput, Vertical } from "webgen/mod.ts";
+import { activeUser } from "../../_legacy/helper.ts";
 import { HeavyReRender } from "../../shared/list.ts";
 import { API, stupidErrorAlert } from "../../shared/mod.ts";
 import { MB, state } from "../data.ts";
@@ -24,8 +24,8 @@ export const migrationInfo = {
 };
 
 export const migrationDialog = () => Dialog(() => Vertical(
-    PlainText(migrationInfo.text0),
-    PlainText(migrationInfo.text1),
+    Label(migrationInfo.text0),
+    Label(migrationInfo.text1),
 ).addClass("dialog-max-width"))
     .setTitle(migrationInfo.title)
     .addButton("View legacy password", () => {
@@ -38,7 +38,7 @@ export const migrationDialog = () => Dialog(() => Vertical(
 
 export const migrationCredentials = () => Dialog(() =>
     Vertical(
-        PlainText("If you want to login to the legacy panel (Pterodactyl) here is your migration password."),
+        Label("If you want to login to the legacy panel (Pterodactyl) here is your migration password."),
         Grid(
             [
                 {
@@ -72,14 +72,14 @@ export const migrationCredentials = () => Dialog(() =>
 
 export const profileView = () =>
     MediaQuery("(max-width: 700px)", (small) =>
-        Reactive(state, "meta", () =>
+        state.$meta.map(() =>
             Grid(
                 Entry(
                     Grid(
-                        PlainText(migrationInfo.title)
+                        Label(migrationInfo.title)
                             .setFont(2, 700),
-                        PlainText(migrationInfo.text0),
-                        PlainText(migrationInfo.text1),
+                        Label(migrationInfo.text0),
+                        Label(migrationInfo.text1),
                         Horizontal(
                             Spacer(),
                             Button(migrationInfo.button)
@@ -93,9 +93,9 @@ export const profileView = () =>
                 ).addClass("full-width"),
                 Entry(
                     Grid(
-                        PlainText(state.meta.coins.toLocaleString())
+                        Label(state.meta.coins.toLocaleString())
                             .setFont(2, 700),
-                        PlainText("Coins")
+                        Label("Coins")
                             .setFont(1, 700)
                             .addClass("gray-color")
                     )
@@ -104,9 +104,9 @@ export const profileView = () =>
                 Box(
                     Entry(
                         Grid(
-                            PlainText(state.meta.used.slots + " / " + state.meta.limits.slots)
+                            Label(state.meta.used.slots + " / " + state.meta.limits.slots)
                                 .setFont(2, 700),
-                            PlainText("Servers")
+                            Label("Servers")
                                 .setFont(1, 700)
                                 .addClass("gray-color")
                         )
@@ -131,9 +131,9 @@ export const profileView = () =>
                 Box(
                     Entry(
                         Grid(
-                            PlainText(format(state.meta.used.memory * MB) + " / " + format(state.meta.limits.memory * MB))
+                            Label(format(state.meta.used.memory * MB) + " / " + format(state.meta.limits.memory * MB))
                                 .setFont(2, 700),
-                            PlainText("Memory")
+                            Label("Memory")
                                 .setFont(1, 700)
                                 .addClass("gray-color")
                         )
@@ -158,9 +158,9 @@ export const profileView = () =>
                 Box(
                     Entry(
                         Grid(
-                            PlainText(format(state.meta.used.disk * MB) + " / " + format(state.meta.limits.disk * MB))
+                            Label(format(state.meta.used.disk * MB) + " / " + format(state.meta.limits.disk * MB))
                                 .setFont(2, 700),
-                            PlainText("Disk")
+                            Label("Disk")
                                 .setFont(1, 700)
                                 .addClass("gray-color")
                         )
@@ -185,9 +185,9 @@ export const profileView = () =>
                 Box(
                     Entry(
                         Grid(
-                            PlainText(state.meta.used.cpu + "% / " + state.meta.limits.cpu + "%")
+                            Label(state.meta.used.cpu + "% / " + state.meta.limits.cpu + "%")
                                 .setFont(2, 700),
-                            PlainText("CPU")
+                            Label("CPU")
                                 .setFont(1, 700)
                                 .addClass("gray-color")
                         )
@@ -213,14 +213,14 @@ export const profileView = () =>
                 .setEvenColumns(small ? 1 : 2)
                 .setGap("var(--gap)")
                 .addClass("details-grid")
-        )
+        ).asRefComponent()
     );
 
 type ShopVariant =
     { type: 'available' | 'recommended' | 'blocked', label: Pointable<string>, sublabel: Pointable<string>, action: (env: MouseEvent) => Promise<void>; };
 
 const ShopStack = (actionText: string, _variant: ShopVariant) => Grid(
-    PlainText(actionText),
+    Label(actionText),
     HeavyReRender(_variant, (variant) => Vertical(
         variant.type != "blocked"
             ? Button(variant.label)
@@ -228,6 +228,6 @@ const ShopStack = (actionText: string, _variant: ShopVariant) => Grid(
                 .setColor(Color.Colored)
                 .onPromiseClick(variant.action)
             : null,
-        PlainText(variant.sublabel).addClass("sublabel")
+        Label(variant.sublabel).addClass("sublabel")
     ).addClass("group"))
 ).addClass(_variant.type, "shop-stack");

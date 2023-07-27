@@ -1,4 +1,4 @@
-import { Box, Button, Color, Grid, Icon, PlainText, Pointable, Pointer, Spacer, Taglist, Vertical } from "webgen/mod.ts";
+import { Box, Button, Color, Grid, Label, MIcon, Pointable, Pointer, Spacer, Taglist, Vertical } from "webgen/mod.ts";
 
 export type Link = {
     title: string;
@@ -15,13 +15,13 @@ export function ActionBar(title: Pointable<string>,
             Grid(
                 ...(history ?? []).map(x =>
                     Box(
-                        PlainText(x.title)
+                        Label(x.title)
                             .addClass("label")
                             .setFont(2.260625, 700),
-                        Icon("arrow_forward_ios")
+                        MIcon("arrow_forward_ios")
                     ).addClass("history-entry").onClick(x.onclick)
                 ),
-                PlainText(title)
+                Label(title)
                     .addClass("text")
                     .setFont(2.260625, 700),
                 Spacer()
@@ -29,7 +29,7 @@ export function ActionBar(title: Pointable<string>,
             categories ?
                 Taglist(categories.list, categories.selected)
                 : Box(),
-            PlainText("")
+            Label("")
                 .addClass("error-message", "hidden-message")
                 .setId("error-message-area")
         ),

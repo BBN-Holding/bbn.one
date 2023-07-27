@@ -1,5 +1,5 @@
 import { assert } from "std/testing/asserts.ts";
-import { asPointer, Box, Component, Entry, Grid, Icon, isMobile, isPointer, PlainText, Pointable, Pointer, Taglist, Vertical } from "webgen/mod.ts";
+import { Box, Component, Entry, Grid, Label, MIcon, Pointable, Pointer, Taglist, Vertical, asPointer, isMobile, isPointer } from "webgen/mod.ts";
 import { HeavyList, HeavyReRender } from "./list.ts";
 import './navigation.css';
 
@@ -229,17 +229,17 @@ function createBreadcrumb(menu: MenuImpl) {
         if (mobile)
             return HeavyReRender(history, it => {
                 const last = it.at(-2);
-                if (!last) return PlainText(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
+                if (!last) return Label(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
                     .addClass("label");
                 return Box(
                     // TODO: Make this a bit smaller
                     Grid(
-                        Icon("arrow_back_ios_new"),
-                        PlainText(parseTitle(menu.rootNode, last, it.indexOf(last) + 1)).addClass("label"),
+                        MIcon("arrow_back_ios_new"),
+                        Label(parseTitle(menu.rootNode, last, it.indexOf(last) + 1)).addClass("label"),
                     )
                         .addClass("history-entry", "mobile")
                         .onClick(() => moveToPath(it.indexOf(last))),
-                    PlainText(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
+                    Label(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
                         .addClass("label"),
                 );
             }).addClass("history-list").removeFromLayout();
@@ -247,13 +247,13 @@ function createBreadcrumb(menu: MenuImpl) {
             return Grid(
                 ...it.map((entry, index) =>
                     Box(
-                        PlainText(entry.title).addClass("label"),
-                        Icon("arrow_forward_ios")
+                        Label(entry.title).addClass("label"),
+                        MIcon("arrow_forward_ios")
                     )
                         .addClass("history-entry")
                         .onClick(() => moveToPath(index))
                 ).filter((_, i) => i != it.length - 1),
-                PlainText(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
+                Label(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
                     .addClass("label"),
             ).addClass("history-list");
         }).removeFromLayout();

@@ -9,13 +9,18 @@ const title = new Map(Object.entries({
     "music": "BBN Music",
     "music/new-drop": "BBN Music - New Drop",
     "music/edit": "BBN Music - Edit Drop",
-    "music/payout": "BBN Music - Payout"
+    "music/payout": "BBN Music - Payout",
+    "p/privacy-policy": "BBN One - Privacy Policy",
+    "p/terms-of-use": "BBN One - Terms of Use",
+    "p/imprint": "BBN One - Imprint",
+    "p/distribution-agreement": "BBN One - Distribution Agreement",
 }));
 
 serve({
     port: 6969,
     extraLoaders: {
-        ".webp": "file"
+        ".webp": "file",
+        ".jpg": "file"
     },
     assets: {
         "sitemap.xml": "./static/sitemap.xml",
@@ -35,24 +40,24 @@ serve({
     },
     pages: {
         "index": "./pages/holding/index.ts",
-        "p/privacy": "./pages/OldPagesPolyfill.ts",
-        "p/terms": "./pages/OldPagesPolyfill.ts",
-        "p/imprint": "./pages/OldPagesPolyfill.ts",
-        "p/distribution": "./pages/OldPagesPolyfill.ts",
+        "p/privacy-policy": "./pages/holding/privacyPolicy.ts",
+        "p/terms-of-use": "./pages/holding/termsOfUse.ts",
+        "p/imprint": "./pages/holding/imprint.ts",
+        "p/distribution-agreement": "./pages/holding/distributionAgreement.ts",
         "signin": "./pages/user/signin.ts",
-        "signin-zendesk": "./pages/manager/misc/zendesk.ts",
-        "callback": "./pages/manager/misc/callback.ts",
+        "signin-zendesk": "./pages/_legacy/misc/zendesk.ts",
+        "callback": "./pages/_legacy/misc/callback.ts",
         "oauth": "./pages/user/oauth.ts",
 
         "music": "./pages/music/main.ts",
-        "music/new-drop": "./pages/manager/newDrop.ts",
-        "music/edit": "./pages/manager/music/edit.ts",
+        "music/new-drop": "./pages/_legacy/newDrop.ts",
+        "music/edit": "./pages/_legacy/music/edit.ts",
         "music/payout": "./pages/payout/main.ts",
 
         "hosting": "./pages/hosting/main.ts",
         "hosting/create": "./pages/hosting/views/create.ts",
 
-        "settings": "./pages/manager/settings/mod.ts",
+        "settings": "./pages/_legacy/settings/mod.ts",
 
         "admin": "./pages/admin/admin.ts",
 
@@ -71,7 +76,7 @@ function createTemplate(name: string, path: string) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>${title.get(path) ?? "BBN One"}</title>
+    <title>${title.get(path) ?? "BBN Holding"}</title>
     <link rel="manifest" href="/app.webmanifest">
     <meta charset='UTF-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1">

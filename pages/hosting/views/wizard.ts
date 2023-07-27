@@ -1,20 +1,20 @@
 import { API, displayError, LoadingSpinner, SliderInput } from "shared";
 import { format } from "std/fmt/bytes.ts";
-import { Box, Dialog, DropDownInput, Grid, Page, PlainText, Reactive, TextInput, Vertical, Wizard } from "webgen/mod.ts";
+import { Box, Dialog, DropDownInput, Grid, Label, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import { ServerCreate, serverCreate } from "../../../spec/music.ts";
 import { creationState, MB, state } from "../data.ts";
 
-export const creationView = () => Reactive(creationState, "loading", () => {
+export const creationView = () => creationState.$loading.map(() => {
     if (creationState.loading)
         return LoadingSpinner();
 
-    return Reactive(creationState, "type", () => Vertical(
-        PlainText("Final Steps!")
+    return creationState.$type.map(() => Vertical(
+        Label("Final Steps!")
             .addClass("same-height")
             .setFont(2, 700)
             .setMargin(".8rem 0 0"),
-        PlainText("You are almost there!")
+        Label("You are almost there!")
             .addClass("gray-color")
             .setFont(1, 700)
             .setMargin("0.4rem 0 0"),
@@ -29,7 +29,7 @@ export const creationView = () => Reactive(creationState, "loading", () => {
                         if (rsp.error)
                             throw rsp;
 
-                        Dialog(() => PlainText("Server has been created. We are now installing everything for you."))
+                        Dialog(() => Label("Server has been created. We are now installing everything for you."))
                             .setTitle("Successful!")
                             .allowUserClose()
                             .addButton("Return", "remove")
@@ -54,7 +54,7 @@ export const creationView = () => Reactive(creationState, "loading", () => {
                     }
                 }, (data) => [
                     Box(
-                        PlainText("About your Server")
+                        Label("About your Server")
                             .setFont(.8, 700),
                         Grid(
                             TextInput("text", "Friendly Name")
@@ -70,7 +70,7 @@ export const creationView = () => Reactive(creationState, "loading", () => {
                             .setMargin(".5rem 0 2rem")
                             .setGap("var(--gap)"),
 
-                        PlainText("Setup Ressources")
+                        Label("Setup Ressources")
                             .setFont(.8, 700),
                         Grid(
                             SliderInput("Memory (RAM)")
@@ -96,5 +96,5 @@ export const creationView = () => Reactive(creationState, "loading", () => {
             .setGap("0.5rem")
             .setWidth("100%")
             .setMargin("1.8rem 0 0")
-    ).addClass("limited-width"));
-});
+    ).addClass("limited-width")).asRefComponent();
+}).asRefComponent();

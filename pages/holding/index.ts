@@ -1,72 +1,107 @@
-import { Card, createElement, Custom, Grid, Horizontal, img, MaterialIcons, PlainText, Spacer, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Box, Button, Grid, Image, Label, Vertical, View, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
-import { asset } from "../../assets/img/subsidiaries/index.ts";
-import { renderFooter } from "../../components/footer.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import services from "../../data/services.json" assert { type: "json" };
-import { RegisterAuthRefresh } from "../manager/helper.ts";
-import { renderOpener } from "./components/opener.ts";
-import './components/subsidiaries.css';
+import { RegisterAuthRefresh } from "../_legacy/helper.ts";
+import './landing.css';
+import { data, streamingPool } from "./loading.ts";
+// Main
+import bbnHosting from "./resources/bbnHosting.svg";
+import bbnMusic from "./resources/bbnMusic.svg";
 
-WebGen({ icon: new MaterialIcons() });
+// External
+import { Counter } from "../shared/counter.ts";
+import { Footer } from "../shared/footer.ts";
+import bbnCard from "./resources/bbnCard.svg";
+import bbnGameStudios from "./resources/bbnGameStudios.svg";
+import bbnPublishing from "./resources/bbnPublishing.svg";
+WebGen();
 await RegisterAuthRefresh();
 
-function inlineSVG(data: string) {
-    const ele = createElement("div");
-    ele.innerHTML = data;
-    return Custom(ele.firstChild! as HTMLElement);
-}
-
-View(() => Vertical(
-    DynaNavigation("Home"),
-    Custom(renderOpener()),
-    Horizontal(
-        Custom(img(asset.bbnMusic)).onClick(() => location.href = "/music"),
-        Spacer(),
-        Custom(img(asset.bbnHosting)).onClick(() => location.href = "/hosting"),
-        Spacer(),
-        Custom(img(asset.bbnPublishing)),
-        Spacer(),
-        Custom(img(asset.bbnGamesStudio)),
-        Spacer(),
-        Custom(img(asset.bbnCard))
-    ).addClass('subsidiary-list'),
-    PlainText("SERVICES", "h2")
-        .setId("services"),
-    PlainText("We offer our partners and customers a wide range of services.", "h4")
-        .setPadding("0 0 2.7rem"),
-    Grid(...services.map(x => Card(
-        Vertical(
-            inlineSVG(x.svgIcon),
-            PlainText(x.title)
-                .setFont(1.5, 900),
-            PlainText(x.description)
-        ).setGap("0.5rem").setPadding("var(--gap)")
-    ).addClass("service-box")))
-        .addClass("limited-width")
-        .setDynamicColumns(7)
-        .setGap("var(--gap)"),
-    PlainText("FREQUENTLY ASKED QUESTIONS", "h2")
-        .setId("faq"),
-    PlainText("Get advice and answers from BBN Holding", "h4")
-        .setPadding("0 0 2.7rem"),
-    Grid(
-        Spacer(),
-        [
-            { width: 5 },
-            Card(Vertical(
-                PlainText("How much of the income goes to me?")
-                    .setFont(1.5, 900),
-                PlainText("BBN Music gives you 97% of the income from your products every month on the 21st. BBN Music is the only company in the whole industry that takes a revenue cut this low!")
+View(() => Box(
+    ...DynaNavigation("Home"),
+    Vertical(
+        Box(
+            Box().addClass("background-image"),
+            Label("Your Journey,  our Mission.")
+        )
+            .addClass("big-title"),
+        Box(
+            Label("BBN One", "h2"),
+            Label("Your all in one solution. Everything in “One” place.", "h3")
+        ).addClass("section"),
+        Box(Box()).addClass("glowbs", "orange"),
+        Grid(
+            Box(
+                Image(bbnMusic, "An orange logo of BBN Music")
             )
-                .setGap("0.4rem")
-                .setPadding("var(--gap)")
+                .setAttribute("data-tilt")
+                .setAttribute("data-tilt-glare")
+                .setAttribute("data-tilt-max-glare", "0.1")
+                .setAttribute("data-tilt-scale", "1.07")
+                .addClass("music", "service-card")
+                .onClick(() => location.href = "/music"),
+            Box(
+                Image(bbnHosting, "An blue logo of BBN Hosting")
+                    .addClass("remove-text-clearance")
+            )
+                .setAttribute("data-tilt")
+                .setAttribute("data-tilt-glare")
+                .setAttribute("data-tilt-max-glare", "0.1")
+                .setAttribute("data-tilt-scale", "1.08")
+                .addClass("hosting", "service-card")
+                .onClick(() => location.href = "/hosting")
+        )
+            .addClass("bbn-one-services")
+            .setRawColumns("max-content max-content"),
+        Box(
+            Label("Grown now.", "h2"),
+            Label("Our BBN One platform is focused on building your projects.", "h3")
+        ).addClass("section"),
+        Box(Box()).addClass("glowbs", "blue"),
+        Grid(
+            Grid(
+                Counter(data.stats.$drops)
+                    .addClass("title"),
+                Label("drops")
+                    .addClass("subtitle")
             ),
-        ],
-        Spacer()
+            Grid(
+                Counter(data.stats.$servers)
+                    .addClass("title"),
+                Label("servers")
+                    .addClass("subtitle")
+            ),
+            Grid(
+                Counter(data.stats.$users)
+                    .addClass("title"),
+                Label("users")
+                    .addClass("subtitle")
+            ),
+        )
+            .addClass("live-stats")
+            .setRawColumns("auto auto auto"),
+
+        Button("Join and grow these numbers!")
+            .asLinkButton("/hosting"),
+        Box(
+            Label("Other things we do", "h2"),
+            Label("Special goals? We are here for you.", "h3")
+        ).addClass("section"),
+        Box(
+            Image(bbnCard, "A logo from BBN Card"),
+            Image(bbnGameStudios, "A logo from BBN Games Studios"),
+            Image(bbnPublishing, "A logo from BBN Publishing"),
+        )
+            .addClass("other-services-images"),
+        Box(Box()).addClass("glowbs", "purple"),
     )
-        .setEvenColumns(7)
-        .addClass("scoped-size"),
-    renderFooter()
+        .addClass("content")
+        .setAlign("center"),
+
+    Footer()
 ))
     .appendOn(document.body);
+
+
+import("https://raw.githubusercontent.com/micku7zu/vanilla-tilt.js/master/dist/vanilla-tilt.min.js");
+await streamingPool();

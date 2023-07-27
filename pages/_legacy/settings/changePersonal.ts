@@ -1,6 +1,6 @@
 import { API, StreamingUploadHandler, uploadFilesDialog } from "shared";
 import { delay } from "std/async/mod.ts";
-import { AdvancedImage, Box, Color, Grid, IconButton, Image, Page, PlainText, Reactive, TextInput, Vertical, Wizard } from "webgen/mod.ts";
+import { AdvancedImage, Box, Color, Grid, IconButton, Image, Label, MIcon, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import { activeUser, allowedImageFormats, forceRefreshToken, track } from "../helper.ts";
 
 export function ChangePersonal() {
@@ -21,7 +21,7 @@ export function ChangePersonal() {
         }, (data) => [
             Vertical(
                 Grid(
-                    Reactive(data, "profilePicture", () => Box(Image(data.profilePicture ?? { type: "loading" }, "Your Avatarimage"), IconButton("edit", "edit-icon")).addClass("upload-image").onClick(() => {
+                    data.$profilePicture.map(() => Box(Image(data.profilePicture ?? { type: "loading" }, "Your Avatarimage"), IconButton(MIcon("edit"), "edit-icon")).addClass("upload-image").onClick(() => {
                         uploadFilesDialog(([ file ]) => {
                             const blobUrl = URL.createObjectURL(file);
                             data.profilePicture = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage: 0 };
@@ -54,7 +54,7 @@ export function ChangePersonal() {
                                 }, file);
                             });
                         }, allowedImageFormats.join(","));
-                    })),
+                    })).asRefComponent(),
                     [
                         { width: 2 },
                         Vertical(
@@ -62,7 +62,7 @@ export function ChangePersonal() {
                             TextInput("email", "Email")
                                 .setColor(Color.Disabled)
                                 .sync(data, "email")
-                                .addSuffix(PlainText("Note: Changing Email is currently not supported."))
+                                .addSuffix(Label("Note: Changing Email is currently not supported."))
                         ).setGap("20px")
                     ]
                 )

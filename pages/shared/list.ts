@@ -1,6 +1,6 @@
-import { asPointer, Box, Button, Component, Horizontal, Icon, PlainText, Pointable, Pointer, Reactive, State, Vertical } from "webgen/mod.ts";
+import { Box, Button, Component, Horizontal, Label, MIcon, Pointable, Pointer, State, Vertical, asPointer } from "webgen/mod.ts";
 import { LoadingSpinner } from "./components.ts";
-import { displayError, External } from "./restSpec.ts";
+import { External, displayError } from "./restSpec.ts";
 
 // TODO: don't rerender the complete list on update. virtual list?
 export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, map: (val: T) => Component) => new class extends Component {
@@ -21,31 +21,31 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
             else if ('status' in val) {
                 if (val.status === "fulfilled")
                     this.wrapper.append(
-                        Reactive(
-                            this.paging, "enabled", () => this.canLoadMore(val.value.length)
-                                ? Vertical(
-                                    ...val.value.length == 0 ? [ this.placeholder ] : val.value.map(x => map(x))
-                                        .filter((_, index) => index % this.paging.limit !== 1),
-                                    Horizontal(
-                                        Button("Load More").onPromiseClick(() => this.loadMore(val.value.length, this.paging.limit))
-                                    )
-                                        .setMargin("0 0 var(--gap)")
+                        this.paging.$enabled.map(() => this.canLoadMore(val.value.length)
+                            ? Vertical(
+                                ...val.value.length == 0 ? [ this.placeholder ] : val.value.map(x => map(x))
+                                    .filter((_, index) => index % this.paging.limit !== 1),
+                                Horizontal(
+                                    Button("Load More").onPromiseClick(() => this.loadMore(val.value.length, this.paging.limit))
                                 )
-                                    .setGap("var(--gap)")
-                                : Vertical(
-                                    ...val.value.length == 0 ? [ this.placeholder ] : val.value.map(x => map(x)),
-                                )
-                                    .setGap("var(--gap)")
+                                    .setMargin("0 0 var(--gap)")
+                            )
+                                .setGap("var(--gap)")
+                            : Vertical(
+                                ...val.value.length == 0 ? [ this.placeholder ] : val.value.map(x => map(x)),
+                            )
+                                .setGap("var(--gap)")
 
                         )
+                            .asRefComponent()
                             .draw()
                     );
                 else
                     this.wrapper.append(
                         Horizontal(
                             Vertical(
-                                Icon("error"),
-                                PlainText(displayError(val.reason))
+                                MIcon("error"),
+                                Label(displayError(val.reason))
                             )
                                 .setAlign("center")
                                 .setGap("calc(var(--gap) * 0.25)")
@@ -58,7 +58,7 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
                 this.wrapper.append(
                     Vertical(
                         ...val.length == 0 ? [ this.placeholder ] : val.map(x => map(x)),
-                        Reactive(this.paging, "enabled", () => this.paging.enabled ? Button("Load More").setMargin("0 0 var(--gap)").onPromiseClick(() => this.loadMore(val.length - 2, this.paging.limit + 1)) : Box().removeFromLayout()).removeFromLayout(),
+                        this.paging.$enabled.map(() => this.paging.enabled ? Button("Load More").setMargin("0 0 var(--gap)").onPromiseClick(() => this.loadMore(val.length - 2, this.paging.limit + 1)) : Box().removeFromLayout()).asRefComponent().removeFromLayout(),
                     )
                         .setGap("var(--gap)")
                         .draw()
@@ -82,10 +82,10 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
 };
 
 export const placeholder = (title: string, subtitle: string) => Vertical(
-    PlainText(title)
+    Label(title)
         .addClass("list-title")
         .setMargin("0"),
-    PlainText(subtitle),
+    Label(subtitle),
 ).setGap("1rem");
 
 export async function loadMore<T>(source: Pointer<External<T[]> | 'loading'>, func: () => Promise<External<T[]>>) {
@@ -102,8 +102,9 @@ export async function loadMore<T>(source: Pointer<External<T[]> | 'loading'>, fu
     }
 }
 
-export const HeavyReRender = <T>(item: Pointable<T>, map: (val: T) => Component) => new class extends Component {
-    constructor() {
+class HeavyReRenderImpl<T> extends Component {
+
+    constructor(item: Pointable<T>, map: (val: T) => Component) {
         super();
         console.debug("HeavyReRender got constructed");
         const it = asPointer(item);
@@ -112,4 +113,5 @@ export const HeavyReRender = <T>(item: Pointable<T>, map: (val: T) => Component)
             this.wrapper.append(map(val).draw());
         });
     }
-};
+}
+export const HeavyReRender = <T>(item: Pointable<T>, map: (val: T) => Component) => new HeavyReRenderImpl(item, map);

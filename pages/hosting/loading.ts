@@ -1,8 +1,8 @@
 import { HmRequest, LoginRequest, MessageType, PublishResponse, SubscribeRequest, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
-import { asPointer, lazyInit, State } from "webgen/mod.ts";
+import { State, asPointer, lazyInit } from "webgen/mod.ts";
 import { Server, ServerDetails } from "../../spec/music.ts";
-import { activeUser, tokens } from "../manager/helper.ts";
+import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 
 export async function refreshState() {

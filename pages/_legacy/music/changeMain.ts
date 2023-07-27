@@ -1,5 +1,5 @@
 import { API } from "shared";
-import { Entry, Grid, Horizontal, Page, PlainText, Spacer, Vertical, Wizard } from "webgen/mod.ts";
+import { Entry, Grid, Horizontal, Label, Page, Spacer, Vertical, Wizard } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { DropTypeToText } from "../../music/views/list.ts";
 import { permCheck, showPreviewImage } from "../helper.ts";
@@ -21,7 +21,7 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
                 .setMargin("3rem auto -3rem"),
             ActionBar(data.title ?? "(no title)"),
             Horizontal(
-                PlainText(DropTypeToText(data.type)),
+                Label(DropTypeToText(data.type)),
                 Spacer()
             ).addClass("limited-width").setMargin("-1rem auto 2rem"),
             Vertical(

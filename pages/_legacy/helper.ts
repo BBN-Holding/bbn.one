@@ -2,7 +2,7 @@
 // This code Will be ported to webgen
 
 import { API, fileCache, Permission } from "shared";
-import { Box, Button, ColumEntry, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, ReCache, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, Cache, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -120,8 +120,8 @@ export function gotoGoal() {
     location.href = localStorage.goal || "/music";
 }
 export async function renewAccessTokenIfNeeded() {
-    const { exp } = rawAccessToken();
     if (!localStorage.getItem("type")) return;
+    const { exp } = rawAccessToken();
     if (!exp) return logOut();
     // We should renew the token 30s before it expires
     if (isExpired(exp)) {
@@ -198,18 +198,19 @@ export function stringToColor(str: string) {
     for (let i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
-    let colour = '#';
+    let color = '#';
     for (let i = 0; i < 3; i++) {
         const value = (hash >> (i * 8)) & 0xFF;
-        colour += ('00' + value.toString(16)).substr(-2);
+        color += ('00' + value.toString(16)).substr(-2);
     }
-    return colour;
+    return color;
 }
 
 const a = document.createElement('a');
 document.body.appendChild(a);
 a.setAttribute('style', 'display: none');
 
+//TODO: mby make use of this function
 export function saveBlob(blob: Blob, fileName: string) {
     const url = window.URL.createObjectURL(blob);
     a.href = url;
@@ -218,33 +219,12 @@ export function saveBlob(blob: Blob, fileName: string) {
     window.URL.revokeObjectURL(url);
 }
 
-
-export function UploadTable<Data>(_columns: ColumEntry<Data>[], upload: (list: File[]) => void) {
-    const table = Table(_columns, []).draw();
-    table.ondragleave = (ev) => {
-        ev.preventDefault();
-        table.classList.remove("hover");
-    };
-    table.ondragover = (ev) => {
-        ev.preventDefault();
-        table.classList.add("hover");
-    };
-    table.ondrop = (ev) => {
-        ev.preventDefault();
-        upload(Array.from(ev.dataTransfer?.files ?? []).filter(x => allowedAudioFormats.includes(x.type)));
-    };
-    table.append(Vertical(
-        PlainText("Nothing here yet").addClass("droptitle"),
-        PlainText("Drag & Drop your Files here").addClass("dropsubtitle")
-    ).setGap("2.5rem").addClass("drop-area-label").draw());
-    return Custom(table);
-}
 const ARTIST_ARRAY = <ArtistTypes[]>[ "PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER" ];
 export function EditArtists(list: Artist[]) {
     const form = Page({
         list: list
     }, (state) => [
-        Reactive(state, "list", () =>
+        state.$list.map(() =>
             Vertical(
                 Table([
                     [ "Type", "10rem", (_, index) =>
@@ -273,7 +253,7 @@ export function EditArtists(list: Artist[]) {
                 .setGap("var(--gap)")
                 .setWidth("clamp(0rem, 100vw, 60vw)")
                 .setMargin("0 -.6rem 0 0")
-        )
+        ).asRefComponent()
     ]);
     return new Promise<Drop[ "artists" ]>((done) => {
         const dialog = Dialog(() => Box(...form.getComponents()))
@@ -293,7 +273,7 @@ export function EditArtists(list: Artist[]) {
     });
 }
 export function showPreviewImage(x: Drop, big = false) {
-    return ReCache("image-preview-" + x._id + big, () => Promise.resolve(),
+    return Cache("image-preview-" + x._id + big, () => Promise.resolve(),
         (type) => type == "loaded" && x.artwork
             ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork")
             : Image(artwork, "A Placeholder Artwork.")).addClass("image-preview");
@@ -357,7 +337,7 @@ export function getNameInital(raw: string) {
 export function showProfilePicture(x: ProfileData) {
     return ProfilePicture(
         x.profile.avatar ?
-            ReCache(x.profile.avatar, () => Promise.resolve(), (type) => type == "loaded" ? Image(x.profile.avatar!, "") : Box()) : PlainText(getNameInital(x.profile.username)),
+            Cache(x.profile.avatar, () => Promise.resolve(), (type) => type == "loaded" ? Image(x.profile.avatar!, "") : Box()) : Label(getNameInital(x.profile.username)),
         x.profile.username
     ).addClass("profile-picture");
 }

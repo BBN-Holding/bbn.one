@@ -1,0 +1,256 @@
+.content>* {
+    z-index: 2;
+}
+
+.big-title {
+    font-size: clamp(2rem, -2.1481rem + 20.7407vw, 5.5rem);
+    font-weight: bold;
+    display: block;
+    text-align: center;
+    text-align: balance;
+    height: 518px;
+    box-sizing: border-box;
+    width: 100vw;
+    display: grid;
+    place-items: end center;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.big-title .background-image {
+    position: absolute;
+    inset: -0.5rem;
+    --image: url('./resources/background.jpg');
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.61) 0%, #000 77.08%, #000 100%),
+        var(--image) no-repeat center center;
+    background-size: cover;
+    filter: blur(4.5px);
+}
+
+[data-theme=light] .big-title .background-image {
+    background:
+        linear-gradient(180deg, rgba(243, 245, 250, 0.61) 0%, #F3F5FA 77.08%, #F3F5FA 100%),
+        var(--image) no-repeat center center;
+    background-size: cover;
+}
+
+@media (min-width: 1700px) {
+    .big-title .background-image {
+        --image: url('./resources/backgroundUltrawide.jpg');
+    }
+
+}
+
+.big-title span {
+    display: block;
+    max-width: 590px;
+    margin: 2.6rem 0;
+    z-index: 1;
+}
+
+.section {
+    height: 255px;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    margin: 0 1.3rem;
+}
+
+/* background: linear-gradient(180deg, rgba(0, 0, 0, 0.61) 0%, #000 77.08%, #000 100%), url(<path-to-image>), lightgray 50% / cover no-repeat;
+filter: blur(4.5px); */
+h2,
+h3 {
+    margin: 0;
+}
+
+.section h2 {
+    font-size: 60px;
+    font-weight: bold;
+}
+
+.section h3 {
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 70%;
+}
+
+.bbn-one-services {
+    gap: 2rem;
+}
+
+.bbn-one-services .wimage img {
+    height: 100%;
+}
+
+.service-card {
+    transform-style: preserve-3d;
+    border-radius: 1.875rem;
+    height: 188px;
+    min-width: 160px;
+    display: grid;
+    place-items: center;
+    padding: 0 47px;
+    cursor: pointer;
+
+    --bg-start: #F19D2D;
+    --bg-end: #DB5721;
+    background: linear-gradient(0deg, #000000b5 0%, #000000b5 100%),
+        linear-gradient(137deg, var(--bg-start) 0%, var(--bg-end) 100%);
+}
+
+.service-card.hosting {
+    --bg-start: #28A9F1;
+    --bg-end: #4A7BB5;
+
+}
+
+.service-card .wimage {
+    transform: translateZ(20px)
+}
+
+.remove-text-clearance {
+    margin-bottom: -1rem;
+}
+
+.other-services-images {
+    display: flex;
+    flex-wrap: wrap;
+    width: calc(100vw - 2rem);
+    justify-content: space-between;
+    max-width: 45rem;
+    gap: 1rem;
+}
+.bbn-one-services :is(.wimage, img),
+.other-services-images :is(.wimage, img) {
+    width: unset !important;
+}
+
+@media (max-width: 670px) {
+    .bbn-one-services {
+        gap: 1rem;
+    }
+
+    .service-card {
+        padding: 0 2rem;
+        height: 8rem;
+        min-width: 5rem;
+    }
+
+    .service-card .wimage {
+        height: 5rem;
+    }
+
+    .other-services-images {
+        display: flex !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 0 2rem;
+    }
+}
+
+[data-theme=dark] {
+    --background-color: #000;
+}
+
+.live-stats {
+    gap: 38px;
+    margin: 50px 0;
+}
+
+.live-stats .title {
+    font-size: 4rem;
+    font-weight: 900;
+}
+
+@media (max-width: 900px) {
+.live-stats .title {
+    font-size: 36.6px;
+}
+}
+
+.live-stats .subtitle {
+    font-size: 13.6px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+@keyframes fade-in {
+    from {
+        filter: blur(10px);
+        opacity: 0;
+    }
+}
+
+@keyframes fade-out {
+    to {
+        filter: blur(2px);
+        opacity: 0;
+    }
+}
+
+@keyframes slide-from-right {
+    from {
+        transform: translateX(30px);
+    }
+}
+
+@keyframes slide-to-left {
+    to {
+        transform: translateX(-30px);
+    }
+}
+
+@keyframes slide-from-bottom {
+    from {
+        transform: translateY(30px);
+    }
+}
+
+@keyframes slide-to-top {
+    to {
+        transform: translateY(-30px);
+    }
+}
+
+.glowbs {
+    width: 100vw;
+    max-width: 38rem;
+    display: grid;
+    height: 0;
+    z-index: 1;
+}
+
+.glowbs>div {
+    width: 81.25rem;
+    height: 81.25rem;
+    margin: calc(-81.25rem / 2);
+    border-radius: 100%;
+    background:
+        radial-gradient(50% 50.00% at 50% 50.00%,
+            rgba(var(--r), var(--g), var(--b), 0.20) 5%,
+            rgba(var(--r), var(--g), var(--b), 0.04) 75%,
+            rgba(var(--r), var(--g), var(--b), 0.00) 87.50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.glowbs.orange>div {
+    --r: 241;
+    --g: 157;
+    --b: 45;
+}
+
+.glowbs.blue>div {
+    --r: 40;
+    --g: 169;
+    --b: 241;
+    justify-self: end;
+}
+
+.glowbs.purple>div {
+    --r: 146;
+    --g: 46;
+    --b: 182;
+}

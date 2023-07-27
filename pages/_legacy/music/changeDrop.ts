@@ -1,5 +1,5 @@
 import { API, uploadFilesDialog } from "shared";
-import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, Page, Reactive, Spacer, State, TextInput, Wizard } from "webgen/mod.ts";
+import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, MIcon, Page, Spacer, State, TextInput, Wizard } from "webgen/mod.ts";
 import artwork from "../../../assets/img/template-artwork.png";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
@@ -50,14 +50,14 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
         }, data => [
             Grid(
                 Grid(
-                    Reactive(data, "artworkClientData", () => DropAreaInput(
-                        Box(data.artworkClientData ? Image(data.artworkClientData, "A Music Album Artwork.") : Image(artwork, "A Default Alubm Artwork."), IconButton("edit", "edit icon"))
+                    data.$artworkClientData.map(() => DropAreaInput(
+                        Box(data.artworkClientData ? Image(data.artworkClientData, "A Music Album Artwork.") : Image(artwork, "A Default Alubm Artwork."), IconButton(MIcon("edit"), "edit icon"))
                             .addClass("upload-image"),
                         allowedImageFormats,
                         ([ { file } ]) => uploadArtwork(data, file)
                     ).onClick(() => uploadFilesDialog(([ file ]) => {
                         uploadArtwork(data, file);
-                    }, allowedImageFormats.join(",")))),
+                    }, allowedImageFormats.join(",")))).asRefComponent(),
                 ).setDynamicColumns(2, "12rem"),
                 [
                     { width: 2 },
@@ -86,11 +86,11 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
                             .onChange(() => {
                                 data.secondaryGenre = undefined!;
                             }),
-                        Reactive(data, "primaryGenre", () => DropDownInput("Secondary Genre", getSecondary(secondary, data.primaryGenre) ?? [])
+                        data.$primaryGenre.map(() => DropDownInput("Secondary Genre", getSecondary(secondary, data.primaryGenre) ?? [])
                             .sync(data, "secondaryGenre")
                             .addClass("border-box")
                             .setWidth("100%")
-                        ),
+                        ).asRefComponent(),
                     )
                         .setEvenColumns(2, "minmax(2rem, 20rem)")
                         .setGap("15px")

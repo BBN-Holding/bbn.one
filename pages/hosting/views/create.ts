@@ -1,18 +1,16 @@
 import { HeavyReRender, LoadingSpinner, Navigation } from "shared";
-import { isMobile, MaterialIcons, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import '../../../assets/css/hosting.css';
 import '../../../assets/css/main.css';
 import { DynaNavigation } from "../../../components/nav.ts";
 import { ServerTypes } from "../../../spec/music.ts";
-import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../../manager/helper.ts";
+import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../../_legacy/helper.ts";
 import { refreshState } from "../loading.ts";
 import { creationState, state } from "./../data.ts";
 import { creationView } from "./wizard.ts";
 
 await RegisterAuthRefresh();
-WebGen({
-    icon: new MaterialIcons()
-});
+WebGen();
 
 const navigation = state.$loaded.map(loaded => loaded ? Navigation({
     title: "New Server",

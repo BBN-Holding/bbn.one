@@ -1,5 +1,5 @@
 import { Box, Entry } from "webgen/mod.ts";
-import { ProfileData, showProfilePicture } from "../../manager/helper.ts";
+import { ProfileData, showProfilePicture } from "../../_legacy/helper.ts";
 
 export function UserEntry(x: ProfileData) {
     return Entry({

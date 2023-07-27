@@ -1,6 +1,6 @@
 import { assert } from "std/testing/asserts.ts";
 import { BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
-import { ProfileData } from "../manager/helper.ts";
+import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
     "/hmsys",

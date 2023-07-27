@@ -1,8 +1,8 @@
 import { API } from "shared";
-import { Box, Checkbox, createElement, Custom, Dialog, DropDownInput, Horizontal, Image, Page, PlainText, Reactive, Spacer, Vertical, Wizard } from "webgen/mod.ts";
+import { Box, Checkbox, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, Vertical, Wizard, createElement } from "webgen/mod.ts";
 import reviewTexts from "../../data/reviewTexts.json" assert { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
-import { showPreviewImage } from "../manager/helper.ts";
+import { showPreviewImage } from "../_legacy/helper.ts";
 import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
 function css(data: TemplateStringsArray, ...expr: string[]) {
     const merge = data.map((x, i) => x + (expr[ i ] || ''));
@@ -106,7 +106,7 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                 }
             }, () => [
                 Page({
-                    review: undefined as string | undefined
+                    review: ""
                 }, (data) => [
                     Vertical(
                         Horizontal(
@@ -114,10 +114,10 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                             Spacer()
                         ),
                         Vertical(
-                            PlainText(state.drop!.title)
+                            Label(state.drop!.title)
                                 .setFont(1.4, 900),
 
-                            PlainText("by " + state.drop!.user)
+                            Label("by " + state.drop!.user)
                                 .setFont(0.8),
                         ),
                         // TODO: Replace with a PickerInput (when api is available)
@@ -135,12 +135,12 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                     denyEdits: false
                 }, (data) => [
                     Box(
-                        PlainText("Choose Rejection Reasons"),
+                        Label("Choose Rejection Reasons"),
                         ...rejectReasons
                             .map((rsp) =>
                                 Horizontal(
                                     Checkbox(data.respones.includes(rsp)).onClick(() => !data.respones.includes(rsp) ? data.respones.push(rsp) : data.respones.splice(data.respones.indexOf(rsp), 1)),
-                                    PlainText(reviewResponse[ rejectReasons.indexOf(rsp) ]),
+                                    Label(reviewResponse[ rejectReasons.indexOf(rsp) ]),
                                     Spacer()
                                 )
                                     .setMargin("0.5rem 0")
@@ -148,10 +148,10 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                                     .setAlign("center")
                             ),
 
-                        PlainText("Choose Rejection Method"),
+                        Label("Choose Rejection Method"),
                         Horizontal(
                             Checkbox(data.denyEdits).onClick(() => data.denyEdits = !data.denyEdits),
-                            PlainText("Reject (Deny Edits)"),
+                            Label("Reject (Deny Edits)"),
                             Spacer()
                         )
                             .setMargin("0.5rem 0")
@@ -168,7 +168,7 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                 }, (data) => [
                     // TODO: Put this Component into webgen directly and clean it up
                     Box(
-                        PlainText("Email Response"),
+                        Label("Email Response"),
                         Custom((() => {
                             const ele = createElement("textarea");
                             ele.rows = 10;
@@ -182,8 +182,11 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                     )
                         .addClass("winput", "grayscaled", "has-value", "textarea")
                         .setMargin("0 0 .5rem"),
-                    PlainText("Preview").setMargin("0 0 0.5rem"),
-                    Reactive(data, "responseText", () => clientRender(dropPatternMatching(data.responseText, state.drop!))),
+                    Label("Preview")
+                        .setMargin("0 0 0.5rem"),
+                    data.$responseText
+                        .map(() => clientRender(dropPatternMatching(data.responseText, state.drop!)))
+                        .asRefComponent(),
                 ]).setValidator((v) => v.object({
                     responseText: v.string().refine(x => render(dropPatternMatching(x, state.drop!)).errors.length == 0, { message: "Invalid MJML" })
                 }))

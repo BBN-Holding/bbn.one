@@ -1,8 +1,8 @@
 import { API, count, HeavyList, loadMore, Navigation, placeholder } from "shared";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Box, Button, Color, Dialog, Entry, Grid, isMobile, PlainText, Reactive, ref, State, TextInput } from "webgen/mod.ts";
+import { Box, Button, Color, Dialog, Entry, Grid, isMobile, Label, ref, State, TextInput } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
-import { activeUser } from "../../manager/helper.ts";
+import { activeUser } from "../../_legacy/helper.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
@@ -191,20 +191,20 @@ const oAuthData = State({
 });
 const addOAuthDialog = Dialog(() =>
     Grid(
-        PlainText("Create new OAuth Application"),
+        Label("Create new OAuth Application"),
         TextInput("text", "Name").sync(oAuthData, "name"),
         TextInput("text", "Redirect URI").sync(oAuthData, "redirectURI"),
         Button("Upload Image").onPromiseClick(async () => {
             oAuthData.image = await upload("oauth");
         }),
-        Reactive(oAuthData, "image", () =>
+        oAuthData.$image.map((img) =>
             Button("Submit")
-                .setColor(oAuthData.image === "" ? Color.Disabled : Color.Grayscaled)
+                .setColor(img === "" ? Color.Disabled : Color.Grayscaled)
                 .onClick(() => {
                     API.oauth(API.getToken()).post(oAuthData.name, oAuthData.redirectURI, oAuthData.image);
                     addOAuthDialog.close();
                 })
-        )
+        ).asRefComponent()
     ).setGap("10px")
 )
     .setTitle("Create new OAuth Application")
