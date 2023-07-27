@@ -3,7 +3,7 @@ import splash from "../../assets/splash.png";
 import './footer.css';
 
 export function Footer() {
-    return Box(
+    return Box(Box(
         Image(splash, "Splash Image").addClass("splash-image"),
         Box(
             Box(
@@ -82,5 +82,5 @@ export function Footer() {
             )
                 .addClass("icon-bar")
         ).addClass("area-bg")
-    ).addClass("footer");
+    ).addClass("footer")).addClass("footer-space");
 }

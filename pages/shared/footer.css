@@ -1,3 +1,7 @@
+.footer-space {
+    overflow: hidden;
+}
+
 .footer {
     --spacing: 4rem;
     position: relative;
