@@ -1,3 +1,7 @@
+body {
+    overflow-x: hidden;
+}
+
 .content>* {
     z-index: 2;
 }
@@ -122,6 +126,7 @@ h3 {
     max-width: 45rem;
     gap: 1rem;
 }
+
 .bbn-one-services :is(.wimage, img),
 .other-services-images :is(.wimage, img) {
     width: unset !important;
@@ -165,9 +170,9 @@ h3 {
 }
 
 @media (max-width: 900px) {
-.live-stats .title {
-    font-size: 36.6px;
-}
+    .live-stats .title {
+        font-size: 36.6px;
+    }
 }
 
 .live-stats .subtitle {
