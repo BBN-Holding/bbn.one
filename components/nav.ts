@@ -80,7 +80,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                 ),
                 user && user.profile.verified?.email != true ? Grid(
                     BasicLabel({
-                        title: "Your Email is not verified. Please check your Inbox."
+                        title: "Your Email is not verified. Please check your Inbox/Spam folder."
                     }).addClass("label"),
                     Button("Resend Verify Email")
                         .addClass("link")
