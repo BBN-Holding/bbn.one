@@ -1,7 +1,7 @@
 {
     "imports": {
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/159f7e8/",
-        // "webgen/": "../WebGen/",
+        // "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/159f7e8/",
+        "webgen/": "../WebGen/",
         "std/": "https://deno.land/std@0.195.0/",
         "shared": "./pages/shared/mod.ts"
     },

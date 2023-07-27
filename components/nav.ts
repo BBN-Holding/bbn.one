@@ -1,6 +1,6 @@
 import { API } from "shared";
 import { delay } from "std/async/delay.ts";
-import { Box, Button, ButtonStyle, CenterV, Component, Custom, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement, img } from "webgen/mod.ts";
+import { BasicLabel, Box, Button, ButtonStyle, Component, Custom, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement, img } from "webgen/mod.ts";
 import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/_legacy/helper.ts";
 import './nav.css';
 import { activeLogo, pages } from "./pages.ts";
@@ -37,57 +37,58 @@ dropOver.onblur = () => dropOver.classList.remove("open");
 dropOver.tabIndex = 0;
 export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" | "Admin" | "Wallet", user = IsLoggedIn()) {
     return [
-        user && user.profile.verified?.email != true ? Nav(Horizontal(
-            CenterV(
-                Label("Your Email is not verified. Please check your Inbox."),
-            ),
-            Spacer(),
-            Button("Resend Verify Email")
-                .addClass("link")
-                .onPromiseClick(async () => {
-                    await API.user(API.getToken()).mail.resendVerifyEmail.post();
-                    await delay(1000);
-                })
-        )).addClass("email-banner", type.toLowerCase()) : Box(),
         Nav(
-            Horizontal(
-                Custom(dropOver),
-                Vertical(
-                    MIcon("apps"),
+            Grid(
+                Horizontal(
+                    Custom(dropOver),
                     Vertical(
-                        Custom(img(activeLogo(type)))
-                    ),
-                )
-                    .setGap(".5rem")
-                    .setDirection("row")
-                    .setAlign("center")
-                    .addClass("justify-content-center", "clickable")
-                    .onClick(() => {
-                        dropOver.classList.add("open");
-                        dropOver.focus();
-                    }),
-                Spacer(),
-                (user
-                    ? Button(
-                        Grid(
-                            showProfilePicture(user),
-                            Label(activeUser.$username),
-                        )
-                            .setRawColumns("max-content max-content")
-                            .setAlign("center")
-                            .setGap(".7rem")
-
+                        MIcon("apps"),
+                        Vertical(
+                            Custom(img(activeLogo(type)))
+                        ),
                     )
-                        .addClass("profile-button")
-                        .setStyle(ButtonStyle.Inline)
-                        .asLinkButton("/settings")
-                    : (type == "Home" && !location.pathname.startsWith("/signin") ?
-                        Button("Sign in")
-                            .addClass("login-button")
-                            .onClick(() => { location.href = "/signin"; })
-                        : null)
+                        .setGap(".5rem")
+                        .setDirection("row")
+                        .setAlign("center")
+                        .addClass("justify-content-center", "clickable")
+                        .onClick(() => {
+                            dropOver.classList.add("open");
+                            dropOver.focus();
+                        }),
+                    Spacer(),
+                    (user
+                        ? Button(
+                            Grid(
+                                showProfilePicture(user),
+                                Label(activeUser.$username),
+                            )
+                                .setRawColumns("max-content max-content")
+                                .setAlign("center")
+                                .setGap(".7rem")
 
-                ) ?? null
+                        )
+                            .addClass("profile-button")
+                            .setStyle(ButtonStyle.Inline)
+                            .asLinkButton("/settings")
+                        : (type == "Home" && !location.pathname.startsWith("/signin") ?
+                            Button("Sign in")
+                                .addClass("login-button")
+                                .onClick(() => { location.href = "/signin"; })
+                            : null)
+
+                    ) ?? null,
+                ),
+                user && user.profile.verified?.email != true ? Grid(
+                    BasicLabel({
+                        title: "Your Email is not verified. Please check your Inbox."
+                    }).addClass("label"),
+                    Button("Resend Verify Email")
+                        .addClass("link")
+                        .onPromiseClick(async () => {
+                            await API.user(API.getToken()).mail.resendVerifyEmail.post();
+                            await delay(1000);
+                        })
+                ).addClass("email-banner", type.toLowerCase()) : Box().removeFromLayout(),
             )
                 .setMargin("0.5rem auto")
                 .setGap("0.4rem"),

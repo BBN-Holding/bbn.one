@@ -27,13 +27,9 @@ export const hostingMenu = Navigation({
         {
             id: "servers",
             title: ref`Servers ${count(state.$servers)}`,
-            // children: [
-            //     HeavyReRender(isMobile, small =>
-            //         HeavyList(state.$servers, item =>
-            //             entryServer(item, small)
-            //         )
-            //     )
-            // ],
+            // children:   HeavyList(state.$servers, item =>
+            //     entryServer(item, small)
+            // ),
             children: state.$servers.map(servers => servers.map(server =>
             (<RenderItem>{
                 id: server._id,

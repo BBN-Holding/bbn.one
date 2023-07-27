@@ -97,13 +97,23 @@ nav img {
     height: 1.7rem;
 }
 
-nav.email-banner {
-    top: 0;
-    background: black !important;
-    padding: .5rem 1rem;
+.email-banner {
+    background: #120000;
+    padding: 0.6rem 0.8rem;
+    border-radius: .9rem;
+    color: red;
+    font-weight: bold;
+    letter-spacing: .5px;
+    display: grid;
+    grid-template-columns: auto max-content;
+    align-items: center;
 }
 
-nav.email-banner a {
+.email-banner .label .title {
+    font-size: 1rem;
+}
+
+.email-banner a {
     padding: 0.1rem 0.4rem;
 }
 
