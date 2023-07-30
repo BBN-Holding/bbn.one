@@ -1,5 +1,5 @@
 import { assert } from "std/assert/assert.ts";
-import { BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
+import { AdminStats, BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
@@ -185,7 +185,6 @@ export const API = {
         fromUserInteraction: {
             get: (id: string) => {
                 return fetch(`${API.BASE_URL}auth/from-user-interaction/${id}`, {
-                    method: "GET",
                     headers: {
                         "Content-Type": "application/json"
                     }
@@ -294,6 +293,13 @@ export const API = {
         }
     }),
     admin: (token: string) => ({
+        stats: async () => {
+            return await fetch(`${API.BASE_URL}admin/stats`, {
+                headers: headers(token)
+            })
+                .then(json<AdminStats>())
+                .catch(reject);
+        },
         files: {
             list: async (offset: number | undefined = undefined) => {
                 const paging = new URLSearchParams();
@@ -533,7 +539,6 @@ export const API = {
         id: (id: string) => ({
             get: async () => {
                 return (await fetch(`${API.BASE_URL}music/drops/${id}`, {
-                    method: "GET",
                     headers: headers(token)
                 }).then(x => x.json()));
             },
@@ -564,27 +569,14 @@ export const API = {
                     }).then(x => x.text());
                 },
             },
-            dropDownload: async (): Promise<{ code: string; }> => {
-                return await fetch(`${API.BASE_URL}music/${id}/drop-download`, {
-                    method: "POST",
+            download: async () => {
+                return await fetch(`${API.BASE_URL}music/drops/${id}/download`, {
                     headers: headers(token)
-                }).then(x => x.json());
+                }).then(blob())
+                    .catch(reject);
             },
             artwork: async () => {
                 return await fetch(`${API.BASE_URL}music/${id}/artwork`, {
-                    method: "GET",
-                    headers: headers(token)
-                }).then(x => x.blob());
-            },
-            artworkPreview: async () => {
-                return await fetch(`${API.BASE_URL}music/${id}/artwork-preview`, {
-                    method: "GET",
-                    headers: headers(token)
-                }).then(x => x.blob());
-            },
-            artworkStore3k: async () => {
-                return await fetch(`${API.BASE_URL}music/${id}/artwork-store3k`, {
-                    method: "GET",
                     headers: headers(token)
                 }).then(x => x.blob());
             }

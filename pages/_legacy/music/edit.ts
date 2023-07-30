@@ -52,7 +52,7 @@ View<EditViewState>(({ state, update }) => Vertical(
             .get()
             .then(async data => {
                 if (data.artwork) {
-                    const blob = await API.music(API.getToken()).id(params.get("id")!).artworkPreview();
+                    const blob = await API.music(API.getToken()).id(params.get("id")!).artwork();
                     update({ data: { ...data, [ "artwork-url" ]: URL.createObjectURL(blob) } });
                 }
                 else update({ data });

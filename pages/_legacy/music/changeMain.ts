@@ -1,11 +1,10 @@
-import { API } from "shared";
+import { API, stupidErrorAlert } from "shared";
 import { Entry, Grid, Horizontal, Label, Page, Spacer, Vertical, Wizard } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { DropTypeToText } from "../../music/views/list.ts";
-import { permCheck, showPreviewImage } from "../helper.ts";
+import { permCheck, saveBlob, showPreviewImage } from "../helper.ts";
 import { ActionBar } from "../misc/actionbar.ts";
 import { changePage } from "../misc/common.ts";
-import { DownloadDrop } from "../misc/drop.ts";
 import { EditViewState } from "./types.ts";
 
 export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) => void) {
@@ -32,7 +31,10 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
                 ] : null,
                 // TODO: Add Read-Only Mode for Drop and Songs
 
-                Entry({ title: "Export", subtitle: "Download your complete Drop with every Song" }).addClass("limited-width").onClick(() => DownloadDrop(data)),
+                Entry({ title: "Export", subtitle: "Download your complete Drop with every Song" }).addClass("limited-width").onPromiseClick(async () => {
+                    const blob = await API.music(API.getToken()).id(data._id).download().then(stupidErrorAlert);
+                    saveBlob(blob, data.title + ".tar")
+                }),
 
                 !Permissions.canCancelReview(data) ? null :
                     Entry({ title: "Cancel Review", subtitle: "Need to change Something? Cancel it now" }).addClass("limited-width").onPromiseClick(async () => {

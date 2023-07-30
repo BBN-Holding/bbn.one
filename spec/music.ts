@@ -320,6 +320,8 @@ export const serverDetails = zod.union([
     _id: zod.string()
 }));
 
+export type AdminStats = { drops: { all: number, reviews: number, publishing: number, published: number, private: number, rejected: number, drafts: number }, users: number, payouts: number, oauthApps: number, files: number, servers: number, wallets: number }
+
 export type Artist = zod.infer<typeof artist>;
 export type BugReport = zod.infer<typeof bugReport>;
 export type Drop = zod.infer<typeof drop>;

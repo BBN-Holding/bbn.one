@@ -9,6 +9,7 @@ import { ReviewEntry } from "./entryReview.ts";
 import { GroupEntry, UserEntry } from "./entryUser.ts";
 import { entryFile, entryOAuth, entryWallet, transcriptMenu } from "./list.ts";
 
+//TODO: Stats
 export const adminMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     categories: [

@@ -202,7 +202,6 @@ const a = document.createElement('a');
 document.body.appendChild(a);
 a.setAttribute('style', 'display: none');
 
-//TODO: mby make use of this function
 export function saveBlob(blob: Blob, fileName: string) {
     const url = window.URL.createObjectURL(blob);
     a.href = url;
@@ -277,7 +276,7 @@ export async function loadImage(x: Drop) {
         return cache.get(x._id + x.artwork);
 
     if (!x.artwork) return fetch(artwork).then(x => x.blob());
-    const blob = await API.music(API.getToken()).id(x._id).artworkPreview();
+    const blob = await API.music(API.getToken()).id(x._id).artwork();
     await cache.set(x._id + x.artwork, blob);
     return blob;
 }

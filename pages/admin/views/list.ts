@@ -1,7 +1,8 @@
-import { API, asExternal, External, fileCache, RenderItem } from "shared";
+import { API, asExternal, External, fileCache, RenderItem, stupidErrorAlert } from "shared";
 import { Box, Button, Cache, Color, Dialog, Entry, Grid, IconButton, Image, MIcon, ref, TextInput } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
+import { saveBlob } from "../../_legacy/helper.ts";
 import { state } from "../state.ts";
 
 export function userName(id: string) {
@@ -91,10 +92,8 @@ export function entryFile(file: File) {
         return Box(imageSource)
             .addClass("image-square");
     })).addSuffix(IconButton(MIcon("download"), "download").onClick(async () => {
-        const blob = await API.admin(API.getToken()).files.download(file._id);
-        if (blob.status !== "fulfilled") return;
-        const url = window.URL.createObjectURL(blob.value);
-        window.open(url, '_blank');
+        const blob = await API.admin(API.getToken()).files.download(file._id).then(stupidErrorAlert);
+        saveBlob(blob, file.filename)
     })).addSuffix(IconButton(MIcon("delete"), "delete").setColor(Color.Critical).onClick(() => {
         API.admin(API.getToken()).files.delete(file._id);
     }));

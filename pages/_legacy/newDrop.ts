@@ -182,7 +182,7 @@ const wizard = (restore?: Drop) => Wizard({
     ]).setValidator(() => pageThree),
     Page({
         artwork: restore?.artwork,
-        artworkClientData: <AdvancedImage | string | undefined>(restore?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music(API.getToken()).id(restore._id).artworkPreview() } : undefined),
+        artworkClientData: <AdvancedImage | string | undefined>(restore?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music(API.getToken()).id(restore._id).artwork() } : undefined),
         loading: false
     }, (data) => [
         Spacer(),
