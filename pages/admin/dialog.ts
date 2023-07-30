@@ -63,9 +63,8 @@ const reviewResponse = [
 const rejectReasons = [ ReviewResponse.DeclineCopyright ];
 export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
     Box(
-        !state.drop
-            ? Box(Image({ type: "loading" }, "Loading...")).addClass("test")
-            : Wizard({
+        state.drop
+            ? Wizard({
                 buttonAlignment: "bottom",
                 buttonArrangement: 'flex-end',
                 cancelAction: () => {
@@ -190,7 +189,8 @@ export const ReviewDialog = Dialog<{ drop: Drop; }>(({ state }) =>
                 ]).setValidator((v) => v.object({
                     responseText: v.string().refine(x => render(dropPatternMatching(x, state.drop!)).errors.length == 0, { message: "Invalid MJML" })
                 }))
-            ]),
+            ])
+            : Box(Image({ type: "loading" }, "Loading...")).addClass("test"),
     )
         .setMargin("0 0 var(--gap)")
 )

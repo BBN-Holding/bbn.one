@@ -25,13 +25,13 @@ export const settingsMenu = Navigation({
                 ChangePersonal()
             ]
         },
-        ...localStorage.type == "email" ? [ {
+        {
             id: "change-password",
             title: "Change Password",
             children: [
                 ChangePassword()
             ]
-        } ] : [],
+        },
         {
             id: "logout",
             title: "Logout",

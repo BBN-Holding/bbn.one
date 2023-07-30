@@ -1,5 +1,5 @@
 import { API } from "shared";
-import { assert } from "std/testing/asserts.ts";
+import { assert } from "std/assert/assert.ts";
 import { Box, Button, ButtonStyle, Color, Custom, Form, Grid, Horizontal, Label, Spacer, TextInput, Vertical, View, WebGen, img, isMobile, loadingWheel } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { discordLogo, googleLogo } from "../../assets/imports.ts";

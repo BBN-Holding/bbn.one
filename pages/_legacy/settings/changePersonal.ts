@@ -1,12 +1,13 @@
-import { API, StreamingUploadHandler, uploadFilesDialog } from "shared";
+import { API, StreamingUploadHandler, stupidErrorAlert, uploadFilesDialog } from "shared";
 import { delay } from "std/async/mod.ts";
-import { AdvancedImage, Box, Color, Grid, IconButton, Image, Label, MIcon, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
+import { AdvancedImage, Box, Grid, IconButton, Image, MIcon, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import { activeUser, allowedImageFormats, forceRefreshToken, track } from "../helper.ts";
 
 export function ChangePersonal() {
     return Wizard({
         submitAction: async ([ { data: { data } } ]) => {
-            await API.user(API.getToken()).setMe.post(data);
+            await API.user(API.getToken()).setMe.post(data)
+                .then(stupidErrorAlert);
             await delay(300);
             await forceRefreshToken();
         },
@@ -17,7 +18,7 @@ export function ChangePersonal() {
             email: activeUser.email,
             name: activeUser.username,
             loading: false,
-            profilePicture: activeUser.avatar ?? <AdvancedImage | string>{ type: "loading" } as string | AdvancedImage | undefined
+            profilePicture: activeUser.avatar ?? { type: "loading" } as string | AdvancedImage | undefined
         }, (data) => [
             Vertical(
                 Grid(
@@ -59,10 +60,7 @@ export function ChangePersonal() {
                         { width: 2 },
                         Vertical(
                             TextInput("text", "Name").sync(data, "name"),
-                            TextInput("email", "Email")
-                                .setColor(Color.Disabled)
-                                .sync(data, "email")
-                                .addSuffix(Label("Note: Changing Email is currently not supported."))
+                            TextInput("email", "Email").sync(data, "email")
                         ).setGap("20px")
                     ]
                 )
@@ -71,7 +69,8 @@ export function ChangePersonal() {
                     .setGap("15px")
             ).setGap("20px").addClass("limited-width"),
         ]).setValidator((v) => v.object({
-            name: v.string().min(1)
+            name: v.string().min(1),
+            email: v.string().email()
         }).strip())
     ]);
 }

@@ -13,7 +13,7 @@ View(() => Box(
         Label(`BBN Holding Inc.`).setFont(1, 600).addClass("block"),
         Label(`270 Trace Colony Park Dr, Suite B`).addClass("block"),
         Box(Label(`Ridgeland - MS 39157`)),
-        Box(Label(`E-Mail: support@bbn.one`)),
+        Box(Label(`Email: support@bbn.one`)),
         Horizontal(
             Label("See also:"),
             Button("Privacy Policy").setStyle(ButtonStyle.Inline).asLinkButton("/p/privacy-policy"),
@@ -26,7 +26,7 @@ View(() => Box(
         Label(`Netiquette and Site Guidelines`, "h3"),
         Label(`For many years, BBN Holding strives to provide helpful and relevant information on the BBN Holding company website. BBN Holding also shares news and information about latest events on maritime\xA0websites or social platforms like LinkedIn. We are happy to connect with you and read your feedb`).addClass("block"),
         Label(`Please keep in mind: comments should be relevant and on-topic. Inappropriate or offensive comments, and in particular those that contain false\xA0/ misleading information or that engage in personal attacks (and similar), may be dele`).addClass("block"),
-        Label(`In case of any questions, please send us an e-mail: support@bbn.one`).addClass("block"),
+        Label(`In case of any questions, please send us an email: support@bbn.one`).addClass("block"),
         Label(`Copyrights/Trademark rights`, "h3"),
         Label(`All rights to the texts, photos, graphics, video files and other objects on these Internet pages are protected by copyright.Their download, reproduction or use in other media or publications requires our written consent.All rights to all of the trademarks on this page belong exclusively to the owners of these trademark`).addClass("block")
     ).addClass("flow-text"),

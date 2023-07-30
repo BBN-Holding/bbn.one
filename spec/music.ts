@@ -148,7 +148,7 @@ export const payout = zod.object({
 
 export const oauthapp = zod.object({
     _id: zod.string(),
-    name: zod.string().min(3).max(32),
+    name: userString,
     redirect: zod.string().url(),
     secret: zod.string().min(32).max(64),
     icon: zod.string()
@@ -214,36 +214,27 @@ export const server = zod.object({
     _id: zod.string(),
     name: zod.string(),
     type: zod.nativeEnum(ServerTypes),
-    location: location,
-    limits: limits,
+    location,
+    limits,
     state: serverState,
     address: zod.string().optional(),
-    ports: zod.number().array().optional(),
+    ports: zod.number().array(),
     user: zod.string(),
-    stateSince: zod.number().describe("unix timestamp").optional()
+    identifier: zod.string().optional(),
+    stateSince: zod.number().describe("unix timestamp")
 });
 
-export const pteroServer = server.extend({
-    ptero: zod.object({
-        id: zod.number(),
-        allocation: zod.number().optional(),
-        suspended: zod.boolean(),
-        container: zod.object({
-            image: zod.string(),
-            startup_command: zod.string(),
-            environment: zod.record(zod.string(), zod.union([ zod.string(), zod.number(), zod.boolean(), zod.null() ])),
-        }),
-        egg: zod.number(),
-        identifier: zod.string(),
-        node: zod.number(),
+export const kubeServer = server.extend({
+    kube: zod.object({
+        type: zod.string()
     })
 });
 
 export const serverCreate = zod.object({
     name: userString,
     type: zod.nativeEnum(ServerTypes),
-    location: location,
-    limits: limits,
+    location,
+    limits,
 });
 
 export const metaLimti = limits.extend({
@@ -255,8 +246,8 @@ export const storeItems = zod.enum([ "memory", "disk", "cpu", "slots" ]);
 export const meta = zod.object({
     _id: zod.string(),
     owner: zod.string(),
-    pteroId: zod.number(),
-    migrationPassword: zod.string(),
+    pteroId: zod.number().optional(),
+    migrationPassword: zod.string().optional(),
     coins: zod.number(),
     limits: metaLimti,
     used: metaLimti,
@@ -338,8 +329,8 @@ export type Location = zod.infer<typeof location>;
 export type Meta = zod.infer<typeof meta>;
 export type OAuthApp = zod.infer<typeof oauthapp>;
 export type Payout = zod.infer<typeof payout>;
+export type KubeServer = zod.infer<typeof kubeServer>;
 export type PowerState = zod.infer<typeof serverState>;
-export type PteroServer = zod.infer<typeof pteroServer>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Server = zod.infer<typeof server>;
 export type ServerCreate = zod.infer<typeof serverCreate>;

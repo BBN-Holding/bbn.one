@@ -74,7 +74,7 @@ export const profileView = () =>
     MediaQuery("(max-width: 700px)", (small) =>
         state.$meta.map(() =>
             Grid(
-                Entry(
+                state.meta.pteroId ? Entry(
                     Grid(
                         Label(migrationInfo.title)
                             .setFont(2, 700),
@@ -90,7 +90,7 @@ export const profileView = () =>
                         )
                     )
                         .addClass("details-item")
-                ).addClass("full-width"),
+                ).addClass("full-width") : Box(),
                 Entry(
                     Grid(
                         Label(state.meta.coins.toLocaleString())

@@ -6,7 +6,7 @@ import { activeUser } from "../../_legacy/helper.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
-import { UserEntry } from "./entryUser.ts";
+import { GroupEntry, UserEntry } from "./entryUser.ts";
 import { entryFile, entryOAuth, entryWallet, transcriptMenu } from "./list.ts";
 
 export const adminMenu = Navigation({
@@ -106,6 +106,14 @@ export const adminMenu = Navigation({
             children: [
                 HeavyList(state.$users, (val) => UserEntry(val))
                     .enablePaging((offset, limit) => loadMore(state.$users, () => API.admin(API.getToken()).users.list(offset, limit)))
+            ]
+        },
+        {
+            id: "groups",
+            title: ref`Groups ${count(state.$groups)}`,
+            children: [
+                HeavyList(state.$groups, (val) => GroupEntry(val))
+                    .enablePaging((offset, limit) => loadMore(state.$groups, () => API.admin(API.getToken()).groups.list(offset, limit)))
             ]
         },
         {

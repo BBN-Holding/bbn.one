@@ -19,18 +19,107 @@ type StateActions = {
 };
 
 export const hostingButtons = asPointer(<Component[]>[]);
-
+export const kubeServers = state.$servers.map(servers => servers.filter(x => !x.identifier));
 export const hostingMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     actions: hostingButtons,
     categories: [
         {
             id: "servers",
-            title: ref`Servers ${count(state.$servers)}`,
+            title: ref`Servers ${count(kubeServers)}`,
+            children: kubeServers.map(servers => servers.map(server =>
+            (<RenderItem>{
+                id: server._id,
+                title: server.$name,
+                replacement: Grid(
+                    Box().addClass(server.$state, "dot"),
+                    BasicLabel({
+                        title: server.$name,
+                        subtitle: ref`${server.$type.map(it => serverTypes[ it ].name)} @ ${server.$state.map(it => it == "moving" ? "Moving to " : "")}${server.$location.map(it => locations[ it ] ?? "(no location)")}`
+                    })
+                )
+                    .setRawColumns("max-content auto")
+                    .setGap("1rem")
+                    .setAlign("center"),
+                suffix: ChangeStateButton(server),
+                clickHandler: async () => {
+                    await streamingPool();
+                    // TODO wait until first data is showing to prevent blinking
+                },
+                children: [
+                    serverDetails(server),
+                    {
+                        id: "storage",
+                        hidden: true,
+                        title: "Storage",
+                        children: [
+                            {
+                                id: "files",
+                                title: "Files",
+                                subtitle: "Upload and manage your files.",
+                                suffix: Label("Coming Soon")
+                                    .setFont(1, 500)
+                                    .setMargin("0 1rem")
+                            },
+                            {
+                                id: "database",
+                                title: "Database",
+                                subtitle: "Enabled a MariaDB Database",
+                                suffix: Label("Coming Soon")
+                                    .setFont(1, 500)
+                                    .setMargin("0 1rem")
+                            }
+                        ]
+                    },
+                    {
+                        id: "settings",
+                        hidden: true,
+                        title: "Settings",
+                        children: [
+                            {
+                                id: "ptero",
+                                title: "Ptero Settings",
+                                subtitle: "Legacy Settings Options",
+                                clickHandler: () => editServer(server)
+                            },
+                            {
+                                id: "extenions",
+                                title: "Download Content",
+                                subtitle: "Get access to Mods, Plugins or Datapacks!",
+                                suffix: Label("Coming Soon")
+                                    .setFont(1, 500)
+                                    .setMargin("0 1rem")
+                            },
+                            {
+                                id: "worlds",
+                                title: "Manage Worlds",
+                                subtitle: "Download, Reset or Upload your worlds.",
+                                suffix: Label("Coming Soon")
+                                    .setFont(1, 500)
+                                    .setMargin("0 1rem")
+                            },
+                            {
+                                id: "core",
+                                title: "Server Settings",
+                                subtitle: "All your Settings in one place.",
+                                suffix: Label("Coming Soon")
+                                    .setFont(1, 500)
+                                    .setMargin("0 1rem")
+                            }
+                        ]
+                    }
+                ]
+            })
+            ))
+        },
+        {
+            id: "legacy-servers",
+            hidden: state.$servers.map(servers => servers.some(x => x.identifier)),
+            title: ref`Legacy Servers ${count(state.$servers.map(servers => servers.filter(x => x.identifier)))}`,
             // children:   HeavyList(state.$servers, item =>
             //     entryServer(item, small)
             // ),
-            children: state.$servers.map(servers => servers.map(server =>
+            children: state.$servers.map(servers => servers.filter(x => x.identifier).map(server =>
             (<RenderItem>{
                 id: server._id,
                 title: server.$name,
@@ -143,7 +232,7 @@ state.$loaded.listen(loaded => {
 // .setActivePath(state.$loaded.map(loaded => loaded ? (state.servers.length == 0 ? '/profile/' : '/servers/') : '/'));
 
 hostingMenu.path.listen(path => {
-    if (path === "servers/" || path === "profile/")
+    if (path === "servers/" || path === "profile/" || path === "legacy-servers/")
         hostingButtons.setValue(
             [
                 Button("Start new Server")
@@ -235,7 +324,7 @@ export function serverDetails(server: StateHandler<Server>) {
 
 
     const uptime = HeavyReRender(time, () => BasicLabel({
-        title: server.$stateSince!.map(it => it ? calculateUptime(new Date(it)) : "---"),
+        title: server.$stateSince.map(it => it ? calculateUptime(new Date(it)) : "---"),
         subtitle: server.$state.map(it => it == "running" ? "uptime" : "since"),
     }));
 
@@ -263,7 +352,7 @@ export function serverDetails(server: StateHandler<Server>) {
 
             currentDetailsSource.setValue((data: ServerDetails) => {
                 if (data.type == "stdout") {
-                    terminal.write(data.chunk + "\r\n");
+                    terminal.write(server.identifier ? data.chunk + "\r\n" : data.chunk.replaceAll("\n", "\r\n"));
                     if (data.clearConsole)
                         terminal.reset();
                 }
@@ -356,13 +445,12 @@ export function serverDetails(server: StateHandler<Server>) {
                 }).onClick(() => {
                     hostingMenu.path.setValue(hostingMenu.path.getValue() + "/settings");
                 }).addClass("small"),
-                Entry({
+                server.identifier ? Entry({
                     title: "Legacy",
                     subtitle: "Go to the legacy panel"
-                }).onClick(async () => {
-                    const thing = await API.hosting(API.getToken()).serverId(server._id).get();
-                    open(`https://panel.bbn.one/server/${thing.ptero.identifier}`, "_blank");
-                }).addClass("small")
+                }).onClick(() => {
+                    open(`https://panel.bbn.one/server/${server.identifier}`, "_blank");
+                }).addClass("small") : Box()
             )
                 .addClass("split-list")
                 .setGap("var(--gap)")
@@ -396,7 +484,7 @@ function editServer(server: StateHandler<Server>) {
                         .sync(data, "name")
                 ],
                 DropDownInput("Location", Object.keys(locations))
-                    .setColor(Color.Disabled)
+                    .setColor(server.identifier ? Color.Disabled : Color.Grayscaled)
                     .setRender(location => locations[ location as keyof typeof locations ])
                     .sync(data, "location"),
                 SliderInput("Memory (RAM)")

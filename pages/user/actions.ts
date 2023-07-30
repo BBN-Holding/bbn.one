@@ -1,6 +1,6 @@
 import { API, displayError } from "shared";
+import { assert } from "std/assert/assert.ts";
 import { delay } from "std/async/delay.ts";
-import { assert } from "std/testing/asserts.ts";
 import { forceRefreshToken, gotoGoal } from "../_legacy/helper.ts";
 import { state } from "./state.ts";
 
@@ -14,7 +14,7 @@ export async function loginUser() {
         if (rsp.status == "rejected")
             throw rsp.reason;
 
-        await logIn(rsp.value, "email");
+        await logIn(rsp.value);
         gotoGoal();
     } catch (error) {
         state.error = displayError(error);
@@ -37,19 +37,17 @@ export async function registerUser() {
         if (rsp.status == "rejected")
             throw rsp.reason;
 
-        await logIn(rsp.value, "email");
+        await logIn(rsp.value);
         gotoGoal();
     } catch (error) {
         state.error = displayError(error);
     }
 }
 
-export async function logIn(data: { token: string; }, mode: "email" | "0auth") {
-    localStorage.removeItem("type");
+export async function logIn(data: { token: string; }) {
     const access = await API.auth.refreshAccessToken.post(data.token);
     localStorage[ "access-token" ] = access.token;
     localStorage[ "refresh-token" ] = data!.token;
-    localStorage[ "type" ] = mode;
 }
 
 export async function handleStateChange() {
@@ -64,38 +62,33 @@ export async function handleStateChange() {
         const rsp = await API.auth.google.post(params.code);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
-        await logIn(rsp.value, "0auth");
+        await logIn(rsp.value);
         gotoGoal();
-    }
-    else if (params.type == "discord" && params.code) {
+    } else if (params.type == "discord" && params.code) {
         const rsp = await API.auth.discord.post(params.code);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
-        await logIn(rsp.value, "0auth");
+        await logIn(rsp.value);
         gotoGoal();
-    }
-    else if (params.type == "microsoft" && params.code) {
+    } else if (params.type == "microsoft" && params.code) {
         const rsp = await API.auth.microsoft.post(params.code);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
-        await logIn(rsp.value, "0auth");
+        await logIn(rsp.value);
         gotoGoal();
-    }
-    else if (params.type == "forgot-password" && params.token) {
+    } else if (params.type == "forgot-password" && params.token) {
         const rsp = await API.auth.fromUserInteraction.get(params.token);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
-        await logIn(rsp.value, "email");
+        await logIn(rsp.value);
         state.token = API.getToken();
-    }
-    else if (params.type == "sign-up" && params.token) {
+    } else if (params.type == "verify-email" && params.token) {
         const rsp = await API.user(API.getToken()).mail.validate.post(params.token);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
         await forceRefreshToken();
         await delay(1000);
         gotoGoal();
-    }
-    else
+    } else
         state.type = "login";
 }

@@ -12,6 +12,7 @@ globalThis.onerror = (e) => {
 };
 
 function report(msg: any) {
+    if (msg === "ResizeObserver loop completed with undelivered notifications.") return;
     if (msg === "ResizeObserver loop limit exceeded") return;
     if (msg === "Uncaught aborting javascript here") return;
 

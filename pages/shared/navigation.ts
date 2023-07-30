@@ -1,4 +1,4 @@
-import { assert } from "std/testing/asserts.ts";
+import { assert } from "std/assert/assert.ts";
 import { Box, Component, Entry, Grid, Label, MIcon, Pointable, Pointer, Taglist, Vertical, asPointer, isMobile, isPointer } from "webgen/mod.ts";
 import { HeavyList, HeavyReRender } from "./list.ts";
 import './navigation.css';
@@ -11,7 +11,7 @@ export type RenderItem = Component | MenuNode;
 
 export interface MenuNode {
     id: string;
-    hidden?: boolean;
+    hidden?: Pointable<boolean>;
     title: Pointable<string>;
     subtitle?: Pointable<string>;
     children?: Pointable<RenderItem[]>;
@@ -105,7 +105,7 @@ class MenuImpl extends Component {
                 if (item instanceof Component)
                     return item;
 
-                if (item.hidden)
+                if (asPointer(item.hidden).getValue())
                     return Box().removeFromLayout();
 
                 const entry = Entry(item.replacement ? asPointer(item.replacement).getValue() : item);

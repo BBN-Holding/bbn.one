@@ -17,22 +17,19 @@ export type ProfileData = {
         hash: string;
     } | {
         type: "oauth",
-        provider: "google" | "apple" | "github" | "microsoft" | string,
-        secret: string;
+        provider: "google" | "discord" | "microsoft" | string,
+        id: string;
     };
     profile: {
         email: string;
         verified?: {
             email?: boolean,
         },
-        calledAfter?: string;
         username: string;
         avatar?: string;
-        created: number;
     };
-    permissions: string[];
+    permissions: Permission[];
     groups: string[];
-    exp: number;
 };
 
 export function IsLoggedIn(): ProfileData | null {
@@ -79,12 +76,7 @@ export function updateActiveUserData() {
         activeUser.email = user.profile.email;
         activeUser.avatar = user.profile.avatar;
         activeUser.id = user._id;
-
-        // Convert id based system to new hmsys permission system.
-        activeUser.permission = State([
-            ...activeUser.permission,
-            ...new Set(user.groups.map(x => API._legacyPermissionFromGroups(x)).flat())
-        ] as Permission[]);
+        activeUser.permission = State(user.permissions);
         console.log("Current User", JSON.parse(JSON.stringify(activeUser)));
     } catch (_) {
         // Session should be invalid

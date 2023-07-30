@@ -1,5 +1,5 @@
-import { assert } from "std/testing/asserts.ts";
-import { BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, PteroServer, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
+import { assert } from "std/assert/assert.ts";
+import { BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
@@ -99,22 +99,6 @@ export const API = {
     BASE_URL: <string>localStorage.OVERRIDE_BASE_URL || (location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/"),
     WS_URL: <string>localStorage.OVERRIDE_WS_URL || (location.hostname == "bbn.one" ? "wss://bbn.one/ws" : "ws://localhost:8443/ws"),
     permission: Permissions,
-    _legacyPermissionFromGroups: (group: string) => {
-        const admin = "6293b146d55350d24e6da542";
-        const reviewer = "6293bb4fd55350d24e6da550";
-        if (group === reviewer)
-            return [
-                "/bbn/payouts"
-            ];
-
-        if (group === admin)
-            // Always highest permissions
-            return [
-                "/bbn",
-                "/hmsys"
-            ];
-        return [];
-    },
     bugReport: async (bugReport: BugReport) => {
         await fetch(`${API.BASE_URL}bug-track/`, {
             method: "POST",
@@ -143,24 +127,17 @@ export const API = {
             }
         },
         setMe: {
-            post: (para: Partial<{ name: string, password: string; }>) => {
+            post: (para: Partial<{ name: string, email: string, password: string; }>) => {
                 return fetch(`${API.BASE_URL}user/set-me`, {
                     method: "POST",
                     headers: headers(token),
                     body: JSON.stringify(para)
                 })
-                    .then(none());
+                    .then(none())
+                    .catch(reject);
 
             }
-        },
-        zendesk: {
-            post: async () => {
-                return await fetch(`${API.BASE_URL}user/zendesk`, {
-                    method: "POST",
-                    headers: headers(token)
-                }).then(x => x.json()) as { jwt: string; };
-            }
-        },
+        }
     }),
     auth: {
         oauthRedirect: (type: "discord" | "google" | "microsoft") => `${API.BASE_URL}auth/redirect/${type}?goal=${localStorage.getItem('goal') ?? '/music'}`,
@@ -402,7 +379,19 @@ export const API = {
                 const paging = new URLSearchParams();
                 paging.append("_offset", offset.toString());
                 paging.append("_limit", limit.toString());
-                return await fetch(`${API.BASE_URL}admin/users?${paging}`, {
+                return await fetch(`${API.BASE_URL}user/users?${paging}`, {
+                    headers: headers(token)
+                })
+                    .then(json<ProfileData[]>())
+                    .catch(reject);
+            }
+        },
+        groups: {
+            list: async (offset = 0, limit = 31) => {
+                const paging = new URLSearchParams();
+                paging.append("_offset", offset.toString());
+                paging.append("_limit", limit.toString());
+                return await fetch(`${API.BASE_URL}admin/groups?${paging}`, {
                     headers: headers(token)
                 })
                     .then(json<ProfileData[]>())
@@ -485,11 +474,6 @@ export const API = {
             }).then(x => x.json());
         },
         serverId: (id: string) => ({
-            get: (): Promise<PteroServer> => {
-                return fetch(`${API.BASE_URL}hosting/servers/${id}`, {
-                    headers: headers(token)
-                }).then(x => x.json());
-            },
             edit: (data: { name?: string, memory?: number, disk?: number, cpu?: number; }) => {
                 return fetch(`${API.BASE_URL}hosting/servers/${id}`, {
                     method: 'PATCH',

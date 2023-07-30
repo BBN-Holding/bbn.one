@@ -13,6 +13,7 @@ export const state = State({
         drafts: <External<Drop[]> | "loading">"loading",
     },
     users: <External<ProfileData[]> | "loading">"loading",
+    groups: <External<any[]> | "loading">"loading",
     payouts: <External<Payout[]> | "loading">"loading",
     oauth: <External<OAuthApp[]> | "loading">"loading",
     files: <External<File[]> | "loading">"loading",

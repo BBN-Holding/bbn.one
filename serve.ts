@@ -45,7 +45,6 @@ serve({
         "p/imprint": "./pages/holding/imprint.ts",
         "p/distribution-agreement": "./pages/holding/distributionAgreement.ts",
         "signin": "./pages/user/signin.ts",
-        "signin-zendesk": "./pages/_legacy/misc/zendesk.ts",
         "callback": "./pages/_legacy/misc/callback.ts",
         "oauth": "./pages/user/oauth.ts",
 
