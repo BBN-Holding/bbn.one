@@ -104,7 +104,6 @@ export function logOut() {
 export function resetTokens() {
     localStorage.removeItem("refresh-token");
     localStorage.removeItem("access-token");
-    localStorage.removeItem("type");
     localStorage.removeItem("goal");
 }
 
@@ -112,14 +111,13 @@ export function gotoGoal() {
     location.href = localStorage.goal || "/music";
 }
 export async function renewAccessTokenIfNeeded() {
-    if (!localStorage.getItem("type")) return;
+    if (!localStorage.getItem("access-token")) return;
     const { exp } = rawAccessToken();
     if (!exp) return logOut();
     // We should renew the token 30s before it expires
     if (isExpired(exp)) {
         await forceRefreshToken();
     }
-
 }
 
 export const tokens = State({
@@ -145,7 +143,6 @@ function isExpired(exp: number) {
 export async function RegisterAuthRefresh() {
     if (!IsLoggedIn()) return shouldLoginPage();
     try {
-
         updateActiveUserData();
         checkIfRefreshTokenIsValid();
         await renewAccessTokenIfNeeded();
@@ -305,7 +302,6 @@ declare global {
 export function track(data: any) {
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push(data);
-    console.log(window.dataLayer);
 }
 
 export function ProfilePicture(component: Component, name: string) {

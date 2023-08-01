@@ -143,7 +143,7 @@ View(() => Vertical(
 
                         Horizontal(
                             Label("New here?"),
-                            Button("Create a Account")
+                            Button("Create an Account")
                                 .setStyle(ButtonStyle.Inline)
                                 .onClick(() => state.type = "register")
                                 .setColor(Color.Colored)

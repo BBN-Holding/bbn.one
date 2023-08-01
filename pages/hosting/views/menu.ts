@@ -77,9 +77,9 @@ export const hostingMenu = Navigation({
                         title: "Settings",
                         children: [
                             {
-                                id: "ptero",
-                                title: "Ptero Settings",
-                                subtitle: "Legacy Settings Options",
+                                id: "general",
+                                title: "General Settings",
+                                subtitle: "General Server Settings",
                                 clickHandler: () => editServer(server)
                             },
                             {
@@ -116,9 +116,6 @@ export const hostingMenu = Navigation({
             id: "legacy-servers",
             hidden: state.$servers.map(servers => servers.some(x => x.identifier)),
             title: ref`Legacy Servers ${count(state.$servers.map(servers => servers.filter(x => x.identifier)))}`,
-            // children:   HeavyList(state.$servers, item =>
-            //     entryServer(item, small)
-            // ),
             children: state.$servers.map(servers => servers.filter(x => x.identifier).map(server =>
             (<RenderItem>{
                 id: server._id,
@@ -127,7 +124,7 @@ export const hostingMenu = Navigation({
                     Box().addClass(server.$state, "dot"),
                     BasicLabel({
                         title: server.$name,
-                        subtitle: ref`${server.$type.map(it => serverTypes[ it ].name)} @ ${server.$state.map(it => it == "moving" ? "Moving to " : "")}${server.$location.map(it => locations[ it ] ?? "(no location)")}`
+                        subtitle: ref`${server.$type.map(it => serverTypes[ it ].name)} @ ${server.$location.map(it => locations[ it ] ?? "(no location)")}`
                     })
                 )
                     .setRawColumns("max-content auto")
@@ -140,66 +137,6 @@ export const hostingMenu = Navigation({
                 },
                 children: [
                     serverDetails(server),
-                    {
-                        id: "storage",
-                        hidden: true,
-                        title: "Storage",
-                        children: [
-                            {
-                                id: "files",
-                                title: "Files",
-                                subtitle: "Upload and manage your files.",
-                                suffix: Label("Coming Soon")
-                                    .setFont(1, 500)
-                                    .setMargin("0 1rem")
-                            },
-                            {
-                                id: "database",
-                                title: "Database",
-                                subtitle: "Enabled a MariaDB Database",
-                                suffix: Label("Coming Soon")
-                                    .setFont(1, 500)
-                                    .setMargin("0 1rem")
-                            }
-                        ]
-                    },
-                    {
-                        id: "settings",
-                        hidden: true,
-                        title: "Settings",
-                        children: [
-                            {
-                                id: "ptero",
-                                title: "Ptero Settings",
-                                subtitle: "Legacy Settings Options",
-                                clickHandler: () => editServer(server)
-                            },
-                            {
-                                id: "extenions",
-                                title: "Download Content",
-                                subtitle: "Get access to Mods, Plugins or Datapacks!",
-                                suffix: Label("Coming Soon")
-                                    .setFont(1, 500)
-                                    .setMargin("0 1rem")
-                            },
-                            {
-                                id: "worlds",
-                                title: "Manage Worlds",
-                                subtitle: "Download, Reset or Upload your worlds.",
-                                suffix: Label("Coming Soon")
-                                    .setFont(1, 500)
-                                    .setMargin("0 1rem")
-                            },
-                            {
-                                id: "core",
-                                title: "Server Settings",
-                                subtitle: "All your Settings in one place.",
-                                suffix: Label("Coming Soon")
-                                    .setFont(1, 500)
-                                    .setMargin("0 1rem")
-                            }
-                        ]
-                    }
                 ]
             })
             ))
@@ -229,7 +166,6 @@ state.$loaded.listen(loaded => {
     else
         hostingMenu.path.setValue("-/");
 });
-// .setActivePath(state.$loaded.map(loaded => loaded ? (state.servers.length == 0 ? '/profile/' : '/servers/') : '/'));
 
 hostingMenu.path.listen(path => {
     if (path === "servers/" || path === "profile/" || path === "legacy-servers/")
@@ -432,28 +368,38 @@ export function serverDetails(server: StateHandler<Server>) {
                         .activeSubmitTo("#submit-button")
                 ).addClass("internal-grid")
             ).addClass("terminal-card"),
-            Grid(
-                Entry({
-                    title: "Storage",
-                    subtitle: "Manage your persistence",
-                }).onClick(() => {
-                    hostingMenu.path.setValue(hostingMenu.path.getValue() + "/storage");
-                }).addClass("small"),
+            server.identifier ? Grid(
                 Entry({
                     title: "Settings",
                     subtitle: "Update your Server"
                 }).onClick(() => {
-                    hostingMenu.path.setValue(hostingMenu.path.getValue() + "/settings");
+                    editServer(server);
                 }).addClass("small"),
-                server.identifier ? Entry({
+                Entry({
                     title: "Legacy",
                     subtitle: "Go to the legacy panel"
                 }).onClick(() => {
                     open(`https://panel.bbn.one/server/${server.identifier}`, "_blank");
-                }).addClass("small") : Box()
+                }).addClass("small")
             )
                 .addClass("split-list")
                 .setGap("var(--gap)")
+                : Grid(
+                    Entry({
+                        title: "Storage",
+                        subtitle: "Manage your persistence",
+                    }).onClick(() => {
+                        hostingMenu.path.setValue(hostingMenu.path.getValue() + "/storage");
+                    }).addClass("small"),
+                    Entry({
+                        title: "Settings",
+                        subtitle: "Update your Server"
+                    }).onClick(() => {
+                        hostingMenu.path.setValue(hostingMenu.path.getValue() + "/settings");
+                    }).addClass("small")
+                )
+                    .addClass("split-list")
+                    .setGap("var(--gap)")
         )
             .setGap("var(--gap)");
 

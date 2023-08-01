@@ -53,7 +53,7 @@ export const migrationCredentials = () => Dialog(() =>
                 .setValue(state.meta.migrationPassword),
             Button("Copy")
                 .onClick(() => {
-                    navigator.clipboard.writeText(state.meta.migrationPassword);
+                    navigator.clipboard.writeText(state.meta.migrationPassword ?? "Already Migrated");
                 })
         )
             .setGap("0.5rem")

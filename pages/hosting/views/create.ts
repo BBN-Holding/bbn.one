@@ -18,12 +18,12 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
         {
             title: "Minecraft",
             id: "minecraft",
-            subtitle: "Quickly start a Vanilla, Modded or Bedrock Server",
+            subtitle: "Quickly start a Vanilla, Modded, or Bedrock Server",
             children: [
                 {
                     title: "Recommended",
                     id: "default",
-                    subtitle: "Play on Efficiency-First Servers with Plugins (Paper/Purpur).",
+                    subtitle: "Play on Efficiency-First Servers with Plugins (Paper/Purpur)",
                     clickHandler: (serverType) => { creationState.type = serverType.replace("-", "") as ServerTypes; },
                     children: [
                         creationView()
@@ -32,7 +32,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                 {
                     title: "Vanilla",
                     id: "vanilla",
-                    subtitle: "Playing on Snapshots? Play on the Vanilla Server.",
+                    subtitle: "Playing on Snapshots? Play on the Vanilla Server",
                     clickHandler: (clickPath) => { creationState.type = clickPath.replace("-", "") as ServerTypes; },
                     children: [
                         creationView()
@@ -41,12 +41,12 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                 {
                     title: "Modded",
                     id: "modded",
-                    subtitle: "Start a Fabric or Forge Server.",
+                    subtitle: "Start a Fabric or Forge Server",
                     children: [
                         {
                             title: "Fabric",
                             id: "fabric",
-                            subtitle: "Lightweight modding, customization, and optimized performance.",
+                            subtitle: "Lightweight modding, customization, and optimized performance",
                             clickHandler: (clickPath) => { creationState.type = clickPath.replace("-", "") as ServerTypes; },
                             children: [
                                 creationView()
@@ -55,7 +55,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                         {
                             title: "Forge",
                             id: "forge",
-                            subtitle: "Extensive modding capabilities and customization options.",
+                            subtitle: "Extensive modding capabilities and customization options",
                             clickHandler: (clickPath) => { creationState.type = clickPath.replace("-", "") as ServerTypes; },
                             children: [
                                 creationView()
@@ -75,7 +75,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                 {
                     title: "PocketMineMP",
                     id: "pocketmine",
-                    subtitle: "Bedrock server, providing customization and plugin support.",
+                    subtitle: "Bedrock server, providing customization and plugin support",
                     clickHandler: (clickPath) => { creationState.type = clickPath.replace("-", "") as ServerTypes; },
                     children: [
                         creationView()
