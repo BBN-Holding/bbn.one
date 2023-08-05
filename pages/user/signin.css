@@ -18,6 +18,14 @@
     z-index: -1;
 }
 
+
+[data-theme=light] .background-image {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.61) 0%, #FFF 77.08%, #FFF 100%),
+        var(--image) no-repeat center center;
+    background-size: cover;
+}
+
 .auth-area {
     min-height: 100vh;
     display: grid;
@@ -46,4 +54,10 @@
 
 .header {
     max-width: 21rem;
+}
+
+@media (prefers-color-scheme: light) {
+    body {
+        background-color: #ffffff !important;
+    }
 }
