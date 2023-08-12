@@ -24,8 +24,7 @@ export const rawTemplate = (data: string) => `
 `.trim();
 
 export function render(data: string) {
-    const rsp = mjml(rawTemplate(data));
-    return rsp;
+    return mjml(rawTemplate(data));
 }
 
 export function clientRender(data: string) {
@@ -35,7 +34,7 @@ export function clientRender(data: string) {
     return Box(
         Custom(shell).addClass("emailPreview").setMargin("0 0 calc(var(--gap) / 2)"),
         Vertical(
-            Array.from(new Set(mjmlrsp.errors.map(x => x.tagName + ": " + x.message))).map(x => Label("⚠️ " + x))
+            Array.from(new Set(mjmlrsp.errors.map(x => `${x.tagName}: ${x.message}`))).map(x => Label(`⚠️ ${x}`))
         )
     );
 }

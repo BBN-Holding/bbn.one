@@ -1,8 +1,7 @@
-// deno-lint-ignore-file no-explicit-any
 // This code Will be ported to webgen
 
-import { API, fileCache, Permission } from "shared";
-import { Box, Button, Cache, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { API, fileCache, Permission, stupidErrorAlert } from "shared";
+import { asPointer, Box, Button, Cache, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -48,9 +47,7 @@ export function getSecondary(secondary: Record<string, string[]>, primaryGenre?:
 
 function b64DecodeUnicode(value: string) {
     // Going backwards: from bytestream, to percent-encoding, to original string.
-    return decodeURIComponent(atob(value).split('').map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
+    return decodeURIComponent(atob(value).split('').map((c) => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`).join(''));
 }
 function rawAccessToken() {
     return JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ]));
@@ -63,6 +60,17 @@ export const activeUser = State({
     permission: <Permission[]>[],
     id: <string | undefined>undefined
 });
+
+export const profile = {
+    picture: (_id: string) => {
+        const data = asPointer(null);
+        return data.map(it => Image({ type: "loading" }, "Profile picture")).asRefComponent();
+    },
+    userName: (_id: string) => {
+        const data = asPointer(null);
+        return data.map(it => `(${_id})`);
+    }
+};
 
 export function permCheck(...per: Permission[]) {
     return API.isPermited(per, activeUser.permission);
@@ -77,7 +85,6 @@ export function updateActiveUserData() {
         activeUser.avatar = user.profile.avatar;
         activeUser.id = user._id;
         activeUser.permission = State(user.permissions);
-        console.log("Current User", JSON.parse(JSON.stringify(activeUser)));
     } catch (_) {
         // Session should be invalid
         logOut();
@@ -93,12 +100,11 @@ function checkIfRefreshTokenIsValid() {
         return;
     }
 }
-export function logOut() {
+export function logOut(goal?: string) {
     if (location.pathname.startsWith("/signin")) return;
     resetTokens();
     location.href = "/signin";
-    // default location
-    localStorage.goal = "/music";
+    localStorage.goal = goal ?? "/music";
 }
 
 export function resetTokens() {
@@ -126,10 +132,9 @@ export const tokens = State({
 });
 export async function forceRefreshToken() {
     try {
-        const access = await API.auth.refreshAccessToken.post(localStorage[ "refresh-token" ]);
+        const access = await API.auth.refreshAccessToken.post(localStorage[ "refresh-token" ]).then(stupidErrorAlert);
         localStorage[ "access-token" ] = access.token;
         tokens.accessToken = access.token;
-        console.log("Refreshed token");
     } catch (_) {
         // TODO: Make a better offline support
         location.href = "/";
@@ -153,11 +158,12 @@ export async function RegisterAuthRefresh() {
 }
 
 export function shouldLoginPage() {
-    if (loginRequired.find(x => location.pathname.startsWith(x))) {
-        localStorage.goal = location.pathname + location.search;
-        location.href = "/signin";
-        throw "aborting javascript here";
+    if (!loginRequired.find(x => location.pathname.startsWith(x))) {
+        return;
     }
+    localStorage.goal = location.pathname + location.search;
+    location.href = "/signin";
+    throw "aborting javascript here";
 }
 
 export function CenterAndRight(center: Component, right: Component): Component {
@@ -190,7 +196,7 @@ export function stringToColor(str: string) {
     let color = '#';
     for (let i = 0; i < 3; i++) {
         const value = (hash >> (i * 8)) & 0xFF;
-        color += ('00' + value.toString(16)).substr(-2);
+        color += (`00${value.toString(16)}`).substring(-2);
     }
     return color;
 }
@@ -210,7 +216,7 @@ export function saveBlob(blob: Blob, fileName: string) {
 const ARTIST_ARRAY = <ArtistTypes[]>[ "PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER" ];
 export function EditArtists(list: Artist[]) {
     const form = Page({
-        list: list
+        list
     }, (state) => [
         state.$list.map(() =>
             Vertical(
@@ -234,7 +240,7 @@ export function EditArtists(list: Artist[]) {
                     Spacer(),
                     Button("Add Artist") // TODO: Remove this in the future => switch to ghost rows
                         .onClick(() => {
-                            state.list = <any>[ ...state.list, [ "", "", "PRIMARY" ] ];
+                            state.list = <any>[ ...state.list, [ "", "", ArtistTypes.Primary ] ];
                         })
                 ).setPadding("0 0 3rem 0")
             )
@@ -261,7 +267,7 @@ export function EditArtists(list: Artist[]) {
     });
 }
 export function showPreviewImage(x: Drop, big = false) {
-    return Cache("image-preview-" + x._id + big, () => Promise.resolve(),
+    return Cache(`image-preview-${x._id}${big}`, () => Promise.resolve(),
         (type) => type == "loaded" && x.artwork
             ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork")
             : Image(artwork, "A Placeholder Artwork.")).addClass("image-preview");
@@ -273,7 +279,7 @@ export async function loadImage(x: Drop) {
         return cache.get(x._id + x.artwork);
 
     if (!x.artwork) return fetch(artwork).then(x => x.blob());
-    const blob = await API.music(API.getToken()).id(x._id).artwork();
+    const blob = await API.music.id(x._id).artwork().then(stupidErrorAlert);
     await cache.set(x._id + x.artwork, blob);
     return blob;
 }
@@ -291,17 +297,6 @@ export function getDropFromPages(data: StateHandler<any>[], restore?: Drop): Dro
         ...restore,
         ...Object.assign({}, ...data)
     };
-}
-
-declare global {
-    interface Window {
-        dataLayer: any[];
-    }
-}
-
-export function track(data: any) {
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push(data);
 }
 
 export function ProfilePicture(component: Component, name: string) {
@@ -323,8 +318,7 @@ export function getNameInital(raw: string) {
 
 export function showProfilePicture(x: ProfileData) {
     return ProfilePicture(
-        x.profile.avatar ?
-            Cache(x.profile.avatar, () => Promise.resolve(), (type) => type == "loaded" ? Image(x.profile.avatar!, "") : Box()) : Label(getNameInital(x.profile.username)),
+        x.profile.avatar ? Image(x.profile.avatar!, "") : Label(getNameInital(x.profile.username)),
         x.profile.username
-    ).addClass("profile-picture");
+    );
 }

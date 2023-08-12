@@ -4,7 +4,6 @@ type ViewType = 'loading' | 'request-reset-password' | 'reset-password-from-emai
 
 export const state = State({
     type: <ViewType>"loading",
-    token: <string | undefined>undefined,
     name: <string | undefined>undefined,
     email: <string | undefined>undefined,
     password: <string | undefined>undefined,

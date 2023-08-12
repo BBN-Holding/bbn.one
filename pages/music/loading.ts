@@ -1,9 +1,9 @@
-import { API } from "shared";
+import { API, stupidErrorAlert } from "shared";
 import { DropType } from "../../spec/music.ts";
 import { state } from "./state.ts";
 
 export async function refreshState() {
-    const list = await API.music(API.getToken()).drops.list();
+    const list = await API.music.drops.list().then(stupidErrorAlert);
 
     state.published = list.filter(x => x.type === DropType.Published);
     state.drafts = list.filter(x => x.type === DropType.Unsubmitted);
@@ -12,5 +12,5 @@ export async function refreshState() {
         || x.type === DropType.Private
         || x.type === DropType.ReviewDeclined
     );
-    state.payouts = await API.payment(API.getToken()).payouts.get();
+    state.payouts = await API.payment.payouts.get().then(stupidErrorAlert);
 }

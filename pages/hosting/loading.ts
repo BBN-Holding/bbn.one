@@ -1,13 +1,13 @@
 import { HmRequest, LoginRequest, MessageType, PublishResponse, SubscribeRequest, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
 import { State, asPointer, lazyInit } from "webgen/mod.ts";
-import { Server, ServerDetails } from "../../spec/music.ts";
+import { Server } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 
 export async function refreshState() {
-    state.servers = State((await API.hosting(API.getToken()).servers()).map(x => State(x)));
-    state.meta = State(await API.hosting(API.getToken()).meta());
+    state.servers = State((await API.hosting.servers()).map(x => State(x)));
+    state.meta = State(await API.hosting.meta());
 }
 
 /**
@@ -18,7 +18,6 @@ export async function refreshState() {
 export function listener() {
     const ws = new WebSocket(API.WS_URL);
     let firstTime = true;
-    console.log("Starting Update Listener...");
     ws.onmessage = ({ data }) => {
         const json = JSON.parse(data);
         if (json.login === "require authentication") {
@@ -40,16 +39,16 @@ export function listener() {
                 }
             }));
         }
-        if (json.type == "pub") {
-            const { data: { id, server: _server } } = <PublishResponse>json;
-            const server = JSON.parse(_server) as Server;
-            console.log(id, server);
-            const index = state.servers.findIndex(x => x._id == server._id);
-            if (index === -1) return; // handle this state
-            for (const [ key, value ] of Object.entries(server)) {
-                // @ts-ignore unsafe af
-                state.servers[ index ][ key ] = value;
-            }
+        if (json.type != "pub") {
+            return;
+        }
+        const { data: { server: _server } } = <PublishResponse>json;
+        const server = JSON.parse(_server) as Server;
+        const index = state.servers.findIndex(x => x._id == server._id);
+        if (index === -1) return; // handle this state
+        for (const [ key, value ] of Object.entries(server)) {
+            // @ts-ignore unsafe af
+            state.servers[ index ][ key ] = value;
         }
     };
     // my fancy reconnect
@@ -57,27 +56,23 @@ export function listener() {
 }
 
 export const currentDetailsTarget = asPointer(<string | undefined>undefined);
-export const currentDetailsSource = asPointer((data: ServerDetails) => { data; });
+export const currentDetailsSource = asPointer(() => { });
 
 export const messageQueue = <HmRequest[]>[];
 // deno-lint-ignore require-await
 export const streamingPool = lazyInit(async () => {
     function connect() {
         const ws = new WebSocket(API.WS_URL);
-        console.log("Starting Streaming Pool");
         let firstTime = true;
         ws.onmessage = ({ data }) => {
             const json = JSON.parse(data);
 
-            if (json.login === "require authentication") {
-                if (tokens.accessToken)
-                    ws.send(JSON.stringify(<LoginRequest>{
-                        action: MessageType.Login,
-                        type: "client",
-                        token: API.getToken(),
-                        id: activeUser.id
-                    }));
-            }
+            if (json.login === "require authentication" && tokens.accessToken) ws.send(JSON.stringify(<LoginRequest>{
+                action: MessageType.Login,
+                type: "client",
+                token: API.getToken(),
+                id: activeUser.id
+            }));
 
             if (json.login === true && firstTime === true) {
                 firstTime = false;
@@ -95,7 +90,6 @@ export const streamingPool = lazyInit(async () => {
                             }
                         }));
                     else if (_oldId != undefined) {
-                        console.log(_oldId);
                         // Else somehow unregister the oldId
                         // Can't current unregister the conversation. Thats why we just restart the pool.
                         ws.close();
@@ -111,8 +105,7 @@ export const streamingPool = lazyInit(async () => {
 
         };
         setInterval(() => {
-            if (ws.readyState != ws.OPEN) return;
-            if (messageQueue.length == 0) return;
+            if (ws.readyState != ws.OPEN || messageQueue.length == 0) return;
 
             ws.send(JSON.stringify(messageQueue.shift()));
         }, 100);

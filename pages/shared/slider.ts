@@ -3,7 +3,7 @@ import '../../assets/css/main.css';
 
 export const SliderInput = (label: string) => new class extends InputForm<number> {
     input = createElement("input");
-    valueRender = (value: number) => ((value / Number(this.input.max || "100")) * 100).toFixed(0) + " %";
+    valueRender = (value: number) => `${((value / Number(this.input.max || "100")) * 100).toFixed(0)} %`;
 
     constructor() {
         super();

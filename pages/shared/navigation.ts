@@ -108,7 +108,7 @@ class MenuImpl extends Component {
                 if (asPointer(item.hidden).getValue())
                     return Box().removeFromLayout();
 
-                const entry = Entry(item.replacement ? asPointer(item.replacement).getValue() : item);
+                const entry = Entry(item.replacement ? asPointer(item.replacement).getValue() : item).addClass(isMobile.map(mobile => mobile ? "small" : "desktop"));
                 const click = this.createClickHandler(item);
                 if (item.suffix)
                     entry.addSuffix(asPointer(item.suffix).getValue());
@@ -141,12 +141,12 @@ class MenuImpl extends Component {
 
     private createClickHandler(menu: MenuNode): undefined | (() => Promise<void> | void) {
         if (menu.clickHandler) return async () => {
-            await menu.clickHandler?.(this.path.getValue() + menu.id + "/", menu);
+            await menu.clickHandler?.(`${this.path.getValue() + menu.id}/`, menu);
             if (menu.children)
-                this.path.setValue(this.path.getValue() + menu.id + "/");
+                this.path.setValue(`${this.path.getValue() + menu.id}/`);
         };
         if (menu.children) return () => {
-            this.path.setValue(this.path.getValue() + menu.id + "/");
+            this.path.setValue(`${this.path.getValue() + menu.id}/`);
         };
         return undefined;
     }
@@ -196,7 +196,7 @@ function createTagList(menu: MenuImpl) {
         if (oldVal != undefined) {
             const path = menu.rootNode.categories![ val ];
             if (path)
-                menu.path.setValue(path.id + "/");
+                menu.path.setValue(`${path.id}/`);
         }
     });
 
@@ -223,7 +223,7 @@ function createBreadcrumb(menu: MenuImpl) {
             return [ root, ...items ];
         });
         function moveToPath(index: number) {
-            menu.path.setValue(history.getValue().filter((_, i) => index >= i).map(it => it.id ?? "-").join("/") + "/");
+            menu.path.setValue(`${history.getValue().filter((_, i) => index >= i).map(it => it.id ?? "-").join("/")}/`);
         }
 
         if (mobile)
@@ -243,20 +243,18 @@ function createBreadcrumb(menu: MenuImpl) {
                         .addClass("label"),
                 );
             }).addClass("history-list").removeFromLayout();
-        return HeavyReRender(history, it => {
-            return Grid(
-                ...it.map((entry, index) =>
-                    Box(
-                        Label(entry.title).addClass("label"),
-                        MIcon("arrow_forward_ios")
-                    )
-                        .addClass("history-entry")
-                        .onClick(() => moveToPath(index))
-                ).filter((_, i) => i != it.length - 1),
-                Label(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
-                    .addClass("label"),
-            ).addClass("history-list");
-        }).removeFromLayout();
+        return HeavyReRender(history, it => Grid(
+            ...it.map((entry, index) =>
+                Box(
+                    Label(entry.title).addClass("label"),
+                    MIcon("arrow_forward_ios")
+                )
+                    .addClass("history-entry")
+                    .onClick(() => moveToPath(index))
+            ).filter((_, i) => i != it.length - 1),
+            Label(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
+                .addClass("label"),
+        ).addClass("history-list")).removeFromLayout();
     }
     ).removeFromLayout();
 }

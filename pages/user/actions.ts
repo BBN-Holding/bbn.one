@@ -1,4 +1,4 @@
-import { API, displayError } from "shared";
+import { API, displayError, stupidErrorAlert } from "shared";
 import { assert } from "std/assert/assert.ts";
 import { delay } from "std/async/delay.ts";
 import { forceRefreshToken, gotoGoal } from "../_legacy/helper.ts";
@@ -45,9 +45,9 @@ export async function registerUser() {
 }
 
 export async function logIn(data: { token: string; }) {
-    const access = await API.auth.refreshAccessToken.post(data.token);
+    const access = await API.auth.refreshAccessToken.post(data.token).then(stupidErrorAlert);
     localStorage[ "access-token" ] = access.token;
-    localStorage[ "refresh-token" ] = data!.token;
+    localStorage[ "refresh-token" ] = data.token;
 }
 
 export async function handleStateChange() {
@@ -64,31 +64,39 @@ export async function handleStateChange() {
             return state.error = displayError(rsp.reason);
         await logIn(rsp.value);
         gotoGoal();
-    } else if (params.type == "discord" && params.code) {
+        return;
+    }
+    if (params.type == "discord" && params.code) {
         const rsp = await API.auth.discord.post(params.code);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
         await logIn(rsp.value);
         gotoGoal();
-    } else if (params.type == "microsoft" && params.code) {
+        return;
+    }
+    if (params.type == "microsoft" && params.code) {
         const rsp = await API.auth.microsoft.post(params.code);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
         await logIn(rsp.value);
         gotoGoal();
-    } else if (params.type == "forgot-password" && params.token) {
+        return;
+    }
+    if (params.type == "reset-password" && params.token) {
         const rsp = await API.auth.fromUserInteraction.get(params.token);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
         await logIn(rsp.value);
-        state.token = API.getToken();
-    } else if (params.type == "verify-email" && params.token) {
-        const rsp = await API.user(API.getToken()).mail.validate.post(params.token);
+        return;
+    }
+    if (params.type == "verify-email" && params.token) {
+        const rsp = await API.user.mail.validate.post(params.token);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
         await forceRefreshToken();
         await delay(1000);
         gotoGoal();
-    } else
-        state.type = "login";
+        return;
+    }
+    state.type = "login";
 }

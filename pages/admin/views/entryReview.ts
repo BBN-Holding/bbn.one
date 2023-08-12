@@ -3,7 +3,7 @@ import { Box, Button, ButtonStyle, Cache, CenterV, Color, Entry, Image, MIcon } 
 import { templateArtwork } from "../../../assets/imports.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { loadImage } from "../../_legacy/helper.ts";
-import { ReviewDialog } from "../dialog.ts";
+import { ReviewDialog, state } from "../dialog.ts";
 import { refreshState } from "../loading.ts";
 
 export function ReviewEntry(x: Drop) {
@@ -16,9 +16,9 @@ export function ReviewEntry(x: Drop) {
             .setStyle(ButtonStyle.Inline)
             .setColor(Color.Colored)
             .addClass("tag")
-            .onClick(() => location.href = "/music/edit?id=" + x._id))
+            .onClick(() => location.href = `/music/edit?id=${x._id}`))
         .addSuffix(Box(...ReviewActions(x)))
-        .addPrefix(Cache("image-preview-" + x._id, () => Promise.resolve(), (type) => {
+        .addPrefix(Cache(`image-preview-${x._id}`, () => Promise.resolve(), (type) => {
             const imageSource = type == "loaded" && x.artwork
                 ? Image({ type: "direct", source: async () => await loadImage(x) ?? fetch(templateArtwork).then(x => x.blob()) }, "A Song Artwork")
                 : Image(templateArtwork, "A Placeholder Artwork.");
@@ -37,9 +37,8 @@ function ReviewActions(x: Drop) {
                     .setColor(Color.Colored)
                     .addClass("tag")
                     .onClick(() => {
-                        ReviewDialog.open().viewOptions().update({
-                            drop: x
-                        });
+                        ReviewDialog.open();
+                        state.drop = x;
                         ReviewDialog.onClose(() => refreshState());
                     })
             ),
@@ -52,7 +51,7 @@ function ReviewActions(x: Drop) {
                     .setColor(Color.Colored)
                     .addClass("tag")
                     .onPromiseClick(async () => {
-                        await API.music(API.getToken()).id(x._id).type.post(DropType.Publishing);
+                        await API.music.id(x._id).type.post(DropType.Publishing);
                     })
             ),
         ] : [],

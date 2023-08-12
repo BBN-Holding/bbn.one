@@ -1,14 +1,13 @@
 import { API, StreamingUploadHandler, stupidErrorAlert, uploadFilesDialog } from "shared";
 import { delay } from "std/async/mod.ts";
 import { AdvancedImage, Box, Grid, IconButton, Image, MIcon, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
-import { activeUser, allowedImageFormats, forceRefreshToken, track } from "../helper.ts";
+import { activeUser, allowedImageFormats, forceRefreshToken } from "../_legacy/helper.ts";
 
 export function ChangePersonal() {
     return Wizard({
         submitAction: async ([ { data: { data } } ]) => {
-            await API.user(API.getToken()).setMe.post(data)
+            await API.user.setMe.post(data)
                 .then(stupidErrorAlert);
-            await delay(300);
             await forceRefreshToken();
         },
         buttonArrangement: "flex-end",
@@ -32,15 +31,9 @@ export function ChangePersonal() {
                                     failure: () => {
                                         data.loading = false;
                                         data.profilePicture = activeUser.avatar;
-                                        track({
-                                            "event": "profile-picture-upload-failed",
-                                        });
                                         alert("Your Upload has failed. Please try a different file or try again later");
                                     },
                                     uploadDone: () => {
-                                        track({
-                                            "event": "profile-picture-uploaded",
-                                        });
                                         data.profilePicture = <AdvancedImage>{ type: "waiting-upload", filename: file.name, blobUrl };
                                     },
                                     backendResponse: () => {
@@ -69,7 +62,7 @@ export function ChangePersonal() {
                     .setGap("15px")
             ).setGap("20px").addClass("limited-width"),
         ]).setValidator((v) => v.object({
-            name: v.string().min(1),
+            name: v.string().min(2),
             email: v.string().email()
         }).strip())
     ]);

@@ -56,7 +56,7 @@ serve({
         "hosting": "./pages/hosting/main.ts",
         "hosting/create": "./pages/hosting/views/create.ts",
 
-        "settings": "./pages/_legacy/settings/mod.ts",
+        "settings": "./pages/user/settings.ts",
 
         "admin": "./pages/admin/admin.ts",
 
@@ -64,6 +64,7 @@ serve({
     },
     defaultTemplate: createTemplate,
     poylfills: [
+        "./polyfill.ts",
         "./bug-reporter.ts",
         "https://unpkg.com/construct-style-sheets-polyfill@3.1.0",
         "https://unpkg.com/urlpattern-polyfill@8.0.2/"

@@ -95,5 +95,6 @@ function update(state: StateHandler<{ songs: Drop[ "songs" ]; }>, index: number,
         state.songs = State([]);
     // @ts-ignore errors due to any usage.
     state.songs[ index ][ key ] = value;
+    // @ts-ignore errors due to any usage.
     state.songs = State([ ...state.songs ]);
 }

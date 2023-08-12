@@ -77,6 +77,11 @@
     animation: pulse 300ms ease infinite;
 }
 
+.dot.moving {
+    background-color: white;
+    animation: pulse 300ms ease infinite;
+}
+
 .action-list .wiconbutton {
     width: 39px;
 }
@@ -84,4 +89,22 @@
 .action-list .loading {
     width: 51px;
     height: 50px;
+}
+
+.tag-node {
+    place-items: start;
+    grid-auto-flow: column;
+    justify-content: start;
+    gap: 4px;
+    margin: 2px 0 -2px;
+}
+
+.tag-node .title {
+    background: white;
+    color: black;
+    display: block;
+    font-weight: 500;
+    border-radius: 5px;
+    font-size: .7rem !important;
+    padding: 2px 5px;
 }

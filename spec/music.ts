@@ -1,4 +1,5 @@
 import * as zod from "https://deno.land/x/zod@v3.21.4/mod.ts";
+import { string } from "https://deno.land/x/zod@v3.21.4/types.ts";
 
 const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
 export const userString = zod.string().min(1).refine(x => x.trim()).transform(x => x.trim());
@@ -31,11 +32,6 @@ export enum DropType {
     */
 }
 
-export enum DataHints {
-    InvalidData = "INVALID_DATA",
-    DeadLinks = "DEAD_LINKS"
-}
-
 export enum ArtistTypes {
     Primary = "PRIMARY",
     Featuring = "FEATURING",
@@ -57,7 +53,6 @@ export const artist = zod.tuple([
 
 export const song = zod.object({
     id: zod.string(),
-    dataHints: zod.nativeEnum(DataHints).optional(),
     isrc: zod.string().optional(),
     title: userString,
     artists: artist.array().min(1),
@@ -119,11 +114,8 @@ export const pureDrop = pageOne
 export const drop = pureDrop
     .merge(zod.object({
         _id: zod.string(),
-        lastChanged: zod.number().describe("unix timestamp").optional(),
         user: zod.string(),
-        dataHints: zod.nativeEnum(DataHints).optional(),
-        type: zod.nativeEnum(DropType).optional(),
-        reviewResponse: zod.nativeEnum(ReviewResponse).optional()
+        type: zod.nativeEnum(DropType),
     }));
 
 export const payout = zod.object({
@@ -149,8 +141,8 @@ export const payout = zod.object({
 export const oauthapp = zod.object({
     _id: zod.string(),
     name: userString,
-    redirect: zod.string().url(),
-    secret: zod.string().min(32).max(64),
+    redirect: zod.string().url().array(),
+    secret: zod.string(),
     icon: zod.string()
 });
 
@@ -212,7 +204,7 @@ export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-mum", "bbn-sgp" ])
 
 export const server = zod.object({
     _id: zod.string(),
-    name: zod.string(),
+    name: zod.string().max(30),
     type: zod.nativeEnum(ServerTypes),
     location,
     limits,
@@ -221,7 +213,8 @@ export const server = zod.object({
     ports: zod.number().array(),
     user: zod.string(),
     identifier: zod.string().optional(),
-    stateSince: zod.number().describe("unix timestamp")
+    stateSince: zod.number().describe("unix timestamp"),
+    labels: zod.enum([ "legacy", "suspended", "contact-support" ]).array()
 });
 
 export const kubeServer = server.extend({
@@ -231,7 +224,7 @@ export const kubeServer = server.extend({
 });
 
 export const serverCreate = zod.object({
-    name: userString,
+    name: string().min(3).max(20),
     type: zod.nativeEnum(ServerTypes),
     location,
     limits,
@@ -253,7 +246,7 @@ export const meta = zod.object({
     used: metaLimti,
     pricing: zod.record(storeItems, zod.object({
         price: zod.number(),
-        ammount: zod.number()
+        amount: zod.number()
     }))
 });
 
@@ -320,7 +313,21 @@ export const serverDetails = zod.union([
     _id: zod.string()
 }));
 
-export type AdminStats = { drops: { all: number, reviews: number, publishing: number, published: number, private: number, rejected: number, drafts: number }, users: number, payouts: number, oauthApps: number, files: number, servers: number, wallets: number }
+export const enum AuditTypes {
+    StorePurchase = "store-purchase",
+    ServerCreate = "server-create",
+    ServerPowerChange = "server-power-change",
+    ServerModify = "server-modify",
+    ServerDelete = "server-delete"
+}
+
+export enum OAuthScopes {
+    Profile = "profile",
+    Email = "email",
+    Phone = "phone",
+}
+
+export type AdminStats = { drops: { all: number, reviews: number, publishing: number, published: number, private: number, rejected: number, drafts: number; }, users: number, payouts: number, oauthApps: number, files: number, servers: number, wallets: number; };
 
 export type Artist = zod.infer<typeof artist>;
 export type BugReport = zod.infer<typeof bugReport>;

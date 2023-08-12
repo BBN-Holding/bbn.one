@@ -1,0 +1,57 @@
+{
+    "/minecraft/vanilla/": {
+        "name": "Minecraft Vanilla",
+        "docker_image": "itzg/minecraft-server",
+        "version_api": "https://launchermeta.mojang.com/mc/game/version_manifest.json"
+    },
+    "/minecraft/default/": {
+        "name": "Minecraft",
+        "docker_image": "itzg/minecraft-server",
+        "version_api": "https://api.purpurmc.org/v2/purpur"
+    },
+    "/minecraft/paper/": {
+        "name": "Minecraft (Paper)",
+        "docker_image": "itzg/minecraft-server",
+        "version_api": "https://papermc.io/api/v2/projects/paper"
+    },
+    "/minecraft/modded/fabric/": {
+        "name": "Minecraft Fabric",
+        "docker_image": "itzg/minecraft-server",
+        "environment": {
+            "TYPE": "FABRIC"
+        },
+        "version_api": "https://meta.fabricmc.net/v2/versions/game"
+    },
+    "/minecraft/modded/forge/": {
+        "name": "Minecraft Forge",
+        "docker_image": "itzg/minecraft-server",
+        "environment": {
+            "TYPE": "FORGE"
+        },
+        "version_api": "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json"
+    },
+    "/minecraft/bedrock/": {
+        "name": "Minecraft Bedrock",
+        "docker_image": "itzg/minecraft-bedrock-server"
+    },
+    "/minecraft/pocketmine/": {
+        "name": "Pocketmine MP",
+        "docker_image": "pmmp/pocketmine-mp"
+    },
+    "/minecraft/legacy/magma/": {
+        "name": "Minecraft Magma",
+        "egg": 30
+    },
+    "/minecraft/legacy/nukkit/": {
+        "name": "Minecraft Nukkit",
+        "egg": 33
+    },
+    "/minecraft/legacy/pgf/": {
+        "name": "Minecraft Purpur Geyser Floodgate",
+        "egg": 34
+    },
+    "/minecraft/legacy/purpur/": {
+        "name": "Minecraft Purpur",
+        "egg": 20
+    }
+}

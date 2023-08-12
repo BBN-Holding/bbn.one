@@ -19,7 +19,7 @@ export function setErrorMessage(rsp?: SafeParseReturnType<any, any>) {
     const hideError = !rsp || rsp.success === true;
     const err = document.querySelector<HTMLElement>("#error-message-area");
     if (!err) return;
-    err.style.margin = !hideError ? "-0.8rem 0 1rem" : "0";
+    err.style.margin = hideError ? "0" : "-0.8rem 0 1rem";
     if (hideError) err.classList.add("hidden-message");
     else err.classList.remove("hidden-message");
     err.innerText = getErrorMessage({ isValid: rsp });

@@ -85,7 +85,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     Button("Resend Verify Email")
                         .addClass("link")
                         .onPromiseClick(async () => {
-                            await API.user(API.getToken()).mail.resendVerifyEmail.post();
+                            await API.user.mail.resendVerifyEmail.post();
                             await delay(1000);
                         })
                 ).addClass("email-banner", type.toLowerCase()) : Box().removeFromLayout(),

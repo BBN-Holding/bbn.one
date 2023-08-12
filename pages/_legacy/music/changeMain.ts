@@ -11,7 +11,7 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
     return Wizard({
         submitAction: () => { },
     }, () => [
-        Page({}, _ => [
+        Page({}, () => [
             Grid(
                 showPreviewImage(data)
             )
@@ -32,27 +32,22 @@ export function ChangeMain(data: Drop, update: (data: Partial<EditViewState>) =>
                 // TODO: Add Read-Only Mode for Drop and Songs
 
                 Entry({ title: "Export", subtitle: "Download your complete Drop with every Song" }).addClass("limited-width").onPromiseClick(async () => {
-                    const blob = await API.music(API.getToken()).id(data._id).download().then(stupidErrorAlert);
-                    saveBlob(blob, data.title + ".tar")
+                    const blob = await API.music.id(data._id).download().then(stupidErrorAlert);
+                    saveBlob(blob, `${data.title}.tar`);
                 }),
 
-                !Permissions.canCancelReview(data) ? null :
-                    Entry({ title: "Cancel Review", subtitle: "Need to change Something? Cancel it now" }).addClass("limited-width").onPromiseClick(async () => {
-                        await API.music(API.getToken()).id(data._id).type.post(DropType.Private);
-                        location.reload();
-                    }),
-                !Permissions.canSubmit(data) ? null :
-                    Entry({ title: "Publish", subtitle: "Submit your Drop for Approval" }).addClass("limited-width").onPromiseClick(async () => {
-                        await API.music(API.getToken()).id(data._id).type.post(DropType.UnderReview);
-                        location.reload();
-                    }),
-
-                !Permissions.canTakedown(data) ? null :
-                    Entry({ title: "Takedown", subtitle: "Completely Takedown your Drop" }).addClass("limited-width").onPromiseClick(async () => {
-                        await API.music(API.getToken()).id(data._id).type.post(DropType.Private);
-                        location.reload();
-                    }).addClass("entry-alert"),
-
+                Permissions.canCancelReview(data) ? Entry({ title: "Cancel Review", subtitle: "Need to change Something? Cancel it now" }).addClass("limited-width").onPromiseClick(async () => {
+                    await API.music.id(data._id).type.post(DropType.Private);
+                    location.reload();
+                }) : null,
+                Permissions.canSubmit(data) ? Entry({ title: "Publish", subtitle: "Submit your Drop for Approval" }).addClass("limited-width").onPromiseClick(async () => {
+                    await API.music.id(data._id).type.post(DropType.UnderReview);
+                    location.reload();
+                }) : null,
+                Permissions.canTakedown(data) ? Entry({ title: "Takedown", subtitle: "Completely Takedown your Drop" }).addClass("limited-width").onPromiseClick(async () => {
+                    await API.music.id(data._id).type.post(DropType.Private);
+                    location.reload();
+                }).addClass("entry-alert") : null,
             )
                 .setMargin("0 0 22px")
                 .setGap("22px")

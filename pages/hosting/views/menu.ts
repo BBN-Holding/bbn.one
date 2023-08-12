@@ -1,33 +1,104 @@
 import { MessageType } from "https://deno.land/x/hmsys_connector@0.9.0/spec/ws.ts";
-import { API, count, HeavyReRender, LoadingSpinner, Navigation, RenderItem, SliderInput, stupidErrorAlert } from "shared";
+import { API, count, HeavyReRender, LoadingSpinner, Navigation, placeholder, RenderItem, SliderInput, stupidErrorAlert } from "shared";
+import { delay } from "std/async/delay.ts";
+import { sumOf } from "std/collections/sum_of.ts";
 import { format } from "std/fmt/bytes.ts";
-import { asPointer, BasicLabel, Box, Button, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, MediaQuery, MIcon, ref, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
-import serverTypes from "../../../data/eggs.json" assert { type: "json" };
+import { readableStreamFromIterable } from "std/streams/readable_stream_from_iterable.ts";
+import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, MediaQuery, MIcon, ref, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
-import { PowerState, Server, ServerDetails } from "../../../spec/music.ts";
-import { activeUser } from "../../_legacy/helper.ts";
+import serverTypes from "../../../data/servers.json" assert { type: "json" };
+import { AuditTypes, PowerState, Server, ServerDetails } from "../../../spec/music.ts";
+import { activeUser, showProfilePicture } from "../../_legacy/helper.ts";
 import { MB, state } from "../data.ts";
 import { currentDetailsSource, currentDetailsTarget, messageQueue, streamingPool } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import './details.css';
+import './fileBrowser.css';
+import { countFileTree, FileEntry, getFileStream } from "./fileHandler.ts";
 import './list.css';
 import { moveDialog } from "./list.ts";
 import { TerminalComponent } from "./terminal.ts";
-
 type StateActions = {
     [ type in PowerState ]: Component | IconButtonComponent;
 };
 
+const labels = {
+    legacy: "Legacy",
+    suspended: "Suspended",
+    "contact-support": "Contact Support"
+} satisfies Record<Server[ "labels" ][ number ], string>;
+
+const auditLabels = {
+    "server-create": "Server Created",
+    "server-delete": "Server Deleted",
+    "server-modify": "Server Specs Updated",
+    "server-power-change": "Power changed to $powerChange",
+    "store-purchase": "Purchased $storeItem in store"
+} satisfies Record<AuditTypes, string>;
+
 export const hostingButtons = asPointer(<Component[]>[]);
-export const kubeServers = state.$servers.map(servers => servers.filter(x => !x.identifier));
+export const auditLogs = asPointer(<RenderItem[]>[]);
+
+const supportsFileSystemAccessAPI =
+    'getAsFileSystemHandle' in DataTransferItem.prototype;
+const supportsWebkitGetAsEntry =
+    'webkitGetAsEntry' in DataTransferItem.prototype;
+
+export function DropHandler(onData: (data: ReadableStream<FileEntry>, length: number) => void, component: Component) {
+    return new class extends Component {
+        hovering = asPointer(false);
+        constructor() {
+            super();
+            this.addClass(this.hovering.map(it => it ? "hovering" : "default"), "drop-area");
+            this.wrapper.ondragover = (ev) => {
+                ev.preventDefault();
+                this.hovering.setValue(true);
+            };
+            this.wrapper.ondragleave = (ev) => {
+                ev.preventDefault();
+                console.log(ev);
+                if (ev.target && !this.wrapper.contains(ev.relatedTarget as Node))
+                    this.hovering.setValue(false);
+            };
+            this.wrapper.ondrop = async (ev) => {
+                ev.preventDefault();
+                if (!supportsFileSystemAccessAPI) {
+                    alert("Please upgrade you Browser to use the latest features");
+                    return;
+                }
+                if (!supportsFileSystemAccessAPI && !supportsWebkitGetAsEntry || !ev.dataTransfer) return;
+
+                this.hovering.setValue(false);
+                const files = await Promise.all([ ...ev.dataTransfer.items ]
+                    .filter(item => item.kind === 'file') // File means file or directory
+                    .map(item => item.getAsFileSystemHandle()));
+
+                const fileSizeCount = sumOf(await Promise.all(files.filter(it => it).map(it => countFileTree(it!))), it => it);
+
+                onData?.(readableStreamFromIterable(files)
+                    .pipeThrough(new TransformStream<FileSystemHandle | null, FileEntry>({
+                        async transform(chunk, controller) {
+                            if (!chunk) return;
+                            for await (const iterator of getFileStream(chunk)) {
+                                controller.enqueue(iterator);
+                            }
+                        }
+                    })), fileSizeCount);
+            };
+            this.wrapper.append(component.draw());
+        }
+    };
+}
+
+const activeFiles = asPointer(<{ name: string; }[]>[]);
 export const hostingMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     actions: hostingButtons,
     categories: [
         {
             id: "servers",
-            title: ref`Servers ${count(kubeServers)}`,
-            children: kubeServers.map(servers => servers.map(server =>
+            title: ref`Servers ${count(state.$servers)}`,
+            children: state.$servers.map(servers => servers.length == 0 ? [ placeholder("Oh soo empty!", "You servers will be here when you create some!") ] : servers.map(server =>
             (<RenderItem>{
                 id: server._id,
                 title: server.$name,
@@ -37,6 +108,16 @@ export const hostingMenu = Navigation({
                         title: server.$name,
                         subtitle: ref`${server.$type.map(it => serverTypes[ it ].name)} @ ${server.$state.map(it => it == "moving" ? "Moving to " : "")}${server.$location.map(it => locations[ it ] ?? "(no location)")}`
                     })
+                        .addClass(isMobile.map(mobile => mobile ? "small" : "desktop"))
+                        .addSuffix(server.$labels
+                            .map(it => Grid(
+                                ...it
+                                    .map(it => BasicLabel({ title: labels[ it ] }))
+                            )
+                                .addClass("tag-node")
+                            )
+                            .asRefComponent()
+                        )
                 )
                     .setRawColumns("max-content auto")
                     .setGap("1rem")
@@ -57,19 +138,74 @@ export const hostingMenu = Navigation({
                                 id: "files",
                                 title: "Files",
                                 subtitle: "Upload and manage your files.",
-                                suffix: Label("Coming Soon")
-                                    .setFont(1, 500)
-                                    .setMargin("0 1rem")
+                                children: [
+                                    DropHandler(
+                                        async (files, count) => {
+                                            console.log("Uploading", count, "files");
+                                            for await (const _iterator of files) {
+                                                activeFiles.setValue([ ...activeFiles.getValue(), { name: _iterator.path } ]);
+                                                await delay(10);
+                                            }
+                                            console.log("file upload has been completed");
+                                        },
+                                        Grid(
+                                            BasicLabel({
+                                                title: "File Browser",
+                                                subtitle: "Drag and Drop files/folders here to upload and download them faster."
+                                            }),
+                                            Grid(
+                                                Button("Home")
+                                                    .setStyle(ButtonStyle.Inline)
+                                            ),
+                                            Entry(
+                                                activeFiles.map(files =>
+                                                    isMobile.map(mobile =>
+                                                        Table(mobile
+                                                            ? [
+                                                                [ "File", "1fr", (data) => Grid(
+                                                                    Box(
+                                                                        BIcon("globe2")
+                                                                    ),
+                                                                    BasicLabel({
+                                                                        title: data.name,
+                                                                        subtitle: ref`2 GB – 2023-06-24 13:53`,
+                                                                    })
+                                                                ).addClass("file-item") ],
+                                                            ]
+                                                            : [
+                                                                [ "Name", "1fr", (data) => Grid(
+                                                                    Box(
+                                                                        BIcon("globe2")
+                                                                    ),
+                                                                    BasicLabel({ title: data.name })
+                                                                ).addClass("file-item") ],
+                                                                [ "Last Modified", "1fr", (data) => Label(data.name) ],
+                                                                [ "Type", "1fr", (data) => Label(data.name) ],
+                                                                [ "Size", "1fr", (data) => Label(data.name) ],
+                                                            ], files)
+                                                    ).asRefComponent()
+                                                ).asRefComponent()
+                                            ).addClass("file-browser")
+                                        ),
+                                    ).addClass("drop-area")
+
+                                ]
                             },
                             {
                                 id: "database",
                                 title: "Database",
-                                subtitle: "Enabled a MariaDB Database",
+                                subtitle: "Create a MariaDB Database",
                                 suffix: Label("Coming Soon")
                                     .setFont(1, 500)
                                     .setMargin("0 1rem")
                             }
                         ]
+                    },
+                    {
+                        id: "audit-trail",
+                        hidden: true,
+                        title: "Audit Trail",
+                        children: auditLogs
                     },
                     {
                         id: "settings",
@@ -90,14 +226,14 @@ export const hostingMenu = Navigation({
                                     .setFont(1, 500)
                                     .setMargin("0 1rem")
                             },
-                            {
-                                id: "worlds",
-                                title: "Manage Worlds",
-                                subtitle: "Download, Reset or Upload your worlds.",
-                                suffix: Label("Coming Soon")
-                                    .setFont(1, 500)
-                                    .setMargin("0 1rem")
-                            },
+                            // {
+                            //     id: "worlds",
+                            //     title: "Manage Worlds",
+                            //     subtitle: "Download, Reset or Upload your worlds.",
+                            //     suffix: Label("Coming Soon")
+                            //         .setFont(1, 500)
+                            //         .setMargin("0 1rem")
+                            // },
                             {
                                 id: "core",
                                 title: "Server Settings",
@@ -105,6 +241,12 @@ export const hostingMenu = Navigation({
                                 suffix: Label("Coming Soon")
                                     .setFont(1, 500)
                                     .setMargin("0 1rem")
+                            },
+                            {
+                                id: "delete",
+                                title: "Delete Server",
+                                subtitle: "Delete everything. Click once, gone forever.",
+                                clickHandler: () => deleteServer(server._id)
                             }
                         ]
                     }
@@ -113,42 +255,12 @@ export const hostingMenu = Navigation({
             ))
         },
         {
-            id: "legacy-servers",
-            hidden: state.$servers.map(servers => servers.some(x => x.identifier)),
-            title: ref`Legacy Servers ${count(state.$servers.map(servers => servers.filter(x => x.identifier)))}`,
-            children: state.$servers.map(servers => servers.filter(x => x.identifier).map(server =>
-            (<RenderItem>{
-                id: server._id,
-                title: server.$name,
-                replacement: Grid(
-                    Box().addClass(server.$state, "dot"),
-                    BasicLabel({
-                        title: server.$name,
-                        subtitle: ref`${server.$type.map(it => serverTypes[ it ].name)} @ ${server.$location.map(it => locations[ it ] ?? "(no location)")}`
-                    })
-                )
-                    .setRawColumns("max-content auto")
-                    .setGap("1rem")
-                    .setAlign("center"),
-                suffix: ChangeStateButton(server),
-                clickHandler: async () => {
-                    await streamingPool();
-                    // TODO wait until first data is showing to prevent blinking
-                },
-                children: [
-                    serverDetails(server),
-                ]
-            })
-            ))
-        },
-        {
-            id: "profile",
-            title: "Profile",
+            id: "resources",
+            title: "Resources",
             children: [
                 state.$meta.map((meta) =>
                     meta ? profileView() : LoadingSpinner()
-                )
-                    .asRefComponent()
+                ).asRefComponent()
             ]
         }
     ],
@@ -162,20 +274,20 @@ export const hostingMenu = Navigation({
 
 state.$loaded.listen(loaded => {
     if (loaded)
-        hostingMenu.path.setValue((state.servers.length == 0 ? 'profile/' : 'servers/'));
+        hostingMenu.path.setValue((state.servers.length == 0 ? 'resources/' : 'servers/'));
     else
         hostingMenu.path.setValue("-/");
 });
 
 hostingMenu.path.listen(path => {
-    if (path === "servers/" || path === "profile/" || path === "legacy-servers/")
+    if ([ "servers/", "resources/", "legacy-servers/" ].includes(path))
         hostingButtons.setValue(
             [
                 Button("Start new Server")
+                    .setColor(state.$meta.map(() => !state.meta || (state.meta.used.slots >= state.meta.limits.slots) ? Color.Disabled : Color.Grayscaled))
                     .onClick(() => {
                         location.href = "/hosting/create";
                     })
-                    .setColor(state.$meta.map(() => !state.meta || (state.meta.used.slots >= state.meta.limits.slots) ? Color.Disabled : Color.Grayscaled))
             ]
         );
     else
@@ -187,6 +299,18 @@ type GridItem = Component | [ settings: {
     heigth?: number | undefined;
 }, element: Component ];
 
+export function auditEntry(audit: any): RenderItem[] {
+    return audit.map((x: any) => Entry(Grid(
+        BasicLabel({
+            title: `${auditLabels[ x.meta.action as AuditTypes ].replaceAll("$powerChange", x.meta.power ?? "")}`,
+            subtitle: `Executed by ${x.user.profile.username}`
+        }),
+        Label(new Date(parseInt(x._id.substring(0, 8), 16) * 1000).toLocaleDateString())
+    ))
+        .addPrefix(showProfilePicture(x.user))
+        .addClass("small"));
+}
+
 function ChangeStateButton(server: StateHandler<Server>): Component {
     return server.$state.map((state) => ((<StateActions>{
         "offline": IconButton(MIcon("play_arrow"), "delete")
@@ -194,7 +318,7 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
             .setColor(Color.Colored)
             .onClick(async (e) => {
                 e.stopPropagation();
-                await API.hosting(API.getToken()).serverId(server._id).power("start");
+                await API.hosting.serverId(server._id).power("start");
                 // This actually works when we a have better change stream system
                 server.state = "starting";
             }),
@@ -207,7 +331,7 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
             .onClick(async (e) => {
                 e.stopPropagation();
                 server.state = "stopping";
-                await API.hosting(API.getToken()).serverId(server._id).power("stop");
+                await API.hosting.serverId(server._id).power("stop");
             })
     })[ state ] ?? Box()))
         .asRefComponent()
@@ -223,15 +347,15 @@ function formatTime(duration: number): string {
     if (duration < 5 * SECOND) {
         return 'now';
     } else if (duration < MINUTE) {
-        return Math.floor(duration / SECOND) + 's';
+        return `${Math.floor(duration / SECOND)}s`;
     } else if (duration < 20 * MINUTE) {
         const minutes = Math.floor(duration / MINUTE);
         const seconds = Math.floor((duration % MINUTE) / SECOND);
         return `${minutes}min ${seconds}s`;
     } else if (duration < HOUR) {
-        return Math.floor(duration / MINUTE) + 'min';
+        return `${Math.floor(duration / MINUTE)}min`;
     } else if (duration < 72 * HOUR) {
-        return Math.floor(duration / HOUR) + 'h';
+        return `${Math.floor(duration / HOUR)}h`;
     } else {
         const days = Math.floor(duration / DAY);
         const hours = Math.floor((duration % DAY) / HOUR);
@@ -240,8 +364,7 @@ function formatTime(duration: number): string {
 }
 
 function calculateUptime(startDate: Date): string {
-    const currentTime = new Date();
-    const duration = currentTime.getTime() - startDate.getTime();
+    const duration = new Date().getTime() - startDate.getTime();
     return formatTime(duration);
 }
 
@@ -278,7 +401,7 @@ export function serverDetails(server: StateHandler<Server>) {
         subtitle: "memory",
     });
     const disk = BasicLabel({
-        title: input.$disk.map(it => `${it ? ((it / server.limits.disk) * 100).toFixed(0) + " %" : "---"}`),
+        title: input.$disk.map(it => it ? `${((it / server.limits.disk) * 100).toFixed(0)} %` : "---"),
         subtitle: "disk",
     });
 
@@ -288,7 +411,7 @@ export function serverDetails(server: StateHandler<Server>) {
 
             currentDetailsSource.setValue((data: ServerDetails) => {
                 if (data.type == "stdout") {
-                    terminal.write(server.identifier ? data.chunk + "\r\n" : data.chunk.replaceAll("\n", "\r\n"));
+                    terminal.write(server.identifier ? `${data.chunk}\r\n` : data.chunk.replaceAll("\n", "\r\n"));
                     if (data.clearConsole)
                         terminal.reset();
                 }
@@ -378,9 +501,8 @@ export function serverDetails(server: StateHandler<Server>) {
                 Entry({
                     title: "Legacy",
                     subtitle: "Go to the legacy panel"
-                }).onClick(() => {
-                    open(`https://panel.bbn.one/server/${server.identifier}`, "_blank");
-                }).addClass("small")
+                }).onClick(() => open(`https://panel.bbn.one/server/${server.identifier}`, "_blank"))
+                    .addClass("small")
             )
                 .addClass("split-list")
                 .setGap("var(--gap)")
@@ -389,13 +511,29 @@ export function serverDetails(server: StateHandler<Server>) {
                         title: "Storage",
                         subtitle: "Manage your persistence",
                     }).onClick(() => {
-                        hostingMenu.path.setValue(hostingMenu.path.getValue() + "/storage");
+                        hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/storage/`);
+                    }).addClass("small"),
+                    Entry({
+                        title: "Audit Trail",
+                        subtitle: "Keep track of what's going on",
+                    }).onClick(async () => {
+                        const audit = await API.hosting.serverId(server._id).audit().then(stupidErrorAlert);
+                        auditLogs.setValue(auditEntry(audit));
+                        hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/audit-trail/`);
+                    }).addClass("small"),
+                    Entry({
+                        title: "Sub-User",
+                        subtitle: "Add friends to manage your server",
+                    }).onClick(async () => {
+                        const audit = await API.hosting.serverId(server._id).audit().then(stupidErrorAlert);
+                        auditLogs.setValue(auditEntry(audit));
+                        hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/audit-trail/`);
                     }).addClass("small"),
                     Entry({
                         title: "Settings",
                         subtitle: "Update your Server"
                     }).onClick(() => {
-                        hostingMenu.path.setValue(hostingMenu.path.getValue() + "/settings");
+                        hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/settings/`);
                     }).addClass("small")
                 )
                     .addClass("split-list")
@@ -437,11 +575,11 @@ function editServer(server: StateHandler<Server>) {
                     .setMax(state.meta.limits.memory - state.meta.used.memory + server.limits.memory)
                     .sync(data, "memory")
                     .setRender((val) => format(val * MB)),
-                SliderInput("Storage (Disk)")
+                SliderInput("Disk (Storage)")
                     .setMax(state.meta.limits.disk - state.meta.used.disk + server.limits.disk)
                     .sync(data, "disk")
                     .setRender((val) => format(val * MB)),
-                SliderInput("Processor (CPU)")
+                SliderInput("CPU (Processor)")
                     .setMax(state.meta.limits.cpu - state.meta.used.cpu + server.limits.cpu)
                     .sync(data, "cpu")
                     .setRender((val) => `${val.toString()} %`),
@@ -464,7 +602,7 @@ function editServer(server: StateHandler<Server>) {
             if (data.location != server.location)
                 moveDialog(data.name, server.location, data.location);
 
-            await API.hosting(API.getToken()).serverId(server._id)
+            await API.hosting.serverId(server._id)
                 .edit(data)
                 .then(stupidErrorAlert);
 
@@ -479,10 +617,10 @@ function deleteServer(serverId: string) {
         .setTitle("Are you sure?")
         .addButton("Cancel", "remove")
         .addButton("Delete", async () => {
-            await API.hosting(API.getToken()).serverId(serverId).delete()
+            await API.hosting.serverId(serverId).delete()
                 .then(stupidErrorAlert)
                 .catch(() => { });
-            location.reload();
+            location.href = "/hosting";
             return "remove" as const;
         }, Color.Critical)
         .allowUserClose()

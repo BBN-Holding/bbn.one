@@ -27,10 +27,10 @@
     max-width: 27rem;
 }
 
-.auth-area .profile-picture {
+.auth-area .wimage.profile-picture img,
+.auth-area .wimage.profile-picture {
     width: 100%;
     height: 100%;
-    border-radius: 1.5rem;
 }
 
 .auth-area .wimage {
