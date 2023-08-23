@@ -54,7 +54,7 @@ View(() => Box(
             .addClass("bbn-one-services")
             .setRawColumns("max-content max-content"),
         Box(
-            Label("Grown now.", "h2"),
+            Label("Grow now.", "h2"),
             Label("Our BBN One platform is focused on building your projects.", "h3")
         ).addClass("section"),
         Box(Box()).addClass("glowbs", "blue"),
