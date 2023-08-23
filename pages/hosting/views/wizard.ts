@@ -59,7 +59,7 @@ export const creationView = () => creationState.$loading.map(() => {
                         Grid(
                             TextInput("text", "Friendly Name")
                                 .sync(data, "name"),
-                            DropDownInput("Location", Object.keys(locations).filter(x => x != "bbn-mum"))
+                            DropDownInput("Location", Object.keys(locations).filter(x => x != "bbn-sgp"))
                                 .setRender((val) => locations[ val as keyof typeof locations ])
                                 .sync(data, "location"),
                             /*DropDownInput("Version", Object.keys(locations))
