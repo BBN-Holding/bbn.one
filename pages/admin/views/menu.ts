@@ -1,14 +1,15 @@
 import { API, count, HeavyList, loadMore, Navigation, placeholder } from "shared";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Box, Button, Color, Dialog, Entry, Grid, isMobile, Label, ref, State, TextInput } from "webgen/mod.ts";
+import { Box, Button, Color, Dialog, Entry, Grid, Horizontal, isMobile, Label, ref, Spacer, State, Table, TextInput, Vertical } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
-import { UserEntry } from "./entryUser.ts";
+import { GroupEntry, UserEntry } from "./entryUser.ts";
 import { entryFile, entryOAuth, entryWallet, transcriptMenu } from "./list.ts";
 
+//TODO: Stats
 export const adminMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     categories: [
@@ -40,7 +41,7 @@ export const adminMenu = Navigation({
                         ? `---`
                         : it.status == "rejected"
                             ? "(failed)"
-                            : "£ " + sumOf(Object.values(it.value.find(wallet => wallet.user === "62ea6fa5321b3702e93ca21c")?.balance!), e => e).toFixed(2) ?? 0
+                            : `£ ${sumOf(Object.values(it.value.find(wallet => wallet.user === "62ea6fa5321b3702e93ca21c")?.balance!), e => e).toFixed(2)}` ?? 0
                     )
                 }
             ])
@@ -55,7 +56,7 @@ export const adminMenu = Navigation({
                     children: [
                         HeavyList(state.drops.$reviews, it => ReviewEntry(it))
                             .setPlaceholder(placeholder("No Servers", "Welcome! Create a server to get going. 🤖🛠️"))
-                            .enablePaging((offset, limit) => loadMore(state.drops.$reviews, () => API.admin(API.getToken()).drops.list(DropType.UnderReview, offset, limit)))
+                            .enablePaging((offset, limit) => loadMore(state.drops.$reviews, () => API.admin.drops.list(DropType.UnderReview, offset, limit)))
                     ]
                 },
                 {
@@ -63,7 +64,7 @@ export const adminMenu = Navigation({
                     title: ref`Publishing ${count(state.drops.$publishing)}`,
                     children: [
                         HeavyList(state.drops.$publishing, it => ReviewEntry(it))
-                            .enablePaging((offset, limit) => loadMore(state.drops.$publishing, () => API.admin(API.getToken()).drops.list(DropType.Publishing, offset, limit)))
+                            .enablePaging((offset, limit) => loadMore(state.drops.$publishing, () => API.admin.drops.list(DropType.Publishing, offset, limit)))
                     ]
                 },
                 {
@@ -71,7 +72,7 @@ export const adminMenu = Navigation({
                     title: ref`Published ${count(state.drops.$published)}`,
                     children: [
                         HeavyList(state.drops.$published, it => ReviewEntry(it))
-                            .enablePaging((offset, limit) => loadMore(state.drops.$published, () => API.admin(API.getToken()).drops.list(DropType.Published, offset, limit)))
+                            .enablePaging((offset, limit) => loadMore(state.drops.$published, () => API.admin.drops.list(DropType.Published, offset, limit)))
                     ]
                 },
                 {
@@ -79,7 +80,7 @@ export const adminMenu = Navigation({
                     title: ref`Private ${count(state.drops.$private)}`,
                     children: [
                         HeavyList(state.drops.$private, it => ReviewEntry(it))
-                            .enablePaging((offset, limit) => loadMore(state.drops.$private, () => API.admin(API.getToken()).drops.list(DropType.Private, offset, limit)))
+                            .enablePaging((offset, limit) => loadMore(state.drops.$private, () => API.admin.drops.list(DropType.Private, offset, limit)))
                     ]
                 },
                 {
@@ -87,7 +88,7 @@ export const adminMenu = Navigation({
                     title: ref`Rejected ${count(state.drops.$rejected)}`,
                     children: [
                         HeavyList(state.drops.$rejected, it => ReviewEntry(it))
-                            .enablePaging((offset, limit) => loadMore(state.drops.$rejected, () => API.admin(API.getToken()).drops.list(DropType.ReviewDeclined, offset, limit)))
+                            .enablePaging((offset, limit) => loadMore(state.drops.$rejected, () => API.admin.drops.list(DropType.ReviewDeclined, offset, limit)))
                     ]
                 },
                 {
@@ -95,7 +96,7 @@ export const adminMenu = Navigation({
                     title: ref`Drafts ${count(state.drops.$drafts)}`,
                     children: [
                         HeavyList(state.drops.$drafts, it => ReviewEntry(it))
-                            .enablePaging((offset, limit) => loadMore(state.drops.$drafts, () => API.admin(API.getToken()).drops.list(DropType.Unsubmitted, offset, limit)))
+                            .enablePaging((offset, limit) => loadMore(state.drops.$drafts, () => API.admin.drops.list(DropType.Unsubmitted, offset, limit)))
                     ]
                 },
             ]
@@ -104,8 +105,16 @@ export const adminMenu = Navigation({
             id: "users",
             title: ref`User ${count(state.$users)}`,
             children: [
-                HeavyList(state.$users, (val) => UserEntry(val))
-                    .enablePaging((offset, limit) => loadMore(state.$users, () => API.admin(API.getToken()).users.list(offset, limit)))
+                HeavyList(state.$users, val => UserEntry(val))
+                    .enablePaging((offset, limit) => loadMore(state.$users, () => API.admin.users.list(offset, limit)))
+            ]
+        },
+        {
+            id: "groups",
+            title: ref`Groups ${count(state.$groups)}`,
+            children: [
+                HeavyList(state.$groups, val => GroupEntry(val))
+                    .enablePaging((offset, limit) => loadMore(state.$groups, () => API.admin.groups.list(offset, limit)))
             ]
         },
         {
@@ -161,14 +170,14 @@ export const adminMenu = Navigation({
             title: ref`Minecraft Servers ${count(state.$servers)}`,
             children: [
                 // HeavyList(state.$servers, it => entryServer(State(it) as StateHandler<Server>, true))
-                // .enablePaging((offset, limit) => loadMore(state.$servers, () => API.admin(API.getToken()).servers.list(offset, limit)))
+                // .enablePaging((offset, limit) => loadMore(state.$servers, () => API.admin.servers.list(offset, limit)))
             ]
         },
         {
             id: "wallets",
             title: ref`Wallets ${count(state.$wallets)}`,
             children: [ HeavyList(state.$wallets, entryWallet)
-                .enablePaging((offset, limit) => loadMore(state.$wallets, () => API.admin(API.getToken()).wallets.list(offset, limit)))
+                .enablePaging((offset, limit) => loadMore(state.$wallets, () => API.admin.wallets.list(offset, limit)))
             ]
         },
         {
@@ -186,14 +195,40 @@ export const adminMenu = Navigation({
 
 const oAuthData = State({
     name: "",
-    redirectURI: "",
+    redirectURI: [ "" ],
     image: ""
 });
+
 const addOAuthDialog = Dialog(() =>
     Grid(
         Label("Create new OAuth Application"),
         TextInput("text", "Name").sync(oAuthData, "name"),
-        TextInput("text", "Redirect URI").sync(oAuthData, "redirectURI"),
+        oAuthData.$redirectURI.map(x =>
+            Vertical(
+                Table([
+                    [ "URI", "auto", (_, index) =>
+                        TextInput("text", "URI", "blur")
+                            .setValue(x[ index ])
+                            .onChange((data) => {
+                                x[ index ] = data ?? "";
+                            })
+                    ]
+                ], x)
+                    .setDelete((_, index) => {
+                        oAuthData.redirectURI = State(x.filter((_, i) => i != index));
+                    }),
+                Horizontal(
+                    Spacer(),
+                    Button("Add URI")
+                        .onClick(() => {
+                            x.push("");
+                        })
+                ).setPadding("0 0 3rem 0")
+            )
+                .setGap("var(--gap)")
+                .setWidth("clamp(0rem, 100vw, 60vw)")
+                .setMargin("0 -.6rem 0 0"),
+        ).asRefComponent(),
         Button("Upload Image").onPromiseClick(async () => {
             oAuthData.image = await upload("oauth");
         }),
@@ -201,8 +236,14 @@ const addOAuthDialog = Dialog(() =>
             Button("Submit")
                 .setColor(img === "" ? Color.Disabled : Color.Grayscaled)
                 .onClick(() => {
-                    API.oauth(API.getToken()).post(oAuthData.name, oAuthData.redirectURI, oAuthData.image);
-                    addOAuthDialog.close();
+                    API.oauth.post(oAuthData.name, oAuthData.redirectURI, oAuthData.image)
+                        .then(async () => {
+                            oAuthData.name = "";
+                            oAuthData.redirectURI = State([ "" ]);
+                            oAuthData.image = "";
+                            addOAuthDialog.close();
+                            state.oauth = await API.oauth.list();
+                        });
                 })
         ).asRefComponent()
     ).setGap("10px")

@@ -1,6 +1,6 @@
-import { API } from "shared";
-import { assert } from "std/testing/asserts.ts";
-import { Box, Button, ButtonStyle, Color, Custom, Form, Grid, Horizontal, Label, Spacer, TextInput, Vertical, View, WebGen, img, isMobile, loadingWheel } from "webgen/mod.ts";
+import { API, LoadingSpinner } from "shared";
+import { assert } from "std/assert/assert.ts";
+import { Box, Button, ButtonStyle, Color, Form, Grid, Horizontal, Image, Label, Spacer, TextInput, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -42,8 +42,8 @@ View(() => Vertical(
                             .setJustify("center")
                             .onPromiseClick(async () => {
                                 try {
-                                    assert(state.token, "Missing Token!");
-                                    await API.user(state.token).setMe.post({
+                                    assert(API.getToken(), "Missing Token!");
+                                    await API.user.setMe.post({
                                         password: state.password
                                     });
                                     state.type = 'login';
@@ -51,7 +51,7 @@ View(() => Vertical(
                                     state.error = "Failed: Please try again later";
                                 }
                             }),
-                        Label(!state.token ? "Error: Link is invalid" : "").addClass("error-message"),
+                        Label(API.getToken() ? "" : "Error: Link is invalid").addClass("error-message"),
                         ErrorMessage()
                     )).activeSubmitTo("#submit-button");
                 if (state.type == "request-reset-password")
@@ -68,9 +68,7 @@ View(() => Vertical(
                                 try {
                                     assert(state.email, "Email is missing");
 
-                                    await API.auth.forgotPassword.post({
-                                        email: state.email
-                                    });
+                                    await API.auth.forgotPassword.post(state.email);
 
                                     alert("Email Send! Please check your Inbox/Spam folder.");
                                 } catch (_) {
@@ -99,7 +97,7 @@ View(() => Vertical(
                             .setJustify("center")
                             .asLinkButton(API.auth.oauthRedirect("google"))
                             .addPrefix(
-                                Custom(img(googleLogo))
+                                Image(googleLogo, "Google Logo")
                                     .addClass("prefix-logo")
                             )
                             .setMargin("0 0 .6rem"),
@@ -107,7 +105,7 @@ View(() => Vertical(
                             .setJustify("center")
                             .asLinkButton(API.auth.oauthRedirect("discord"))
                             .addPrefix(
-                                Custom(img(discordLogo))
+                                Image(discordLogo, "Discord Logo")
                                     .addClass("prefix-logo")
                             )
                             // .setMargin("0 0 .6rem"),
@@ -143,7 +141,7 @@ View(() => Vertical(
 
                         Horizontal(
                             Label("New here?"),
-                            Button("Create a Account")
+                            Button("Create an Account")
                                 .setStyle(ButtonStyle.Inline)
                                 .onClick(() => state.type = "register")
                                 .setColor(Color.Colored)
@@ -208,7 +206,7 @@ View(() => Vertical(
                         .activeSubmitTo("#register-button");
 
                 return Box(
-                    Custom(loadingWheel() as Element as HTMLElement),
+                    LoadingSpinner(),
                     Label("Loading..."),
                     ErrorMessage(),
                 ).addClass("loading", "loader");

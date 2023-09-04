@@ -32,7 +32,7 @@ nav.home {
 
 }
 
-[data-theme="light"] nav.home .vertical-stack>img {
+[data-theme="light"] nav.home .clickable img {
     filter: invert();
 }
 

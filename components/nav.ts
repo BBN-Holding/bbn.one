@@ -1,6 +1,6 @@
 import { API } from "shared";
 import { delay } from "std/async/delay.ts";
-import { BasicLabel, Box, Button, ButtonStyle, Component, Custom, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement, img } from "webgen/mod.ts";
+import { BasicLabel, Box, Button, ButtonStyle, Component, Custom, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement } from "webgen/mod.ts";
 import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/_legacy/helper.ts";
 import './nav.css';
 import { activeLogo, pages } from "./pages.ts";
@@ -44,7 +44,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     Vertical(
                         MIcon("apps"),
                         Vertical(
-                            Custom(img(activeLogo(type)))
+                            Image(activeLogo(type), "Selected Service")
                         ),
                     )
                         .setGap(".5rem")
@@ -85,7 +85,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     Button("Resend Verify Email")
                         .addClass("link")
                         .onPromiseClick(async () => {
-                            await API.user(API.getToken()).mail.resendVerifyEmail.post();
+                            await API.user.mail.resendVerifyEmail.post();
                             await delay(1000);
                         })
                 ).addClass("email-banner", type.toLowerCase()) : Box().removeFromLayout(),

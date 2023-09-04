@@ -1,4 +1,4 @@
-import { API, Navigation } from "shared";
+import { API, Navigation, stupidErrorAlert } from "shared";
 import { Button, Card, Color, Grid, Label, MediaQuery, State, Table, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
@@ -27,10 +27,10 @@ View(() => Vertical(
             actions: [
                 Button("Request Payout")
                     .onPromiseClick(async () => {
-                        await API.wallet(API.getToken()).requestPayout();
+                        await API.wallet.requestPayout();
                         alert(`Your payout request has been submitted.`);
                     })
-                    .setColor(state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained! > 0 ? Color.Grayscaled : Color.Disabled)
+                    .setColor(state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained! > 10 ? Color.Grayscaled : Color.Disabled)
             ]
         }).addClass(
             isMobile.map(mobile => mobile ? "mobile-navigation" : "navigation"),
@@ -42,7 +42,7 @@ View(() => Vertical(
                     Grid(
                         Card(
                             Grid(
-                                Label(Number(state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained!).toFixed(2) + " £")
+                                Label(`${Number(state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained!).toFixed(2)} £`)
                                     .setFont(2, 700),
                                 Label("Balance")
                                     .setFont(1, 700)
@@ -52,7 +52,7 @@ View(() => Vertical(
                         ),
                         Card(
                             Grid(
-                                Label(state.wallet?.cut + "%")
+                                Label(`${state.wallet?.cut}%`)
                                     .setFont(2, 700),
                                 Label("Your Cut")
                                     .setFont(1, 700)
@@ -65,7 +65,7 @@ View(() => Vertical(
                         .setGap("var(--gap)")
                         .addClass("limited-width", "details-grid"),
                     Table([
-                        [ "Amount", "auto", ({ amount }) => Label(amount.toFixed(2) + " £") ],
+                        [ "Amount", "auto", ({ amount }) => Label(`${amount.toFixed(2)} £`) ],
                         [ "Description", "auto", ({ description }) => Label(description) ],
                         [ "Counterparty", "auto", ({ counterParty }) => Label(counterParty) ],
                         [ "Date", "auto", ({ timestamp }) => Label(new Date(Number(timestamp)).toDateString()) ],
@@ -81,7 +81,8 @@ renewAccessTokenIfNeeded()
     .then(() => state.loaded = true);
 
 async function refreshState() {
-    state.wallet = await API.wallet(API.getToken()).get();
-    state.wallet.transactions = state.wallet.transactions.sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
+    state.wallet = await API.wallet.get().then(stupidErrorAlert);
+    if (state.wallet)
+        state.wallet.transactions = state.wallet.transactions.sort((a, b) => Number(b.timestamp) - Number(a.timestamp));
     state.loaded = true;
 }

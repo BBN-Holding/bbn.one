@@ -53,7 +53,7 @@ export const migrationCredentials = () => Dialog(() =>
                 .setValue(state.meta.migrationPassword),
             Button("Copy")
                 .onClick(() => {
-                    navigator.clipboard.writeText(state.meta.migrationPassword);
+                    navigator.clipboard.writeText(state.meta.migrationPassword ?? "Already Migrated");
                 })
         )
             .setGap("0.5rem")
@@ -74,7 +74,7 @@ export const profileView = () =>
     MediaQuery("(max-width: 700px)", (small) =>
         state.$meta.map(() =>
             Grid(
-                Entry(
+                state.meta.pteroId ? Entry(
                     Grid(
                         Label(migrationInfo.title)
                             .setFont(2, 700),
@@ -90,7 +90,7 @@ export const profileView = () =>
                         )
                     )
                         .addClass("details-item")
-                ).addClass("full-width"),
+                ).addClass("full-width") : Box(),
                 Entry(
                     Grid(
                         Label(state.meta.coins.toLocaleString())
@@ -104,7 +104,7 @@ export const profileView = () =>
                 Box(
                     Entry(
                         Grid(
-                            Label(state.meta.used.slots + " / " + state.meta.limits.slots)
+                            Label(`${state.meta.used.slots} / ${state.meta.limits.slots}`)
                                 .setFont(2, 700),
                             Label("Servers")
                                 .setFont(1, 700)
@@ -113,25 +113,25 @@ export const profileView = () =>
                             .addClass("details-item")
                     )
                         .addClass("docked"),
-                    HeavyReRender(state.meta.pricing.slots, slots => !slots ? Box() :
-                        ShopStack(slots.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
-                            type: slots.price > state.meta.coins ? "blocked" : "available",
-                            label: `Add x${slots.ammount} Servers`,
-                            sublabel: `Requires ${slots.price} Coins`,
-                            action: async (ev) => {
-                                await API.hosting(API.getToken()).store.create("slots")
-                                    .then(stupidErrorAlert);
-                                confettiFromElement(ev);
-                                refreshState();
-                            }
-                        })
+                    HeavyReRender(state.meta.pricing.slots, slots => slots ? ShopStack(slots.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
+                        type: slots.price > state.meta.coins ? "blocked" : "available",
+                        label: `Add x${slots.amount} Servers`,
+                        sublabel: `Requires ${slots.price} Coins`,
+                        action: async (ev) => {
+                            await API.hosting.store.create("slots")
+                                .then(stupidErrorAlert);
+                            confettiFromElement(ev);
+                            refreshState();
+                        }
+                    }) :
+                        Box()
                     ).removeFromLayout()
                 )
                     .addClass("shop"),
                 Box(
                     Entry(
                         Grid(
-                            Label(format(state.meta.used.memory * MB) + " / " + format(state.meta.limits.memory * MB))
+                            Label(`${format(state.meta.used.memory * MB)} / ${format(state.meta.limits.memory * MB)}`)
                                 .setFont(2, 700),
                             Label("Memory")
                                 .setFont(1, 700)
@@ -140,25 +140,25 @@ export const profileView = () =>
                             .addClass("details-item")
                     )
                         .addClass("docked"),
-                    HeavyReRender(state.meta.pricing.memory, memory => !memory ? Box() :
-                        ShopStack(memory.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
-                            type: memory.price > state.meta.coins ? "blocked" : "available",
-                            label: `Add ${format((memory.ammount ?? 0) * MB)}`,
-                            sublabel: `Requires ${memory.price} Coins`,
-                            action: async (ev) => {
-                                await API.hosting(API.getToken()).store.create("memory")
-                                    .then(stupidErrorAlert);
-                                confettiFromElement(ev);
-                                refreshState();
-                            }
-                        })
+                    HeavyReRender(state.meta.pricing.memory, memory => memory ? ShopStack(memory.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
+                        type: memory.price > state.meta.coins ? "blocked" : "available",
+                        label: `Add ${format((memory.amount ?? 0) * MB)}`,
+                        sublabel: `Requires ${memory.price} Coins`,
+                        action: async (ev) => {
+                            await API.hosting.store.create("memory")
+                                .then(stupidErrorAlert);
+                            confettiFromElement(ev);
+                            refreshState();
+                        }
+                    }) :
+                        Box()
                     ).removeFromLayout()
                 )
                     .addClass("shop"),
                 Box(
                     Entry(
                         Grid(
-                            Label(format(state.meta.used.disk * MB) + " / " + format(state.meta.limits.disk * MB))
+                            Label(`${format(state.meta.used.disk * MB)} / ${format(state.meta.limits.disk * MB)}`)
                                 .setFont(2, 700),
                             Label("Disk")
                                 .setFont(1, 700)
@@ -167,25 +167,25 @@ export const profileView = () =>
                             .addClass("details-item")
                     )
                         .addClass("docked"),
-                    HeavyReRender(state.meta.pricing.disk, disk => !disk ? Box() :
-                        ShopStack(disk.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
-                            type: disk.price > state.meta.coins ? "blocked" : "available",
-                            label: `Add ${format(disk.ammount * MB)}`,
-                            sublabel: `Requires ${disk.price} Coins`,
-                            action: async (ev) => {
-                                await API.hosting(API.getToken()).store.create("disk")
-                                    .then(stupidErrorAlert);
-                                confettiFromElement(ev);
-                                refreshState();
-                            }
-                        })
+                    HeavyReRender(state.meta.pricing.disk, disk => disk ? ShopStack(disk.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
+                        type: disk.price > state.meta.coins ? "blocked" : "available",
+                        label: `Add ${format(disk.amount * MB)}`,
+                        sublabel: `Requires ${disk.price} Coins`,
+                        action: async (ev) => {
+                            await API.hosting.store.create("disk")
+                                .then(stupidErrorAlert);
+                            confettiFromElement(ev);
+                            refreshState();
+                        }
+                    }) :
+                        Box()
                     ).removeFromLayout()
                 )
                     .addClass("shop"),
                 Box(
                     Entry(
                         Grid(
-                            Label(state.meta.used.cpu + "% / " + state.meta.limits.cpu + "%")
+                            Label(`${state.meta.used.cpu}% / ${state.meta.limits.cpu}%`)
                                 .setFont(2, 700),
                             Label("CPU")
                                 .setFont(1, 700)
@@ -194,18 +194,18 @@ export const profileView = () =>
                             .addClass("details-item")
                     )
                         .addClass("docked"),
-                    HeavyReRender(state.meta.pricing.cpu, cpu => !cpu ? Box() :
-                        ShopStack(cpu.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
-                            type: cpu.price > state.meta.coins ? "blocked" : "available",
-                            label: `Add ${cpu.ammount} %`,
-                            sublabel: `Requires ${cpu.price} Coins`,
-                            action: async (ev) => {
-                                await API.hosting(API.getToken()).store.create("cpu")
-                                    .then(stupidErrorAlert);
-                                confettiFromElement(ev);
-                                refreshState();
-                            }
-                        })
+                    HeavyReRender(state.meta.pricing.cpu, cpu => cpu ? ShopStack(cpu.price > state.meta.coins ? "Not enough Coins" : "Upgrade available", {
+                        type: cpu.price > state.meta.coins ? "blocked" : "available",
+                        label: `Add ${cpu.amount} %`,
+                        sublabel: `Requires ${cpu.price} Coins`,
+                        action: async (ev) => {
+                            await API.hosting.store.create("cpu")
+                                .then(stupidErrorAlert);
+                            confettiFromElement(ev);
+                            refreshState();
+                        }
+                    }) :
+                        Box()
                     ).removeFromLayout()
                 )
                     .addClass("shop")
@@ -222,12 +222,12 @@ type ShopVariant =
 const ShopStack = (actionText: string, _variant: ShopVariant) => Grid(
     Label(actionText),
     HeavyReRender(_variant, (variant) => Vertical(
-        variant.type != "blocked"
-            ? Button(variant.label)
+        variant.type == "blocked"
+            ? null
+            : Button(variant.label)
                 .setStyle(ButtonStyle.Secondary)
                 .setColor(Color.Colored)
-                .onPromiseClick(variant.action)
-            : null,
+                .onPromiseClick(variant.action),
         Label(variant.sublabel).addClass("sublabel")
     ).addClass("group"))
 ).addClass(_variant.type, "shop-stack");

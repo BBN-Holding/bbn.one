@@ -1,4 +1,4 @@
-import { API, uploadFilesDialog } from "shared";
+import { API, stupidErrorAlert, uploadFilesDialog } from "shared";
 import { AdvancedImage, Box, Button, ButtonStyle, Center, CenterV, Color, Custom, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard, loadingWheel } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -30,19 +30,17 @@ const inputWidth = "436px";
 View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
     ...DynaNavigation("Music", state.aboutMe),
     state.restoreData == null
-        ? (() => {
-            return CenterV(
-                Center(
-                    Custom(loadingWheel() as Element as HTMLElement)
-                ).addClass("loading"),
-                Spacer()
-            ).addClass("wwizard");
-        })()
+        ? CenterV(
+            Center(
+                Custom(loadingWheel() as Element as HTMLElement)
+            ).addClass("loading"),
+            Spacer()
+        ).addClass("wwizard")
         : wizard(state.restoreData).addClass("wizard-box")
 ))
     .change(({ update }) => {
         update({ aboutMe: IsLoggedIn() ?? undefined });
-        API.music(API.getToken()).id(dropId).get()
+        API.music.id(dropId).get().then(stupidErrorAlert)
             .then(restoreData => {
                 update({ restoreData });
             })
@@ -59,13 +57,12 @@ const wizard = (restore?: Drop) => Wizard({
     buttonArrangement: "space-between",
     submitAction: async (data) => {
         try {
-            let obj = {};
+            let obj = <Drop>{};
             data.map(x => x.data.data).forEach(x => obj = { ...obj, ...x });
 
-            // deno-lint-ignore no-explicit-any
-            await API.music(API.getToken()).id(dropId).update(<any>obj);
+            await API.music.id(dropId).update(obj);
 
-            await API.music(API.getToken()).id(dropId).type.post(DropType.UnderReview);
+            await API.music.id(dropId).type.post(DropType.UnderReview);
             location.href = "/music";
         } catch (_) {
             alert("Unexpected Error happend while updating your Drop\nPlease try again later...");
@@ -73,11 +70,10 @@ const wizard = (restore?: Drop) => Wizard({
     },
     onNextPage: async ({ ResponseData }) => {
         const _data = await ResponseData();
-        let obj = {};
+        let obj = <Drop>{};
         _data.map(x => x.success == true ? x.data : ({})).forEach(x => obj = { ...obj, ...x });
         try {
-            // deno-lint-ignore no-explicit-any
-            await API.music(API.getToken()).id(dropId).update(<any>obj);
+            await API.music.id(dropId).update(obj);
         } catch (_) {
             alert("Unexpected Error happend while updating your Drop\nPlease try again later...");
         }
@@ -182,7 +178,7 @@ const wizard = (restore?: Drop) => Wizard({
     ]).setValidator(() => pageThree),
     Page({
         artwork: restore?.artwork,
-        artworkClientData: <AdvancedImage | string | undefined>(restore?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music(API.getToken()).id(restore._id).artworkPreview() } : undefined),
+        artworkClientData: <AdvancedImage | string | undefined>(restore?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(restore._id).artwork().then(stupidErrorAlert) } : undefined),
         loading: false
     }, (data) => [
         Spacer(),

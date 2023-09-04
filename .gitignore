@@ -1,5 +1,3 @@
-.sass-cache
-*.css.map
 .DS_Store
 dist
 deno.lock

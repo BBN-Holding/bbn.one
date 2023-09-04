@@ -1,13 +1,13 @@
-import { API, StreamingUploadHandler, uploadFilesDialog } from "shared";
+import { API, StreamingUploadHandler, stupidErrorAlert, uploadFilesDialog } from "shared";
 import { delay } from "std/async/mod.ts";
-import { AdvancedImage, Box, Color, Grid, IconButton, Image, Label, MIcon, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
-import { activeUser, allowedImageFormats, forceRefreshToken, track } from "../helper.ts";
+import { AdvancedImage, Box, Grid, IconButton, Image, MIcon, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
+import { activeUser, allowedImageFormats, forceRefreshToken } from "../_legacy/helper.ts";
 
 export function ChangePersonal() {
     return Wizard({
         submitAction: async ([ { data: { data } } ]) => {
-            await API.user(API.getToken()).setMe.post(data);
-            await delay(300);
+            await API.user.setMe.post(data)
+                .then(stupidErrorAlert);
             await forceRefreshToken();
         },
         buttonArrangement: "flex-end",
@@ -17,7 +17,7 @@ export function ChangePersonal() {
             email: activeUser.email,
             name: activeUser.username,
             loading: false,
-            profilePicture: activeUser.avatar ?? <AdvancedImage | string>{ type: "loading" } as string | AdvancedImage | undefined
+            profilePicture: activeUser.avatar ?? { type: "loading" } as string | AdvancedImage | undefined
         }, (data) => [
             Vertical(
                 Grid(
@@ -31,15 +31,9 @@ export function ChangePersonal() {
                                     failure: () => {
                                         data.loading = false;
                                         data.profilePicture = activeUser.avatar;
-                                        track({
-                                            "event": "profile-picture-upload-failed",
-                                        });
                                         alert("Your Upload has failed. Please try a different file or try again later");
                                     },
                                     uploadDone: () => {
-                                        track({
-                                            "event": "profile-picture-uploaded",
-                                        });
                                         data.profilePicture = <AdvancedImage>{ type: "waiting-upload", filename: file.name, blobUrl };
                                     },
                                     backendResponse: () => {
@@ -59,10 +53,7 @@ export function ChangePersonal() {
                         { width: 2 },
                         Vertical(
                             TextInput("text", "Name").sync(data, "name"),
-                            TextInput("email", "Email")
-                                .setColor(Color.Disabled)
-                                .sync(data, "email")
-                                .addSuffix(Label("Note: Changing Email is currently not supported."))
+                            TextInput("email", "Email").sync(data, "email")
                         ).setGap("20px")
                     ]
                 )
@@ -71,7 +62,8 @@ export function ChangePersonal() {
                     .setGap("15px")
             ).setGap("20px").addClass("limited-width"),
         ]).setValidator((v) => v.object({
-            name: v.string().min(1)
+            name: v.string().min(2),
+            email: v.string().email()
         }).strip())
     ]);
 }

@@ -11,12 +11,12 @@ import bbnWalletLogo from '../assets/img/bbnWallet.svg';
 
 import { Permission } from "shared";
 
-export const pages: [logo: any, perm: Permission[], route: string][] = [
-    [bbnHolding, [], "/"],
-    [bbnMusicLogo, [], "/music"],
-    [bbnHostingLogo, [], "/hosting"],
-    [bbnWalletLogo, [], "/wallet"],
-    [bbnAdminLogo, ["/bbn/manage", "/hmsys/user"], "/admin"],
+export const pages: [ logo: any, perm: Array<Permission>, route: string ][] = [
+    [ bbnHolding, [], "/" ],
+    [ bbnMusicLogo, [], "/music" ],
+    [ bbnHostingLogo, [], "/hosting" ],
+    [ bbnWalletLogo, [], "/wallet" ],
+    [ bbnAdminLogo, [ "/bbn/manage", "/hmsys/user" ], "/admin" ],
 ];
 
 // Moved this to the up array when we use the hmsys permission system

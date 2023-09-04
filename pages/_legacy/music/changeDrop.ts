@@ -1,4 +1,4 @@
-import { API, uploadFilesDialog } from "shared";
+import { API, stupidErrorAlert, uploadFilesDialog } from "shared";
 import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, MIcon, Page, Spacer, State, TextInput, Wizard } from "webgen/mod.ts";
 import artwork from "../../../assets/img/template-artwork.png";
 import language from "../../../data/language.json" assert { type: "json" };
@@ -15,12 +15,8 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
     return Wizard({
         submitAction: async (data) => {
             let obj = structuredClone(drop);
-            // @ts-ignore fuck typings
             data.map(x => x.data.data).forEach(x => obj = { ...obj, ...x });
-
-            // deno-lint-ignore no-explicit-any
-            await API.music(API.getToken()).id(drop._id).update(<any>obj);
-
+            await API.music.id(drop._id).update(obj);
             location.reload(); // Handle this Smarter => Make it a Reload Event.
         },
         buttonArrangement: ({ PageValid, Submit }) => {
@@ -43,7 +39,7 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
 
             loading: false,
             artwork: drop.artwork,
-            artworkClientData: <AdvancedImage | string | undefined>(drop?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music(API.getToken()).id(drop._id).artworkPreview() } : undefined),
+            artworkClientData: <AdvancedImage | string | undefined>(drop?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id).artwork().then(stupidErrorAlert) } : undefined),
 
             uploadingSongs: [],
             songs: drop.songs

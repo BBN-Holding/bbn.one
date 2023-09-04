@@ -1,5 +1,5 @@
-import { API } from "shared";
-import { Center, CenterV, Custom, loadingWheel, Spacer, Vertical, View, WebGen } from "webgen/mod.ts";
+import { API, stupidErrorAlert } from "shared";
+import { Center, CenterV, Custom, Spacer, Vertical, View, WebGen, loadingWheel } from "webgen/mod.ts";
 import '../../../assets/css/main.css';
 import '../../../assets/css/music.css';
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -47,12 +47,11 @@ View<EditViewState>(({ state, update }) => Vertical(
         if (data.route)
             update({ route: data.route as EditViewState[ "route" ] });
 
-        API.music(API.getToken())
-            .id(data.id)
-            .get()
+        API.music.id(data.id).get()
+            .then(stupidErrorAlert)
             .then(async data => {
                 if (data.artwork) {
-                    const blob = await API.music(API.getToken()).id(params.get("id")!).artworkPreview();
+                    const blob = await API.music.id(params.get("id")!).artwork().then(stupidErrorAlert);
                     update({ data: { ...data, [ "artwork-url" ]: URL.createObjectURL(blob) } });
                 }
                 else update({ data });

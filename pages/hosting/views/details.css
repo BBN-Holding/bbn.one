@@ -39,3 +39,7 @@
 .terminal-window {
     height: 30rem;
 }
+
+.hidden {
+    display: none;
+}

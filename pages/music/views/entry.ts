@@ -9,7 +9,7 @@ export function DropEntry(x: Drop, small: boolean) {
         subtitle: `${x.release ?? "(no release date)"} - ${x.upc ?? "(no upc number)"}`
     })
         .addClass(small ? "small" : "normal")
-        .addPrefix(Cache("image-preview-" + x._id + small, () => Promise.resolve(), (type) => {
+        .addPrefix(Cache(`image-preview-${x._id}${small}`, () => Promise.resolve(), (type) => {
             const imageSource = type == "loaded" && x.artwork
                 ? Image({ type: "direct", source: async () => await loadImage(x) ?? fetch(templateArtwork).then(x => x.blob()) }, "A Song Artwork")
                 : Image(templateArtwork, "A Placeholder Artwork.");
@@ -28,9 +28,5 @@ export function DropEntry(x: Drop, small: boolean) {
 
             return Box();
         })())
-        .onClick(() => {
-            x.type === DropType.Unsubmitted
-                ? location.href = "/music/new-drop?id=" + x._id
-                : location.href = "/music/edit?id=" + x._id;
-        });
+        .onClick(() => location.href = x.type === DropType.Unsubmitted ? `/music/new-drop?id=${x._id}` : `/music/edit?id=${x._id}`);
 }

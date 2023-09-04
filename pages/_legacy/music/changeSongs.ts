@@ -13,10 +13,7 @@ export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) =
         submitAction: async (data) => {
             let obj = structuredClone(drop);
             data.map(x => x.data.data).forEach(x => obj = { ...obj, ...x });
-
-            // deno-lint-ignore no-explicit-any
-            await API.music(API.getToken()).id(drop._id).update(<any>obj);
-
+            await API.music.id(drop._id).update(obj);
             location.reload(); // Handle this Smarter => Make it a Reload Event.
         },
         buttonArrangement: ({ PageValid, Submit }) => {

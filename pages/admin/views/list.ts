@@ -1,7 +1,8 @@
-import { API, asExternal, External, fileCache, RenderItem } from "shared";
+import { API, asExternal, External, fileCache, RenderItem, stupidErrorAlert } from "shared";
 import { Box, Button, Cache, Color, Dialog, Entry, Grid, IconButton, Image, MIcon, ref, TextInput } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
+import { saveBlob } from "../../_legacy/helper.ts";
 import { state } from "../state.ts";
 
 export function userName(id: string) {
@@ -33,7 +34,7 @@ export function transcriptMenu(transcripts: External<Transcript[]> | "loading"):
         id: transcript._id,
         children: [
             {
-                title: "Close" + transcript.with,
+                title: `Close${transcript.with}`,
                 id: "close",
             },
             ...transcript.messages.map((x, i) => (<RenderItem>{
@@ -50,7 +51,7 @@ export function entryOAuth(app: OAuthApp) {
         title: app.name,
         subtitle: app._id,
     })
-        .addPrefix(Cache("appicon-" + app._id, () => API.admin(API.getToken()).files.download(app.icon), (type, val) => {
+        .addPrefix(Cache(`appicon-${app._id}`, () => API.admin.files.download(app.icon), (type, val) => {
             const imageSource = type == "loaded" && app.icon !== "" && val && val.status == "fulfilled"
                 ? Image({ type: "direct", source: () => Promise.resolve(val.value) }, "O-Auth Icon")
                 : Image(templateArtwork, "A Placeholder Artwork.");
@@ -58,7 +59,7 @@ export function entryOAuth(app: OAuthApp) {
                 .addClass("image-square");
         }))
         .addSuffix(IconButton(MIcon("delete"), "delete").setColor(Color.Critical).onClick(() => {
-            API.oauth(API.getToken()).delete(app._id);
+            API.oauth.delete(app._id).then(async () => state.oauth = await API.oauth.list());
         }))
         .addSuffix(Button("View").onClick(() => {
             oAuthViewDialog(app).open();
@@ -66,23 +67,20 @@ export function entryOAuth(app: OAuthApp) {
         .addClass("small");
 }
 
-const oAuthViewDialog = (oauth: OAuthApp) => {
-    const dialog = Dialog(() =>
-        Grid(
-            TextInput("text", "Name").setValue(oauth.name).setColor(Color.Disabled),
-            TextInput("text", "Client ID").setValue(oauth._id).setColor(Color.Disabled),
-            TextInput("text", "Client Secret").setValue(oauth.secret).setColor(Color.Disabled),
-            TextInput("text", "Redirect URI").setValue(oauth.redirect).setColor(Color.Disabled),
-        )
-    ).allowUserClose().setTitle("OAuth App Details").addButton("Close", "remove");
-    return dialog;
-};
+const oAuthViewDialog = (oauth: OAuthApp) => Dialog(() =>
+    Grid(
+        TextInput("text", "Name").setValue(oauth.name).setColor(Color.Disabled),
+        TextInput("text", "Client ID").setValue(oauth._id).setColor(Color.Disabled),
+        TextInput("text", "Client Secret").setValue(oauth.secret).setColor(Color.Disabled),
+        TextInput("text", "Redirect URI").setValue(oauth.redirect.join(",")).setColor(Color.Disabled),
+    )
+).allowUserClose().setTitle("OAuth App Details").addButton("Close", "remove");
 
 export function entryFile(file: File) {
     return Entry({
         title: file.filename,
         subtitle: file._id,
-    }).addPrefix(Cache("fileicon-" + file._id, () => loadFilePreview(file._id), (type, val) => {
+    }).addPrefix(Cache(`fileicon-${file._id}`, () => loadFilePreview(file._id), (type, val) => {
         if (type == "cache")
             return Image({ type: "loading" }, "Loading");
         const imageSource = type == "loaded" && file.metadata.type.startsWith("image/") && val?.status === "fulfilled"
@@ -91,19 +89,17 @@ export function entryFile(file: File) {
         return Box(imageSource)
             .addClass("image-square");
     })).addSuffix(IconButton(MIcon("download"), "download").onClick(async () => {
-        const blob = await API.admin(API.getToken()).files.download(file._id);
-        if (blob.status !== "fulfilled") return;
-        const url = window.URL.createObjectURL(blob.value);
-        window.open(url, '_blank');
+        const blob = await API.admin.files.download(file._id).then(stupidErrorAlert);
+        saveBlob(blob, file.filename);
     })).addSuffix(IconButton(MIcon("delete"), "delete").setColor(Color.Critical).onClick(() => {
-        API.admin(API.getToken()).files.delete(file._id);
+        API.admin.files.delete(file._id);
     }));
 }
 
 export async function loadFilePreview(id: string) {
     const cache = await fileCache();
     if (await cache.has(id)) return await asExternal(cache.get(id));
-    const blob = await API.admin(API.getToken()).files.download(id);
+    const blob = await API.admin.files.download(id);
     if (blob.status == "fulfilled")
         cache.set(id, blob.value);
     return blob;
