@@ -1,0 +1,125 @@
+{
+    "/minecraft/vanilla/": {
+        "name": "Minecraft Vanilla",
+        "egg": 63,
+        "docker_image": "ghcr.io/pterodactyl/yolks:java_17",
+        "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar {{SERVER_JARFILE}}",
+        "environment": {
+            "SERVER_JARFILE": "server.jar",
+            "VANILLA_VERSION": "latest"
+        },
+        "version_api": "https://launchermeta.mojang.com/mc/game/version_manifest.json"
+    },
+    "/minecraft/default/": {
+        "name": "Minecraft (Purpur)",
+        "egg": 42,
+        "docker_image": "ghcr.io/software-noob/pterodactyl-images:java_17",
+        "startup": "./msh_server.bin -port {{SERVER_PORT}} -d {{DEBUG_LVL}} -file {{SERVER_JARFILE}} -allowkill {{KILL_TIME}} -timeout {{TBSES}} -suspendrefresh {{SUSPEND_REFRESH}} $( [[ ${WL_IMPORT} -eq 1 ]] && echo \" -wlimport\") $( [[ ${SUSPEND_ALLOW} -eq 1 ]] && echo \" -suspendallow\")",
+        "environment": {
+            "MINECRAFT_VERSION": "latest",
+            "SERVER_JARFILE": "server.jar",
+            "DL_PATH": "",
+            "BUILD_NUMBER": "latest",
+            "VENDOR": "BBN",
+            "MSH_D_URL": "https://msh.gekware.net/builds/egg/",
+            "TBSES": 60000,
+            "KILL_TIME": 30,
+            "DEBUG_LVL": 2,
+            "HIB_INFO": "Hibernating",
+            "HIB_START": "Starting",
+            "CONST_CHAR": "&quot;",
+            "SUSPEND_ALLOW": 1,
+            "SUSPEND_REFRESH": 30,
+            "WL_IMPORT": 0
+        },
+        "version_api": "https://api.purpurmc.org/v2/purpur"
+    },
+    "/minecraft/paper/": {
+        "name": "Minecraft (Paper)",
+        "egg": 68,
+        "docker_image": "ghcr.io/software-noob/pterodactyl-images:java_17_shenandoah",
+        "startup": "./msh_server.bin -port {{SERVER_PORT}} -d {{DEBUG_LVL}} -file {{SERVER_JARFILE}} -allowkill {{KILL_TIME}} -timeout {{TBSES}} -suspendrefresh {{SUSPEND_REFRESH}} $( [[ ${WL_IMPORT} -eq 1 ]] && echo \" -wlimport\") $( [[ ${SUSPEND_ALLOW} -eq 1 ]] && echo \" -suspendallow\")",
+        "environment": {
+            "MINECRAFT_VERSION": "latest",
+            "SERVER_JARFILE": "server.jar",
+            "DL_PATH": "",
+            "BUILD_NUMBER": "latest",
+            "VENDOR": "BBN",
+            "MSH_D_URL": "https://msh.gekware.net/builds/egg/",
+            "TBSES": 60000,
+            "KILL_TIME": 30,
+            "DEBUG_LVL": 2,
+            "HIB_INFO": "Hibernating",
+            "HIB_START": "Starting",
+            "CONST_CHAR": "&quot;",
+            "SUSPEND_ALLOW": 1,
+            "SUSPEND_REFRESH": 30,
+            "WL_IMPORT": 0
+        },
+        "version_api": "https://papermc.io/api/v2/projects/paper"
+    },
+    "/minecraft/modded/fabric/": {
+        "name": "Minecraft Fabric",
+        "egg": 67,
+        "docker_image": "ghcr.io/pterodactyl/yolks:java_17",
+        "startup": "java -Xms128M -Xmx{{SERVER_MEMORY}}M -jar {{SERVER_JARFILE}}",
+        "environment": {
+            "MC_VERSION": "latest",
+            "SERVER_JARFILE": "fabric-server-launch.jar",
+            "FABRIC_VERSION": "latest",
+            "LOADER_VERSION": "latest"
+        },
+        "version_api": "https://meta.fabricmc.net/v2/versions/game"
+    },
+    "/minecraft/modded/forge/": {
+        "name": "Minecraft Forge",
+        "egg": 65,
+        "docker_image": "ghcr.io/pterodactyl/yolks:java_17",
+        "startup": "java -Xms128M -XX:MaxRAMPercentage=95.0 -Dterminal.jline=false -Dterminal.ansi=true $( [[  ! -f unix_args.txt ]] && printf %s \"-jar {{SERVER_JARFILE}}\" || printf %s \"@unix_args.txt\" )",
+        "environment": {
+            "SERVER_JARFILE": "server.jar",
+            "MC_VERSION": "latest",
+            "BUILD_TYPE": "recommended"
+        },
+        "version_api": "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json"
+    },
+    "/minecraft/bedrock/": {
+        "name": "Minecraft Bedrock",
+        "egg": 17,
+        "docker_image": "ghcr.io/parkervcp/yolks:debian",
+        "startup": "./bedrock_server",
+        "environment": {
+            "BEDROCK_VERSION": "latest",
+            "LD_LIBRARY_PATH": ".",
+            "SERVERNAME": "Dedicated Bedrock Server by mc4u.xyz",
+            "GAMEMODE": "survival",
+            "DIFFICULTY": "easy",
+            "CHEATS": "false"
+        }
+    },
+    "/minecraft/pocketmine/": {
+        "name": "Pocketmine MP",
+        "egg": 16,
+        "docker_image": "ghcr.io/parkervcp/yolks:debian",
+        "startup": "./bin/php7/bin/php ./PocketMine-MP.phar --no-wizard --disable-ansi",
+        "environment": {
+            "VERSION": "PM5"
+        }
+    },
+    "/minecraft/legacy/magma/": {
+        "name": "Minecraft Magma",
+        "egg": 30
+    },
+    "/minecraft/legacy/nukkit/": {
+        "name": "Minecraft Nukkit",
+        "egg": 33
+    },
+    "/minecraft/legacy/pgf/": {
+        "name": "Minecraft Purpur Geyser Floodgate",
+        "egg": 34
+    },
+    "/minecraft/legacy/purpur/": {
+        "name": "Minecraft Purpur",
+        "egg": 20
+    }
+}
