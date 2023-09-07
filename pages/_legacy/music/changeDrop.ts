@@ -39,7 +39,7 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
 
             loading: false,
             artwork: drop.artwork,
-            artworkClientData: <AdvancedImage | string | undefined>(drop?.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id).artwork().then(stupidErrorAlert) } : undefined),
+            artworkClientData: <AdvancedImage | string | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id).artwork().then(stupidErrorAlert) } : undefined),
 
             uploadingSongs: [],
             songs: drop.songs
