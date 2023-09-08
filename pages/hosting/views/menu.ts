@@ -499,6 +499,14 @@ export function serverDetails(server: StateHandler<Server>) {
                     editServer(server);
                 }).addClass("small"),
                 Entry({
+                    title: "Audit Trail",
+                    subtitle: "Keep track of what's going on",
+                }).onClick(async () => {
+                    const audit = await API.hosting.serverId(server._id).audit().then(stupidErrorAlert);
+                    auditLogs.setValue(auditEntry(audit));
+                    hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/audit-trail/`);
+                }).addClass("small"),
+                Entry({
                     title: "Legacy",
                     subtitle: "Go to the legacy panel"
                 }).onClick(() => open(`https://panel.bbn.one/server/${server.identifier}`, "_blank"))
