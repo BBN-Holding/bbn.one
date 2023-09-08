@@ -6,7 +6,6 @@ import { changeThemeColor } from "../_legacy/misc/common.ts";
 import { state } from "./data.ts";
 import { listener, refreshState } from "./loading.ts";
 import { hostingMenu } from "./views/menu.ts";
-import { migrationDialog } from "./views/profile.ts";
 
 import '../../assets/css/hosting.css';
 await RegisterAuthRefresh();
@@ -23,4 +22,3 @@ renewAccessTokenIfNeeded()
     .then(() => refreshState())
     .then(() => listener())
     .then(() => state.loaded = true)
-    .then(() => new URLSearchParams(location.search).has("migrated") ? migrationDialog() : null);

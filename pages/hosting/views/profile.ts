@@ -17,24 +17,10 @@ function confettiFromElement(element: MouseEvent, opts: confetti.Options = {}) {
     confetti({ origin, ...opts });
 }
 export const migrationInfo = {
-    title: "Welcome to our Beta Dashboard!",
-    text0: "We're excited to have you on board as we unveil our new and improved platform.",
-    text1: "As we transition to this enhanced experience, we want to make sure you have a seamless migration process. To access your account on the old panel (Pterodactyl), simply click the button below to get access to your legacy password:",
+    title: "Welcome to our New Dashboard!",
+    text: "In order to access your account on the old panel (Pterodactyl), simply click the button below to get access to your legacy password:",
     button: "Get your legacy password"
 };
-
-export const migrationDialog = () => Dialog(() => Vertical(
-    Label(migrationInfo.text0),
-    Label(migrationInfo.text1),
-).addClass("dialog-max-width"))
-    .setTitle(migrationInfo.title)
-    .addButton("View legacy password", () => {
-        migrationCredentials();
-        return "close";
-    })
-    .addButton("Ok", "remove")
-    .allowUserClose()
-    .open();
 
 export const migrationCredentials = () => Dialog(() =>
     Vertical(
@@ -53,7 +39,7 @@ export const migrationCredentials = () => Dialog(() =>
                 .setValue(state.meta.migrationPassword),
             Button("Copy")
                 .onClick(() => {
-                    navigator.clipboard.writeText(state.meta.migrationPassword ?? "Already Migrated");
+                    navigator.clipboard.writeText(state.meta.migrationPassword!);
                 })
         )
             .setGap("0.5rem")
@@ -78,8 +64,7 @@ export const profileView = () =>
                     Grid(
                         Label(migrationInfo.title)
                             .setFont(2, 700),
-                        Label(migrationInfo.text0),
-                        Label(migrationInfo.text1),
+                        Label(migrationInfo.text),
                         Horizontal(
                             Spacer(),
                             Button(migrationInfo.button)

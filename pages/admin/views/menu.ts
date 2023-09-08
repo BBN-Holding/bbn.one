@@ -47,13 +47,13 @@ export const adminMenu = Navigation({
             ])
         },
         {
-            id: "reviews",
+            id: "drops",
             title: ref`Drops`,
-            children: [
+                        children: [
                 {
                     id: "reviews",
                     title: ref`Reviews ${count(state.drops.$reviews)}`,
-                    children: [
+                                        children: [
                         HeavyList(state.drops.$reviews, it => ReviewEntry(it))
                             .setPlaceholder(placeholder("No Servers", "Welcome! Create a server to get going. 🤖🛠️"))
                             .enablePaging((offset, limit) => loadMore(state.drops.$reviews, () => API.admin.drops.list(DropType.UnderReview, offset, limit)))
@@ -104,7 +104,7 @@ export const adminMenu = Navigation({
         {
             id: "users",
             title: ref`User ${count(state.$users)}`,
-            children: [
+                        children: [
                 HeavyList(state.$users, val => UserEntry(val))
                     .enablePaging((offset, limit) => loadMore(state.$users, () => API.admin.users.list(offset, limit)))
             ]

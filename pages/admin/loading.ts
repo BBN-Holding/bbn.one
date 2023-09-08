@@ -6,7 +6,7 @@ import { state } from "./state.ts";
 
 export async function refreshState() {
     await Promise.all([
-        (async () => state.drops.reviews = await API.admin.drops.list(DropType.UnderReview))(),
+(async () => state.drops.reviews = await API.admin.drops.list(DropType.UnderReview))(),
         (async () => state.drops.publishing = await API.admin.drops.list(DropType.Publishing))(),
         (async () => state.drops.published = await API.admin.drops.list(DropType.Published))(),
         (async () => state.drops.private = await API.admin.drops.list(DropType.Private))(),

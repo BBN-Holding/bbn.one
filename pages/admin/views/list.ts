@@ -5,14 +5,10 @@ import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
 import { saveBlob } from "../../_legacy/helper.ts";
 import { state } from "../state.ts";
 
-export function userName(id: string) {
-    return state.$users.map(it => it === "loading" || it.status === "rejected" ? "(TODO: Load me)" : it.value.find(x => x._id == id)?.profile.username ?? "Unknown User");
-}
-
 export function entryWallet(wallet: Wallet) {
     return Entry({
-        title: ref`${userName(wallet.user)} - ${((wallet.balance?.restrained ?? 0) + (wallet.balance?.unrestrained ?? 0)).toString()}`,
-        subtitle: `${wallet.user} - ${wallet._id} - ${wallet.cut}% - restrained: ${wallet.balance?.restrained} unrestrained: ${wallet.balance?.unrestrained}`,
+        title: ref`${wallet.userName} - ${((wallet.balance?.restrained ?? 0) + (wallet.balance?.unrestrained ?? 0)).toFixed(2).toString()}`,
+        subtitle: `${wallet.email} - ${wallet.user} - ${wallet._id} - ${wallet.cut}% - ${wallet.balance?.restrained.toFixed(2)}/${wallet.balance?.unrestrained.toFixed(2)}`,
     }).addClass("small");
 }
 
