@@ -1,4 +1,4 @@
-import { API, count, LoadingSpinner, Navigation } from "shared";
+import { API, count, LoadingSpinner, Navigation, stupidErrorAlert } from "shared";
 import { Button, isMobile, ref, Vertical } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
@@ -10,7 +10,7 @@ export const musicMenu = Navigation({
     actions: [
         Button("Submit new Drop")
             .onPromiseClick(async () => {
-                const id = await API.music.drops.create();
+                const { id } = await API.music.drops.create().then(stupidErrorAlert);
                 location.href = `/music/new-drop?id=${id}`;
             })
     ],
