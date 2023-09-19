@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/x/esbuild_serve@1.3.0/mod.ts";
 
 const title = new Map(Object.entries({
-    admin: "BBN Admin Panel",
+    "admin": "BBN Admin Panel",
     "hosting": "BBN Hosting",
     "hosting/create": "BBN Hosting",
     "settings": "BBN One - Settings",
@@ -79,11 +79,12 @@ function createTemplate(name: string, path: string) {
     <title>${title.get(path) ?? "BBN Holding"}</title>
     <link rel="manifest" href="/app.webmanifest">
     <meta charset='UTF-8'>
+    <meta name="description" content="BBN Holding is a US-based holding company with a diverse portfolio of businesses including music and hosting services. BBN Music provides music streaming and hosting services, while BBN Hosting offers Minecraft hosting services.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name='theme-color' content='black'>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="BBN One">
+    <meta name="apple-mobile-web-app-title" content="${title.get(path) ?? "BBN Holding"}">
     <link rel="apple-touch-icon" href="/images/apple.png">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="${name}.css">

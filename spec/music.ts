@@ -59,8 +59,8 @@ export const song = zod.object({
     primaryGenre: zod.string(),
     secondaryGenre: zod.string(),
     year: zod.number(),
-    //TODO: no optional
-    country: zod.string().optional(),
+    country: zod.string(),
+    //TODO: Add in frontend mby
     language: zod.string().optional(),
     explicit: zod.boolean(),
     instrumental: zod.boolean(),
