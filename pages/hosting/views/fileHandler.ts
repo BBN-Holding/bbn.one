@@ -43,6 +43,5 @@ export async function countFileTree(handle: FileSystemHandle) {
     }
     return count;
 }
-import { readableStreamFromIterable } from "std/streams/readable_stream_from_iterable.ts";
-
-export const getFileStream = (handle: FileSystemHandle) => readableStreamFromIterable(walkFileTree(handle));
+// @ts-ignore from is not a thing yet
+export const getFileStream = (handle: FileSystemHandle) => ReadableStream.from(walkFileTree(handle));

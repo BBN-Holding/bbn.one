@@ -1,5 +1,4 @@
 import * as zod from "https://deno.land/x/zod@v3.21.4/mod.ts";
-import { string } from "https://deno.land/x/zod@v3.21.4/types.ts";
 
 const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
 export const userString = zod.string().min(1).refine(x => x.trim()).transform(x => x.trim());
@@ -226,7 +225,7 @@ export const kubeServer = server.extend({
 });
 
 export const serverCreate = zod.object({
-    name: string().min(3).max(20),
+    name: zod.string().min(3).max(20),
     type: zod.nativeEnum(ServerTypes),
     location,
     limits,

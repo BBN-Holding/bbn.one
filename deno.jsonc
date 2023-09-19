@@ -2,7 +2,7 @@
     "imports": {
         "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/b9b71c3/",
         // "webgen/": "../WebGen/",
-        "std/": "https://deno.land/std@0.197.0/",
+        "std/": "https://deno.land/std@0.201.0/",
         "shared": "./pages/shared/mod.ts"
     },
     "compilerOptions": {

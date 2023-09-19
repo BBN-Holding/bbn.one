@@ -1,16 +1,15 @@
 import { MessageType } from "https://deno.land/x/hmsys_connector@0.9.0/spec/ws.ts";
 import { API, count, HeavyReRender, LoadingSpinner, Navigation, placeholder, RenderItem, SliderInput, stupidErrorAlert } from "shared";
-import { delay } from "std/async/delay.ts";
 import { sumOf } from "std/collections/sum_of.ts";
 import { format } from "std/fmt/bytes.ts";
-import { readableStreamFromIterable } from "std/streams/readable_stream_from_iterable.ts";
+import { dirname } from "std/path/mod.ts";
 import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, MediaQuery, MIcon, ref, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
 import { AuditTypes, PowerState, Server, ServerDetails } from "../../../spec/music.ts";
 import { activeUser, showProfilePicture } from "../../_legacy/helper.ts";
 import { MB, state } from "../data.ts";
-import { currentDetailsSource, currentDetailsTarget, messageQueue, streamingPool } from "../loading.ts";
+import { currentDetailsSource, currentDetailsTarget, currentFiles, currentPath, listFiles, messageQueue, RemotePath, streamingPool, uploadFile } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import './details.css';
 import './fileBrowser.css';
@@ -75,7 +74,7 @@ export function DropHandler(onData: (data: ReadableStream<FileEntry>, length: nu
 
                 const fileSizeCount = sumOf(await Promise.all(files.filter(it => it).map(it => countFileTree(it!))), it => it);
 
-                onData?.(readableStreamFromIterable(files)
+                onData?.(ReadableStream.from(files)
                     .pipeThrough(new TransformStream<FileSystemHandle | null, FileEntry>({
                         async transform(chunk, controller) {
                             if (!chunk) return;
@@ -90,7 +89,7 @@ export function DropHandler(onData: (data: ReadableStream<FileEntry>, length: nu
     };
 }
 
-const activeFiles = asPointer(<{ name: string; }[]>[]);
+const uploadingFiles = asPointer(<Record<string, number | "failed">>{});
 export const hostingMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     actions: hostingButtons,
@@ -138,15 +137,28 @@ export const hostingMenu = Navigation({
                                 id: "files",
                                 title: "Files",
                                 subtitle: "Upload and manage your files.",
+                                clickHandler: async () => {
+                                    await listFiles("/");
+                                },
                                 children: [
                                     DropHandler(
                                         async (files, count) => {
                                             console.log("Uploading", count, "files");
                                             for await (const _iterator of files) {
-                                                activeFiles.setValue([ ...activeFiles.getValue(), { name: _iterator.path } ]);
-                                                await delay(10);
+                                                await new Promise<void>((done) => {
+                                                    uploadFile(_iterator.path, _iterator.file, (ratio) => {
+                                                        console.log(_iterator.path, ratio);
+                                                        uploadingFiles.setValue({
+                                                            ...uploadingFiles.getValue(),
+                                                            [ "/" + _iterator.path ]: ratio
+                                                        });
+                                                        if (ratio >= 1) {
+                                                            done();
+                                                        }
+                                                    });
+                                                });
+                                                uploadingFiles.setValue(Object.fromEntries(Object.entries(uploadingFiles.getValue()).filter(([ path ]) => path != _iterator.path)));
                                             }
-                                            console.log("file upload has been completed");
                                         },
                                         Grid(
                                             BasicLabel({
@@ -156,33 +168,37 @@ export const hostingMenu = Navigation({
                                             Grid(
                                                 Button("Home")
                                                     .setStyle(ButtonStyle.Inline)
-                                            ),
+                                            ).setJustify("start"),
                                             Entry(
-                                                activeFiles.map(files =>
+                                                currentFiles.map(files =>
                                                     isMobile.map(mobile =>
-                                                        Table(mobile
-                                                            ? [
-                                                                [ "File", "1fr", (data) => Grid(
-                                                                    Box(
-                                                                        BIcon("globe2")
-                                                                    ),
-                                                                    BasicLabel({
-                                                                        title: data.name,
-                                                                        subtitle: ref`2 GB – 2023-06-24 13:53`,
-                                                                    })
-                                                                ).addClass("file-item") ],
-                                                            ]
-                                                            : [
-                                                                [ "Name", "1fr", (data) => Grid(
-                                                                    Box(
-                                                                        BIcon("globe2")
-                                                                    ),
-                                                                    BasicLabel({ title: data.name })
-                                                                ).addClass("file-item") ],
-                                                                [ "Last Modified", "1fr", (data) => Label(data.name) ],
-                                                                [ "Type", "1fr", (data) => Label(data.name) ],
-                                                                [ "Size", "1fr", (data) => Label(data.name) ],
-                                                            ], files)
+                                                        uploadingFiles
+                                                            .map(files => Object.entries(files).filter(([ path ]) => dirname(path) === currentPath.getValue()).map(([ name, uploadingRatio ]) => (<RemotePath>{ name, uploadingRatio })))
+                                                            .map(currentFiles =>
+                                                                Table(mobile
+                                                                    ? [
+                                                                        [ "File", "1fr", (data) => Grid(
+                                                                            Box(
+                                                                                BIcon("globe2")
+                                                                            ),
+                                                                            BasicLabel({
+                                                                                title: data.name,
+                                                                                subtitle: ref`${data.size != undefined ? data.size : ''} – ${data.fileMimeType != undefined ? data.fileMimeType : ''}`,
+                                                                            })
+                                                                        ).addClass("file-item") ],
+                                                                    ]
+                                                                    : [
+                                                                        [ "Name", "1fr", (data) => Grid(
+                                                                            Box(
+                                                                                BIcon("globe2")
+                                                                            ),
+                                                                            BasicLabel({ title: data.name })
+                                                                        ).addClass("file-item") ],
+                                                                        [ "Last Modified", "1fr", (data) => data.lastModified != undefined ? Label(new Date(data.lastModified).toLocaleString()) : Box() ],
+                                                                        [ "Type", "1fr", (data) => data.fileMimeType != undefined ? Label(data.fileMimeType) : Box() ],
+                                                                        [ "Size", "1fr", (data) => data.size != undefined ? Label(data.size) : Box() ],
+                                                                    ], [ ...currentFiles, ...files ])
+                                                            ).asRefComponent()
                                                     ).asRefComponent()
                                                 ).asRefComponent()
                                             ).addClass("file-browser")

@@ -229,9 +229,8 @@ export function EditArtists(list: Artist[]) {
                     [ "Name", "auto", (_, index) =>
                         TextInput("text", "Name", "blur")
                             .setValue(state.list[ index ][ 0 ])
-                            .onChange((data) => update(state, index, 0, data))
+                            .onChange((data) => update(state, index, 0, data!))
                     ]
-
                 ], state.list)
                     .setDelete((_, index) => {
                         state.list = <typeof state.list>state.list.filter((_, i) => i != index);
@@ -284,10 +283,9 @@ export async function loadImage(x: Drop) {
     return blob;
 }
 
-function update(state: StateHandler<{ list: [ name: string, img: string, type: ArtistTypes ][] | undefined; }>, index: number, key: number, value: any) {
+function update(state: StateHandler<{ list: [ name: string, img: string, type: ArtistTypes ][] | undefined; }>, index: number, key: number, value: string) {
     if (!state.list)
         state.list = [];
-    // @ts-ignore errors due to any usage.
     state.list[ index ][ key ] = value;
     state.list = [ ...state.list ];
 }

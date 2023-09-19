@@ -1,7 +1,7 @@
 import { HmRequest, LoginRequest, MessageType, PublishResponse, SubscribeRequest, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
 import { State, asPointer, lazyInit } from "webgen/mod.ts";
-import { Server } from "../../spec/music.ts";
+import { Server, ServerDetails } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 
@@ -56,7 +56,7 @@ export function listener() {
 }
 
 export const currentDetailsTarget = asPointer(<string | undefined>undefined);
-export const currentDetailsSource = asPointer(() => { });
+export const currentDetailsSource = asPointer((_data: ServerDetails) => { });
 
 export const messageQueue = <HmRequest[]>[];
 // deno-lint-ignore require-await
@@ -113,3 +113,43 @@ export const streamingPool = lazyInit(async () => {
     }
     connect();
 });
+
+export type RemotePath = {
+    name: string;
+    size?: string;
+    lastModified?: number;
+    fileMimeType?: string;
+    uploadingRatio?: string;
+};
+
+export const currentFiles = asPointer(<RemotePath[]>[]);
+export const currentPath = asPointer("/");
+export async function listFiles(_path: string) {
+    // TODO: Add API for this;
+    currentFiles.setValue(<RemotePath[]>[
+        {
+            name: "world",
+        },
+        {
+            name: "logs",
+        },
+        {
+            name: "logs",
+        },
+        {
+            name: "server.jar",
+            fileMimeType: "application/java-archive",
+            lastModified: new Date().getTime()
+        }
+    ]);
+}
+
+export async function uploadFile(_path: string, file: File, progress: (ratio: number) => void) {
+    // TODO: Add API to upload the file (chunking based)
+    // Filename: file.name;
+    for await (const iterator of file.stream()) {
+        progress(0);
+        iterator;
+    }
+    progress(1);
+}
