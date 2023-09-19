@@ -2,13 +2,10 @@ import { API, uploadFilesDialog } from "shared";
 import { Button, Grid, Horizontal, Page, Spacer, Wizard } from "webgen/mod.ts";
 import { Drop, pageFive } from "../../../spec/music.ts";
 import { allowedAudioFormats, getDropFromPages } from "../helper.ts";
-import { ActionBar } from "../misc/actionbar.ts";
-import { HandleSubmit, changePage, setErrorMessage } from "../misc/common.ts";
 import { uploadSongToDrop } from "./data.ts";
 import { ManageSongs } from "./table.ts";
-import { EditViewState } from "./types.ts";
 
-export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) => void) {
+export function ChangeSongs(drop: Drop) {
     return Wizard({
         submitAction: async (data) => {
             let obj = structuredClone(drop);
@@ -16,12 +13,7 @@ export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) =
             await API.music.id(drop._id).update(obj);
             location.reload(); // Handle this Smarter => Make it a Reload Event.
         },
-        buttonArrangement: ({ PageValid, Submit }) => {
-            setErrorMessage();
-            return ActionBar("Songs", undefined, {
-                title: "Update", onclick: HandleSubmit(PageValid, Submit)
-            }, [ { title: drop.title || "(no title)", onclick: changePage(update, "main") } ]);
-        },
+        buttonArrangement: "flex-end",
         buttonAlignment: "top",
     }, ({ PageData }) => [
         Page({
@@ -37,7 +29,7 @@ export function ChangeSongs(drop: Drop, update: (data: Partial<EditViewState>) =
                 )
             )
                 .setGap("15px")
-                .addClass("limited-width")
+                .setPadding("15px 0 0 0")
         ]).setValidator(() => pageFive)
     ]
     );

@@ -1,7 +1,7 @@
 // This code Will be ported to webgen
 
 import { API, fileCache, Permission, stupidErrorAlert } from "shared";
-import { asPointer, Box, Button, Cache, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { asPointer, Box, Button, Cache, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Style, SupportedThemes, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -39,6 +39,10 @@ export function IsLoggedIn(): ProfileData | null {
         resetTokens();
         return null;
     }
+}
+
+export function changeThemeColor(): ((data: SupportedThemes, options: Style) => void) | undefined {
+    return (_data) => { };// document.head.querySelector("meta[name=theme-color]")?.setAttribute("content", data == SupportedThemes.autoLight ? "#e6e6e6" : "#0a0a0a");
 }
 
 export function getSecondary(secondary: Record<string, string[]>, primaryGenre?: string): string[] | null {

@@ -7,8 +7,7 @@ import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { Drop, Payout } from "../../spec/music.ts";
-import { RegisterAuthRefresh, permCheck, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
-import { changeThemeColor } from "../_legacy/misc/common.ts";
+import { RegisterAuthRefresh, changeThemeColor, permCheck, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
 
 await RegisterAuthRefresh();
 

@@ -153,6 +153,7 @@ class MenuImpl extends Component {
 
     setHeader(header: (data: this) => Component) {
         this.#header.setValue(header);
+        return this;
     }
 
     setFooter(footer: (data: this) => Component) {
@@ -185,11 +186,11 @@ function defaultFooter(menu: MenuImpl) {
     return HeavyReRender(isMobile, mobile => mobile && menu.rootNode.actions ? Box(createActionList(menu)).addClass(asPointer(menu.rootNode.actions).map(it => it.length == 0 ? "remove-from-layout" : "normal"), "sticky-footer") : Box().removeFromLayout()).removeFromLayout();
 }
 
-function createActionList(menu: MenuImpl) {
+export function createActionList(menu: MenuImpl) {
     return HeavyReRender(menu.rootNode.actions, it => Grid(...(it ?? [])).addClass("action-list-bar")).removeFromLayout();
 }
 
-function createTagList(menu: MenuImpl) {
+export function createTagList(menu: MenuImpl) {
     if (!menu.rootNode.categories) return Box().removeFromLayout();
     const index = asPointer(0);
     index.listen((val, oldVal) => {
@@ -211,7 +212,7 @@ function createTagList(menu: MenuImpl) {
     }), visable => visable && menu.rootNode.categories ? Taglist(menu.rootNode.categories.map(it => it.title), index) : Box().removeFromLayout()).removeFromLayout();
 }
 
-function createBreadcrumb(menu: MenuImpl) {
+export function createBreadcrumb(menu: MenuImpl) {
     return HeavyReRender(isMobile, mobile => {
 
         const history = menu.path.map(path => {

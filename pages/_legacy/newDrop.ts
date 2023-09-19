@@ -1,6 +1,7 @@
 import { API, stupidErrorAlert, uploadFilesDialog } from "shared";
 import { AdvancedImage, Box, Button, ButtonStyle, Center, CenterV, Color, Custom, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard, loadingWheel } from "webgen/mod.ts";
 import '../../assets/css/main.css';
+import '../../assets/css/wizard.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import language from "../../data/language.json" assert { type: "json" };
 import primary from "../../data/primary.json" assert { type: "json" };
@@ -9,8 +10,6 @@ import { ArtistTypes, Drop, DropType, pageFive, pageFour, pageOne, pageThree, pa
 import { CenterAndRight, EditArtists, IsLoggedIn, ProfileData, RegisterAuthRefresh, allowedAudioFormats, allowedImageFormats, getDropFromPages, getSecondary } from "./helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
 import { ManageSongs } from "./music/table.ts";
-
-import '../../assets/css/wizard.css';
 
 await RegisterAuthRefresh();
 WebGen({

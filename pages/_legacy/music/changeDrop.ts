@@ -6,12 +6,9 @@ import primary from "../../../data/primary.json" assert { type: "json" };
 import secondary from "../../../data/secondary.json" assert { type: "json" };
 import { ArtistTypes, Drop, pureDrop } from "../../../spec/music.ts";
 import { EditArtists, allowedImageFormats, getSecondary } from "../helper.ts";
-import { ActionBar } from "../misc/actionbar.ts";
-import { HandleSubmit, changePage, setErrorMessage } from "../misc/common.ts";
 import { uploadArtwork } from "./data.ts";
-import { EditViewState } from "./types.ts";
 
-export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) => void) {
+export function ChangeDrop(drop: Drop) {
     return Wizard({
         submitAction: async (data) => {
             let obj = structuredClone(drop);
@@ -19,12 +16,7 @@ export function ChangeDrop(drop: Drop, update: (data: Partial<EditViewState>) =>
             await API.music.id(drop._id).update(obj);
             location.reload(); // Handle this Smarter => Make it a Reload Event.
         },
-        buttonArrangement: ({ PageValid, Submit }) => {
-            setErrorMessage();
-            return ActionBar("Drop", undefined, {
-                title: "Update", onclick: HandleSubmit(PageValid, Submit)
-            }, [ { title: drop.title || "(no title)", onclick: changePage(update, "main") } ]);
-        },
+        buttonArrangement: "flex-end",
         buttonAlignment: "top",
     }, () => [
         Page({
