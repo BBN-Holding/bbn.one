@@ -14,7 +14,7 @@ async function* walkFileTree(handle: FileSystemHandle, path?: string): AsyncGene
     } else if (handle.kind === 'directory') {
         const entries = (<FileSystemDirectoryHandle>handle).values();
         for await (const entry of entries) {
-            const entryPath = realpath + '/' + entry.name;
+            const entryPath = `${realpath}/${entry.name}`;
 
             if (entry.kind == "file") {
                 const file = await entry.getFile();

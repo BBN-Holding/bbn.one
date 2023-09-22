@@ -61,8 +61,7 @@ View(() => Vertical(
                         ),
                     )
                         .setEvenColumns(small ? 1 : 2)
-                        .setGap("var(--gap)")
-                        .addClass("limited-width", "details-grid"),
+                        .setGap("var(--gap)"),
                     Table([
                         [ "Amount", "auto", ({ amount }) => Label(`${amount.toFixed(2)} £`) ],
                         [ "Description", "auto", ({ description }) => Label(description) ],

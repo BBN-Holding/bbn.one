@@ -1,7 +1,6 @@
-import { Box, Cache, CenterV, Entry, Image, Label } from "webgen/mod.ts";
-import { templateArtwork } from "../../../assets/imports.ts";
+import { Box, CenterV, Entry, Label } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
-import { loadImage } from "../../_legacy/helper.ts";
+import { showPreviewImage } from "../../_legacy/helper.ts";
 
 export function DropEntry(x: Drop, small: boolean) {
     return Entry({
@@ -9,14 +8,7 @@ export function DropEntry(x: Drop, small: boolean) {
         subtitle: `${x.release ?? "(no release date)"} - ${x.upc ?? "(no upc number)"}`
     })
         .addClass(small ? "small" : "normal")
-        .addPrefix(Cache(`image-preview-${x._id}${small}`, () => Promise.resolve(), (type) => {
-            const imageSource = type == "loaded" && x.artwork
-                ? Image({ type: "direct", source: async () => await loadImage(x) ?? fetch(templateArtwork).then(x => x.blob()) }, "A Song Artwork")
-                : Image(templateArtwork, "A Placeholder Artwork.");
-
-            return Box(imageSource)
-                .addClass("image-square");
-        }))
+        .addPrefix(showPreviewImage(x).addClass("image-square"))
         .addSuffix((() => {
             if (x.type == DropType.UnderReview)
                 return CenterV(Label("Under Review")

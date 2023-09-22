@@ -1,9 +1,9 @@
-import { API, count, LoadingSpinner, Navigation, stupidErrorAlert } from "shared";
-import { Button, isMobile, ref, Vertical } from "webgen/mod.ts";
+import { API, count, HeavyList, LoadingSpinner, Navigation, placeholder, stupidErrorAlert } from "shared";
+import { Button, Entry, isMobile, ref } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
 import { state } from "../state.ts";
-import { listPayouts, musicList } from "./list.ts";
+import { musicList } from "./list.ts";
 
 export const musicMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
@@ -19,34 +19,37 @@ export const musicMenu = Navigation({
             id: "published",
             title: ref`Published ${count(state.$published)}`,
             // TODO: Use HeavyList
-            children: state.$published.map(lo => lo ? [
-                musicList(state.published ?? [], DropType.Published)
-            ] : [ LoadingSpinner() ])
+            children: state.$published.map(published => published == "loading" ? [ LoadingSpinner() ] : [
+                musicList(published ?? [], DropType.Published)
+            ])
         },
         {
             id: "unpublished",
             title: ref`Unpublished ${count(state.$unpublished)}`,
             // TODO: Use HeavyList
-            children: state.$unpublished.map(lo => lo ? [
-                musicList(state.unpublished ?? [], DropType.Private)
-            ] : [ LoadingSpinner() ])
+            children: state.$unpublished.map(unpublished => unpublished == "loading" ? [ LoadingSpinner() ] : [
+                musicList(unpublished ?? [], DropType.Private)
+            ])
         },
         {
             id: "drafts",
             title: ref`Drafts ${count(state.$drafts)}`,
             // TODO: Use HeavyList
-            children: state.$drafts.map(lo => lo ? [
-                musicList(state.drafts ?? [], DropType.Unsubmitted)
-            ] : [ LoadingSpinner() ])
+            children: state.$drafts.map(drafts => drafts == "loading" ? [ LoadingSpinner() ] : [
+                musicList(drafts ?? [], DropType.Unsubmitted)
+            ])
         },
         {
             id: "payouts",
             title: ref`Payouts ${count(state.$payouts)}`,
-            // TODO: Use HeavyList
-            children: state.$payouts.map(lo => lo ? [
-                Vertical(listPayouts(state.payouts ?? []))
-                    .setGap("0.5rem")
-            ] : [ LoadingSpinner() ])
+            children: state.$payouts.map(payouts => payouts == "loading" ? [ LoadingSpinner() ] : [
+                HeavyList(state.$payouts, (x) => Entry({
+                    title: x.period,
+                    subtitle: x.moneythisperiod,
+                }).onClick(() => {
+                    location.href = `/music/payout?id=${x._id}`;
+                })).setPlaceholder(placeholder("No Payouts", "Release new Drops to earn money"))
+            ])
         }
     ]
 })

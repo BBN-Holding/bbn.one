@@ -58,13 +58,8 @@ export function StreamingUploadHandler(path: string, events: StreamingUploadEven
                 events.backendResponse(data);
             }
         };
-        // await write(writable, "end");
-        // const reader = readable.getReader();
-        // const { id } = JSON.parse((await reader.read()).value as string);
-        // reader.releaseLock();
-
     } catch (error) {
         console.error(error);
-        alert("There was an Error Uploading your files...\n\nPlease try again later");
+        alert("There was an error uploading your files...\n\nPlease try again later");
     }
 }

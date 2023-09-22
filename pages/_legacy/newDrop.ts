@@ -1,5 +1,5 @@
 import { API, stupidErrorAlert, uploadFilesDialog } from "shared";
-import { AdvancedImage, Box, Button, ButtonStyle, Center, CenterV, Color, Custom, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard, loadingWheel } from "webgen/mod.ts";
+import { AdvancedImage, Button, ButtonStyle, Center, CenterV, Color, Custom, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard, loadingWheel } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/wizard.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -191,7 +191,7 @@ const wizard = (restore?: Drop) => Wizard({
                         }, allowedImageFormats.join(",")))
                 ),
                 DropAreaInput(
-                    CenterV(data.artworkClientData ? Image(data.artworkClientData, "A Music Album Artwork.") : Box()),
+                    CenterV(data.artworkClientData ? Image(data.artworkClientData, "A Music Album Artwork.") : Label("Drop your Artwork here.").setFont(1.2, 600)),
                     allowedImageFormats,
                     ([ { file } ]) => uploadArtwork(data, file)
                 ).addClass("drop-area")

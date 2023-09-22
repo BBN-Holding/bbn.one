@@ -12,7 +12,7 @@ globalThis.onerror = (e) => {
 };
 
 function report(msg: any) {
-    if (["ResizeObserver loop completed with undelivered notifications.", "ResizeObserver loop limit exceeded", "Uncaught aborting javascript here"].includes(msg)) return;
+    if ([ "ResizeObserver loop completed with undelivered notifications.", "ResizeObserver loop limit exceeded", "Uncaught aborting javascript here" ].includes(msg)) return;
 
     API.bugReport({
         type: "web-frontend",

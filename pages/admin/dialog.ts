@@ -68,7 +68,7 @@ export const ReviewDialog = Dialog(() =>
     state.$drop.map(drop =>
         Box(
             drop === "loading"
-                ? Box(Image({ type: "loading" }, "Loading...")).addClass("test")
+                ? Box(Image({ type: "loading" }, "Loading..."))
                 : Wizard({
                     buttonAlignment: "bottom",
                     buttonArrangement: 'flex-end',
@@ -113,7 +113,7 @@ export const ReviewDialog = Dialog(() =>
                     }, (data) => [
                         Vertical(
                             Horizontal(
-                                showPreviewImage(drop, true).setWidth("25%"),
+                                showPreviewImage(drop).addClass("image-preview").setWidth("35%"),
                                 Spacer()
                             ),
                             Vertical(

@@ -100,7 +100,7 @@ View(() => Vertical(
             const list = Vertical(
                 menu.path.map(x => x == "-/" ?
                     Grid(
-                        showPreviewImage(drop)
+                        showPreviewImage(drop).addClass("image-preview")
                     ).setEvenColumns(1, "10rem")
                     : Box().removeFromLayout()
                 ).asRefComponent(),

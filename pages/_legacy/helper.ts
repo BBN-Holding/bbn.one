@@ -269,21 +269,18 @@ export function EditArtists(list: Artist[]) {
             .open();
     });
 }
-export function showPreviewImage(x: Drop, big = false) {
-    return Cache(`image-preview-${x._id}${big}`, () => Promise.resolve(),
-        (type) => type == "loaded" && x.artwork
+export function showPreviewImage(x: Drop) {
+    return x.artwork ? Cache(`image-preview-${x.artwork}`, () => Promise.resolve(),
+        (type) => type == "loaded"
             ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork")
-            : Image(artwork, "A Placeholder Artwork.")).addClass("image-preview");
+            : Box())
+        : Image(artwork, "A Placeholder Artwork.");
 }
 
 export async function loadImage(x: Drop) {
     const cache = await fileCache();
-    if (await cache.has(x._id + x.artwork))
-        return cache.get(x._id + x.artwork);
-
-    if (!x.artwork) return fetch(artwork).then(x => x.blob());
     const blob = await API.music.id(x._id).artwork().then(stupidErrorAlert);
-    await cache.set(x._id + x.artwork, blob);
+    await cache.set(`image-preview-${x.artwork}`, blob);
     return blob;
 }
 

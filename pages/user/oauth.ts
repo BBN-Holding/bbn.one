@@ -39,8 +39,8 @@ const state = State({
     icon: ""
 });
 
-const list = state.$loaded.map(() => {
-    if (state.loaded)
+const list = state.$loaded.map(loaded => {
+    if (loaded)
         return Box(
             Grid(
                 isMobile.map((small) =>

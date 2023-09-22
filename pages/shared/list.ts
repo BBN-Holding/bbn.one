@@ -1,4 +1,4 @@
-import { Box, Button, Component, Horizontal, Label, MIcon, Pointable, Pointer, State, Vertical, asPointer } from "webgen/mod.ts";
+import { Box, Button, CenterV, Component, Horizontal, Label, MIcon, Pointable, Pointer, State, Vertical, asPointer } from "webgen/mod.ts";
 import { LoadingSpinner } from "./components.ts";
 import { External, displayError } from "./restSpec.ts";
 
@@ -81,12 +81,13 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
     }
 };
 
-export const placeholder = (title: string, subtitle: string) => Vertical(
+export const placeholder = (title: string, subtitle: string) => CenterV(
     Label(title)
-        .addClass("list-title")
-        .setMargin("0"),
-    Label(subtitle),
-).setGap("1rem");
+        .setFont(2, 700)
+        .addClass("list-title"),
+    Label(subtitle)
+        .setFont(1.2)
+).setMargin("100px 0 0").setGap("1rem").setAttribute("align", "center")
 
 export async function loadMore<T>(source: Pointer<External<T[]> | 'loading'>, func: () => Promise<External<T[]>>) {
     const data = source.getValue();

@@ -16,5 +16,4 @@ export function GroupEntry(x: any) {
         subtitle: `${x._id} - ${x.permission}`
     })
         .addClass("small");
-    // .addPrefix(Box(showProfilePicture(x)));
 }

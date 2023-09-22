@@ -38,7 +38,7 @@ View(() => Vertical(
             {
                 id: "drop",
                 title: `Drop`,
-                children: state.$music.map(() => sortBy((state.music?.map(drop => {
+                children: state.$music.map(music => sortBy((music?.map(drop => {
                     const entries = state.payout?.entries.filter(entry => drop.songs?.some(song => song.isrc === entry.isrc)) ?? [];
                     if (entries.length === 0) return undefined;
                     return {

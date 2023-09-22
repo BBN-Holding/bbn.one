@@ -76,7 +76,7 @@ export function entryFile(file: File) {
     return Entry({
         title: file.filename,
         subtitle: file._id,
-    }).addPrefix(Cache(`fileicon-${file._id}`, () => loadFilePreview(file._id), (type, val) => {
+    }).addPrefix(Cache(`file-icon-${file._id}`, () => loadFilePreview(file._id), (type, val) => {
         if (type == "cache")
             return Image({ type: "loading" }, "Loading");
         const imageSource = type == "loaded" && file.metadata.type.startsWith("image/") && val?.status === "fulfilled"
@@ -97,6 +97,6 @@ export async function loadFilePreview(id: string) {
     if (await cache.has(id)) return await asExternal(cache.get(id));
     const blob = await API.admin.files.download(id);
     if (blob.status == "fulfilled")
-        cache.set(id, blob.value);
+        cache.set(`file-icon-${id}`, blob.value);
     return blob;
 }

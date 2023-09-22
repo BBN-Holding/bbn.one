@@ -1,12 +1,12 @@
-import { API, displayError, LoadingSpinner, SliderInput } from "shared";
+import { API, displayError, LoadingSpinner, SliderInput, stupidErrorAlert } from "shared";
 import { format } from "std/fmt/bytes.ts";
 import { BasicLabel, Box, Dialog, DropDownInput, Grid, Label, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import { ServerCreate, serverCreate } from "../../../spec/music.ts";
 import { creationState, MB, state } from "../data.ts";
 
-export const creationView = () => creationState.$loading.map(() => {
-    if (creationState.loading)
+export const creationView = () => creationState.$loading.map(loading => {
+    if (loading)
         return LoadingSpinner();
 
     return creationState.$type.map(() => Vertical(
@@ -24,10 +24,7 @@ export const creationView = () => creationState.$loading.map(() => {
                 submitAction: async ([ { data: { data } } ]) => {
                     creationState.loading = true;
                     try {
-                        const rsp = await API.hosting.create(data);
-
-                        if (rsp.error)
-                            throw rsp;
+                        await API.hosting.create(data).then(stupidErrorAlert);
 
                         Dialog(() => Label("Server has been created. We are now installing everything for you."))
                             .setTitle("Successful!")
@@ -93,7 +90,7 @@ export const creationView = () => creationState.$loading.map(() => {
                 ]).setValidator(() => serverCreate)
             ]),
             Grid(
-                BasicLabel({ title: "", subtitle: "When pressing Submit you also accept the Minecraft Eula" }).addClass("small")
+                BasicLabel({ title: "", subtitle: "When pressing Submit you also accept the Minecraft EULA" }).addClass("small")
             ).setJustify("end")
         )
             .setGap("0.5rem")
