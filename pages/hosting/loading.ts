@@ -1,7 +1,7 @@
 import { HmRequest, LoginRequest, MessageType, PublishResponse, SubscribeRequest, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
 import { State, asPointer, lazyInit } from "webgen/mod.ts";
-import { Server, ServerDetails } from "../../spec/music.ts";
+import { Server, ServerDetails, SidecarRequest } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 
@@ -125,6 +125,17 @@ export type RemotePath = {
 export const currentFiles = asPointer(<RemotePath[]>[]);
 export const currentPath = asPointer("/");
 export async function listFiles(_path: string) {
+    const ws = new WebSocket("wss://sidecar.bbn.one/api/@bbn/sidecar/6509ebcddd2620dce60e25b1/file-browser");
+    ws.onmessage = (ev) => {
+        const data = JSON.parse(ev.data);
+        console.log(data);
+    };
+    ws.onopen = () => {
+        ws.send(JSON.stringify(<SidecarRequest>{
+            type: "list",
+            path: _path
+        }));
+    };
     // TODO: Add API for this;
     currentFiles.setValue(<RemotePath[]>[
         {

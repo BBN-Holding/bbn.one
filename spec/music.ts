@@ -314,6 +314,46 @@ export const serverDetails = zod.union([
     _id: zod.string()
 }));
 
+export const sidecarRequest = zod.discriminatedUnion("type", [
+    zod.object({
+        type: zod.literal("list"),
+        path: zod.string(),
+    }),
+    zod.object({
+        type: zod.literal("read"),
+        path: zod.string(),
+    }),
+    zod.object({
+        type: zod.literal("write"),
+        path: zod.string(),
+        chunk: zod.string().optional(),
+        finish: zod.boolean()
+    })
+]);
+
+export const sidecarResponse = zod.discriminatedUnion("type", [
+    zod.object({
+        type: zod.literal("list"),
+        path: zod.string(),
+        list: zod.object({
+            name: zod.string(),
+            fileMimeType: zod.string().optional(),
+            lastModified: zod.number().optional()
+        }).array()
+    }),
+    zod.object({
+        type: zod.literal("read"),
+        path: zod.string(),
+    }),
+    zod.object({
+        type: zod.literal("write"),
+        path: zod.string(),
+        chunk: zod.string().optional(),
+        finish: zod.boolean()
+    })
+]);
+
+
 export const enum AuditTypes {
     StorePurchase = "store-purchase",
     ServerCreate = "server-create",
@@ -330,6 +370,8 @@ export enum OAuthScopes {
 
 export type AdminStats = { drops: { all: number, reviews: number, publishing: number, published: number, private: number, rejected: number, drafts: number; }, users: number, payouts: number, oauthApps: number, files: number, servers: number, wallets: number; };
 
+export type SidecarResponse = zod.infer<typeof sidecarResponse>;
+export type SidecarRequest = zod.infer<typeof sidecarRequest>;
 export type Artist = zod.infer<typeof artist>;
 export type BugReport = zod.infer<typeof bugReport>;
 export type Drop = zod.infer<typeof drop>;
