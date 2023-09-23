@@ -68,7 +68,7 @@ export const ReviewDialog = Dialog(() =>
     state.$drop.map(drop =>
         Box(
             drop === "loading"
-                ? Box(Image({ type: "loading" }, "Loading..."))
+                ? Box(Image({ type: "loading" }, "Loading...")).addClass("test")
                 : Wizard({
                     buttonAlignment: "bottom",
                     buttonArrangement: 'flex-end',
