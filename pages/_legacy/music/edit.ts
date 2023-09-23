@@ -70,6 +70,7 @@ View(() => Vertical(
                     subtitle: "Need to change Something? Cancel it now",
                     clickHandler: async () => {
                         await API.music.id(drop._id).type.post(DropType.Private)
+                        location.reload();
                     },
                 } : Box().removeFromLayout(),
             Permissions.canSubmit(drop) ?
@@ -79,6 +80,7 @@ View(() => Vertical(
                     subtitle: "Submit your Drop for Approval",
                     clickHandler: async () => {
                         await API.music.id(drop._id).type.post(DropType.UnderReview);
+                        location.reload();
                     },
                 } : Box().removeFromLayout(),
             Permissions.canTakedown(drop) ?
@@ -88,6 +90,7 @@ View(() => Vertical(
                     subtitle: "Completely Takedown your Drop",
                     clickHandler: async () => {
                         await API.music.id(drop._id).type.post(DropType.Private);
+                        location.reload();
                     },
                 } : Box().removeFromLayout()
         ]
