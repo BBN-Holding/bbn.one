@@ -271,7 +271,7 @@ export function EditArtists(list: Artist[]) {
 }
 export function showPreviewImage(x: Drop) {
     return x.artwork ? Cache(`image-preview-${x.artwork}`, () => Promise.resolve(),
-        (type) => type == "loaded"
+        type => type == "loaded"
             ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork")
             : Box())
         : Image(artwork, "A Placeholder Artwork.");
@@ -279,6 +279,8 @@ export function showPreviewImage(x: Drop) {
 
 export async function loadImage(x: Drop) {
     const cache = await fileCache();
+    if (await cache.has(`image-preview-${x.artwork}`))
+        return await cache.get(`image-preview-${x.artwork}`)!;
     const blob = await API.music.id(x._id).artwork().then(stupidErrorAlert);
     await cache.set(`image-preview-${x.artwork}`, blob);
     return blob;

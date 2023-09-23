@@ -1,4 +1,4 @@
-import { API, asExternal, External, fileCache, RenderItem, stupidErrorAlert } from "shared";
+import { API, External, fileCache, RenderItem, stupidErrorAlert } from "shared";
 import { Box, Button, Cache, Color, Dialog, Entry, Grid, IconButton, Image, MIcon, ref, TextInput } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
@@ -94,9 +94,8 @@ export function entryFile(file: File) {
 
 export async function loadFilePreview(id: string) {
     const cache = await fileCache();
-    if (await cache.has(id)) return await asExternal(cache.get(id));
-    const blob = await API.admin.files.download(id);
-    if (blob.status == "fulfilled")
-        cache.set(`file-icon-${id}`, blob.value);
+    if (await cache.has(`file-icon-${id}`)) return await cache.get(`file-icon-${id}`);
+    const blob = await API.admin.files.download(id).then(stupidErrorAlert);
+    cache.set(`file-icon-${id}`, blob);
     return blob;
 }
