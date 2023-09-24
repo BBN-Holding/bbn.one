@@ -3,13 +3,13 @@ import { API, count, HeavyReRender, LoadingSpinner, Navigation, placeholder, Ren
 import { sumOf } from "std/collections/sum_of.ts";
 import { format } from "std/fmt/bytes.ts";
 import { dirname } from "std/path/mod.ts";
-import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, MediaQuery, MIcon, ref, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, MediaQuery, MIcon, Pointer, ref, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
 import { AuditTypes, PowerState, Server, ServerDetails } from "../../../spec/music.ts";
 import { activeUser, showProfilePicture } from "../../_legacy/helper.ts";
 import { MB, state } from "../data.ts";
-import { currentDetailsSource, currentDetailsTarget, currentFiles, currentPath, listFiles, messageQueue, RemotePath, streamingPool, uploadFile } from "../loading.ts";
+import { currentDetailsSource, currentDetailsTarget, currentFiles, currentPath, listFiles, messageQueue, RemotePath, startSidecarConnection, streamingPool, uploadFile } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import './details.css';
 import './fileBrowser.css';
@@ -90,6 +90,57 @@ export function DropHandler(onData: (data: ReadableStream<FileEntry>, length: nu
 }
 
 const uploadingFiles = asPointer(<Record<string, number | "failed">>{});
+
+type TableColumn<Data> = {
+    size: 'fill' | 'auto',
+    converter: (data: Data) => Component;
+    title: Pointer<string>;
+    sorting: Pointer<TableSorting | undefined>;
+};
+
+enum TableSorting {
+    Descending = "descending",
+    Ascending = "ascending",
+    Available = "available"
+}
+
+export class Table2<Data> extends Component {
+    private columns: Pointer<TableColumn<Data>[]> = asPointer([]);
+    constructor(dataSource: Pointer<Data[]>) {
+        super();
+        this.wrapper.append(this.columns.map(columns => Box(
+            ...columns.map(column => Box(
+                this.header(column),
+                dataSource.map(rows =>
+                    Box(
+                        ...rows.map(row => column.converter(row))
+                    )
+                        .removeFromLayout()
+                )
+                    .asRefComponent()
+                    .removeFromLayout()
+            ))
+        )).asRefComponent().draw());
+    }
+
+    addColumn(converter: TableColumn<Data>[ "converter" ], title: Pointer<string> | string, sorting: Pointer<undefined | TableSorting> | undefined | TableSorting, size: TableColumn<Data>[ "size" ] = 'auto') {
+        this.columns.setValue([ ...this.columns.getValue(), <TableColumn<Data>>{
+            converter,
+            size,
+            title: asPointer(title),
+            sorting: asPointer(sorting)
+        } ]);
+        return this;
+    }
+
+    private header(column: TableColumn<Data>) {
+        return Box(
+            Label(column.title)
+        );
+    }
+}
+
+
 export const hostingMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     actions: hostingButtons,
@@ -124,6 +175,8 @@ export const hostingMenu = Navigation({
                 suffix: ChangeStateButton(server),
                 clickHandler: async () => {
                     await streamingPool();
+                    if (!server.identifier)
+                        startSidecarConnection(server._id);
                     // TODO wait until first data is showing to prevent blinking
                 },
                 children: [

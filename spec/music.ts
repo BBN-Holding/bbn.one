@@ -172,8 +172,8 @@ export const wallet = zod.object({
     }).array(),
     cut: zod.number(),
     user: zod.string(),
-    userName: zod.string(),
-    email: zod.string(),
+    userName: zod.string().optional(),
+    email: zod.string().optional(),
     balance: zod.object({
         restrained: zod.number(),
         unrestrained: zod.number()

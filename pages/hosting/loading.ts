@@ -1,7 +1,8 @@
 import { HmRequest, LoginRequest, MessageType, PublishResponse, SubscribeRequest, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
+import { Deferred, deferred } from "std/async/deferred.ts";
 import { State, asPointer, lazyInit } from "webgen/mod.ts";
-import { Server, ServerDetails, SidecarRequest } from "../../spec/music.ts";
+import { Server, ServerDetails, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 
@@ -124,35 +125,61 @@ export type RemotePath = {
 
 export const currentFiles = asPointer(<RemotePath[]>[]);
 export const currentPath = asPointer("/");
-export async function listFiles(_path: string) {
+export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
+let activeSideCar: Deferred<void> | undefined = undefined;
+export async function startSidecarConnection(id: string) {
+    if (activeSideCar) {
+        activeSideCar.resolve();
+        messageQueueSidecar = [];
+    }
+
     const ws = new WebSocket("wss://sidecar.bbn.one/api/@bbn/sidecar/6509ebcddd2620dce60e25b1/file-browser");
-    ws.onmessage = (ev) => {
-        const data = JSON.parse(ev.data);
-        console.log(data);
+    activeSideCar = deferred();
+
+    const syncedResponses = new Set<{ request: SidecarRequest, response: Deferred<SidecarResponse>; }>();
+
+    let watcher = 0;
+    ws.onmessage = (event: MessageEvent<string>) => {
+        const msg = <SidecarResponse>JSON.parse(event.data);
+        for (const iterator of syncedResponses) {
+            if (iterator.request.type === "list" && msg.type === "list" && iterator.request.path == msg.path) {
+                syncedResponses.delete(iterator);
+                iterator.response.resolve(msg);
+                break;
+            }
+        }
     };
     ws.onopen = () => {
-        ws.send(JSON.stringify(<SidecarRequest>{
+        watcher = setInterval(() => {
+            if (ws.readyState != ws.OPEN || messageQueueSidecar.length == 0) return;
+            const msg = messageQueueSidecar.shift()!;
+            syncedResponses.add(msg);
+            ws.send(JSON.stringify(msg.request));
+        }, 100);
+    };
+
+    ws.onclose = () => {
+        clearInterval(watcher);
+        startSidecarConnection(id);
+    };
+
+    await activeSideCar;
+    activeSideCar = undefined;
+}
+
+export async function listFiles(_path: string) {
+    const response = deferred<SidecarResponse>();
+    messageQueueSidecar.push({
+        request: {
             type: "list",
             path: _path
-        }));
-    };
-    // TODO: Add API for this;
-    currentFiles.setValue(<RemotePath[]>[
-        {
-            name: "world",
         },
-        {
-            name: "logs",
-        },
-        {
-            name: "logs",
-        },
-        {
-            name: "server.jar",
-            fileMimeType: "application/java-archive",
-            lastModified: new Date().getTime()
-        }
-    ]);
+        response
+    });
+
+    const data = await response;
+    if (data.type == "list")
+        currentFiles.setValue(data.list);
 }
 
 export async function uploadFile(_path: string, file: File, progress: (ratio: number) => void) {
