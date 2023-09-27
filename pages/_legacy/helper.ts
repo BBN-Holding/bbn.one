@@ -58,7 +58,7 @@ function rawAccessToken() {
 }
 
 export const activeUser = State({
-    email: <string | undefined>"--",
+    email: <string | undefined>undefined,
     username: <string>"--",
     avatar: <string | undefined>undefined,
     permission: <Permission[]>[],

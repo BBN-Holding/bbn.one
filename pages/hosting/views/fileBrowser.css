@@ -1,5 +1,5 @@
 .file-browser {
-    padding: 10px 20px 20px;
+    padding: 0 20px 20px;
 }
 
 .wtable {
@@ -56,12 +56,30 @@
 
 .loading-box {
     position: relative;
+    width: 0;
+    transition: all 200ms ease;
+    height: 15px;
+    z-index: -1;
+    scale: 0.7;
+    opacity: 0;
+}
+
+.loading-box.loading {
     width: 20px;
-    aspect-ratio: 1 / 1;
+    opacity: 1;
+    transition: all 300ms ease 400ms;
 }
 
 .path-bar {
     grid-auto-flow: column;
-    align-items: start;
+    height: 34px;
+    align-items: center;
     justify-content: start;
+}
+
+.path-bar .wbutton {
+    height: 25px;
+    padding: 0 10px;
+    border-radius: 8px;
+    margin-right: 5px;
 }
