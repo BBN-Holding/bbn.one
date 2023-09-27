@@ -47,19 +47,14 @@ serve({
         "signin": "./pages/user/signin.ts",
         "callback": "./pages/_legacy/misc/callback.ts",
         "oauth": "./pages/user/oauth.ts",
-
         "music": "./pages/music/main.ts",
         "music/new-drop": "./pages/_legacy/newDrop.ts",
         "music/edit": "./pages/_legacy/music/edit.ts",
         "music/payout": "./pages/payout/main.ts",
-
         "hosting": "./pages/hosting/main.ts",
         "hosting/create": "./pages/hosting/views/create.ts",
-
         "settings": "./pages/user/settings.ts",
-
         "admin": "./pages/admin/admin.ts",
-
         "wallet": "./pages/wallet/wallet.ts",
     },
     defaultTemplate: createTemplate,

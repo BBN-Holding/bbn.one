@@ -3,7 +3,7 @@ import { API, count, HeavyReRender, LoadingSpinner, Navigation, placeholder, Ren
 import { sumOf } from "std/collections/sum_of.ts";
 import { format } from "std/fmt/bytes.ts";
 import { dirname } from "std/path/mod.ts";
-import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, MediaQuery, MIcon, Pointer, ref, State, StateHandler, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, loadingWheel, MediaQuery, MIcon, Pointable, Pointer, ref, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
 import { AuditTypes, PowerState, Server, ServerDetails } from "../../../spec/music.ts";
@@ -16,6 +16,7 @@ import './fileBrowser.css';
 import { countFileTree, FileEntry, getFileStream } from "./fileHandler.ts";
 import './list.css';
 import { moveDialog } from "./list.ts";
+import './table2.css';
 import { TerminalComponent } from "./terminal.ts";
 type StateActions = {
     [ type in PowerState ]: Component | IconButtonComponent;
@@ -104,43 +105,103 @@ enum TableSorting {
     Available = "available"
 }
 
+type RowClickHandler = (rowIndex: number, columnIndex: number) => void;
+
 export class Table2<Data> extends Component {
     private columns: Pointer<TableColumn<Data>[]> = asPointer([]);
+    private hoveredRow: Pointer<number | undefined> = asPointer(undefined);
+    private rowClick: Pointer<RowClickHandler | undefined> = asPointer(undefined);
     constructor(dataSource: Pointer<Data[]>) {
         super();
         this.wrapper.append(this.columns.map(columns => Box(
-            ...columns.map(column => Box(
+            ...columns.map((column, columnIndex) => Box(
                 this.header(column),
                 dataSource.map(rows =>
                     Box(
-                        ...rows.map(row => column.converter(row))
+                        ...rows.map((row, rowIndex) => {
+                            const hovering = refMerge({
+                                clickEnabled: this.rowClick.map(it => !!it),
+                                hoveredRow: this.hoveredRow
+                            });
+                            const item = Box(column.converter(row))
+                                .addClass(rowIndex % 2 == 0 ? "even" : "odd", "item", columnIndex == 0 ? "left" : (columnIndex == columns.length - 1 ? "right" : "middle"))
+                                .addClass(hovering.map(({ clickEnabled, hoveredRow }) => clickEnabled && hoveredRow === rowIndex ? "hover" : "non-hover"))
+                                .draw();
+                            item.addEventListener("pointerenter", () => this.hoveredRow.setValue(rowIndex));
+                            item.addEventListener("pointerleave", () => this.hoveredRow.setValue(undefined));
+                            item.onclick = () => {
+                                this.rowClick.getValue()?.(rowIndex, columnIndex);
+                            };
+                            return Custom(item);
+                        })
                     )
                         .removeFromLayout()
                 )
                     .asRefComponent()
                     .removeFromLayout()
-            ))
-        )).asRefComponent().draw());
+            ).addClass("column"))
+        ).addClass("wgtable")).asRefComponent().draw());
     }
 
-    addColumn(converter: TableColumn<Data>[ "converter" ], title: Pointer<string> | string, sorting: Pointer<undefined | TableSorting> | undefined | TableSorting, size: TableColumn<Data>[ "size" ] = 'auto') {
+    setColumnTemplate(layout: Pointable<string>) {
+        asPointer(layout).listen(value => {
+            this.wrapper.style.setProperty("--wgtable-column-template", value);
+        });
+        return this;
+    }
+
+    addColumn(title: Pointer<string> | string, converter: TableColumn<Data>[ "converter" ], sorting?: Pointer<undefined | TableSorting> | undefined | TableSorting, size: TableColumn<Data>[ "size" ] = 'auto') {
         this.columns.setValue([ ...this.columns.getValue(), <TableColumn<Data>>{
             converter,
             size,
-            title: asPointer(title),
+            title: asPointer(title ?? ""),
             sorting: asPointer(sorting)
         } ]);
+        return this;
+    }
+
+    setRowClick(clickHandler: Pointable<RowClickHandler>) {
+        asPointer(clickHandler).listen(value => this.rowClick.setValue(value));
         return this;
     }
 
     private header(column: TableColumn<Data>) {
         return Box(
             Label(column.title)
-        );
+        ).addClass("header");
     }
 }
 
+function refMerge<PointerRecord extends Record<string, Pointer<unknown>>>(data: PointerRecord): Pointer<{ [ P in keyof PointerRecord ]: ReturnType<PointerRecord[ P ][ "getValue" ]> }> {
+    const loadData = () => Object.fromEntries(Object.entries(data).map(([ key, value ]) => [ key, value.getValue() ])) as { [ P in keyof PointerRecord ]: ReturnType<PointerRecord[ P ][ "getValue" ]> };
 
+    const internalValue = asPointer(loadData());
+    for (const iterator of Object.values(data)) {
+        let firstTime = true;
+        iterator.listen(() => {
+            if (firstTime)
+                return firstTime = false;
+            internalValue.setValue(loadData());
+        });
+    }
+    return internalValue;
+}
+
+const allFiles = refMerge({
+    uploadingFiles: uploadingFiles
+        .map(files => Object.entries(files)
+            .filter(([ path ]) => dirname(path) === currentPath.getValue())
+            .map(([ name, uploadingRatio ]) => (<RemotePath>{ name, uploadingRatio }))
+        ),
+    currentFiles: currentFiles.map(it => {
+        const compare = new Intl.Collator().compare;
+        return Array.from(it).sort((a, b) => compare(a.name, b.name)).sort((a, b) => Number(!!a.fileMimeType) - Number(!!b.fileMimeType));
+
+    })
+}).map(({ currentFiles, uploadingFiles }) => [ ...uploadingFiles, ...currentFiles ]);
+
+const path = asPointer("");
+const loading = asPointer(false);
 export const hostingMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     actions: hostingButtons,
@@ -192,6 +253,7 @@ export const hostingMenu = Navigation({
                                 subtitle: "Upload and manage your files.",
                                 clickHandler: async () => {
                                     await listFiles("/");
+                                    path.setValue("/");
                                 },
                                 children: [
                                     DropHandler(
@@ -218,42 +280,33 @@ export const hostingMenu = Navigation({
                                                 title: "File Browser",
                                                 subtitle: "Drag and Drop files/folders here to upload and download them faster."
                                             }),
-                                            Grid(
-                                                Button("Home")
-                                                    .setStyle(ButtonStyle.Inline)
-                                            ).setJustify("start"),
+                                            path.map(list => Grid(
+                                                Box(Custom(loadingWheel() as Element as HTMLElement)).addClass(loading.map(it => it?  "loading" : "non-loading"), "loading-box"),
+                                                ...list.split("/").filter((_, index, list) => (list.length - 1) != index).map((item, currentIndex, list) => Button(item || 'home')
+                                                    .setStyle(ButtonStyle.Secondary)
+                                                    .onClick(() => {
+                                                        path.setValue([ ...list.filter((_, listIndex) => listIndex <= currentIndex), '' ].join("/"));
+                                                        loading.setValue(true);
+                                                        listFiles(path.getValue()).finally(() => loading.setValue(false));
+                                                    }))
+                                            ).setJustify("start").addClass("path-bar")).asRefComponent().removeFromLayout(),
                                             Entry(
-                                                currentFiles.map(files =>
-                                                    isMobile.map(mobile =>
-                                                        uploadingFiles
-                                                            .map(files => Object.entries(files).filter(([ path ]) => dirname(path) === currentPath.getValue()).map(([ name, uploadingRatio ]) => (<RemotePath>{ name, uploadingRatio })))
-                                                            .map(currentFiles =>
-                                                                Table(mobile
-                                                                    ? [
-                                                                        [ "File", "1fr", (data) => Grid(
-                                                                            Box(
-                                                                                BIcon("globe2")
-                                                                            ),
-                                                                            BasicLabel({
-                                                                                title: data.name,
-                                                                                subtitle: ref`${data.size != undefined ? data.size : ''} – ${data.fileMimeType != undefined ? data.fileMimeType : ''}`,
-                                                                            })
-                                                                        ).addClass("file-item") ],
-                                                                    ]
-                                                                    : [
-                                                                        [ "Name", "1fr", (data) => Grid(
-                                                                            Box(
-                                                                                BIcon("globe2")
-                                                                            ),
-                                                                            BasicLabel({ title: data.name })
-                                                                        ).addClass("file-item") ],
-                                                                        [ "Last Modified", "1fr", (data) => data.lastModified != undefined ? Label(new Date(data.lastModified).toLocaleString()) : Box() ],
-                                                                        [ "Type", "1fr", (data) => data.fileMimeType != undefined ? Label(data.fileMimeType) : Box() ],
-                                                                        [ "Size", "1fr", (data) => data.size != undefined ? Label(data.size) : Box() ],
-                                                                    ], [ ...currentFiles, ...files ])
-                                                            ).asRefComponent()
-                                                    ).asRefComponent()
-                                                ).asRefComponent()
+                                                new Table2(allFiles)
+                                                    .addColumn("Name", (data) => Box(BIcon("globe2"), BasicLabel({ title: data.name }).addClass("small-text")).addClass("file-item"))
+                                                    .addColumn("Last Modified", (data) => data.lastModified !== undefined ? Label(new Date(data.lastModified).toLocaleString()) : Box())
+                                                    .addColumn("Type", (data) => data.fileMimeType !== undefined ? Label(data.fileMimeType) : Box())
+                                                    .addColumn("Size", (data) => data.size !== undefined ? Label(data.size) : Box())
+                                                    .setRowClick((rowIndx) => {
+                                                        const data = allFiles.getValue()[ rowIndx ];
+                                                        console.log(data);
+                                                        if (data.fileMimeType === undefined) {
+                                                            path.setValue(path.getValue() + data.name + "/");
+                                                            loading.setValue(true);
+                                                            listFiles(path.getValue()).finally(() => loading.setValue(false));
+                                                        } else {
+                                                            Dialog(() => Label(JSON.stringify(data))).setTitle("File Info").allowUserClose().open();
+                                                        }
+                                                    })
                                             ).addClass("file-browser")
                                         ),
                                     ).addClass("drop-area")
@@ -362,7 +415,6 @@ hostingMenu.path.listen(path => {
     else
         hostingButtons.setValue([]);
 });
-
 type GridItem = Component | [ settings: {
     width?: number | undefined;
     heigth?: number | undefined;

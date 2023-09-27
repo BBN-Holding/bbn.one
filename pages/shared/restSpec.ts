@@ -413,7 +413,9 @@ export const API = {
             method: 'POST',
             body: JSON.stringify(data),
             headers: headers(API.getToken())
-        }).then(x => x.json()),
+        })
+            .then(none())
+            .catch(reject),
         meta: (): Promise<Meta> => fetch(`${API.BASE_URL}hosting/meta`, {
             headers: headers(API.getToken())
         }).then(x => x.json()),

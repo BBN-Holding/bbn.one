@@ -35,7 +35,7 @@ const dropOver = activeUser.$permission.map(() => Vertical(
 
 dropOver.onblur = () => dropOver.classList.remove("open");
 dropOver.tabIndex = 0;
-export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" | "Admin" | "Wallet", user = IsLoggedIn()) {
+export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" | "Admin" | "Wallet") {
     return [
         Nav(
             Grid(
@@ -56,10 +56,10 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                             dropOver.focus();
                         }),
                     Spacer(),
-                    (user
-                        ? Button(
+                    (activeUser.$email.map(email => email ?
+                        Button(
                             Grid(
-                                showProfilePicture(user),
+                                showProfilePicture(IsLoggedIn()!),
                                 Label(activeUser.$username),
                             )
                                 .setRawColumns("max-content max-content")
@@ -70,15 +70,16 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                             .addClass("profile-button")
                             .setStyle(ButtonStyle.Inline)
                             .asLinkButton("/settings")
-                        : (type == "Home" && !location.pathname.startsWith("/signin") ?
+                        :
+                        (type == "Home" && !location.pathname.startsWith("/signin") ?
                             Button("Sign in")
                                 .addClass("login-button")
                                 .onClick(() => { location.href = "/signin"; })
-                            : null)
-
+                            : Box())
+                    ).asRefComponent()
                     ) ?? null,
                 ),
-                user && user.profile.verified?.email != true ? Grid(
+                IsLoggedIn() && IsLoggedIn()!.profile.verified?.email != true ? Grid(
                     BasicLabel({
                         title: "Your Email is not verified. Please check your Inbox/Spam folder."
                     }).addClass("label"),

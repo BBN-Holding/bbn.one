@@ -225,19 +225,19 @@ export function EditArtists(list: Artist[]) {
         state.$list.map(() =>
             Vertical(
                 Table([
-                    [ "Type", "10rem", (_, index) =>
+                    [ "Type", "10rem", (artist, index) =>
                         DropDownInput("Type", ARTIST_ARRAY)
-                            .setValue(state.list[ index ][ 2 ])
-                            .onChange((data) => update(state, index, 2, data))
+                            .setValue(artist[ 2 ])
+                            .onChange(data => update(state, index, 2, data))
                     ],
-                    [ "Name", "auto", (_, index) =>
+                    [ "Name", "auto", (artist, index) =>
                         TextInput("text", "Name", "blur")
-                            .setValue(state.list[ index ][ 0 ])
-                            .onChange((data) => update(state, index, 0, data!))
+                            .setValue(artist[ 0 ])
+                            .onChange(data => update(state, index, 0, data!))
                     ]
                 ], state.list)
-                    .setDelete((_, index) => {
-                        state.list = <typeof state.list>state.list.filter((_, i) => i != index);
+                    .setDelete((_, i) => {
+                        state.list = state.list?.filter((_, index) => index != i) as typeof state.list;
                     }),
                 Horizontal(
                     Spacer(),

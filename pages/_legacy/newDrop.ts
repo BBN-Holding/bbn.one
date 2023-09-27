@@ -1,5 +1,5 @@
-import { API, stupidErrorAlert, uploadFilesDialog } from "shared";
-import { AdvancedImage, Button, ButtonStyle, Center, CenterV, Color, Custom, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard, loadingWheel } from "webgen/mod.ts";
+import { API, LoadingSpinner, stupidErrorAlert, uploadFilesDialog } from "shared";
+import { AdvancedImage, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, State, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/wizard.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -7,7 +7,7 @@ import language from "../../data/language.json" assert { type: "json" };
 import primary from "../../data/primary.json" assert { type: "json" };
 import secondary from "../../data/secondary.json" assert { type: "json" };
 import { ArtistTypes, Drop, DropType, pageFive, pageFour, pageOne, pageThree, pageTwo } from "../../spec/music.ts";
-import { CenterAndRight, EditArtists, IsLoggedIn, ProfileData, RegisterAuthRefresh, allowedAudioFormats, allowedImageFormats, getDropFromPages, getSecondary } from "./helper.ts";
+import { CenterAndRight, EditArtists, RegisterAuthRefresh, allowedAudioFormats, allowedImageFormats, getDropFromPages, getSecondary } from "./helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
 import { ManageSongs } from "./music/table.ts";
 
@@ -26,22 +26,21 @@ const dropId = params.get("id")!;
 const gapSize = "15px";
 const inputWidth = "436px";
 
-View<{ restoreData: Drop, aboutMe: ProfileData; }>(({ state }) => Vertical(
-    ...DynaNavigation("Music", state.aboutMe),
-    state.restoreData == null
-        ? CenterV(
-            Center(
-                Custom(loadingWheel() as Element as HTMLElement)
-            ).addClass("loading"),
-            Spacer()
-        ).addClass("wwizard")
-        : wizard(state.restoreData).addClass("wizard-box")
+const state = State({
+    restoreData: <Drop | undefined>undefined
+});
+
+View(() => Vertical(
+    ...DynaNavigation("Music"),
+    state.$restoreData.map(restoreData => restoreData ?
+        wizard(restoreData).addClass("wizard-box")
+        : LoadingSpinner()
+    ).asRefComponent().removeFromLayout()
 ))
-    .change(({ update }) => {
-        update({ aboutMe: IsLoggedIn() ?? undefined });
+    .change(() => {
         API.music.id(dropId).get().then(stupidErrorAlert)
             .then(restoreData => {
-                update({ restoreData });
+                state.restoreData = restoreData;
             })
             .catch((e) => {
                 alert(e);

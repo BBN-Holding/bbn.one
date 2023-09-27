@@ -48,3 +48,20 @@
     border-radius: 5px;
     scale: 1.02;
 }
+
+.small-text .title {
+    font-size: 19.6px;
+    padding: 0;
+}
+
+.loading-box {
+    position: relative;
+    width: 20px;
+    aspect-ratio: 1 / 1;
+}
+
+.path-bar {
+    grid-auto-flow: column;
+    align-items: start;
+    justify-content: start;
+}

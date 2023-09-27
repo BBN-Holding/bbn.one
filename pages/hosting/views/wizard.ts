@@ -1,4 +1,4 @@
-import { API, displayError, LoadingSpinner, SliderInput, stupidErrorAlert } from "shared";
+import { API, displayError, LoadingSpinner, SliderInput } from "shared";
 import { format } from "std/fmt/bytes.ts";
 import { BasicLabel, Box, Dialog, DropDownInput, Grid, Label, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
@@ -23,17 +23,16 @@ export const creationView = () => creationState.$loading.map(loading => {
             Wizard({
                 submitAction: async ([ { data: { data } } ]) => {
                     creationState.loading = true;
-                    try {
-                        await API.hosting.create(data).then(stupidErrorAlert);
-
+                    const rsp = await API.hosting.create(data);
+                    if (rsp.status === "fulfilled") {
                         Dialog(() => Label("Server has been created. We are now installing everything for you."))
                             .setTitle("Successful!")
                             .allowUserClose()
                             .addButton("Return", "remove")
                             .onClose(() => location.href = "/hosting")
                             .open();
-                    } catch (error) {
-                        alert(displayError(error));
+                    } else {
+                        alert(displayError(rsp.status));
                         location.reload();
                     }
                 },

@@ -133,7 +133,7 @@ export async function startSidecarConnection(id: string) {
         messageQueueSidecar = [];
     }
 
-    const ws = new WebSocket("wss://sidecar.bbn.one/api/@bbn/sidecar/6509ebcddd2620dce60e25b1/file-browser");
+    const ws = new WebSocket(`wss://sidecar.bbn.one/api/@bbn/sidecar/${id}/file-browser`);
     activeSideCar = deferred();
 
     const syncedResponses = new Set<{ request: SidecarRequest, response: Deferred<SidecarResponse>; }>();
