@@ -199,7 +199,8 @@ export enum ServerTypes {
     LegacyPGF = "/minecraft/legacy/pgf/",
 }
 
-export const serverState = zod.enum([ "offline", "starting", "stopping", "running", "installing", "start", "stop", "kill", "restart", "moving" ]);
+export const serverPowerState = zod.enum(["starting", "installing", "stopping", "moving", "running", "offline"]);
+export const serverPowerActions = zod.enum(["start", "stop", "kill"]);
 
 export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-mum", "bbn-sgp" ]);
 
@@ -209,7 +210,7 @@ export const server = zod.object({
     type: zod.nativeEnum(ServerTypes),
     location,
     limits,
-    state: serverState,
+    state: serverPowerState,
     address: zod.string().optional(),
     ports: zod.number().array(),
     user: zod.string(),
@@ -328,6 +329,14 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
         path: zod.string(),
         chunk: zod.string().optional(),
         finish: zod.boolean()
+    }),
+    zod.object({
+        type: zod.literal("state"),
+        state: serverPowerActions
+    }),
+    zod.object({
+        type: zod.literal("auth"),
+        token: zod.string()
     })
 ]);
 
@@ -350,6 +359,33 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
         path: zod.string(),
         chunk: zod.string().optional(),
         finish: zod.boolean()
+    }),
+    zod.object({
+        type: zod.literal("state"),
+        state: serverPowerState
+    }),
+    zod.object({
+        type: zod.literal("auth"),
+        success: zod.boolean()
+    }),
+    zod.object({
+        type: zod.literal("log"),
+        chunk: zod.string(),
+        backlog: zod.boolean().optional()
+    }),
+    zod.object({
+        type: zod.literal("error"),
+        error: zod.string()
+    }),
+    zod.object({
+        type: zod.literal("resources"),
+        cpu: zod.number(),
+        memory: zod.number(),
+        used: zod.number(),
+        avail: zod.number(),
+    }),
+    zod.object({
+        type: zod.literal("next-chunk")
     })
 ]);
 
@@ -382,7 +418,7 @@ export type Meta = zod.infer<typeof meta>;
 export type OAuthApp = zod.infer<typeof oauthapp>;
 export type Payout = zod.infer<typeof payout>;
 export type KubeServer = zod.infer<typeof kubeServer>;
-export type PowerState = zod.infer<typeof serverState>;
+export type PowerState = zod.infer<typeof serverPowerState>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Server = zod.infer<typeof server>;
 export type ServerCreate = zod.infer<typeof serverCreate>;
