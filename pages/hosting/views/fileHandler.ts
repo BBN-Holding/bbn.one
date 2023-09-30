@@ -1,3 +1,6 @@
+
+import { readableStreamFromIterable } from "https://deno.land/std@0.200.0/streams/readable_stream_from_iterable.ts";
+
 /// <reference types="npm:@types/wicg-file-system-access"/>
 type FileWalkerEvent = { path: string; file: File; };
 
@@ -44,6 +47,4 @@ export async function countFileTree(handle: FileSystemHandle) {
     return count;
 }
 
-import { readableStreamFromIterable } from "https://deno.land/std@0.200.0/streams/readable_stream_from_iterable.ts";
-
-export const getFileStream = (handle: FileSystemHandle) => ReadableStream.from ? ReadableStream.from(walkFileTree(handle)) : readableStreamFromIterable(walkFileTree(handle));
+export const getFileStream = (handle: FileSystemHandle) => 'from' in ReadableStream && ReadableStream.from instanceof Function ? ReadableStream.from(walkFileTree(handle)) : readableStreamFromIterable(walkFileTree(handle));

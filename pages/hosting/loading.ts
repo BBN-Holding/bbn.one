@@ -133,13 +133,16 @@ export async function startSidecarConnection(id: string) {
         messageQueueSidecar = [];
     }
 
-    const ws = new WebSocket(`wss://sidecar.bbn.one/api/@bbn/sidecar/${id}/file-browser`);
+    const url = new URL(`wss://sidecar.bbn.one/api/@bbn/sidecar/${id}/ws`);
+    url.searchParams.set("TOKEN", localStorage[ "access-token" ]);
+    const ws = new WebSocket(url.toString());
     activeSideCar = deferred();
 
     const syncedResponses = new Set<{ request: SidecarRequest, response: Deferred<SidecarResponse>; }>();
 
     let watcher = 0;
     ws.onmessage = (event: MessageEvent<string>) => {
+        console.log(event.data);
         const msg = <SidecarResponse>JSON.parse(event.data);
         for (const iterator of syncedResponses) {
             if (iterator.request.type === "list" && msg.type === "list" && iterator.request.path == msg.path) {

@@ -1,3 +1,4 @@
+import { readableStreamFromIterable } from "https://deno.land/std@0.200.0/streams/readable_stream_from_iterable.ts";
 import { MessageType } from "https://deno.land/x/hmsys_connector@0.9.0/spec/ws.ts";
 import { API, count, HeavyReRender, LoadingSpinner, Navigation, placeholder, RenderItem, SliderInput, stupidErrorAlert } from "shared";
 import { sumOf } from "std/collections/sum_of.ts";
@@ -75,7 +76,7 @@ export function DropHandler(onData: (data: ReadableStream<FileEntry>, length: nu
 
                 const fileSizeCount = sumOf(await Promise.all(files.filter(it => it).map(it => countFileTree(it!))), it => it);
 
-                onData?.(ReadableStream.from(files)
+                onData?.(readableStreamFromIterable(files)
                     .pipeThrough(new TransformStream<FileSystemHandle | null, FileEntry>({
                         async transform(chunk, controller) {
                             if (!chunk) return;
@@ -281,7 +282,7 @@ export const hostingMenu = Navigation({
                                                 subtitle: "Drag and Drop files/folders here to upload and download them faster."
                                             }),
                                             path.map(list => Grid(
-                                                Box(Custom(loadingWheel() as Element as HTMLElement)).addClass(loading.map(it => it?  "loading" : "non-loading"), "loading-box"),
+                                                Box(Custom(loadingWheel() as Element as HTMLElement)).addClass(loading.map(it => it ? "loading" : "non-loading"), "loading-box"),
                                                 ...list.split("/").filter((_, index, list) => (list.length - 1) != index).map((item, currentIndex, list) => Button(item || 'home')
                                                     .setStyle(ButtonStyle.Secondary)
                                                     .onClick(() => {
