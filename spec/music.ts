@@ -347,7 +347,8 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
         list: zod.object({
             name: zod.string(),
             fileMimeType: zod.string().optional(),
-            lastModified: zod.number().optional()
+            lastModified: zod.number().optional(),
+            size: zod.number().optional(),
         }).array()
     }),
     zod.object({
