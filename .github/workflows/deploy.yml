@@ -57,6 +57,22 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Set up Kubectl
+        run: |
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x kubectl
+            sudo mv kubectl /usr/local/bin/
+
+      - name: Configure Kubernetes credentials
+        env:
+          KUBECONFIG_DATA: ${{ secrets.KUBE_CREDENTIALS }}
+        run: |
+            echo "$KUBECONFIG_DATA" | base64 --decode > kubeconfig.yaml
+
+      - name: Restart Rollout
+        run: |
+            kubectl rollout restart deployment bbnone-frontend -n bbnone --kubeconfig=kubeconfig.yaml
+
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
