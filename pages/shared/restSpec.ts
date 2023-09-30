@@ -1,4 +1,4 @@
-import { AdminStats, BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, PowerState, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
+import { AdminStats, BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
@@ -427,7 +427,7 @@ export const API = {
             })
                 .then(none())
                 .catch(reject),
-            power: (data: PowerState) => fetch(`${API.BASE_URL}hosting/${id}/power`, {
+            power: (data: PowerAction) => fetch(`${API.BASE_URL}hosting/${id}/power`, {
                 method: 'POST',
                 body: JSON.stringify({
                     signal: data

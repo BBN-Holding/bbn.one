@@ -296,7 +296,7 @@ export const hostingMenu = Navigation({
                                                     .addColumn("Name", (data) => Box(BIcon("globe2"), BasicLabel({ title: data.name }).addClass("small-text")).addClass("file-item"))
                                                     .addColumn("Last Modified", (data) => data.lastModified !== undefined ? Label(new Date(data.lastModified).toLocaleString()) : Box())
                                                     .addColumn("Type", (data) => data.fileMimeType !== undefined ? Label(data.fileMimeType) : Box())
-                                                    .addColumn("Size", (data) => data.size !== undefined ? Label(data.size) : Box())
+                                                    .addColumn("Size", (data) => data.size !== undefined ? Label(format(parseInt(data.size))).addClass('text-align-right') : Box())
                                                     .setRowClick((rowIndx) => {
                                                         const data = allFiles.getValue()[ rowIndx ];
                                                         console.log(data);
