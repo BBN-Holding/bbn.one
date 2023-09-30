@@ -282,14 +282,14 @@ export const hostingMenu = Navigation({
                                                 subtitle: "Drag and Drop files/folders here to upload and download them faster."
                                             }),
                                             path.map(list => Grid(
-                                                Box(Custom(loadingWheel() as Element as HTMLElement)).addClass(loading.map(it => it ? "loading" : "non-loading"), "loading-box"),
                                                 ...list.split("/").filter((_, index, list) => (list.length - 1) != index).map((item, currentIndex, list) => Button(item || 'home')
                                                     .setStyle(ButtonStyle.Secondary)
                                                     .onClick(() => {
                                                         path.setValue([ ...list.filter((_, listIndex) => listIndex <= currentIndex), '' ].join("/"));
                                                         loading.setValue(true);
                                                         listFiles(path.getValue()).finally(() => loading.setValue(false));
-                                                    }))
+                                                    })),
+                                                Box(Custom(loadingWheel() as Element as HTMLElement)).addClass(loading.map(it => it ? "loading" : "non-loading"), "loading-box"),
                                             ).setJustify("start").addClass("path-bar")).asRefComponent().removeFromLayout(),
                                             Entry(
                                                 new Table2(allFiles)
