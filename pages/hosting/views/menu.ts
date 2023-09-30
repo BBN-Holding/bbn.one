@@ -293,7 +293,7 @@ export const hostingMenu = Navigation({
                                             ).setJustify("start").addClass("path-bar")).asRefComponent().removeFromLayout(),
                                             Entry(
                                                 new Table2(allFiles)
-                                                    .addColumn("Name", (data) => Box(BIcon("globe2"), BasicLabel({ title: data.name }).addClass("small-text")).addClass("file-item"))
+                                                    .addColumn("Name", (data) => Box(BIcon(mapFiletoIcon(data)), BasicLabel({ title: data.name }).addClass("small-text")).addClass("file-item"))
                                                     .addColumn("Last Modified", (data) => data.lastModified !== undefined ? Label(new Date(data.lastModified).toLocaleString()) : Box())
                                                     .addColumn("Type", (data) => data.fileMimeType !== undefined ? Label(data.fileMimeType) : Box())
                                                     .addColumn("Size", (data) => data.size !== undefined ? Label(format(parseInt(data.size))).addClass('text-align-right') : Box())
@@ -755,4 +755,70 @@ function deleteServer(serverId: string) {
         }, Color.Critical)
         .allowUserClose()
         .open();
+}
+
+const fileNameIncludes: Record<string, string> = {
+    "world": "globe2",
+    "world_nether": "globe2",
+    "world_the_end": "globe2",
+    "logs": "body-text",
+    "plugins": "plug",
+    "mods": "box-seam",
+    "config": "gear"
+}
+
+// filetype-aac
+// filetype-ai
+// filetype-bmp
+// filetype-cs
+// filetype-css
+// filetype-csv
+// filetype-doc
+// filetype-docx
+// filetype-exe
+// filetype-gif
+// filetype-heic
+// filetype-html
+// filetype-java
+// filetype-jpg
+// filetype-js
+// filetype-json
+// filetype-jsx
+// filetype-key
+// filetype-m4p
+// filetype-md
+// filetype-mdx
+// filetype-mov
+// filetype-mp3
+// filetype-mp4
+// filetype-otf
+// filetype-pdf
+// filetype-php
+// filetype-png
+// filetype-ppt
+// filetype-pptx
+// filetype-psd
+// filetype-py
+// filetype-raw
+// filetype-rb
+// filetype-sass
+// filetype-scss
+// filetype-sh
+// filetype-sql
+// filetype-svg
+// filetype-tiff
+// filetype-tsx
+// filetype-ttf
+// filetype-txt
+// filetype-wav
+// filetype-woff
+// filetype-xls
+// filetype-xlsx
+// filetype-xml
+// filetype-yml
+function mapFiletoIcon(file: RemotePath) {
+    if (!file.fileMimeType) {
+        return fileNameIncludes[file.name] ?? "folder";
+    }
+    return "filetype-" + file.fileMimeType.split(';')[0].split('/')[1].split('-').at(-1);
 }
