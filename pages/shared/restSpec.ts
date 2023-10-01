@@ -350,6 +350,13 @@ export const API = {
                 })
                     .then(json<ProfileData[]>())
                     .catch(reject);
+            },
+            get: async (id: string) => {
+                return await fetch(`${API.BASE_URL}user/users/${id}`, {
+                    headers: headers(API.getToken())
+                })
+                    .then(json<ProfileData>())
+                    .catch(reject);
             }
         },
         groups: {

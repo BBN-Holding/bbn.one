@@ -1,7 +1,7 @@
 // This code Will be ported to webgen
 
 import { API, fileCache, Permission, stupidErrorAlert } from "shared";
-import { asPointer, Box, Button, Cache, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Style, SupportedThemes, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, Cache, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Style, SupportedThemes, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -64,17 +64,6 @@ export const activeUser = State({
     permission: <Permission[]>[],
     id: <string | undefined>undefined
 });
-
-export const profile = {
-    picture: (_id: string) => {
-        const data = asPointer(null);
-        return data.map(it => Image({ type: "loading" }, "Profile picture")).asRefComponent();
-    },
-    userName: (_id: string) => {
-        const data = asPointer(null);
-        return data.map(it => `(${_id})`);
-    }
-};
 
 export function permCheck(...per: Permission[]) {
     return API.isPermited(per, activeUser.permission);
@@ -200,7 +189,7 @@ export function stringToColor(str: string) {
     let color = '#';
     for (let i = 0; i < 3; i++) {
         const value = (hash >> (i * 8)) & 0xFF;
-        color += (`00${value.toString(16)}`).substring(-2);
+        color += (`00${value.toString(16)}`).slice(-2);
     }
     return color;
 }

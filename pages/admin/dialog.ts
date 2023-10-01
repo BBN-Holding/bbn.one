@@ -4,6 +4,7 @@ import reviewTexts from "../../data/reviewTexts.json" assert { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
 import { showPreviewImage } from "../_legacy/helper.ts";
 import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
+
 function css(data: TemplateStringsArray, ...expr: string[]) {
     const merge = data.map((x, i) => x + (expr[ i ] || ''));
 

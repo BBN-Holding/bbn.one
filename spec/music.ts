@@ -199,8 +199,8 @@ export enum ServerTypes {
     LegacyPGF = "/minecraft/legacy/pgf/",
 }
 
-export const serverPowerState = zod.enum(["starting", "installing", "stopping", "moving", "running", "offline"]);
-export const serverPowerActions = zod.enum(["start", "stop", "kill"]);
+export const serverPowerState = zod.enum([ "starting", "installing", "stopping", "moving", "running", "offline" ]);
+export const serverPowerActions = zod.enum([ "start", "stop", "kill" ]);
 
 export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-mum", "bbn-sgp" ]);
 
@@ -217,12 +217,6 @@ export const server = zod.object({
     identifier: zod.string().optional(),
     stateSince: zod.number().describe("unix timestamp"),
     labels: zod.enum([ "legacy", "suspended", "contact-support" ]).array()
-});
-
-export const kubeServer = server.extend({
-    kube: zod.object({
-        type: zod.string()
-    })
 });
 
 export const serverCreate = zod.object({
@@ -413,12 +407,10 @@ export type Artist = zod.infer<typeof artist>;
 export type BugReport = zod.infer<typeof bugReport>;
 export type Drop = zod.infer<typeof drop>;
 export type File = zod.infer<typeof file>;
-export type Limits = zod.infer<typeof limits>;
 export type Location = zod.infer<typeof location>;
 export type Meta = zod.infer<typeof meta>;
 export type OAuthApp = zod.infer<typeof oauthapp>;
 export type Payout = zod.infer<typeof payout>;
-export type KubeServer = zod.infer<typeof kubeServer>;
 export type PowerState = zod.infer<typeof serverPowerState>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Server = zod.infer<typeof server>;

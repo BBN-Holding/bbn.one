@@ -1,19 +1,20 @@
 import { serve } from "https://deno.land/x/esbuild_serve@1.3.0/mod.ts";
 
 const title = new Map(Object.entries({
-    "admin": "BBN Admin Panel",
+    "admin": "BBN Admin",
+    "admin/review": "BBN Music - Review Drop",
     "hosting": "BBN Hosting",
     "hosting/create": "BBN Hosting",
-    "settings": "BBN One - Settings",
+    "settings": "BBN - Settings",
     "wallet": "BBN Wallet",
     "music": "BBN Music",
     "music/new-drop": "BBN Music - New Drop",
     "music/edit": "BBN Music - Edit Drop",
-    "music/payout": "BBN Music - Payout",
-    "p/privacy-policy": "BBN One - Privacy Policy",
-    "p/terms-of-use": "BBN One - Terms of Use",
-    "p/imprint": "BBN One - Imprint",
-    "p/distribution-agreement": "BBN One - Distribution Agreement",
+    "music/payout": "BBN Music - Payouts",
+    "p/privacy-policy": "BBN - Privacy Policy",
+    "p/terms-of-use": "BBN - Terms of Use",
+    "p/imprint": "BBN - Imprint",
+    "p/distribution-agreement": "BBN - Distribution Agreement",
 }));
 
 serve({
@@ -55,6 +56,7 @@ serve({
         "hosting/create": "./pages/hosting/views/create.ts",
         "settings": "./pages/user/settings.ts",
         "admin": "./pages/admin/admin.ts",
+        "admin/review": "./pages/admin/review.ts",
         "wallet": "./pages/wallet/wallet.ts",
     },
     defaultTemplate: createTemplate,

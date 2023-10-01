@@ -72,7 +72,7 @@ export function DropHandler(onData: (data: ReadableStream<FileEntry>, length: nu
                 this.hovering.setValue(false);
                 const files = await Promise.all([ ...ev.dataTransfer.items ]
                     .filter(item => item.kind === 'file') // File means file or directory
-                    .map(item => item.getAsFileSystemHandle()));
+                    .map(item => item.getAsFileSystemHandle() as Promise<FileSystemHandle | FileSystemDirectoryHandle>));
 
                 const fileSizeCount = sumOf(await Promise.all(files.filter(it => it).map(it => countFileTree(it!))), it => it);
 
@@ -830,14 +830,14 @@ const otherFiletypes: Record<string, string> = {
 }
 function mapFiletoIcon(file: RemotePath) {
     if (!file.fileMimeType) {
-        return fileNameIncludes[file.name] ?? "folder";
+        return fileNameIncludes[ file.name ] ?? "folder";
     }
     //const filetype = file.fileMimeType.split(';')[0].split('/')[1].split('-').at(-1);
     const filetype = file.name.split('.').at(-1);
     if (!filetype) return "file-earmark";
     if (supportedFiletypes.includes(filetype))
         return "filetype-" + filetype;
-    if (otherFiletypes[filetype])
-        return otherFiletypes[filetype];
+    if (otherFiletypes[ filetype ])
+        return otherFiletypes[ filetype ];
     return "file-earmark";
 }
