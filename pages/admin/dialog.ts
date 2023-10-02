@@ -66,14 +66,12 @@ export const ApproveDialog = Dialog(() =>
                     cancelAction: () => {
                         ApproveDialog.close();
                     },
-                    submitAction: async ([ _, { data: { data: { respones, denyEdits } } }, { data: { data: { responseText } } } ]) => {
-                        const reason = <ReviewResponse[]>respones;
-
+                    submitAction: async ([ { data: { data: { responseText } } } ]) => {
                         await API.music.id(drop._id).review.post({
                             title: dropPatternMatching(reviewTexts.APPROVED.header, drop),
-                            reason,
+                            reason: [ "APPROVED" ],
                             body: rawTemplate(dropPatternMatching(responseText, drop)),
-                            denyEdits
+                            denyEdits: false
                         });
 
                         ApproveDialog.close();
@@ -125,11 +123,11 @@ export const DeclineDialog = Dialog(() =>
                     cancelAction: () => {
                         DeclineDialog.close();
                     },
-                    submitAction: async ([ { data: { data: { review } } }, { data: { data: { respones, denyEdits } } }, { data: { data: { responseText } } } ]) => {
+                    submitAction: async ([ { data: { data: { respones, denyEdits } } }, { data: { data: { responseText } } } ]) => {
                         const reason = <ReviewResponse[]>respones;
 
                         await API.music.id(drop._id).review.post({
-                            title: dropPatternMatching(reviewTexts[ review == "DECLINE" ? "REJECTED" : "APPROVED" ].header, drop),
+                            title: dropPatternMatching(reviewTexts.REJECTED.header, drop),
                             reason,
                             body: rawTemplate(dropPatternMatching(responseText, drop)),
                             denyEdits
