@@ -1,5 +1,5 @@
 import { API, Navigation, stupidErrorAlert } from "shared";
-import { Button, Card, Color, Grid, Label, MediaQuery, State, Table, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
+import { Button, Card, Color, Dialog, Grid, Label, MediaQuery, State, Table, TextInput, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
 import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
@@ -18,6 +18,35 @@ const state = State({
     loaded: false
 });
 
+async function handlePayoutResponse(amount: number) {
+    const response = await API.wallet.requestPayout(amount);
+    if (response.status === "fulfilled") {
+        if (response.value.type === "createAccount") {
+            Dialog(() => Vertical(
+                Label("To process your payout, you need to create a Stripe account."),
+                Label("Please click the button below to create your account.")
+            )).addButton("Create Account", () => {
+                if (response.value.type === "createAccount") {
+                    window.location.href = response.value.url;
+                    return "remove";
+                }
+            }).open();
+        } else if (response.value.type === "needDetails") {
+            Dialog(() => Vertical(
+                Label("To process your payout, you need to fill out missing information."),
+                Label("Please click the button below to provide the missing information.")
+            )).addButton("Provide Information", () => {
+                if (response.value.type === "needDetails") {
+                    window.location.href = response.value.url;
+                    return "remove";
+                }
+            }).open();
+        } else {
+            Dialog(() => {}).addButton("Close", "close").setTitle("Sucess!").onClose(() => refreshState()).open();
+        }
+    }
+}
+
 View(() => Vertical(
     DynaNavigation("Wallet"),
     state.$loaded.map(() => Vertical(
@@ -25,8 +54,15 @@ View(() => Vertical(
             title: "Your Wallet",
             actions: [
                 Button("Request Payout")
-                    .onPromiseClick(async () => {
-                        await API.wallet.requestPayout();
+                    .onClick(() => {
+                        const amount = State({ value: "" });
+                        Dialog(() => Vertical(
+                            Label("How much would you like to withdraw?"),
+                            TextInput("text", "Amount").sync(amount, "value"),
+                        )).addButton("Request", () => {
+                            handlePayoutResponse(Number(amount.value));
+                            return "remove";
+                        }).open();
                         alert(`Your payout request has been submitted.`);
                     })
                     .setColor(state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained! > 10 ? Color.Grayscaled : Color.Disabled)

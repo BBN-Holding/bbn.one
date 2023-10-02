@@ -1,4 +1,4 @@
-import { AdminStats, BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
+import { AdminStats, BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
@@ -219,11 +219,12 @@ export const API = {
         })
             .then(json<Wallet>())
             .catch(reject),
-        requestPayout: async () => await fetch(`${API.BASE_URL}wallet/request-payment`, {
+        requestPayout: async (amount: number) => await fetch(`${API.BASE_URL}wallet/request-payment`, {
             method: "POST",
-            headers: headers(API.getToken())
+            headers: headers(API.getToken()),
+            body: JSON.stringify({ amount })
         })
-            .then(json<{ success: boolean; }>())
+            .then(json<RequestPayoutResponse>())
             .catch(reject)
     }),
     oauth: ({

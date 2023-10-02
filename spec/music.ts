@@ -177,7 +177,8 @@ export const wallet = zod.object({
     balance: zod.object({
         restrained: zod.number(),
         unrestrained: zod.number()
-    }).optional()
+    }).optional(),
+    stripeAccountId: zod.string().optional(),
 });
 
 export const limits = zod.object({
@@ -384,6 +385,21 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
     })
 ]);
 
+export const requestPayoutResponse = zod.discriminatedUnion("type", [
+    zod.object({
+        type: zod.literal("createAccount"),
+        url: zod.string()
+    }),
+    zod.object({
+        type: zod.literal("needDetails"),
+        missingDetails: zod.array(zod.string()),
+        url: zod.string()
+    }),
+    zod.object({
+        type: zod.literal("success")
+    }),
+]);
+
 
 export const enum AuditTypes {
     StorePurchase = "store-purchase",
@@ -401,6 +417,7 @@ export enum OAuthScopes {
 
 export type AdminStats = { drops: { all: number, reviews: number, publishing: number, published: number, private: number, rejected: number, drafts: number; }, users: number, payouts: number, oauthApps: number, files: number, servers: number, wallets: number; };
 
+export type RequestPayoutResponse = zod.infer<typeof requestPayoutResponse>;
 export type SidecarResponse = zod.infer<typeof sidecarResponse>;
 export type SidecarRequest = zod.infer<typeof sidecarRequest>;
 export type Artist = zod.infer<typeof artist>;
