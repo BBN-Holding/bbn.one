@@ -63,7 +63,6 @@ View(() => Vertical(
                             handlePayoutResponse(Number(amount.value));
                             return "remove";
                         }).open();
-                        alert(`Your payout request has been submitted.`);
                     })
                     .setColor(state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained! > 10 ? Color.Grayscaled : Color.Disabled)
             ]

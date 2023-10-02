@@ -214,13 +214,13 @@ export const API = {
         }
     },
     wallet: ({
-        get: async () => await fetch(`${API.BASE_URL}wallet/get`, {
+        get: async () => await fetch(`${API.BASE_URL}wallet/`, {
             headers: headers(API.getToken())
         })
             .then(json<Wallet>())
             .catch(reject),
-        requestPayout: async (amount: number) => await fetch(`${API.BASE_URL}wallet/request-payment`, {
-            method: "POST",
+        requestPayout: async (amount: number) => await fetch(`${API.BASE_URL}wallet/`, {
+            method: "PUT",
             headers: headers(API.getToken()),
             body: JSON.stringify({ amount })
         })
