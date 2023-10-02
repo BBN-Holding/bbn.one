@@ -306,13 +306,13 @@ export const API = {
                     .then(json<Drop[]>())
                     .catch(reject);
             },
-        },
-        reviews: {
-            get: async () => await fetch(`${API.BASE_URL}admin/reviews`, {
-                headers: headers(API.getToken())
-            })
-                .then(json<Drop[]>())
-                .catch(reject),
+            user: async (id: string) => {
+                return await fetch(`${API.BASE_URL}admin/drops?user=${id}`, {
+                    headers: headers(API.getToken())
+                })
+                    .then(json<Drop[]>())
+                    .catch(reject)
+            },
         },
         payouts: {
             get: async () => await fetch(`${API.BASE_URL}admin/payouts`, {

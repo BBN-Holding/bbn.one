@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, createActionList, createBreadcrumb, createTagList, stupidErrorAlert } from "shared";
-import { Box, Grid, Horizontal, Label, Spacer, State, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
+import { Box, Entry, Grid, Horizontal, Label, Spacer, State, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -34,6 +34,7 @@ if (!data.id) {
 const state = State({
     drop: <Drop | undefined>undefined,
     user: <ProfileData | undefined>undefined,
+    drops: <Drop[] | undefined>undefined,
 })
 
 View(() => Vertical(
@@ -47,6 +48,9 @@ View(() => Vertical(
                 Label(`Email: ${user.profile.email}`),
                 Label(`ID: ${user._id}`),
             ).setGap("var(--gap)") : LoadingSpinner()).asRefComponent(),
+            Label("User's Drops", "h1").setAlign("center"),
+            state.$drops.map(drops => drops ? Vertical(
+                ...drops.map(drop => Entry({ title: drop.title, subtitle: drop.type }))).setGap("var(--gap)") : LoadingSpinner()).asRefComponent(),
         )
             .setAttribute("style", "border-style: solid;").setGap("var(--gap)").setBorderRadius("tiny"),
         state.$drop.map(drop => drop ? Navigation({
@@ -114,4 +118,7 @@ View(() => Vertical(
 ))
     .appendOn(document.body)
 
-renewAccessTokenIfNeeded().then(async () => state.drop = await API.music.id(data.id).get().then(stupidErrorAlert)).then(async () => state.user = await API.admin.users.get(state.drop!.user).then(stupidErrorAlert));
+renewAccessTokenIfNeeded()
+    .then(async () => state.drop = await API.music.id(data.id).get().then(stupidErrorAlert))
+    .then(async () => state.user = await API.admin.users.get(state.drop!.user).then(stupidErrorAlert))
+    .then(async () => state.drops = await API.admin.drops.user(state.drop!.user).then(stupidErrorAlert))
