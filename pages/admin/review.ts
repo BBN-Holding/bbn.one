@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, createActionList, createBreadcrumb, createTagList, stupidErrorAlert } from "shared";
-import { Box, Entry, Grid, Horizontal, Label, Spacer, State, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Color, Entry, Grid, Horizontal, Label, Spacer, State, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -8,6 +8,8 @@ import { ProfileData, RegisterAuthRefresh, changeThemeColor, permCheck, renewAcc
 import { ChangeDrop } from "../_legacy/music/changeDrop.ts";
 import { ChangeSongs } from "../_legacy/music/changeSongs.ts";
 import { DropTypeToText } from "../music/views/list.ts";
+import { ApproveDialog, DeclineDialog, dialogState } from "./dialog.ts";
+import { refreshState } from "./loading.ts";
 
 await RegisterAuthRefresh();
 
@@ -111,7 +113,30 @@ View(() => Vertical(
             }).asRefComponent())
             : LoadingSpinner()
         ).asRefComponent().setJustify("center").setAlign("center"),
-        Box(Label("dsdfffffffffffffffffffffffffffffff")).setAttribute("style", "border-style: solid;").setBorderRadius("tiny")
+        Vertical(
+            Label("Drop History", "h1").setAlign("center"),
+            Spacer(),
+            Horizontal(
+                Button("Decline")
+                    .setStyle(ButtonStyle.Inline)
+                    .setColor(Color.Colored)
+                    .addClass("tag")
+                    .onClick(() => {
+                        DeclineDialog.open();
+                        dialogState.drop = state.drop!;
+                        DeclineDialog.onClose(() => refreshState());
+                    }),
+                Button("Approve")
+                    .setStyle(ButtonStyle.Normal)
+                    .setColor(Color.Colored)
+                    .addClass("tag")
+                    .onClick(() => {
+                        ApproveDialog.open();
+                        dialogState.drop = state.drop!;
+                        ApproveDialog.onClose(() => refreshState());
+                    }),
+            ).setGap("var(--gap)"),
+        ).setAttribute("style", "border-style: solid;").setBorderRadius("tiny")
     )
         .setGap("var(--gap)")
         .setRawColumns("1fr 3fr 1fr"),

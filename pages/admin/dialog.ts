@@ -1,8 +1,7 @@
 import { API } from "shared";
-import { Box, Checkbox, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, Vertical, Wizard, createElement } from "webgen/mod.ts";
+import { Box, Checkbox, Custom, Dialog, Horizontal, Image, Label, Page, Spacer, State, Wizard, createElement } from "webgen/mod.ts";
 import reviewTexts from "../../data/reviewTexts.json" assert { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
-import { showPreviewImage } from "../_legacy/helper.ts";
 import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
 
 function css(data: TemplateStringsArray, ...expr: string[]) {
@@ -46,15 +45,6 @@ document.adoptedStyleSheets.push(css`
         outline: none;
     }
 `);
-const reviewActions = [
-    "APPROVED",
-    "DECLINE"
-];
-
-const reviewActionsText = [
-    "Approved",
-    "Decline/Reject"
-];
 
 const reviewResponse = [
     "Copyright bad",
@@ -62,11 +52,11 @@ const reviewResponse = [
 ];
 
 const rejectReasons = [ ReviewResponse.DeclineCopyright ];
-export const state = State({
+export const dialogState = State({
     drop: <Drop | "loading">"loading"
 });
-export const ReviewDialog = Dialog(() =>
-    state.$drop.map(drop =>
+export const ApproveDialog = Dialog(() =>
+    dialogState.$drop.map(drop =>
         Box(
             drop === "loading"
                 ? Box(Image({ type: "loading" }, "Loading...")).addClass("test")
@@ -74,7 +64,66 @@ export const ReviewDialog = Dialog(() =>
                     buttonAlignment: "bottom",
                     buttonArrangement: 'flex-end',
                     cancelAction: () => {
-                        ReviewDialog.close();
+                        ApproveDialog.close();
+                    },
+                    submitAction: async ([ _, { data: { data: { respones, denyEdits } } }, { data: { data: { responseText } } } ]) => {
+                        const reason = <ReviewResponse[]>respones;
+
+                        await API.music.id(drop._id).review.post({
+                            title: dropPatternMatching(reviewTexts.APPROVED.header, drop),
+                            reason,
+                            body: rawTemplate(dropPatternMatching(responseText, drop)),
+                            denyEdits
+                        });
+
+                        ApproveDialog.close();
+                    },
+                }, () => [
+                    Page({
+                        responseText: reviewTexts.APPROVED.content.join("\n"),
+                    }, (data) => [
+                        // TODO: Put this Component into webgen directly and clean it up
+                        Box(
+                            Label("Email Response"),
+                            Custom((() => {
+                                const ele = createElement("textarea");
+                                ele.rows = 10;
+                                ele.value = data.responseText;
+                                ele.style.resize = "vertical";
+                                ele.oninput = () => {
+                                    data.responseText = ele.value;
+                                };
+                                return ele;
+                            })()),
+                        )
+                            .addClass("winput", "grayscaled", "has-value", "textarea")
+                            .setMargin("0 0 .5rem"),
+                        Label("Preview")
+                            .setMargin("0 0 0.5rem"),
+                        data.$responseText
+                            .map(() => clientRender(dropPatternMatching(data.responseText, drop)))
+                            .asRefComponent(),
+                    ]).setValidator((v) => v.object({
+                        responseText: v.string().refine(x => render(dropPatternMatching(x, drop)).errors.length == 0, { message: "Invalid MJML" })
+                    }))
+                ]),
+        )
+            .setMargin("0 0 var(--gap)")
+    ).asRefComponent()
+)
+    .allowUserClose()
+    .setTitle("Approve Drop");
+
+export const DeclineDialog = Dialog(() =>
+    dialogState.$drop.map(drop =>
+        Box(
+            drop === "loading"
+                ? Box(Image({ type: "loading" }, "Loading...")).addClass("test")
+                : Wizard({
+                    buttonAlignment: "bottom",
+                    buttonArrangement: 'flex-end',
+                    cancelAction: () => {
+                        DeclineDialog.close();
                     },
                     submitAction: async ([ { data: { data: { review } } }, { data: { data: { respones, denyEdits } } }, { data: { data: { responseText } } } ]) => {
                         const reason = <ReviewResponse[]>respones;
@@ -86,54 +135,18 @@ export const ReviewDialog = Dialog(() =>
                             denyEdits
                         });
 
-                        ReviewDialog.close();
+                        DeclineDialog.close();
                     },
                     // deno-lint-ignore require-await
-                    onNextPage: async ({ PageData, PageID, Next }) => {
+                    onNextPage: async ({ PageData }) => {
                         const data = PageData();
-                        const current = PageID();
-                        const reviewPick = data[ 0 ].review;
-                        if (current == 0) {
-                            if (reviewPick == "APPROVED") {
-                                data[ 1 ].respones = [ ReviewResponse.Approved ];
-                                data[ 2 ].responseText = reviewTexts.APPROVED.content.join("\n");
-                                setTimeout(() => Next());
-                            }
-                        } else if (current == 1) {
-                            if (reviewPick == "APPROVED") return;
-                            data[ 2 ].responseText = reviewTexts.REJECTED.content.join("\n")
-                                .replace("{{REASON}}", (data[ 1 ].respones as Array<keyof typeof reviewTexts.REJECTED.reasonMap>)
-                                    .map(x => reviewTexts.REJECTED.reasonMap[ x ])
-                                    .filter(x => x)
-                                    .join(""));
-                        }
+                        data[ 1 ].responseText = reviewTexts.REJECTED.content.join("\n")
+                            .replace("{{REASON}}", (data[ 0 ].respones as Array<keyof typeof reviewTexts.REJECTED.reasonMap>)
+                                .map(x => reviewTexts.REJECTED.reasonMap[ x ])
+                                .filter(x => x)
+                                .join(""));
                     }
                 }, () => [
-                    Page({
-                        review: ""
-                    }, (data) => [
-                        Vertical(
-                            Horizontal(
-                                showPreviewImage(drop).addClass("image-preview").setWidth("35%"),
-                                Spacer()
-                            ),
-                            Vertical(
-                                Label(drop.title)
-                                    .setFont(1.4, 900),
-
-                                Label(`by ${drop.user}`)
-                                    .setFont(0.8),
-                            ),
-                            // TODO: Replace with a PickerInput (when api is available)
-                            DropDownInput("Select Review Action", reviewActions)
-                                .setRender((data) => reviewActionsText[ reviewActions.indexOf(data) ])
-                                .sync(data, "review")
-                        )
-                            .setGap("1rem")
-                            .setMargin("0 0 1rem")
-                    ]).setValidator((val) => val.object({
-                        review: val.any().refine(x => reviewActions.includes(x), "Missing Review Action.")
-                    })),
                     Page({
                         respones: [] as ReviewResponse[],
                         denyEdits: false
@@ -199,4 +212,5 @@ export const ReviewDialog = Dialog(() =>
             .setMargin("0 0 var(--gap)")
     ).asRefComponent()
 )
-    .setTitle("Finish up that Drop!");
+    .allowUserClose()
+    .setTitle("Decline Drop");

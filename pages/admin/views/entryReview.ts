@@ -1,8 +1,7 @@
-import { Box, Button, ButtonStyle, CenterV, Color, Dialog, DropDownInput, Entry, MIcon, State, Vertical } from "webgen/mod.ts";
+import { Button, ButtonStyle, Color, Dialog, DropDownInput, Entry, MIcon, State, Vertical } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { showPreviewImage } from "../../_legacy/helper.ts";
 import { API } from "../../shared/restSpec.ts";
-import { ReviewDialog, state } from "../dialog.ts";
 import { refreshState } from "../loading.ts";
 
 export function ReviewEntry(x: Drop) {
@@ -16,6 +15,7 @@ export function ReviewEntry(x: Drop) {
             .setColor(Color.Colored)
             .addClass("tag")
             .onClick(() => location.href = `/admin/review?id=${x._id}`))
+        //TODO: Move to review page
         .addSuffix(Button(MIcon("bug_report"))
             .setStyle(ButtonStyle.Inline)
             .setColor(Color.Colored)
@@ -27,26 +27,7 @@ export function ReviewEntry(x: Drop) {
                 changeTypeDialog.onClose(() => refreshState());
             })
         )
-        .addSuffix(Box(...ReviewActions(x)))
         .addPrefix(showPreviewImage(x).addClass("image-square"));
-}
-
-function ReviewActions(x: Drop) {
-    return [
-        ...x.type == "UNDER_REVIEW" ? [
-            CenterV(
-                Button(MIcon("done_all"))
-                    .setStyle(ButtonStyle.Inline)
-                    .setColor(Color.Colored)
-                    .addClass("tag")
-                    .onClick(() => {
-                        ReviewDialog.open();
-                        state.drop = x;
-                        ReviewDialog.onClose(() => refreshState());
-                    })
-            ),
-        ] : []
-    ];
 }
 
 const changeState = State({
