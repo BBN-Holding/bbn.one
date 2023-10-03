@@ -1,27 +1,27 @@
 {
-  "imports": {
-    "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/3af22e5/",
-    // "webgen/": "../WebGen/",
-    "std/": "https://deno.land/std@0.203.0/",
-    "shared": "./pages/shared/mod.ts"
-  },
-  "compilerOptions": {
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "dom.asynciterable",
-      "deno.ns",
-      "deno.unstable"
-    ]
-  },
-  "tasks": {
-    "start": "deno run -A serve.ts"
-  },
-  "lint": {
-    "files": {
-      "exclude": [
-        "dist"
-      ]
+    "imports": {
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/a23b2fb/",
+        // "webgen/": "../WebGen/",
+        "std/": "https://deno.land/std@0.203.0/",
+        "shared": "./pages/shared/mod.ts"
+    },
+    "compilerOptions": {
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "dom.asynciterable",
+            "deno.ns",
+            "deno.unstable"
+        ]
+    },
+    "tasks": {
+        "start": "deno run -A serve.ts"
+    },
+    "lint": {
+        "files": {
+            "exclude": [
+                "dist"
+            ]
+        }
     }
-  }
 }
