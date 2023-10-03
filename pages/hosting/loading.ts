@@ -127,6 +127,10 @@ export const currentFiles = asPointer(<RemotePath[]>[]);
 export const currentPath = asPointer("/");
 export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
 let activeSideCar: Deferred<void> | undefined = undefined;
+export const isSidecarConnect = asPointer(false);
+export function stopSidecarConnection() {
+    activeSideCar?.resolve();
+}
 export async function startSidecarConnection(id: string) {
     if (activeSideCar) {
         activeSideCar.resolve();
@@ -159,14 +163,18 @@ export async function startSidecarConnection(id: string) {
             syncedResponses.add(msg);
             ws.send(JSON.stringify(msg.request));
         }, 100);
+        isSidecarConnect.setValue(true);
     };
 
     ws.onclose = () => {
+        if (!activeSideCar) return;
+        isSidecarConnect.setValue(false);
         clearInterval(watcher);
         startSidecarConnection(id);
     };
 
     await activeSideCar;
+    ws.close();
     activeSideCar = undefined;
 }
 

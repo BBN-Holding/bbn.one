@@ -43,3 +43,11 @@
 .hidden {
     display: none;
 }
+
+.disconnected-screen {
+    min-height: 50vh;
+    display: grid;
+    place-items: center;
+    font-size: 2rem;
+    font-weight: 500;
+}

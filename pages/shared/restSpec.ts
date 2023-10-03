@@ -312,7 +312,7 @@ export const API = {
                     headers: headers(API.getToken())
                 })
                     .then(json<Drop[]>())
-                    .catch(reject)
+                    .catch(reject);
             },
         },
         payouts: {

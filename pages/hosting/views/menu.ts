@@ -1,24 +1,28 @@
-import { readableStreamFromIterable } from "https://deno.land/std@0.200.0/streams/readable_stream_from_iterable.ts";
 import { MessageType } from "https://deno.land/x/hmsys_connector@0.9.0/spec/ws.ts";
 import { API, count, HeavyReRender, LoadingSpinner, Navigation, placeholder, RenderItem, SliderInput, stupidErrorAlert } from "shared";
-import { sumOf } from "std/collections/sum_of.ts";
 import { format } from "std/fmt/bytes.ts";
 import { dirname } from "std/path/mod.ts";
-import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, loadingWheel, MediaQuery, MIcon, Pointable, Pointer, ref, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
+import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, loadingWheel, MediaQuery, MIcon, ref, refMerge, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
 import { AuditTypes, PowerState, Server, ServerDetails } from "../../../spec/music.ts";
 import { activeUser, showProfilePicture } from "../../_legacy/helper.ts";
 import { MB, state } from "../data.ts";
-import { currentDetailsSource, currentDetailsTarget, currentFiles, currentPath, listFiles, messageQueue, RemotePath, startSidecarConnection, streamingPool, uploadFile } from "../loading.ts";
+import { currentDetailsSource, currentDetailsTarget, currentFiles, currentPath, isSidecarConnect, listFiles, messageQueue, RemotePath, startSidecarConnection, stopSidecarConnection, streamingPool, uploadFile } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import './details.css';
+import { DropHandler } from "./dropHandler.ts";
 import './fileBrowser.css';
-import { countFileTree, FileEntry, getFileStream } from "./fileHandler.ts";
+import { FileEntry } from "./fileHandler.ts";
+import { fileTypeName } from "./fileTypeName.ts";
+import { mapFiletoIcon } from "./icon.ts";
 import './list.css';
 import { moveDialog } from "./list.ts";
 import './table2.css';
+import { Table2 } from "./table2.ts";
 import { TerminalComponent } from "./terminal.ts";
+import { GridItem } from "./types.ts";
+import { calculateUptime } from "./uptime.ts";
 type StateActions = {
     [ type in PowerState ]: Component | IconButtonComponent;
 };
@@ -40,153 +44,7 @@ const auditLabels = {
 export const hostingButtons = asPointer(<Component[]>[]);
 export const auditLogs = asPointer(<RenderItem[]>[]);
 
-const supportsFileSystemAccessAPI =
-    'getAsFileSystemHandle' in DataTransferItem.prototype;
-const supportsWebkitGetAsEntry =
-    'webkitGetAsEntry' in DataTransferItem.prototype;
-
-export function DropHandler(onData: (data: ReadableStream<FileEntry>, length: number) => void, component: Component) {
-    return new class extends Component {
-        hovering = asPointer(false);
-        constructor() {
-            super();
-            this.addClass(this.hovering.map(it => it ? "hovering" : "default"), "drop-area");
-            this.wrapper.ondragover = (ev) => {
-                ev.preventDefault();
-                this.hovering.setValue(true);
-            };
-            this.wrapper.ondragleave = (ev) => {
-                ev.preventDefault();
-                console.log(ev);
-                if (ev.target && !this.wrapper.contains(ev.relatedTarget as Node))
-                    this.hovering.setValue(false);
-            };
-            this.wrapper.ondrop = async (ev) => {
-                ev.preventDefault();
-                if (!supportsFileSystemAccessAPI) {
-                    alert("Please upgrade you Browser to use the latest features");
-                    return;
-                }
-                if (!supportsFileSystemAccessAPI && !supportsWebkitGetAsEntry || !ev.dataTransfer) return;
-
-                this.hovering.setValue(false);
-                const files = await Promise.all([ ...ev.dataTransfer.items ]
-                    .filter(item => item.kind === 'file') // File means file or directory
-                    .map(item => item.getAsFileSystemHandle() as Promise<FileSystemHandle | FileSystemDirectoryHandle>));
-
-                const fileSizeCount = sumOf(await Promise.all(files.filter(it => it).map(it => countFileTree(it!))), it => it);
-
-                onData?.(readableStreamFromIterable(files)
-                    .pipeThrough(new TransformStream<FileSystemHandle | null, FileEntry>({
-                        async transform(chunk, controller) {
-                            if (!chunk) return;
-                            for await (const iterator of getFileStream(chunk)) {
-                                controller.enqueue(iterator);
-                            }
-                        }
-                    })), fileSizeCount);
-            };
-            this.wrapper.append(component.draw());
-        }
-    };
-}
-
 const uploadingFiles = asPointer(<Record<string, number | "failed">>{});
-
-type TableColumn<Data> = {
-    size: 'fill' | 'auto',
-    converter: (data: Data) => Component;
-    title: Pointer<string>;
-    sorting: Pointer<TableSorting | undefined>;
-};
-
-enum TableSorting {
-    Descending = "descending",
-    Ascending = "ascending",
-    Available = "available"
-}
-
-type RowClickHandler = (rowIndex: number, columnIndex: number) => void;
-
-export class Table2<Data> extends Component {
-    private columns: Pointer<TableColumn<Data>[]> = asPointer([]);
-    private hoveredRow: Pointer<number | undefined> = asPointer(undefined);
-    private rowClick: Pointer<RowClickHandler | undefined> = asPointer(undefined);
-    constructor(dataSource: Pointer<Data[]>) {
-        super();
-        this.wrapper.append(this.columns.map(columns => Box(
-            ...columns.map((column, columnIndex) => Box(
-                this.header(column),
-                dataSource.map(rows =>
-                    Box(
-                        ...rows.map((row, rowIndex) => {
-                            const hovering = refMerge({
-                                clickEnabled: this.rowClick.map(it => !!it),
-                                hoveredRow: this.hoveredRow
-                            });
-                            const item = Box(column.converter(row))
-                                .addClass(rowIndex % 2 == 0 ? "even" : "odd", "item", columnIndex == 0 ? "left" : (columnIndex == columns.length - 1 ? "right" : "middle"))
-                                .addClass(hovering.map(({ clickEnabled, hoveredRow }) => clickEnabled && hoveredRow === rowIndex ? "hover" : "non-hover"))
-                                .draw();
-                            item.addEventListener("pointerenter", () => this.hoveredRow.setValue(rowIndex));
-                            item.addEventListener("pointerleave", () => this.hoveredRow.setValue(undefined));
-                            item.onclick = () => {
-                                this.rowClick.getValue()?.(rowIndex, columnIndex);
-                            };
-                            return Custom(item);
-                        })
-                    )
-                        .removeFromLayout()
-                )
-                    .asRefComponent()
-                    .removeFromLayout()
-            ).addClass("column"))
-        ).addClass("wgtable")).asRefComponent().draw());
-    }
-
-    setColumnTemplate(layout: Pointable<string>) {
-        asPointer(layout).listen(value => {
-            this.wrapper.style.setProperty("--wgtable-column-template", value);
-        });
-        return this;
-    }
-
-    addColumn(title: Pointer<string> | string, converter: TableColumn<Data>[ "converter" ], sorting?: Pointer<undefined | TableSorting> | undefined | TableSorting, size: TableColumn<Data>[ "size" ] = 'auto') {
-        this.columns.setValue([ ...this.columns.getValue(), <TableColumn<Data>>{
-            converter,
-            size,
-            title: asPointer(title ?? ""),
-            sorting: asPointer(sorting)
-        } ]);
-        return this;
-    }
-
-    setRowClick(clickHandler: Pointable<RowClickHandler>) {
-        asPointer(clickHandler).listen(value => this.rowClick.setValue(value));
-        return this;
-    }
-
-    private header(column: TableColumn<Data>) {
-        return Box(
-            Label(column.title)
-        ).addClass("header");
-    }
-}
-
-function refMerge<PointerRecord extends Record<string, Pointer<unknown>>>(data: PointerRecord): Pointer<{ [ P in keyof PointerRecord ]: ReturnType<PointerRecord[ P ][ "getValue" ]> }> {
-    const loadData = () => Object.fromEntries(Object.entries(data).map(([ key, value ]) => [ key, value.getValue() ])) as { [ P in keyof PointerRecord ]: ReturnType<PointerRecord[ P ][ "getValue" ]> };
-
-    const internalValue = asPointer(loadData());
-    for (const iterator of Object.values(data)) {
-        let firstTime = true;
-        iterator.listen(() => {
-            if (firstTime)
-                return firstTime = false;
-            internalValue.setValue(loadData());
-        });
-    }
-    return internalValue;
-}
 
 const allFiles = refMerge({
     uploadingFiles: uploadingFiles
@@ -203,6 +61,24 @@ const allFiles = refMerge({
 
 const path = asPointer("");
 const loading = asPointer(false);
+const droppingFileHandler = async (files: ReadableStream<FileEntry>, count: number): Promise<void> => {
+    console.log("Uploading", count, "files");
+    for await (const _iterator of files) {
+        await new Promise<void>((done) => {
+            uploadFile(_iterator.path, _iterator.file, (ratio) => {
+                console.log(_iterator.path, ratio);
+                uploadingFiles.setValue({
+                    ...uploadingFiles.getValue(),
+                    [ "/" + _iterator.path ]: ratio
+                });
+                if (ratio >= 1) {
+                    done();
+                }
+            });
+        });
+        uploadingFiles.setValue(Object.fromEntries(Object.entries(uploadingFiles.getValue()).filter(([ path ]) => path != _iterator.path)));
+    }
+};
 export const hostingMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     actions: hostingButtons,
@@ -249,79 +125,48 @@ export const hostingMenu = Navigation({
                         title: "Storage",
                         children: [
                             {
-                                id: "files",
-                                title: "Files",
-                                subtitle: "Upload and manage your files.",
-                                clickHandler: async () => {
-                                    await listFiles("/");
-                                    path.setValue("/");
-                                },
-                                children: [
-                                    DropHandler(
-                                        async (files, count) => {
-                                            console.log("Uploading", count, "files");
-                                            for await (const _iterator of files) {
-                                                await new Promise<void>((done) => {
-                                                    uploadFile(_iterator.path, _iterator.file, (ratio) => {
-                                                        console.log(_iterator.path, ratio);
-                                                        uploadingFiles.setValue({
-                                                            ...uploadingFiles.getValue(),
-                                                            [ "/" + _iterator.path ]: ratio
-                                                        });
-                                                        if (ratio >= 1) {
-                                                            done();
-                                                        }
-                                                    });
-                                                });
-                                                uploadingFiles.setValue(Object.fromEntries(Object.entries(uploadingFiles.getValue()).filter(([ path ]) => path != _iterator.path)));
-                                            }
-                                        },
-                                        Grid(
-                                            BasicLabel({
-                                                title: "File Browser",
-                                                subtitle: "Drag and Drop files/folders here to upload and download them faster."
-                                            }),
-                                            path.map(list => Grid(
-                                                ...list.split("/").filter((_, index, list) => (list.length - 1) != index).map((item, currentIndex, list) => Button(item || 'home')
-                                                    .setStyle(ButtonStyle.Secondary)
-                                                    .onClick(() => {
-                                                        path.setValue([ ...list.filter((_, listIndex) => listIndex <= currentIndex), '' ].join("/"));
-                                                        loading.setValue(true);
-                                                        listFiles(path.getValue()).finally(() => loading.setValue(false));
-                                                    })),
-                                                Box(Custom(loadingWheel() as Element as HTMLElement)).addClass(loading.map(it => it ? "loading" : "non-loading"), "loading-box"),
-                                            ).setJustify("start").addClass("path-bar")).asRefComponent().removeFromLayout(),
-                                            Entry(
-                                                new Table2(allFiles)
-                                                    .addColumn("Name", (data) => Box(BIcon(mapFiletoIcon(data)), BasicLabel({ title: data.name }).addClass("small-text")).addClass("file-item"))
-                                                    .addColumn("Last Modified", (data) => data.lastModified !== undefined ? Label(new Date(data.lastModified).toLocaleString()) : Box())
-                                                    .addColumn("Type", (data) => data.fileMimeType !== undefined ? Label(data.fileMimeType) : Box())
-                                                    .addColumn("Size", (data) => data.size !== undefined ? Label(format(parseInt(data.size))).addClass('text-align-right') : Box())
-                                                    .setRowClick((rowIndx) => {
-                                                        const data = allFiles.getValue()[ rowIndx ];
-                                                        console.log(data);
-                                                        if (data.fileMimeType === undefined) {
-                                                            path.setValue(path.getValue() + data.name + "/");
-                                                            loading.setValue(true);
-                                                            listFiles(path.getValue()).finally(() => loading.setValue(false));
-                                                        } else {
-                                                            Dialog(() => Label(JSON.stringify(data))).setTitle("File Info").allowUserClose().open();
-                                                        }
-                                                    })
-                                            ).addClass("file-browser")
-                                        ),
-                                    ).addClass("drop-area")
-
-                                ]
-                            },
-                            {
                                 id: "database",
-                                title: "Database",
+                                title: "Manage Databases",
                                 subtitle: "Create a MariaDB Database",
                                 suffix: Label("Coming Soon")
                                     .setFont(1, 500)
                                     .setMargin("0 1rem")
-                            }
+                            },
+                            {
+                                id: "assets",
+                                title: "Add Assets",
+                                subtitle: "Get new Plugins, Mods and Datapacks",
+                                suffix: Label("Coming Soon")
+                                    .setFont(1, 500)
+                                    .setMargin("0 1rem")
+                            },
+                            DropHandler(
+                                droppingFileHandler,
+                                Grid(
+                                    Entry(Grid(
+                                        BasicLabel({
+                                            title: "File Browser",
+                                            subtitle: "Drag and Drop files/folders here to upload and download them faster."
+                                        }).setMargin("0 0 1rem 0"),
+                                        pathNavigation(),
+                                        new Table2(allFiles)
+                                            .addColumn("Name", (data) => Box(BIcon(mapFiletoIcon(data)), BasicLabel({ title: data.name }).addClass("small-text")).addClass("file-item"))
+                                            .addColumn("Last Modified", (data) => data.lastModified !== undefined ? Label(new Date(data.lastModified).toLocaleString()) : Box())
+                                            .addColumn("Type", (data) => data.fileMimeType !== undefined ? Label(fileTypeName(data.fileMimeType)) : Label("Folder"))
+                                            .addColumn("Size", (data) => data.size !== undefined ? Label(format(parseInt(data.size))).addClass('text-align-right') : Box())
+                                            .setRowClick((rowIndx) => {
+                                                const data = allFiles.getValue()[ rowIndx ];
+                                                if (data.fileMimeType === undefined) {
+                                                    path.setValue(`${path.getValue() + data.name}/`);
+                                                    loading.setValue(true);
+                                                    listFiles(path.getValue()).finally(() => loading.setValue(false));
+                                                } else {
+                                                    Dialog(() => Label(JSON.stringify(data))).setTitle("File Info").allowUserClose().open();
+                                                }
+                                            })
+                                    )).addClass("file-browser")
+                                ),
+                            ).addClass("drop-area")
                         ]
                     },
                     {
@@ -341,22 +186,6 @@ export const hostingMenu = Navigation({
                                 subtitle: "General Server Settings",
                                 clickHandler: () => editServer(server)
                             },
-                            {
-                                id: "extenions",
-                                title: "Download Content",
-                                subtitle: "Get access to Mods, Plugins or Datapacks!",
-                                suffix: Label("Coming Soon")
-                                    .setFont(1, 500)
-                                    .setMargin("0 1rem")
-                            },
-                            // {
-                            //     id: "worlds",
-                            //     title: "Manage Worlds",
-                            //     subtitle: "Download, Reset or Upload your worlds.",
-                            //     suffix: Label("Coming Soon")
-                            //         .setFont(1, 500)
-                            //         .setMargin("0 1rem")
-                            // },
                             {
                                 id: "core",
                                 title: "Server Settings",
@@ -403,7 +232,7 @@ state.$loaded.listen(loaded => {
 });
 
 hostingMenu.path.listen(path => {
-    if ([ "servers/", "resources/", "legacy-servers/" ].includes(path))
+    if ([ "servers/", "resources/", "legacy-servers/" ].includes(path)) {
         hostingButtons.setValue(
             [
                 Button("Start new Server")
@@ -413,13 +242,25 @@ hostingMenu.path.listen(path => {
                     })
             ]
         );
+        stopSidecarConnection();
+    }
     else
         hostingButtons.setValue([]);
 });
-type GridItem = Component | [ settings: {
-    width?: number | undefined;
-    heigth?: number | undefined;
-}, element: Component ];
+
+
+function pathNavigation(): Component | [ settings: { width?: number | undefined; heigth?: number | undefined; }, element: Component ] {
+    return path.map(list => Grid(
+        ...list.split("/").filter((_, index, list) => (list.length - 1) != index).map((item, currentIndex, list) => Button(item || 'home')
+            .setStyle(ButtonStyle.Secondary)
+            .onClick(() => {
+                path.setValue([ ...list.filter((_, listIndex) => listIndex <= currentIndex), '' ].join("/"));
+                loading.setValue(true);
+                listFiles(path.getValue()).finally(() => loading.setValue(false));
+            })),
+        Box(Custom(loadingWheel() as Element as HTMLElement)).addClass(loading.map(it => it ? "loading" : "non-loading"), "loading-box")
+    ).setJustify("start").addClass("path-bar")).asRefComponent().removeFromLayout();
+}
 
 export function auditEntry(audit: any): RenderItem[] {
     return audit.map((x: any) => Entry(Grid(
@@ -458,36 +299,6 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
     })[ state ] ?? Box()))
         .asRefComponent()
         .addClass(isMobile.map(it => it ? "small" : "normal"), "icon-buttons-list", "action-list");
-}
-
-const SECOND = 1000; // Milliseconds
-const MINUTE = 60 * SECOND;
-const HOUR = 60 * MINUTE;
-const DAY = 24 * HOUR;
-
-function formatTime(duration: number): string {
-    if (duration < 5 * SECOND) {
-        return 'now';
-    } else if (duration < MINUTE) {
-        return `${Math.floor(duration / SECOND)}s`;
-    } else if (duration < 20 * MINUTE) {
-        const minutes = Math.floor(duration / MINUTE);
-        const seconds = Math.floor((duration % MINUTE) / SECOND);
-        return `${minutes}min ${seconds}s`;
-    } else if (duration < HOUR) {
-        return `${Math.floor(duration / MINUTE)}min`;
-    } else if (duration < 72 * HOUR) {
-        return `${Math.floor(duration / HOUR)}h`;
-    } else {
-        const days = Math.floor(duration / DAY);
-        const hours = Math.floor((duration % DAY) / HOUR);
-        return `${days}d ${hours}h`;
-    }
-}
-
-function calculateUptime(startDate: Date): string {
-    const duration = new Date().getTime() - startDate.getTime();
-    return formatTime(duration);
 }
 
 const time = asPointer(new Date().getTime());
@@ -552,7 +363,7 @@ export function serverDetails(server: StateHandler<Server>) {
             currentDetailsTarget.setValue(undefined);
     });
 
-    return HeavyReRender(isMobile, mobile => {
+    return isSidecarConnect.map((connected) => !server.identifier && !connected ? DisconnectedScreen() : HeavyReRender(isMobile, mobile => {
         const items = Grid(
             ...(mobile ? <Component[]>[
                 Entry(Grid(
@@ -640,7 +451,9 @@ export function serverDetails(server: StateHandler<Server>) {
                     Entry({
                         title: "Storage",
                         subtitle: "Manage your persistence",
-                    }).onClick(() => {
+                    }).onClick(async () => {
+                        await listFiles("/");
+                        path.setValue("/");
                         hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/storage/`);
                     }).addClass("small"),
                     Entry({
@@ -675,7 +488,16 @@ export function serverDetails(server: StateHandler<Server>) {
             items.setRawColumns("69% auto");
 
         return items;
-    });
+    })).asRefComponent();
+}
+
+function DisconnectedScreen(): Component {
+    return Grid(
+        Grid(
+            Label("Connecting to server...", "h1"),
+            Label("Waiting for server availability")
+        ).setJustify("center")
+    ).addClass("disconnected-screen");
 }
 
 function editServer(server: StateHandler<Server>) {
@@ -706,6 +528,7 @@ function editServer(server: StateHandler<Server>) {
                     .sync(data, "memory")
                     .setRender((val) => format(val * MB)),
                 SliderInput("Disk (Storage)")
+                    .setMin(server.identifier ? 0 : server.limits.disk)
                     .setMax(state.meta.limits.disk - state.meta.used.disk + server.limits.disk)
                     .sync(data, "disk")
                     .setRender((val) => format(val * MB)),
@@ -755,89 +578,4 @@ function deleteServer(serverId: string) {
         }, Color.Critical)
         .allowUserClose()
         .open();
-}
-
-const fileNameIncludes: Record<string, string> = {
-    "world": "globe2",
-    "world_nether": "globe2",
-    "world_the_end": "globe2",
-    "logs": "body-text",
-    "plugins": "plug",
-    "mods": "box-seam",
-    "config": "gear"
-}
-
-const supportedFiletypes = [
-    'aac',
-    'ai',
-    'bmp',
-    'cs',
-    'css',
-    'csv',
-    'doc',
-    'docx',
-    'exe',
-    'gif',
-    'heic',
-    'html',
-    'java',
-    'jpg',
-    'js',
-    'json',
-    'jsx',
-    'key',
-    'm4p',
-    'md',
-    'mdx',
-    'mov',
-    'mp3',
-    'mp4',
-    'otf',
-    'pdf',
-    'php',
-    'png',
-    'ppt',
-    'pptx',
-    'psd',
-    'py',
-    'raw',
-    'rb',
-    'sass',
-    'scss',
-    'sh',
-    'sql',
-    'svg',
-    'tiff',
-    'tsx',
-    'ttf',
-    'txt',
-    'wav',
-    'woff',
-    'xls',
-    'xlsx',
-    'xml',
-    'yml',
-]
-
-const otherFiletypes: Record<string, string> = {
-    'zip': 'archive',
-    'tar': 'archive',
-    'gz': 'archive',
-    '7z': 'archive',
-    'rar': 'archive',
-    'yaml': 'filetype-yml',
-    'jar': 'filetype-java',
-}
-function mapFiletoIcon(file: RemotePath) {
-    if (!file.fileMimeType) {
-        return fileNameIncludes[ file.name ] ?? "folder";
-    }
-    //const filetype = file.fileMimeType.split(';')[0].split('/')[1].split('-').at(-1);
-    const filetype = file.name.split('.').at(-1);
-    if (!filetype) return "file-earmark";
-    if (supportedFiletypes.includes(filetype))
-        return "filetype-" + filetype;
-    if (otherFiletypes[ filetype ])
-        return otherFiletypes[ filetype ];
-    return "file-earmark";
 }

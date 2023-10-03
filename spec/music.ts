@@ -324,14 +324,6 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
         path: zod.string(),
         chunk: zod.string().optional(),
         finish: zod.boolean()
-    }),
-    zod.object({
-        type: zod.literal("state"),
-        state: serverPowerActions
-    }),
-    zod.object({
-        type: zod.literal("auth"),
-        token: zod.string()
     })
 ]);
 
@@ -355,10 +347,6 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
         path: zod.string(),
         chunk: zod.string().optional(),
         finish: zod.boolean()
-    }),
-    zod.object({
-        type: zod.literal("state"),
-        state: serverPowerState
     }),
     zod.object({
         type: zod.literal("auth"),
