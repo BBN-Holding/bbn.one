@@ -389,7 +389,7 @@ export const requestPayoutResponse = zod.discriminatedUnion("type", [
 ]);
 
 
-export const enum AuditTypes {
+export enum AuditTypes {
     StorePurchase = "store-purchase",
     ServerCreate = "server-create",
     ServerPowerChange = "server-power-change",
