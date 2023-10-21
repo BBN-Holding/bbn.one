@@ -328,7 +328,11 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("command"),
         command: zod.string()
-    })
+    }),
+    zod.object({
+        type: zod.literal("delete"),
+        path: zod.string()
+    }),
 ]);
 
 export const sidecarResponse = zod.discriminatedUnion("type", [
@@ -400,6 +404,7 @@ export enum AuditTypes {
     ServerDelete = "server-delete",
     FileUpload = "file-upload",
     FileDelete = "file-delete",
+    FileRead = "file-read",
 }
 
 export const audit = zod.discriminatedUnion("type", [
@@ -445,6 +450,11 @@ export const audit = zod.discriminatedUnion("type", [
     }),
     zod.object({
         type: zod.literal(AuditTypes.FileDelete),
+        user: zod.string(),
+        file: zod.string(),
+    }),
+    zod.object({
+        type: zod.literal(AuditTypes.FileRead),
         user: zod.string(),
         file: zod.string(),
     }),
