@@ -405,6 +405,7 @@ export enum AuditTypes {
     FileUpload = "file-upload",
     FileDelete = "file-delete",
     FileRead = "file-read",
+    CommandExecute = "command-execute",
 }
 
 export const audit = zod.discriminatedUnion("type", [
@@ -457,6 +458,12 @@ export const audit = zod.discriminatedUnion("type", [
         type: zod.literal(AuditTypes.FileRead),
         user: zod.string(),
         file: zod.string(),
+    }),
+    zod.object({
+        type: zod.literal(AuditTypes.CommandExecute),
+        user: zod.string(),
+        server: zod.string(),
+        command: zod.string(),
     }),
 ]);
 
