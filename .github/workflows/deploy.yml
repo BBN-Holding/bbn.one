@@ -71,4 +71,4 @@ jobs:
 
       - name: Restart Rollout
         run: |
-          kubectl rollout restart deployment bbnone-frontend -n bbnone --kubeconfig=kubeconfig.yaml
+          kubectl rollout restart deployment bbnone-frontend -n bbn-one --kubeconfig=kubeconfig.yaml
