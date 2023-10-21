@@ -1,6 +1,7 @@
 import { HmRequest, LoginRequest, MessageType, PublishResponse, SubscribeRequest, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
 import { Deferred, deferred } from "std/async/deferred.ts";
+import { delay } from "std/async/delay.ts";
 import { State, asPointer, lazyInit } from "webgen/mod.ts";
 import { Server, ServerDetails, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
@@ -166,8 +167,10 @@ export async function startSidecarConnection(id: string) {
         isSidecarConnect.setValue(true);
     };
 
-    ws.onclose = () => {
+    ws.onclose = async () => {
         if (!activeSideCar) return;
+        await delay(500);
+        activeSideCar = undefined;
         isSidecarConnect.setValue(false);
         clearInterval(watcher);
         startSidecarConnection(id);
