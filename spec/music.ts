@@ -324,6 +324,10 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
         path: zod.string(),
         chunk: zod.string().optional(),
         finish: zod.boolean()
+    }),
+    zod.object({
+        type: zod.literal("command"),
+        command: zod.string()
     })
 ]);
 
