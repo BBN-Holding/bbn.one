@@ -392,14 +392,63 @@ export const requestPayoutResponse = zod.discriminatedUnion("type", [
     }),
 ]);
 
-
 export enum AuditTypes {
     StorePurchase = "store-purchase",
     ServerCreate = "server-create",
     ServerPowerChange = "server-power-change",
     ServerModify = "server-modify",
-    ServerDelete = "server-delete"
+    ServerDelete = "server-delete",
+    FileUpload = "file-upload",
+    FileDelete = "file-delete",
 }
+
+export const audit = zod.discriminatedUnion("type", [
+    zod.object({
+        type: zod.literal(AuditTypes.StorePurchase),
+        user: zod.string(),
+        item: zod.enum([ "memory", "disk", "cpu", "slot" ]),
+    }),
+    zod.object({
+        type: zod.literal(AuditTypes.ServerCreate),
+        user: zod.string(),
+        server: zod.string(),
+    }),
+    zod.object({
+        type: zod.literal(AuditTypes.ServerPowerChange),
+        user: zod.string(),
+        server: zod.string(),
+        action: serverPowerActions
+    }),
+    zod.object({
+        type: zod.literal(AuditTypes.ServerModify),
+        user: zod.string(),
+        server: zod.string(),
+        changes: zod.object({
+            name: zod.string(),
+            location: zod.string(),
+            limits: limits,
+            state: serverPowerState,
+            ports: zod.number().array(),
+            identifier: zod.string(),
+            labels: zod.enum([ "legacy", "suspended", "contact-support" ]).array()
+        }).partial()
+    }),
+    zod.object({
+        type: zod.literal(AuditTypes.ServerDelete),
+        user: zod.string(),
+        server: zod.string(),
+    }),
+    zod.object({
+        type: zod.literal(AuditTypes.FileUpload),
+        user: zod.string(),
+        file: zod.string(),
+    }),
+    zod.object({
+        type: zod.literal(AuditTypes.FileDelete),
+        user: zod.string(),
+        file: zod.string(),
+    }),
+]);
 
 export enum OAuthScopes {
     Profile = "profile",
@@ -408,7 +457,7 @@ export enum OAuthScopes {
 }
 
 export type AdminStats = { drops: { all: number, reviews: number, publishing: number, published: number, private: number, rejected: number, drafts: number; }, users: number, payouts: number, oauthApps: number, files: number, servers: number, wallets: number; };
-
+export type Audit = zod.infer<typeof audit>;
 export type RequestPayoutResponse = zod.infer<typeof requestPayoutResponse>;
 export type SidecarResponse = zod.infer<typeof sidecarResponse>;
 export type SidecarRequest = zod.infer<typeof sidecarRequest>;
