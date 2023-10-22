@@ -335,7 +335,7 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
     }),
     zod.object({
         type: zod.literal("state"),
-        state: zod.string()
+        state: serverPowerActions
     })
 ]);
 
