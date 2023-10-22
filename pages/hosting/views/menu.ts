@@ -5,10 +5,10 @@ import { dirname } from "std/path/mod.ts";
 import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, loadingWheel, MediaQuery, MIcon, ref, refMerge, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
-import { AuditTypes, PowerState, Server, ServerDetails } from "../../../spec/music.ts";
+import { AuditTypes, PowerState, Server } from "../../../spec/music.ts";
 import { activeUser, showProfilePicture } from "../../_legacy/helper.ts";
 import { MB, state } from "../data.ts";
-import { currentDetailsSource, currentDetailsTarget, currentFiles, currentPath, isSidecarConnect, listFiles, messageQueueSidecar, RemotePath, startSidecarConnection, stopSidecarConnection, streamingPool, uploadFile } from "../loading.ts";
+import { currentFiles, currentPath, isSidecarConnect, listFiles, messageQueueSidecar, RemotePath, startSidecarConnection, stopSidecarConnection, streamingPool, subscriberSidecar, uploadFile } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import './details.css';
 import { DropHandler } from "./dropHandler.ts";
@@ -338,30 +338,16 @@ export function serverDetails(server: StateHandler<Server>) {
         subtitle: "disk",
     });
 
-    terminal.connected.listen(val => {
-        if (val) {
-            currentDetailsTarget.setValue(server._id);
-
-            currentDetailsSource.setValue((data: ServerDetails) => {
-                if (data.type == "stdout") {
-                    terminal.write(server.identifier ? `${data.chunk}\r\n` : data.chunk.replaceAll("\n", "\r\n"));
-                    if (data.clearConsole)
-                        terminal.reset();
-                }
-                else if (data.type == "stats") {
-                    input.cpu = data.cpu;
-                    input.disk = data.disk;
-                    input.memory = data.memory;
-                }
-                else if (data.type == "features") {
-                    // TODO remove this when backend sends clearConsole flag
-                    terminal.reset();
-                }
-                else console.log("Unhandled Info", data);
-            });
-        } else
-            currentDetailsTarget.setValue(undefined);
-    });
+    subscriberSidecar.push([server._id, (data) => { 
+        if (data.type == "log") {
+            terminal.write(`${data.chunk}\r\n`);
+        }
+        else if (data.type == "resources") {
+            input.cpu = data.cpu;
+            input.disk = data.used;
+            input.memory = data.memory;
+        }
+    }])
 
     return isSidecarConnect.map((connected) => !server.identifier && !connected ? DisconnectedScreen() : HeavyReRender(isMobile, mobile => {
         const items = Grid(

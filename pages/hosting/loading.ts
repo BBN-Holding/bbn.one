@@ -127,6 +127,7 @@ export type RemotePath = {
 export const currentFiles = asPointer(<RemotePath[]>[]);
 export const currentPath = asPointer("/");
 export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
+export const subscriberSidecar: ([id: string, (message: SidecarResponse) => void])[] = []
 let activeSideCar: Deferred<void> | undefined = undefined;
 export const isSidecarConnect = asPointer(false);
 export function stopSidecarConnection() {
@@ -154,6 +155,11 @@ export async function startSidecarConnection(id: string) {
                 syncedResponses.delete(iterator);
                 iterator.response.resolve(msg);
                 break;
+            }
+        }
+        for (const iterator of subscriberSidecar) { 
+            if (iterator[0] === id) {
+                iterator[1](msg);
             }
         }
     };
