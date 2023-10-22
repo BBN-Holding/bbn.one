@@ -126,9 +126,9 @@ export type RemotePath = {
 export const currentFiles = asPointer(<RemotePath[]>[]);
 export const currentPath = asPointer("/");
 export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
-export const subscriberSidecar: ([ id: string, (message: SidecarResponse) => void ])[] = [];
 let activeSideCar: Deferred<void> | undefined = undefined;
 export const isSidecarConnect = asPointer(false);
+export const sidecarDetailsSource = asPointer((_data: SidecarResponse | "connected") => { });
 export function stopSidecarConnection() {
     activeSideCar?.resolve();
 }
@@ -155,11 +155,7 @@ export async function startSidecarConnection(id: string) {
                 break;
             }
         }
-        for (const iterator of subscriberSidecar) {
-            if (iterator[ 0 ] === id) {
-                iterator[ 1 ](msg);
-            }
-        }
+        sidecarDetailsSource.getValue()?.(msg);
     };
     ws.onopen = () => {
         watcher = setInterval(() => {
@@ -168,6 +164,7 @@ export async function startSidecarConnection(id: string) {
             syncedResponses.add(msg);
             ws.send(JSON.stringify(msg.request));
         }, 100);
+        sidecarDetailsSource.getValue()?.("connected");
         isSidecarConnect.setValue(true);
     };
 
