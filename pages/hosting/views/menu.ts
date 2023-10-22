@@ -279,9 +279,15 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
         "offline": IconButton(MIcon("play_arrow"), "delete")
             .addClass("color-green")
             .setColor(Color.Colored)
-            .onClick(async (e) => {
+            .onClick((e) => {
                 e.stopPropagation();
-                await API.hosting.serverId(server._id).power("start");
+                messageQueueSidecar.push({
+                    request: {
+                        type: "state",
+                        state: "start"
+                    },
+                    response: deferred() // Maybe we can use this to show a different loading spinner until the server is starting
+                })
                 // This actually works when we a have better change stream system
                 server.state = "starting";
             }),
@@ -291,10 +297,16 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
         "starting": LoadingSpinner(),
         "running": IconButton(MIcon("stop"), "delete")
             .setColor(Color.Critical)
-            .onClick(async (e) => {
+            .onClick((e) => {
                 e.stopPropagation();
                 server.state = "stopping";
-                await API.hosting.serverId(server._id).power("stop");
+                messageQueueSidecar.push({
+                    request: {
+                        type: "state",
+                        state: "stop"
+                    },
+                    response: deferred()
+                })
             })
     })[ state ] ?? Box()))
         .asRefComponent()
