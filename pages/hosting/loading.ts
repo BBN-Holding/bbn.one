@@ -33,9 +33,12 @@ export function listener() {
             firstTime = false;
             ws.send(JSON.stringify(<TriggerRequest>{
                 action: "trigger",
-                id: "@bbn/hosting/list",
+                type: "@bbn/hosting/list",
                 auth: {
                     token: API.getToken(),
+                    id: activeUser.id
+                },
+                data: {
                     id: activeUser.id
                 }
             }));
@@ -43,7 +46,7 @@ export function listener() {
         if (json.type !== "sync") {
             return;
         }
-        const { data: { servers: _servers } } = <SyncResponse>json;
+        const { data: { servers: _servers } } = <SyncResponse>json.data;
         const servers = JSON.parse(_servers) as Server[];
         for (const server of servers) {
             const index = state.servers.findIndex(x => x._id == server._id);

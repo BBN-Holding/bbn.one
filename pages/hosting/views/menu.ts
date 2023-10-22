@@ -281,13 +281,18 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
             .setColor(Color.Colored)
             .onClick((e) => {
                 e.stopPropagation();
+                startSidecarConnection(server._id);
+                const promise = deferred<any>();
                 messageQueueSidecar.push({
                     request: {
                         type: "state",
                         state: "start"
                     },
-                    response: deferred() // Maybe we can use this to show a different loading spinner until the server is starting
+                    response: promise // Maybe we can use this to show a different loading spinner until the server is starting
                 })
+                promise.then(() => {
+                    stopSidecarConnection();
+                });
                 // This actually works when we a have better change stream system
                 server.state = "starting";
             }),
@@ -300,13 +305,18 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
             .onClick((e) => {
                 e.stopPropagation();
                 server.state = "stopping";
+                startSidecarConnection(server._id);
+                const promise = deferred<any>();
                 messageQueueSidecar.push({
                     request: {
                         type: "state",
                         state: "stop"
                     },
-                    response: deferred()
+                    response: promise
                 })
+                promise.then(() => {
+                    stopSidecarConnection();
+                });
             })
     })[ state ] ?? Box()))
         .asRefComponent()
