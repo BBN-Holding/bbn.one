@@ -1,5 +1,5 @@
-import { MessageType } from "https://deno.land/x/hmsys_connector@0.9.0/spec/ws.ts";
 import { API, count, HeavyReRender, LoadingSpinner, Navigation, placeholder, RenderItem, SliderInput, stupidErrorAlert } from "shared";
+import { deferred } from "std/async/deferred.ts";
 import { format } from "std/fmt/bytes.ts";
 import { dirname } from "std/path/mod.ts";
 import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, loadingWheel, MediaQuery, MIcon, ref, refMerge, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
@@ -8,7 +8,7 @@ import serverTypes from "../../../data/servers.json" assert { type: "json" };
 import { AuditTypes, PowerState, Server, ServerDetails } from "../../../spec/music.ts";
 import { activeUser, showProfilePicture } from "../../_legacy/helper.ts";
 import { MB, state } from "../data.ts";
-import { currentDetailsSource, currentDetailsTarget, currentFiles, currentPath, isSidecarConnect, listFiles, messageQueue, RemotePath, startSidecarConnection, stopSidecarConnection, streamingPool, uploadFile } from "../loading.ts";
+import { currentDetailsSource, currentDetailsTarget, currentFiles, currentPath, isSidecarConnect, listFiles, messageQueueSidecar, RemotePath, startSidecarConnection, stopSidecarConnection, streamingPool, uploadFile } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import './details.css';
 import { DropHandler } from "./dropHandler.ts";
@@ -404,18 +404,13 @@ export function serverDetails(server: StateHandler<Server>) {
                         Button("Send")
                             .setId("submit-button")
                             .onClick(() => {
-                                messageQueue.push({
-                                    action: MessageType.Trigger,
-                                    type: "@bbn/hosting/stdin",
-                                    data: {
-                                        id: server._id,
-                                        message: input.message
+                                messageQueueSidecar.push({
+                                    request: {
+                                        type: "command",
+                                        command: input.message
                                     },
-                                    auth: {
-                                        token: API.getToken(),
-                                        id: activeUser.id
-                                    }
-                                });
+                                    response: deferred()
+                                })
                                 input.message = "";
                             })
                     )
