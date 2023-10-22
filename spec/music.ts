@@ -333,6 +333,10 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
         type: zod.literal("delete"),
         path: zod.string()
     }),
+    zod.object({
+        type: zod.literal("state"),
+        state: zod.string()
+    })
 ]);
 
 export const sidecarResponse = zod.discriminatedUnion("type", [
