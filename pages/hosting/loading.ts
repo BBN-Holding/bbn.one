@@ -1,4 +1,4 @@
-import { HmRequest, LoginRequest, MessageType, PublishResponse, SubscribeRequest, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
+import { HmRequest, LoginRequest, MessageType, SyncResponse, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
 import { Deferred, deferred } from "std/async/deferred.ts";
 import { State, asPointer, lazyInit } from "webgen/mod.ts";
@@ -31,25 +31,27 @@ export function listener() {
         }
         if (json.login === true && firstTime === true) {
             firstTime = false;
-            ws.send(JSON.stringify(<SubscribeRequest>{
-                action: "sub",
-                id: "@bbn/hosting/sync",
+            ws.send(JSON.stringify(<TriggerRequest>{
+                action: "trigger",
+                id: "@bbn/hosting/list",
                 auth: {
                     token: API.getToken(),
                     id: activeUser.id
                 }
             }));
         }
-        if (json.type != "pub") {
+        if (json.type !== "sync") {
             return;
         }
-        const { data: { server: _server } } = <PublishResponse>json;
-        const server = JSON.parse(_server) as Server;
-        const index = state.servers.findIndex(x => x._id == server._id);
-        if (index === -1) return; // handle this state
-        for (const [ key, value ] of Object.entries(server)) {
-            // @ts-ignore unsafe af
-            state.servers[ index ][ key ] = value;
+        const { data: { servers: _servers } } = <SyncResponse>json;
+        const servers = JSON.parse(_servers) as Server[];
+        for (const server of servers) {
+            const index = state.servers.findIndex(x => x._id == server._id);
+            if (index === -1) return; // handle this state
+            for (const [ key, value ] of Object.entries(server)) {
+                // @ts-ignore unsafe af
+                state.servers[ index ][ key ] = value;
+            }
         }
     };
     // my fancy reconnect
@@ -154,6 +156,11 @@ export async function startSidecarConnection(id: string) {
                 iterator.response.resolve(msg);
                 break;
             }
+        }
+        if (msg.type === "state") {
+            const index = state.servers.findIndex(x => x._id == id);
+            if (index === -1) return; // handle this state
+            state.servers[ index ].state = msg.state;
         }
         sidecarDetailsSource.getValue()?.(msg);
     };

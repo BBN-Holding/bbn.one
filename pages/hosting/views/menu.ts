@@ -350,11 +350,6 @@ export function serverDetails(server: StateHandler<Server>) {
                 if (data.type == "log") {
                     terminal.write(`${data.chunk}\r\n`);
                 }
-                else if (data.type == "resources") {
-                    input.cpu = data.cpu;
-                    input.disk = data.used;
-                    input.memory = data.memory;
-                }
             });
         }
     });
