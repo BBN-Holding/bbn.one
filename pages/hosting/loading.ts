@@ -1,7 +1,6 @@
 import { HmRequest, LoginRequest, MessageType, PublishResponse, SubscribeRequest, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
 import { Deferred, deferred } from "std/async/deferred.ts";
-import { delay } from "std/async/delay.ts";
 import { State, asPointer, lazyInit } from "webgen/mod.ts";
 import { Server, ServerDetails, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
@@ -127,7 +126,7 @@ export type RemotePath = {
 export const currentFiles = asPointer(<RemotePath[]>[]);
 export const currentPath = asPointer("/");
 export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
-export const subscriberSidecar: ([id: string, (message: SidecarResponse) => void])[] = []
+export const subscriberSidecar: ([ id: string, (message: SidecarResponse) => void ])[] = [];
 let activeSideCar: Deferred<void> | undefined = undefined;
 export const isSidecarConnect = asPointer(false);
 export function stopSidecarConnection() {
@@ -157,9 +156,9 @@ export async function startSidecarConnection(id: string) {
                 break;
             }
         }
-        for (const iterator of subscriberSidecar) { 
-            if (iterator[0] === id) {
-                iterator[1](msg);
+        for (const iterator of subscriberSidecar) {
+            if (iterator[ 0 ] === id) {
+                iterator[ 1 ](msg);
             }
         }
     };
@@ -173,10 +172,8 @@ export async function startSidecarConnection(id: string) {
         isSidecarConnect.setValue(true);
     };
 
-    ws.onclose = async () => {
+    ws.onclose = () => {
         if (!activeSideCar) return;
-        await delay(500);
-        activeSideCar = undefined;
         isSidecarConnect.setValue(false);
         clearInterval(watcher);
         startSidecarConnection(id);
