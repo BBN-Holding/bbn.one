@@ -134,7 +134,6 @@ export function stopSidecarConnection() {
 }
 export async function startSidecarConnection(id: string) {
     if (activeSideCar) {
-        activeSideCar.resolve();
         messageQueueSidecar = [];
     }
 
