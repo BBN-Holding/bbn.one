@@ -128,7 +128,7 @@ export const currentPath = asPointer("/");
 export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
 let activeSideCar: Deferred<void> | undefined = undefined;
 export const isSidecarConnect = asPointer(false);
-export const sidecarDetailsSource = asPointer((_data: SidecarResponse | "connected") => { });
+export const sidecarDetailsSource = asPointer((_data: SidecarResponse | "clear") => { });
 export function stopSidecarConnection() {
     activeSideCar?.resolve();
 }
@@ -164,7 +164,7 @@ export async function startSidecarConnection(id: string) {
             syncedResponses.add(msg);
             ws.send(JSON.stringify(msg.request));
         }, 100);
-        sidecarDetailsSource.getValue()?.("connected");
+        sidecarDetailsSource.getValue()?.("clear");
         isSidecarConnect.setValue(true);
     };
 
