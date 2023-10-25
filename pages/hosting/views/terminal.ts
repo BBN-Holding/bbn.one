@@ -18,7 +18,8 @@ export class TerminalComponent extends HTMLElement {
     connectedCallback() {
         this.terminal = new Terminal({
             fontSize: 11,
-            disableStdin: true
+            disableStdin: true,
+            convertEol: true
         });
 
         const fitAddon = new FitAddon();

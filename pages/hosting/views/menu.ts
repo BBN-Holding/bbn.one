@@ -289,7 +289,7 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
                         state: "start"
                     },
                     response: promise // Maybe we can use this to show a different loading spinner until the server is starting
-                })
+                });
                 promise.then(() => {
                     stopSidecarConnection();
                 });
@@ -313,7 +313,7 @@ function ChangeStateButton(server: StateHandler<Server>): Component {
                         state: "stop"
                     },
                     response: promise
-                })
+                });
                 promise.then(() => {
                     stopSidecarConnection();
                 });
@@ -370,7 +370,7 @@ export function serverDetails(server: StateHandler<Server>) {
                     return;
                 }
                 if (data.type == "log") {
-                    terminal.write(`${data.chunk}\r\n`);
+                    terminal.write(data.chunk);
                 }
             });
         }
@@ -423,7 +423,7 @@ export function serverDetails(server: StateHandler<Server>) {
                                         command: input.message
                                     },
                                     response: deferred()
-                                })
+                                });
                                 input.message = "";
                             })
                     )
