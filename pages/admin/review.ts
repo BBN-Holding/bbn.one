@@ -1,15 +1,15 @@
 import { API, LoadingSpinner, Navigation, createActionList, createBreadcrumb, createTagList, stupidErrorAlert } from "shared";
-import { Box, Button, ButtonStyle, Color, Entry, Grid, Horizontal, Label, Spacer, State, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Color, Entry, Grid, Horizontal, Label, Spacer, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
-import { Drop } from "../../spec/music.ts";
-import { ProfileData, RegisterAuthRefresh, changeThemeColor, permCheck, renewAccessTokenIfNeeded, saveBlob, showPreviewImage, showProfilePicture } from "../_legacy/helper.ts";
+import { RegisterAuthRefresh, changeThemeColor, permCheck, renewAccessTokenIfNeeded, saveBlob, showPreviewImage, showProfilePicture } from "../_legacy/helper.ts";
 import { ChangeDrop } from "../_legacy/music/changeDrop.ts";
 import { ChangeSongs } from "../_legacy/music/changeSongs.ts";
 import { DropTypeToText } from "../music/views/list.ts";
 import { ApproveDialog, DeclineDialog, dialogState } from "./dialog.ts";
-import { refreshState } from "./loading.ts";
+import { reviewState } from "./state.ts";
+import { changeState, changeTypeDialog } from "./views/entryReview.ts";
 
 await RegisterAuthRefresh();
 
@@ -33,29 +33,23 @@ if (!data.id) {
     location.href = "/admin";
 }
 
-const state = State({
-    drop: <Drop | undefined>undefined,
-    user: <ProfileData | undefined>undefined,
-    drops: <Drop[] | undefined>undefined,
-})
-
 View(() => Vertical(
-    ...DynaNavigation("Music"),
+    ...DynaNavigation("Admin"),
     Grid(
         Vertical(
             Label("User Details", "h1").setAlign("center"),
-            state.$user.map(user => user ? Vertical(
+            reviewState.$user.map(user => user ? Vertical(
                 showProfilePicture(user),
                 Label(`Username: ${user.profile.username}`),
                 Label(`Email: ${user.profile.email}`),
                 Label(`ID: ${user._id}`),
             ).setGap("var(--gap)") : LoadingSpinner()).asRefComponent(),
             Label("User's Drops", "h1").setAlign("center"),
-            state.$drops.map(drops => drops ? Vertical(
-                ...drops.map(drop => Entry({ title: drop.title, subtitle: drop.type }))).setGap("var(--gap)") : LoadingSpinner()).asRefComponent(),
+            reviewState.$drops.map(drops => drops ? Vertical(
+                ...drops.map(drop => Entry({ title: drop.title, subtitle: drop.type }).addClass("small"))).setGap("var(--gap)") : LoadingSpinner()).asRefComponent(),
         )
             .setAttribute("style", "border-style: solid;").setGap("var(--gap)").setBorderRadius("tiny"),
-        state.$drop.map(drop => drop ? Navigation({
+        reviewState.$drop.map(drop => drop ? Navigation({
             title: drop.title,
             children: [
                 Horizontal(
@@ -116,6 +110,17 @@ View(() => Vertical(
         Vertical(
             Label("Drop History", "h1").setAlign("center"),
             Spacer(),
+            Button("Change Drop Type")
+                .setStyle(ButtonStyle.Inline)
+                .setColor(Color.Colored)
+                .addClass("tag")
+                .setMargin("var(--gap)")
+                .onClick(() => {
+                    changeTypeDialog.open();
+                    changeState.drop = reviewState.drop;
+                    changeState.type = reviewState.drop!.type;
+                    changeTypeDialog.onClose(() => refreshReviewState());
+                }),
             Horizontal(
                 Button("Decline")
                     .setStyle(ButtonStyle.Inline)
@@ -123,8 +128,8 @@ View(() => Vertical(
                     .addClass("tag")
                     .onClick(() => {
                         DeclineDialog.open();
-                        dialogState.drop = state.drop!;
-                        DeclineDialog.onClose(() => refreshState());
+                        dialogState.drop = reviewState.drop!;
+                        DeclineDialog.onClose(() => refreshReviewState());
                     }),
                 Button("Approve")
                     .setStyle(ButtonStyle.Normal)
@@ -132,8 +137,8 @@ View(() => Vertical(
                     .addClass("tag")
                     .onClick(() => {
                         ApproveDialog.open();
-                        dialogState.drop = state.drop!;
-                        ApproveDialog.onClose(() => refreshState());
+                        dialogState.drop = reviewState.drop!;
+                        ApproveDialog.onClose(() => refreshReviewState());
                     }),
             ).setGap("var(--gap)"),
         ).setAttribute("style", "border-style: solid;").setBorderRadius("tiny")
@@ -141,9 +146,13 @@ View(() => Vertical(
         .setGap("var(--gap)")
         .setRawColumns("1fr 3fr 1fr"),
 ))
-    .appendOn(document.body)
+    .appendOn(document.body);
 
 renewAccessTokenIfNeeded()
-    .then(async () => state.drop = await API.music.id(data.id).get().then(stupidErrorAlert))
-    .then(async () => state.user = await API.admin.users.get(state.drop!.user).then(stupidErrorAlert))
-    .then(async () => state.drops = await API.admin.drops.user(state.drop!.user).then(stupidErrorAlert))
+    .then(() => refreshReviewState());
+
+async function refreshReviewState() {
+    reviewState.drop = await API.music.id(data.id).get().then(stupidErrorAlert);
+    reviewState.user = await API.admin.users.get(reviewState.drop!.user).then(stupidErrorAlert);
+    reviewState.drops = await API.admin.drops.user(reviewState.drop!.user).then(stupidErrorAlert);
+}

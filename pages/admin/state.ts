@@ -22,3 +22,9 @@ export const state = State({
     transcripts: <External<Transcript[]> | "loading">"loading",
     stats: <External<AdminStats> | "loading">"loading",
 });
+
+export const reviewState = State({
+    drop: <Drop | undefined>undefined,
+    user: <ProfileData | undefined>undefined,
+    drops: <Drop[] | undefined>undefined,
+});

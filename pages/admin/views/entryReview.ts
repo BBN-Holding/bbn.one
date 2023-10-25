@@ -1,8 +1,7 @@
-import { Button, ButtonStyle, Color, Dialog, DropDownInput, Entry, MIcon, State, Vertical } from "webgen/mod.ts";
+import { Button, ButtonStyle, Color, Dialog, DropDownInput, Entry, State, Vertical } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { showPreviewImage } from "../../_legacy/helper.ts";
 import { API } from "../../shared/restSpec.ts";
-import { refreshState } from "../loading.ts";
 
 export function ReviewEntry(x: Drop) {
     return Entry({
@@ -15,27 +14,15 @@ export function ReviewEntry(x: Drop) {
             .setColor(Color.Colored)
             .addClass("tag")
             .onClick(() => location.href = `/admin/review?id=${x._id}`))
-        //TODO: Move to review page
-        .addSuffix(Button(MIcon("bug_report"))
-            .setStyle(ButtonStyle.Inline)
-            .setColor(Color.Colored)
-            .addClass("tag")
-            .onClick(() => {
-                changeTypeDialog.open();
-                changeState.drop = x;
-                changeState.type = x.type;
-                changeTypeDialog.onClose(() => refreshState());
-            })
-        )
         .addPrefix(showPreviewImage(x).addClass("image-square"));
 }
 
-const changeState = State({
+export const changeState = State({
     drop: <Drop | undefined>undefined,
     type: <DropType | undefined>undefined
 });
 
-const changeTypeDialog = Dialog(() =>
+export const changeTypeDialog = Dialog(() =>
     Vertical(
         DropDownInput("Change Type", Object.values(DropType)).sync(changeState, "type")
     )
