@@ -522,7 +522,7 @@ export const API = {
     })
 };
 
-function headers(token: string): HeadersInit | undefined {
+function headers(token: string) {
     return {
         "Authorization": `JWT ${token}`
     };
