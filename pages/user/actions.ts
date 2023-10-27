@@ -58,24 +58,8 @@ export async function handleStateChange() {
         code: para.get("code")
     };
 
-    if (params.type == "google" && params.code) {
-        const rsp = await API.auth.google.post(params.code);
-        if (rsp.status === "rejected")
-            return state.error = displayError(rsp.reason);
-        await logIn(rsp.value);
-        gotoGoal();
-        return;
-    }
-    if (params.type == "discord" && params.code) {
-        const rsp = await API.auth.discord.post(params.code);
-        if (rsp.status === "rejected")
-            return state.error = displayError(rsp.reason);
-        await logIn(rsp.value);
-        gotoGoal();
-        return;
-    }
-    if (params.type == "microsoft" && params.code) {
-        const rsp = await API.auth.microsoft.post(params.code);
+    if (params.type && [ "google", "discord", "microsoft" ].includes(params.type) && params.code) {
+        const rsp = await API.auth.oauth.post(params.type, params.code);
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
         await logIn(rsp.value);

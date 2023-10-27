@@ -136,30 +136,10 @@ export const API = {
                 .then(json<{ token: string; }>())
                 .catch(reject)
         },
-        google: {
-            post: (code: string) => {
+        oauth: {
+            post: (provider: string, code: string) => {
                 const param = new URLSearchParams({ code });
-                return fetch(`${API.BASE_URL}auth/google?${param.toString()}`, {
-                    method: "POST"
-                })
-                    .then(json<{ token: string; }>())
-                    .catch(reject);
-            }
-        },
-        discord: {
-            post: async (code: string) => {
-                const param = new URLSearchParams({ code });
-                return await fetch(`${API.BASE_URL}auth/discord?${param.toString()}`, {
-                    method: "POST"
-                })
-                    .then(json<{ token: string; }>())
-                    .catch(reject);
-            }
-        },
-        microsoft: {
-            post: async (code: string) => {
-                const param = new URLSearchParams({ code });
-                return await fetch(`${API.BASE_URL}auth/microsoft?${param.toString()}`, {
+                return fetch(`${API.BASE_URL}auth/oauth/${provider}?${param.toString()}`, {
                     method: "POST"
                 })
                     .then(json<{ token: string; }>())

@@ -541,7 +541,7 @@ function editServer(server: StateHandler<Server>) {
                     .sync(data, "memory")
                     .setRender((val) => format(val * MB)),
                 SliderInput("Disk (Storage)")
-                    .setMin(1)
+                    .setMin(server.identifier ? 1 : server.limits.disk)
                     .setMax(state.meta.limits.disk - state.meta.used.disk + server.limits.disk)
                     .sync(data, "disk")
                     .setRender((val) => format(val * MB)),
