@@ -38,7 +38,11 @@ const auditLabels = {
     "server-delete": "Server Deleted",
     "server-modify": "Server Specs Updated",
     "server-power-change": "Power changed to $powerChange",
-    "store-purchase": "Purchased $storeItem in store"
+    "store-purchase": "Purchased $storeItem in store",
+    "file-upload": "File Uploaded",
+    "file-delete": "File Deleted",
+    "file-read": "File Read",
+    "command-execute": "Command Executed",
 } satisfies Record<AuditTypes, string>;
 
 export const hostingButtons = asPointer(<Component[]>[]);
@@ -53,7 +57,7 @@ const allFiles = refMerge({
             .map(([ name, uploadingRatio ]) => (<RemotePath>{ name, uploadingRatio }))
         ),
     currentFiles: currentFiles.map(it => {
-        const compare = new Intl.Collator().compare;
+        const { compare } = new Intl.Collator();
         return Array.from(it).sort((a, b) => compare(a.name, b.name)).sort((a, b) => Number(!!a.fileMimeType) - Number(!!b.fileMimeType));
 
     })
@@ -69,7 +73,7 @@ const droppingFileHandler = async (files: ReadableStream<FileEntry>, count: numb
                 console.log(_iterator.path, ratio);
                 uploadingFiles.setValue({
                     ...uploadingFiles.getValue(),
-                    [ "/" + _iterator.path ]: ratio
+                    [ `/${_iterator.path}` ]: ratio
                 });
                 if (ratio >= 1) {
                     done();
@@ -532,15 +536,17 @@ function editServer(server: StateHandler<Server>) {
                     .setRender(location => locations[ location as keyof typeof locations ])
                     .sync(data, "location"),
                 SliderInput("Memory (RAM)")
+                    .setMin(1)
                     .setMax(state.meta.limits.memory - state.meta.used.memory + server.limits.memory)
                     .sync(data, "memory")
                     .setRender((val) => format(val * MB)),
                 SliderInput("Disk (Storage)")
-                    .setMin(server.identifier ? 0 : server.limits.disk)
+                    .setMin(1)
                     .setMax(state.meta.limits.disk - state.meta.used.disk + server.limits.disk)
                     .sync(data, "disk")
                     .setRender((val) => format(val * MB)),
                 SliderInput("CPU (Processor)")
+                    .setMin(1)
                     .setMax(state.meta.limits.cpu - state.meta.used.cpu + server.limits.cpu)
                     .sync(data, "cpu")
                     .setRender((val) => `${val.toString()} %`),
