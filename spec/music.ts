@@ -378,6 +378,14 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("state"),
         state: serverPowerState
+    }),
+    zod.object({
+        type: zod.literal("stats"),
+        stats: zod.object({
+            cpu: zod.number(),
+            memory: zod.number(),
+            disk: zod.number(),
+        })
     })
 ]);
 
