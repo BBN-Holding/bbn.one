@@ -376,7 +376,21 @@ export function serverDetails(server: StateHandler<Server>) {
                 if (data.type == "log") {
                     terminal.write(data.chunk);
                 }
+                if (data.type == "stats") {
+                    input.cpu = data.stats.cpu;
+                    input.memory = data.stats.memory;
+                    input.disk = data.stats.disk;
+                }
             });
+
+            setInterval(() => {
+                messageQueueSidecar.push({
+                    request: {
+                        type: "stats"
+                    },
+                    response: deferred()
+                });
+            }, 1000);
         }
     });
 
