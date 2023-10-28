@@ -323,7 +323,6 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
         type: zod.literal("write"),
         path: zod.string(),
         chunk: zod.string().optional(),
-        finish: zod.boolean()
     }),
     zod.object({
         type: zod.literal("command"),
@@ -358,22 +357,18 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
         path: zod.string(),
     }),
     zod.object({
-        type: zod.literal("write"),
-        path: zod.string(),
-        chunk: zod.string().optional(),
-        finish: zod.boolean()
-    }),
-    zod.object({
         type: zod.literal("log"),
         chunk: zod.string(),
         backlog: zod.boolean().optional()
     }),
     zod.object({
         type: zod.literal("error"),
-        error: zod.string()
+        error: zod.string(),
+        path: zod.string().optional()
     }),
     zod.object({
-        type: zod.literal("next-chunk")
+        type: zod.literal("next-chunk"),
+        path: zod.string(),
     }),
     zod.object({
         type: zod.literal("state"),
