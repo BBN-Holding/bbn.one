@@ -360,7 +360,7 @@ export function serverDetails(server: StateHandler<Server>) {
         subtitle: "memory",
     });
     const disk = BasicLabel({
-        title: input.$disk.map(it => it ? `${((it / server.limits.disk) * 100).toFixed(0)} %` : "---"),
+        title: input.$disk.map(it => it ? `${((it / server.limits.disk) * 100).toFixed(0)} % (${format(it*MB)} / ${format(server.limits.disk*MB)})` : "---"),
         subtitle: "disk",
     });
 
@@ -382,15 +382,6 @@ export function serverDetails(server: StateHandler<Server>) {
                     input.disk = data.stats.disk;
                 }
             });
-
-            setInterval(() => {
-                messageQueueSidecar.push({
-                    request: {
-                        type: "stats"
-                    },
-                    response: deferred()
-                });
-            }, 1000);
         }
     });
 

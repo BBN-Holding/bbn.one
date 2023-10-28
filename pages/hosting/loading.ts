@@ -150,6 +150,7 @@ export async function startSidecarConnection(id: string) {
     const syncedResponses = new Set<{ request: SidecarRequest, response: Deferred<SidecarResponse>; }>();
 
     let watcher = 0;
+    let stats = 0;
     ws.onmessage = (event: MessageEvent<string>) => {
         console.log(event.data);
         const msg = <SidecarResponse>JSON.parse(event.data);
@@ -174,6 +175,11 @@ export async function startSidecarConnection(id: string) {
             syncedResponses.add(msg);
             ws.send(JSON.stringify(msg.request));
         }, 100);
+        ws.send(JSON.stringify({ type: "stats" }));
+        stats = setInterval(() => {
+            if (ws.readyState != ws.OPEN) return;
+            ws.send(JSON.stringify({ type: "stats" }));
+        }, 5000);
         sidecarDetailsSource.getValue()?.("clear");
         isSidecarConnect.setValue(true);
     };
@@ -182,6 +188,7 @@ export async function startSidecarConnection(id: string) {
         if (!activeSideCar) return;
         isSidecarConnect.setValue(false);
         clearInterval(watcher);
+        clearInterval(stats);
         startSidecarConnection(id);
     };
 
