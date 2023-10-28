@@ -69,7 +69,7 @@ const droppingFileHandler = async (files: ReadableStream<FileEntry>, count: numb
     console.log("Uploading", count, "files");
     for await (const _iterator of files) {
         await new Promise<void>((done) => {
-            uploadFile(_iterator.path, _iterator.file, (ratio) => {
+            uploadFile(path.getValue() + _iterator.path, _iterator.file, (ratio) => {
                 console.log(_iterator.path, ratio);
                 uploadingFiles.setValue({
                     ...uploadingFiles.getValue(),

@@ -1,6 +1,7 @@
 import { HmRequest, LoginRequest, MessageType, SyncResponse, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
 import { Deferred, deferred } from "std/async/deferred.ts";
+import { encodeBase64 } from "std/encoding/base64.ts";
 import { State, asPointer, lazyInit } from "webgen/mod.ts";
 import { Server, ServerDetails, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
@@ -155,7 +156,8 @@ export async function startSidecarConnection(id: string) {
         console.log(event.data);
         const msg = <SidecarResponse>JSON.parse(event.data);
         for (const iterator of syncedResponses) {
-            if (iterator.request.type === "list" && msg.type === "list" && iterator.request.path == msg.path) {
+            console.log(iterator.request, msg)
+            if (((iterator.request.type === "write" && (msg.type === "next-chunk" || msg.type === "error")) || (iterator.request.type === "list" && msg.type === "list")) && iterator.request.path == msg.path) {
                 syncedResponses.delete(iterator);
                 iterator.response.resolve(msg);
                 break;
@@ -213,11 +215,28 @@ export async function listFiles(_path: string) {
 }
 
 export async function uploadFile(_path: string, file: File, progress: (ratio: number) => void) {
-    // TODO: Add API to upload the file (chunking based)
-    // Filename: file.name;
+    const check = deferred<SidecarResponse>();
+    messageQueueSidecar.push({
+        request: {
+            type: "write",
+            path: _path
+        },
+        response: check
+    });
+    await check;
+    progress(0);
     for await (const iterator of file.stream()) {
-        progress(0);
-        iterator;
+        const nextChunk = deferred<SidecarResponse>();
+        messageQueueSidecar.push({
+            request: {
+                type: "write",
+                path: _path,
+                chunk: encodeBase64(iterator)
+            },
+            response: nextChunk
+        });
+        await nextChunk;
+        // TODO: Add progress
     }
     progress(1);
 }
