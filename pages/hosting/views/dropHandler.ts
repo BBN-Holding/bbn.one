@@ -26,7 +26,6 @@ export function DropHandler(onData: (data: ReadableStream<FileEntry>, length: nu
             };
             this.wrapper.ondragleave = (ev) => {
                 ev.preventDefault();
-                console.log(ev);
                 if (ev.target && !this.wrapper.contains(ev.relatedTarget as Node))
                     this.hovering.setValue(false);
             };

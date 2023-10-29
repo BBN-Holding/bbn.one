@@ -1,15 +1,16 @@
 import { API, count, HeavyReRender, LoadingSpinner, Navigation, placeholder, RenderItem, SliderInput, stupidErrorAlert } from "shared";
 import { deferred } from "std/async/deferred.ts";
 import { format } from "std/fmt/bytes.ts";
-import { dirname } from "std/path/mod.ts";
-import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, IconButtonComponent, isMobile, Label, loadingWheel, MediaQuery, MIcon, ref, refMerge, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
+import { asPointer, BasicLabel, BIcon, Box, Button, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, isMobile, Label, MediaQuery, ref, refMerge, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
-import { AuditTypes, PowerState, Server, SidecarResponse } from "../../../spec/music.ts";
+import { AuditTypes, Server, SidecarResponse } from "../../../spec/music.ts";
 import { activeUser, showProfilePicture } from "../../_legacy/helper.ts";
 import { MB, state } from "../data.ts";
-import { currentDetailsTarget, currentFiles, currentPath, isSidecarConnect, listFiles, messageQueueSidecar, RemotePath, sidecarDetailsSource, startSidecarConnection, stopSidecarConnection, streamingPool, uploadFile } from "../loading.ts";
+import { currentDetailsTarget, isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource, startSidecarConnection, stopSidecarConnection, streamingPool, uploadFile } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
+import { ChangeStateButton } from "./changeStateButton.ts";
+import { deleteServer } from "./deleteServer.ts";
 import './details.css';
 import { DropHandler } from "./dropHandler.ts";
 import './fileBrowser.css';
@@ -18,59 +19,21 @@ import { fileTypeName } from "./fileTypeName.ts";
 import { mapFiletoIcon } from "./icon.ts";
 import './list.css';
 import { moveDialog } from "./list.ts";
+import { pathNavigation } from "./pathNavigation.ts";
+import { allFiles, auditLogs, hostingButtons, loading, path, uploadingFiles } from "./state.ts";
 import './table2.css';
 import { Table2 } from "./table2.ts";
 import { TerminalComponent } from "./terminal.ts";
+import { auditLabels, labels } from "./translation.ts";
 import { GridItem } from "./types.ts";
 import { calculateUptime } from "./uptime.ts";
-type StateActions = {
-    [ type in PowerState ]: Component | IconButtonComponent;
-};
+import { DisconnectedScreen } from "./waitingScreen.ts";
 
-const labels = {
-    legacy: "Legacy",
-    suspended: "Suspended",
-    "contact-support": "Contact Support"
-} satisfies Record<Server[ "labels" ][ number ], string>;
-
-const auditLabels = {
-    "server-create": "Server Created",
-    "server-delete": "Server Deleted",
-    "server-modify": "Server Specs Updated",
-    "server-power-change": "Power changed to $powerChange",
-    "store-purchase": "Purchased $storeItem in store",
-    "file-upload": "File Uploaded",
-    "file-delete": "File Deleted",
-    "file-read": "File Read",
-    "command-execute": "Command Executed",
-} satisfies Record<AuditTypes, string>;
-
-export const hostingButtons = asPointer(<Component[]>[]);
-export const auditLogs = asPointer(<RenderItem[]>[]);
-
-const uploadingFiles = asPointer(<Record<string, number | "failed">>{});
-
-const allFiles = refMerge({
-    uploadingFiles: uploadingFiles
-        .map(files => Object.entries(files)
-            .filter(([ path ]) => dirname(path) === currentPath.getValue())
-            .map(([ name, uploadingRatio ]) => (<RemotePath>{ name, uploadingRatio }))
-        ),
-    currentFiles: currentFiles.map(it => {
-        const { compare } = new Intl.Collator();
-        return Array.from(it).sort((a, b) => compare(a.name, b.name)).sort((a, b) => Number(!!a.fileMimeType) - Number(!!b.fileMimeType));
-
-    })
-}).map(({ currentFiles, uploadingFiles }) => [ ...uploadingFiles, ...currentFiles ]);
-
-const path = asPointer("");
-const loading = asPointer(false);
 const droppingFileHandler = async (files: ReadableStream<FileEntry>, count: number): Promise<void> => {
     console.log("Uploading", count, "files");
     for await (const _iterator of files) {
         await new Promise<void>((done) => {
             uploadFile(path.getValue() + _iterator.path, _iterator.file, (ratio) => {
-                console.log(_iterator.path, ratio);
                 uploadingFiles.setValue({
                     ...uploadingFiles.getValue(),
                     [ `/${_iterator.path}` ]: ratio
@@ -253,19 +216,6 @@ hostingMenu.path.listen(path => {
 });
 
 
-function pathNavigation(): Component | [ settings: { width?: number | undefined; heigth?: number | undefined; }, element: Component ] {
-    return path.map(list => Grid(
-        ...list.split("/").filter((_, index, list) => (list.length - 1) != index).map((item, currentIndex, list) => Button(item || 'home')
-            .setStyle(ButtonStyle.Secondary)
-            .onClick(() => {
-                path.setValue([ ...list.filter((_, listIndex) => listIndex <= currentIndex), '' ].join("/"));
-                loading.setValue(true);
-                listFiles(path.getValue()).finally(() => loading.setValue(false));
-            })),
-        Box(Custom(loadingWheel() as Element as HTMLElement)).addClass(loading.map(it => it ? "loading" : "non-loading"), "loading-box")
-    ).setJustify("start").addClass("path-bar")).asRefComponent().removeFromLayout();
-}
-
 export function auditEntry(audit: any): RenderItem[] {
     return audit.map((x: any) => Entry(Grid(
         BasicLabel({
@@ -276,55 +226,6 @@ export function auditEntry(audit: any): RenderItem[] {
     ))
         .addPrefix(showProfilePicture(x.user))
         .addClass("small"));
-}
-
-function ChangeStateButton(server: StateHandler<Server>): Component {
-    return server.$state.map((state) => ((<StateActions>{
-        "offline": IconButton(MIcon("play_arrow"), "delete")
-            .addClass("color-green")
-            .setColor(Color.Colored)
-            .onClick((e) => {
-                e.stopPropagation();
-                startSidecarConnection(server._id);
-                const promise = deferred<any>();
-                messageQueueSidecar.push({
-                    request: {
-                        type: "state",
-                        state: "start"
-                    },
-                    response: promise // Maybe we can use this to show a different loading spinner until the server is starting
-                });
-                promise.then(() => {
-                    stopSidecarConnection();
-                });
-                // This actually works when we a have better change stream system
-                server.state = "starting";
-            }),
-        // TODO: make this better (labels or something)
-        "installing": LoadingSpinner(),
-        "stopping": LoadingSpinner(),
-        "starting": LoadingSpinner(),
-        "running": IconButton(MIcon("stop"), "delete")
-            .setColor(Color.Critical)
-            .onClick((e) => {
-                e.stopPropagation();
-                server.state = "stopping";
-                startSidecarConnection(server._id);
-                const promise = deferred<any>();
-                messageQueueSidecar.push({
-                    request: {
-                        type: "state",
-                        state: "stop"
-                    },
-                    response: promise
-                });
-                promise.then(() => {
-                    stopSidecarConnection();
-                });
-            })
-    })[ state ] ?? Box()))
-        .asRefComponent()
-        .addClass(isMobile.map(it => it ? "small" : "normal"), "icon-buttons-list", "action-list");
 }
 
 const time = asPointer(new Date().getTime());
@@ -341,10 +242,13 @@ export function serverDetails(server: StateHandler<Server>) {
     });
 
 
-    const uptime = HeavyReRender(time, () => BasicLabel({
-        title: server.$stateSince.map(it => it ? calculateUptime(new Date(it)) : "---"),
+    const uptime = BasicLabel({
+        title: refMerge({
+            state: server.$stateSince,
+            time
+        }).map(({ state, time }) => state ? calculateUptime(new Date(time)) : "---"),
         subtitle: server.$state.map(it => it == "running" ? "uptime" : "since"),
-    }));
+    });
 
     const address = BasicLabel({
         title: server.$address!.map(it => it ?? "---"),
@@ -356,18 +260,17 @@ export function serverDetails(server: StateHandler<Server>) {
         subtitle: "cpu",
     });
     const ram = BasicLabel({
-        title: input.$memory.map(it => `${it ? format(it * MB) : "0 MB"} / ${format(server.limits.memory * MB)}`),
+        title: input.$memory.map(it => `${it ? format(it * MB) : "---"} / ${format(server.limits.memory * MB)}`),
         subtitle: "memory",
     });
     const disk = BasicLabel({
-        title: input.$disk.map(it => it ? `${((it / server.limits.disk) * 100).toFixed(0)} % (${format(it*MB)} / ${format(server.limits.disk*MB)})` : "---"),
+        title: input.$disk.map(it => it ? `${((it / server.limits.disk) * 100).toFixed(0)} %` : "---"),
         subtitle: "disk",
     });
 
     terminal.connected.listen(val => {
         if (val) {
             currentDetailsTarget.setValue(server._id);
-
             sidecarDetailsSource.setValue((data: SidecarResponse | "clear") => {
                 if (data === "clear") {
                     terminal.reset();
@@ -508,15 +411,6 @@ export function serverDetails(server: StateHandler<Server>) {
     })).asRefComponent();
 }
 
-function DisconnectedScreen(): Component {
-    return Grid(
-        Grid(
-            Label("Connecting to server...", "h1"),
-            Label("Waiting for server availability")
-        ).setJustify("center")
-    ).addClass("disconnected-screen");
-}
-
 function editServer(server: StateHandler<Server>) {
     const data = State({
         name: server.name,
@@ -581,20 +475,5 @@ function editServer(server: StateHandler<Server>) {
             location.reload();
             return "remove" as const;
         })
-        .open();
-}
-
-function deleteServer(serverId: string) {
-    Dialog(() => Box(Label("Deleting this Server, will result in data loss.\nAfter this point there is no going back.")).setMargin("0 0 1.5rem"))
-        .setTitle("Are you sure?")
-        .addButton("Cancel", "remove")
-        .addButton("Delete", async () => {
-            await API.hosting.serverId(serverId).delete()
-                .then(stupidErrorAlert)
-                .catch(() => { });
-            location.href = "/hosting";
-            return "remove" as const;
-        }, Color.Critical)
-        .allowUserClose()
         .open();
 }

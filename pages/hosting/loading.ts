@@ -141,9 +141,10 @@ export function stopSidecarConnection() {
 export async function startSidecarConnection(id: string) {
     if (activeSideCar) {
         messageQueueSidecar = [];
+        activeSideCar.resolve();
     }
 
-    const url = new URL(`wss://sidecar.bbn.one/api/@bbn/sidecar/${id}/ws`);
+    const url = new URL(`wss://bbn.one/api/@bbn/sidecar/${id}/ws`);
     url.searchParams.set("TOKEN", localStorage[ "access-token" ]);
     const ws = new WebSocket(url.toString());
     activeSideCar = deferred();
@@ -153,10 +154,8 @@ export async function startSidecarConnection(id: string) {
     let watcher = 0;
     let stats = 0;
     ws.onmessage = (event: MessageEvent<string>) => {
-        console.log(event.data);
         const msg = <SidecarResponse>JSON.parse(event.data);
         for (const iterator of syncedResponses) {
-            console.log(iterator.request, msg)
             if (((iterator.request.type === "write" && (msg.type === "next-chunk" || msg.type === "error")) || (iterator.request.type === "list" && msg.type === "list")) && iterator.request.path == msg.path) {
                 syncedResponses.delete(iterator);
                 iterator.response.resolve(msg);
@@ -177,26 +176,20 @@ export async function startSidecarConnection(id: string) {
             syncedResponses.add(msg);
             ws.send(JSON.stringify(msg.request));
         }, 100);
-        ws.send(JSON.stringify({ type: "stats" }));
-        stats = setInterval(() => {
-            if (ws.readyState != ws.OPEN) return;
-            ws.send(JSON.stringify({ type: "stats" }));
-        }, 5000);
         sidecarDetailsSource.getValue()?.("clear");
         isSidecarConnect.setValue(true);
     };
 
     ws.onclose = () => {
-        if (!activeSideCar) return;
-        isSidecarConnect.setValue(false);
         clearInterval(watcher);
         clearInterval(stats);
+        if (!activeSideCar) return;
+        isSidecarConnect.setValue(false);
         startSidecarConnection(id);
     };
-
     await activeSideCar;
-    ws.close();
     activeSideCar = undefined;
+    ws.close();
 }
 
 export async function listFiles(_path: string) {
@@ -235,7 +228,8 @@ export async function uploadFile(_path: string, file: File, progress: (ratio: nu
             },
             response: nextChunk
         });
-        await nextChunk;
+        const rsp = await nextChunk;
+        console.log(rsp);
         // TODO: Add progress
     }
     progress(1);

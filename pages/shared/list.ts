@@ -87,7 +87,7 @@ export const placeholder = (title: string, subtitle: string) => CenterV(
         .addClass("list-title"),
     Label(subtitle)
         .setFont(1.2)
-).setMargin("100px 0 0").setGap("1rem").setAttribute("align", "center")
+).setMargin("100px 0 0").setGap("1rem").setAttribute("align", "center");
 
 export async function loadMore<T>(source: Pointer<External<T[]> | 'loading'>, func: () => Promise<External<T[]>>) {
     const data = source.getValue();
@@ -103,6 +103,9 @@ export async function loadMore<T>(source: Pointer<External<T[]> | 'loading'>, fu
     }
 }
 
+/**
+ * @deprecated replace with Pointer#asRefComponent
+ */
 class HeavyReRenderImpl<T> extends Component {
 
     constructor(item: Pointable<T>, map: (val: T) => Component) {
@@ -115,4 +118,8 @@ class HeavyReRenderImpl<T> extends Component {
         });
     }
 }
+
+/**
+ * @deprecated replace with Pointer#asRefComponent
+ */
 export const HeavyReRender = <T>(item: Pointable<T>, map: (val: T) => Component) => new HeavyReRenderImpl(item, map);

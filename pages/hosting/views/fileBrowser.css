@@ -28,7 +28,6 @@
 
 .drop-area {
     transition: scale 150ms ease;
-    min-height: calc(100vh - 20rem);
 }
 
 .drop-area.hovering {

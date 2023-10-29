@@ -335,9 +335,6 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("state"),
         state: serverPowerActions
-    }),
-    zod.object({
-        type: zod.literal("stats")
     })
 ]);
 
@@ -345,6 +342,7 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("list"),
         path: zod.string(),
+        canWrite: zod.boolean(),
         list: zod.object({
             name: zod.string(),
             fileMimeType: zod.string().optional(),
