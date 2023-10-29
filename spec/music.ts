@@ -320,6 +320,10 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
         path: zod.string(),
     }),
     zod.object({
+        type: zod.literal("next-chunk"),
+        path: zod.string(),
+    }),
+    zod.object({
         type: zod.literal("write"),
         path: zod.string(),
         chunk: zod.string().optional(),
@@ -345,6 +349,7 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
         canWrite: zod.boolean(),
         list: zod.object({
             name: zod.string(),
+            canWrite: zod.boolean().optional(),
             fileMimeType: zod.string().optional(),
             lastModified: zod.number().optional(),
             size: zod.number().optional(),
@@ -353,6 +358,8 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("read"),
         path: zod.string(),
+        chunk: zod.string().optional(),
+        finish: zod.boolean().optional()
     }),
     zod.object({
         type: zod.literal("log"),

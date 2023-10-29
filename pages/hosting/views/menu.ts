@@ -1,7 +1,7 @@
 import { API, count, HeavyReRender, LoadingSpinner, Navigation, placeholder, RenderItem, SliderInput, stupidErrorAlert } from "shared";
 import { deferred } from "std/async/deferred.ts";
 import { format } from "std/fmt/bytes.ts";
-import { asPointer, BasicLabel, BIcon, Box, Button, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, isMobile, Label, MediaQuery, ref, refMerge, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
+import { asPointer, BasicLabel, BIcon, Box, Button, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, isMobile, Label, MediaQuery, MIcon, ref, refMerge, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
 import { AuditTypes, Server, SidecarResponse } from "../../../spec/music.ts";
@@ -20,7 +20,7 @@ import { mapFiletoIcon } from "./icon.ts";
 import './list.css';
 import { moveDialog } from "./list.ts";
 import { pathNavigation } from "./pathNavigation.ts";
-import { allFiles, auditLogs, hostingButtons, loading, path, uploadingFiles } from "./state.ts";
+import { allFiles, auditLogs, canWriteInFolder, hostingButtons, loading, path, uploadingFiles } from "./state.ts";
 import './table2.css';
 import { Table2 } from "./table2.ts";
 import { TerminalComponent } from "./terminal.ts";
@@ -30,6 +30,10 @@ import { calculateUptime } from "./uptime.ts";
 import { DisconnectedScreen } from "./waitingScreen.ts";
 
 const droppingFileHandler = async (files: ReadableStream<FileEntry>, count: number): Promise<void> => {
+    if (!canWriteInFolder.getValue()) {
+        alert("This folder is Read-only. You can't upload files here.");
+        return;
+    }
     console.log("Uploading", count, "files");
     for await (const _iterator of files) {
         await new Promise<void>((done) => {
@@ -46,6 +50,7 @@ const droppingFileHandler = async (files: ReadableStream<FileEntry>, count: numb
         uploadingFiles.setValue(Object.fromEntries(Object.entries(uploadingFiles.getValue()).filter(([ path ]) => path != _iterator.path)));
     }
 };
+
 export const hostingMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     actions: hostingButtons,
@@ -116,20 +121,46 @@ export const hostingMenu = Navigation({
                                             subtitle: "Drag and Drop files/folders here to upload and download them faster."
                                         }).setMargin("0 0 1rem 0"),
                                         pathNavigation(),
+                                        canWriteInFolder.map(writeable => writeable ? Box() : Box(
+                                            MIcon("warning"),
+                                            Label("This folder is Read-only. You can't upload files here.")
+                                        ).addClass("read-only-path")).asRefComponent(),
                                         new Table2(allFiles)
                                             .addColumn("Name", (data) => Box(BIcon(mapFiletoIcon(data)), BasicLabel({ title: data.name }).addClass("small-text")).addClass("file-item"))
                                             .addColumn("Last Modified", (data) => data.lastModified !== undefined ? Label(new Date(data.lastModified).toLocaleString()) : Box())
                                             .addColumn("Type", (data) => data.fileMimeType !== undefined ? Label(fileTypeName(data.fileMimeType)) : Label("Folder"))
                                             .addColumn("Size", (data) => data.size !== undefined ? Label(format(parseInt(data.size))).addClass('text-align-right') : Box())
-                                            .setRowClick((rowIndx) => {
-                                                const data = allFiles.getValue()[ rowIndx ];
-                                                if (data.fileMimeType === undefined) {
-                                                    path.setValue(`${path.getValue() + data.name}/`);
-                                                    loading.setValue(true);
-                                                    listFiles(path.getValue()).finally(() => loading.setValue(false));
-                                                } else {
-                                                    Dialog(() => Label(JSON.stringify(data))).setTitle("File Info").allowUserClose().open();
-                                                }
+                                            .addColumn("", (data) => Grid(
+                                                data.fileMimeType
+                                                    ? IconButton(MIcon("file_open"), "Open file")
+                                                        .addClass("table-button")
+                                                        .onClick(() => {
+
+                                                        })
+                                                    : Box(),
+                                                data.fileMimeType && data.size
+                                                    ? IconButton(MIcon("download"), "Download")
+                                                        .addClass("table-button")
+                                                        .onClick(() => {
+
+                                                        })
+                                                    : Box(),
+                                                data.fileMimeType
+                                                    ? IconButton(MIcon("delete"), "Delete")
+                                                        .addClass("table-button", "red")
+                                                        .onClick(() => {
+
+                                                        })
+                                                    : Box()
+                                            ).setEvenColumns(3))
+                                            .setColumnTemplate("auto auto auto auto min-content")
+                                            .setRowClickEnabled((rowIndex) => !allFiles.getValue()[ rowIndex ].fileMimeType)
+                                            .setRowClick((rowIndex) => {
+                                                const data = allFiles.getValue()[ rowIndex ];
+                                                // Only folders
+                                                path.setValue(`${path.getValue() + data.name}/`);
+                                                loading.setValue(true);
+                                                listFiles(path.getValue()).finally(() => loading.setValue(false));
                                             })
                                     )).addClass("file-browser")
                                 ),
@@ -271,12 +302,10 @@ export function serverDetails(server: StateHandler<Server>) {
     terminal.connected.listen(val => {
         if (val) {
             currentDetailsTarget.setValue(server._id);
-            sidecarDetailsSource.setValue((data: SidecarResponse | "clear") => {
-                if (data === "clear") {
-                    terminal.reset();
-                    return;
-                }
+            sidecarDetailsSource.setValue((data: SidecarResponse) => {
                 if (data.type == "log") {
+                    if (data.backlog)
+                        terminal.reset();
                     terminal.write(data.chunk);
                 }
                 if (data.type == "stats") {

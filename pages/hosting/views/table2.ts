@@ -1,7 +1,6 @@
 import { Box, Component, Custom, Label, Pointable, Pointer, asPointer, refMerge } from "webgen/mod.ts";
 
 export type TableColumn<Data> = {
-    size: 'fill' | 'auto',
     converter: (data: Data) => Component;
     title: Pointer<string>;
     sorting: Pointer<TableSorting | undefined>;
@@ -14,11 +13,13 @@ export enum TableSorting {
 }
 
 export type RowClickHandler = (rowIndex: number, columnIndex: number) => void;
+export type RowClickEnabledHandler = (rowIndex: number) => boolean;
 
 export class Table2<Data> extends Component {
     private columns: Pointer<TableColumn<Data>[]> = asPointer([]);
     private hoveredRow: Pointer<number | undefined> = asPointer(undefined);
     private rowClick: Pointer<RowClickHandler | undefined> = asPointer(undefined);
+    private rowClickable: Pointer<RowClickEnabledHandler | undefined> = asPointer(undefined);
     constructor(dataSource: Pointer<Data[]>) {
         super();
         this.wrapper.append(this.columns.map(columns => Box(
@@ -27,8 +28,9 @@ export class Table2<Data> extends Component {
                 dataSource.map(rows =>
                     Box(
                         ...rows.map((row, rowIndex) => {
+                            const clickEnabled = this.rowClick.map(it => !!it && (this.rowClickable.getValue()?.(rowIndex) ?? true));
                             const hovering = refMerge({
-                                clickEnabled: this.rowClick.map(it => !!it),
+                                clickEnabled,
                                 hoveredRow: this.hoveredRow
                             });
                             const item = Box(column.converter(row))
@@ -38,7 +40,8 @@ export class Table2<Data> extends Component {
                             item.addEventListener("pointerenter", () => this.hoveredRow.setValue(rowIndex));
                             item.addEventListener("pointerleave", () => this.hoveredRow.setValue(undefined));
                             item.onclick = () => {
-                                this.rowClick.getValue()?.(rowIndex, columnIndex);
+                                if (clickEnabled.getValue())
+                                    this.rowClick.getValue()?.(rowIndex, columnIndex);
                             };
                             return Custom(item);
                         })
@@ -58,13 +61,17 @@ export class Table2<Data> extends Component {
         return this;
     }
 
-    addColumn(title: Pointer<string> | string, converter: TableColumn<Data>[ "converter" ], sorting?: Pointer<undefined | TableSorting> | undefined | TableSorting, size: TableColumn<Data>[ "size" ] = 'auto') {
+    addColumn(title: Pointer<string> | string, converter: TableColumn<Data>[ "converter" ], sorting?: Pointer<undefined | TableSorting> | undefined | TableSorting) {
         this.columns.setValue([ ...this.columns.getValue(), <TableColumn<Data>>{
             converter,
-            size,
             title: asPointer(title ?? ""),
             sorting: asPointer(sorting)
         } ]);
+        return this;
+    }
+
+    setRowClickEnabled(clickableHandler: Pointable<RowClickEnabledHandler>) {
+        asPointer(clickableHandler).listen(value => this.rowClickable.setValue(value));
         return this;
     }
 

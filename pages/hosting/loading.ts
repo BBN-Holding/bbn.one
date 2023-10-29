@@ -1,11 +1,12 @@
 import { HmRequest, LoginRequest, MessageType, SyncResponse, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API } from "shared";
 import { Deferred, deferred } from "std/async/deferred.ts";
-import { encodeBase64 } from "std/encoding/base64.ts";
+import { decodeBase64, encodeBase64 } from "std/encoding/base64.ts";
 import { State, asPointer, lazyInit } from "webgen/mod.ts";
 import { Server, ServerDetails, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
+import { canWriteInFolder, currentFiles } from "./views/state.ts";
 
 export async function refreshState() {
     state.servers = State((await API.hosting.servers()).map(x => State(x)));
@@ -121,16 +122,6 @@ export const streamingPool = lazyInit(async () => {
     connect();
 });
 
-export type RemotePath = {
-    name: string;
-    size?: string;
-    lastModified?: number;
-    fileMimeType?: string;
-    uploadingRatio?: string;
-};
-
-export const currentFiles = asPointer(<RemotePath[]>[]);
-export const currentPath = asPointer("/");
 export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
 let activeSideCar: Deferred<void> | undefined = undefined;
 export const isSidecarConnect = asPointer(false);
@@ -152,11 +143,17 @@ export async function startSidecarConnection(id: string) {
     const syncedResponses = new Set<{ request: SidecarRequest, response: Deferred<SidecarResponse>; }>();
 
     let watcher = 0;
-    let stats = 0;
     ws.onmessage = (event: MessageEvent<string>) => {
         const msg = <SidecarResponse>JSON.parse(event.data);
         for (const iterator of syncedResponses) {
-            if (((iterator.request.type === "write" && (msg.type === "next-chunk" || msg.type === "error")) || (iterator.request.type === "list" && msg.type === "list")) && iterator.request.path == msg.path) {
+            if (
+                (
+                    (iterator.request.type === "write" && (msg.type === "next-chunk" || msg.type === "error")) ||
+                    (iterator.request.type === "read" && (msg.type === "next-chunk" || msg.type === "error")) ||
+                    (iterator.request.type === "list" && msg.type === "list")
+                )
+                && iterator.request.path == msg.path
+            ) {
                 syncedResponses.delete(iterator);
                 iterator.response.resolve(msg);
                 break;
@@ -176,13 +173,11 @@ export async function startSidecarConnection(id: string) {
             syncedResponses.add(msg);
             ws.send(JSON.stringify(msg.request));
         }, 100);
-        sidecarDetailsSource.getValue()?.("clear");
         isSidecarConnect.setValue(true);
     };
 
     ws.onclose = () => {
         clearInterval(watcher);
-        clearInterval(stats);
         if (!activeSideCar) return;
         isSidecarConnect.setValue(false);
         startSidecarConnection(id);
@@ -203,10 +198,38 @@ export async function listFiles(_path: string) {
     });
 
     const data = await response;
-    if (data.type == "list")
+    if (data.type == "list") {
+        canWriteInFolder.setValue(data.canWrite);
         currentFiles.setValue(data.list);
+    }
 }
-
+export function downloadFile(path: string) {
+    let firstTime = true;
+    return new ReadableStream<Uint8Array>({
+        pull: async (controller) => {
+            const nextChunk = deferred<SidecarResponse>();
+            messageQueueSidecar.push({
+                request: {
+                    type: firstTime ? "read" : "next-chunk",
+                    path: path
+                },
+                response: nextChunk
+            });
+            const response = await nextChunk;
+            if (response.type === "error") {
+                controller.error(response.error);
+                return;
+            }
+            if (response.type === "read" && response.chunk) {
+                controller.enqueue(decodeBase64(response.chunk));
+            }
+            if (response.type === "read" && response.finish) {
+                controller.close();
+            }
+            firstTime = false;
+        }
+    });
+}
 export async function uploadFile(_path: string, file: File, progress: (ratio: number) => void) {
     const check = deferred<SidecarResponse>();
     messageQueueSidecar.push({

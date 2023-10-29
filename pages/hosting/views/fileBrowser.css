@@ -75,3 +75,13 @@
 .text-align-right {
     text-align: right;
 }
+
+.read-only-path {
+    display: grid;
+    grid-template-columns: max-content auto;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    color: #ffd42e;
+    margin: 12px 0 0;
+}

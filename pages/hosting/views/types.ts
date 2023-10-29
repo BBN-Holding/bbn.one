@@ -10,3 +10,11 @@ export type GridItem = Component | [ settings: {
     width?: number | undefined;
     heigth?: number | undefined;
 }, element: Component ];
+
+export type RemotePath = {
+    name: string;
+    size?: string;
+    lastModified?: number;
+    fileMimeType?: string;
+    uploadingRatio?: string;
+};
