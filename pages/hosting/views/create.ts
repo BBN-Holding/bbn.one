@@ -1,4 +1,4 @@
-import { HeavyReRender, LoadingSpinner, Navigation } from "shared";
+import { LoadingSpinner, Navigation } from "shared";
 import { Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import '../../../assets/css/hosting.css';
 import '../../../assets/css/main.css';
@@ -96,7 +96,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
 ) : LoadingSpinner());
 
 
-View(() => Vertical(...DynaNavigation("Hosting"), HeavyReRender(navigation, it => it))).appendOn(document.body);
+View(() => Vertical(...DynaNavigation("Hosting"), navigation.asRefComponent())).appendOn(document.body);
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())

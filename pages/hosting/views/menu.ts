@@ -1,4 +1,4 @@
-import { API, count, HeavyReRender, LoadingSpinner, Navigation, placeholder, RenderItem, SliderInput, stupidErrorAlert } from "shared";
+import { API, count, LoadingSpinner, Navigation, placeholder, RenderItem, SliderInput, stupidErrorAlert } from "shared";
 import { deferred } from "std/async/deferred.ts";
 import { format } from "std/fmt/bytes.ts";
 import { asPointer, BasicLabel, BIcon, Box, Button, Color, Component, Custom, Dialog, DropDownInput, Entry, Form, Grid, IconButton, isMobile, Label, MediaQuery, MIcon, ref, refMerge, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
@@ -317,7 +317,7 @@ export function serverDetails(server: StateHandler<Server>) {
         }
     });
 
-    return isSidecarConnect.map((connected) => !server.identifier && !connected ? DisconnectedScreen() : HeavyReRender(isMobile, mobile => {
+    return isSidecarConnect.map((connected) => !server.identifier && !connected ? DisconnectedScreen() : isMobile.map(mobile => {
         const items = Grid(
             ...(mobile ? <Component[]>[
                 Entry(Grid(
@@ -437,7 +437,7 @@ export function serverDetails(server: StateHandler<Server>) {
             items.setRawColumns("69% auto");
 
         return items;
-    })).asRefComponent();
+    }).asRefComponent()).asRefComponent();
 }
 
 function editServer(server: StateHandler<Server>) {

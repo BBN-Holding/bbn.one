@@ -1,6 +1,5 @@
 import { randomInteger } from "std/collections/_utils.ts";
 import { asPointer, Box, css, Label, Pointer } from "webgen/mod.ts";
-import { HeavyReRender } from "./list.ts";
 
 export function Counter(value: Pointer<string | number>) {
     const id = randomInteger(1000, 100000);
@@ -75,5 +74,5 @@ export function Counter(value: Pointer<string | number>) {
         update();
     });
 
-    return HeavyReRender(counter, it => it);
+    return counter.asRefComponent();
 }

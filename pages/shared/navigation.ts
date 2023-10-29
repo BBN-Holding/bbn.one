@@ -1,6 +1,6 @@
 import { assert } from "std/assert/assert.ts";
 import { Box, Component, Entry, Grid, Label, MIcon, Pointable, Pointer, Taglist, Vertical, asPointer, isMobile, isPointer } from "webgen/mod.ts";
-import { HeavyList, HeavyReRender } from "./list.ts";
+import { HeavyList } from "./list.ts";
 import './navigation.css';
 
 export interface ClickHandler {
@@ -100,7 +100,7 @@ class MenuImpl extends Component {
         this.path = asPointer(rootNode.categories?.at(0) ? `${rootNode.categories.at(0)!.id}/` : "-/");
         // Renderer
         this.wrapper.append(Vertical(
-            HeavyReRender(this.#header, it => it(this)).removeFromLayout(),
+            this.#header.map(it => it(this)).asRefComponent().removeFromLayout(),
             HeavyList(this.displayed, item => {
                 if (item instanceof Component)
                     return item;
@@ -116,7 +116,7 @@ class MenuImpl extends Component {
                     entry.onPromiseClick(async () => await click());
                 return entry;
             }),
-            HeavyReRender(this.#footer, it => it(this)).removeFromLayout(),
+            this.#footer.map(it => it(this)).asRefComponent().removeFromLayout(),
         ).setGap("var(--gap)").draw());
 
         // Listener
@@ -169,7 +169,7 @@ class MenuImpl extends Component {
 export const Navigation = (rootNode: RootNode) => new MenuImpl(rootNode);
 
 function defaultHeader(menu: MenuImpl) {
-    return HeavyReRender(isMobile, mobile => {
+    return isMobile.map(mobile => {
         const list = Vertical(
             createBreadcrumb(menu),
             createTagList(menu)
@@ -179,15 +179,15 @@ function defaultHeader(menu: MenuImpl) {
             createActionList(menu)
         ).setRawColumns("auto max-content").setGap("var(--gap)").setAlign("center");
         return list;
-    });
+    }).asRefComponent();
 }
 
 function defaultFooter(menu: MenuImpl) {
-    return HeavyReRender(isMobile, mobile => mobile && menu.rootNode.actions ? Box(createActionList(menu)).addClass(asPointer(menu.rootNode.actions).map(it => it.length == 0 ? "remove-from-layout" : "normal"), "sticky-footer") : Box().removeFromLayout()).removeFromLayout();
+    return isMobile.map(mobile => mobile && menu.rootNode.actions ? Box(createActionList(menu)).addClass(asPointer(menu.rootNode.actions).map(it => it.length == 0 ? "remove-from-layout" : "normal"), "sticky-footer") : Box().removeFromLayout()).asRefComponent().removeFromLayout();
 }
 
 export function createActionList(menu: MenuImpl) {
-    return HeavyReRender(menu.rootNode.actions, it => Grid(...(it ?? [])).addClass("action-list-bar")).removeFromLayout();
+    return asPointer(menu.rootNode.actions).map(it => Grid(...(it ?? [])).addClass("action-list-bar")).asRefComponent().removeFromLayout();
 }
 
 export function createTagList(menu: MenuImpl) {
@@ -205,15 +205,16 @@ export function createTagList(menu: MenuImpl) {
         index.setValue(menu.rootNode.categories!.findIndex(it => it.id == path.split("/").at(0)));
     });
 
-    return HeavyReRender(menu.path.map(path => {
+    return menu.path.map(path => {
         const [ rootId ] = path.split("/");
         const unprefixed = path.replace(rootId, "");
-        return unprefixed == "/";
-    }), visable => visable && menu.rootNode.categories ? Taglist(menu.rootNode.categories.map(it => it.title), index) : Box().removeFromLayout()).removeFromLayout();
+        const visible = unprefixed == "/";
+        return visible && menu.rootNode.categories ? Taglist(menu.rootNode.categories.map(it => it.title), index) : Box().removeFromLayout();
+    }).asRefComponent();
 }
 
 export function createBreadcrumb(menu: MenuImpl) {
-    return HeavyReRender(isMobile, mobile => {
+    return isMobile.map(mobile => {
 
         const history = menu.path.map(path => {
             const [ rootId ] = path.split("/");
@@ -228,7 +229,7 @@ export function createBreadcrumb(menu: MenuImpl) {
         }
 
         if (mobile)
-            return HeavyReRender(history, it => {
+            return history.map(it => {
                 const last = it.at(-2);
                 if (!last) return Label(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
                     .addClass("label");
@@ -243,8 +244,8 @@ export function createBreadcrumb(menu: MenuImpl) {
                     Label(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
                         .addClass("label"),
                 );
-            }).addClass("history-list").removeFromLayout();
-        return HeavyReRender(history, it => Grid(
+            }).asRefComponent().addClass("history-list").removeFromLayout();
+        return history.map(it => Grid(
             ...it.map((entry, index) =>
                 Box(
                     Label(entry.title).addClass("label"),
@@ -255,9 +256,9 @@ export function createBreadcrumb(menu: MenuImpl) {
             ).filter((_, i) => i != it.length - 1),
             Label(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
                 .addClass("label"),
-        ).addClass("history-list")).removeFromLayout();
+        ).addClass("history-list")).asRefComponent().removeFromLayout();
     }
-    ).removeFromLayout();
+    ).asRefComponent().removeFromLayout();
 }
 
 function parseTitle(rootNode: RootNode, node: MenuNode, index: number) {

@@ -102,24 +102,3 @@ export async function loadMore<T>(source: Pointer<External<T[]> | 'loading'>, fu
             });
     }
 }
-
-/**
- * @deprecated replace with Pointer#asRefComponent
- */
-class HeavyReRenderImpl<T> extends Component {
-
-    constructor(item: Pointable<T>, map: (val: T) => Component) {
-        super();
-        console.debug("HeavyReRender got constructed");
-        const it = asPointer(item);
-        it.listen((val: T) => {
-            this.wrapper.textContent = '';
-            this.wrapper.append(map(val).draw());
-        });
-    }
-}
-
-/**
- * @deprecated replace with Pointer#asRefComponent
- */
-export const HeavyReRender = <T>(item: Pointable<T>, map: (val: T) => Component) => new HeavyReRenderImpl(item, map);
