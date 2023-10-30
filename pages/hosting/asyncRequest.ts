@@ -12,10 +12,6 @@ export enum MessageType {
 
 export type HmMessage = {
     type: MessageType.ChannelOpen;
-    channelId: string;
-    subscribe: (subscription: string) => ReadableStream<HmPublishMessage>;
-    request: (triggerId: string, data: Record<string, string>) => Promise<HmMessage>;
-    announce: (triggerId: string, data: Record<string, string>) => Promise<void>;
 } | {
     type: MessageType.JsonObjectData,
     unparsedData: string;
@@ -25,27 +21,40 @@ export type HmMessage = {
 };
 
 export interface HmConnection {
-    channel: (moduleId: string) => ReadableStream<HmMessage>;
+    channel: (moduleId: string) => Promise<ReadableStream<HmMessage> & {
+        request: (triggerId: string, data: Record<string, string>) => Promise<HmMessage>;
+        announce: (triggerId: string, data: Record<string, string>) => Promise<void>;
+    }>;
+    subscribe: (subscription: string) => Promise<ReadableStream<HmPublishMessage>>;
 }
 
 
 async function connect(domain: string, options?: {
-    type?: 'secure' | 'unsecure';
+    type?: 'secure' | 'insecure';
     getToken?: () => string;
 }): Promise<HmConnection> {
     await "";
-    return {
-        channel: () => new ReadableStream<HmMessage>()
-    };
+    return undefined!;
 }
 
 
 const connection = await connect("bbn.one");
 
-for await (const message of connection.channel("@bbn/hosting/sidecar")) {
+
+const channel = await connection.channel("@bbn/hosting/sidecar");
+
+for await (const message of channel) {
     if (message.type == MessageType.ChannelOpen) {
-        for await (const iterator of message.subscribe("ressourceInfo")) {
-            console.log(iterator);
-        }
     }
 }
+
+for await (const iterator of await connection.subscribe("@bbn/hosting/sidecar/ressourceInfo")) {
+    console.log(iterator);
+}
+
+// Insecure
+// Client sends ulid:@bbn/hosting/sidecar
+// Servers sends ulid:MessageType { ChannelOpen } or ulid:MessageType{ ChannelOpenFailed }:{ "error": "Requires Secure Endpoint" }
+
+// Client makes ulid => ulid:
+// ulid:MessageType

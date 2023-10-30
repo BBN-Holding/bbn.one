@@ -8,6 +8,7 @@ import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 import { canWriteInFolder, currentFiles } from "./views/state.ts";
 
+
 export async function refreshState() {
     state.servers = State((await API.hosting.servers()).map(x => State(x)));
     state.meta = State(await API.hosting.meta());
@@ -149,7 +150,8 @@ export async function startSidecarConnection(id: string) {
             if (
                 (
                     (iterator.request.type === "write" && (msg.type === "next-chunk" || msg.type === "error")) ||
-                    (iterator.request.type === "read" && (msg.type === "next-chunk" || msg.type === "error")) ||
+                    (iterator.request.type === "read" && (msg.type === "read" || msg.type === "error")) ||
+                    (iterator.request.type === "next-chunk" && (msg.type === "read" || msg.type === "error")) ||
                     (iterator.request.type === "list" && msg.type === "list")
                 )
                 && iterator.request.path == msg.path
@@ -179,11 +181,11 @@ export async function startSidecarConnection(id: string) {
     ws.onclose = () => {
         clearInterval(watcher);
         if (!activeSideCar) return;
+        activeSideCar = undefined;
         isSidecarConnect.setValue(false);
         startSidecarConnection(id);
     };
     await activeSideCar;
-    activeSideCar = undefined;
     ws.close();
 }
 

@@ -26,6 +26,8 @@ serve({
     assets: {
         "sitemap.xml": "./static/sitemap.xml",
         "robots.txt": "./static/robots.txt",
+        "mitm.html": "./static/mitm.html",
+        "sw.js": "./static/sw.js",
         "favicon.ico": "./static/favicon.ico",
         "email-header.png": "./static/email-header.png",
         "app.webmanifest": "./static/app.webmanifest",

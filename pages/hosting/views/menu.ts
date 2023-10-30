@@ -7,7 +7,7 @@ import serverTypes from "../../../data/servers.json" assert { type: "json" };
 import { AuditTypes, Server, SidecarResponse } from "../../../spec/music.ts";
 import { activeUser, showProfilePicture } from "../../_legacy/helper.ts";
 import { MB, state } from "../data.ts";
-import { currentDetailsTarget, isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource, startSidecarConnection, stopSidecarConnection, streamingPool, uploadFile } from "../loading.ts";
+import { currentDetailsTarget, downloadFile, isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource, startSidecarConnection, stopSidecarConnection, streamingPool, uploadFile } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import { ChangeStateButton } from "./changeStateButton.ts";
 import { deleteServer } from "./deleteServer.ts";
@@ -21,6 +21,7 @@ import './list.css';
 import { moveDialog } from "./list.ts";
 import { pathNavigation } from "./pathNavigation.ts";
 import { allFiles, auditLogs, canWriteInFolder, hostingButtons, loading, path, uploadingFiles } from "./state.ts";
+import { createDownloadStream } from "./streamSaver.ts";
 import './table2.css';
 import { Table2 } from "./table2.ts";
 import { TerminalComponent } from "./terminal.ts";
@@ -141,8 +142,9 @@ export const hostingMenu = Navigation({
                                                 data.fileMimeType && data.size
                                                     ? IconButton(MIcon("download"), "Download")
                                                         .addClass("table-button")
-                                                        .onClick(() => {
-
+                                                        .onClick(async () => {
+                                                            const stream = downloadFile(path.getValue() + data.name);
+                                                            await stream.pipeTo(createDownloadStream(data.name));
                                                         })
                                                     : Box(),
                                                 data.fileMimeType
