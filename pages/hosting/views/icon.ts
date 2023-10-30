@@ -1,4 +1,4 @@
-import { RemotePath } from "../loading.ts";
+import { RemotePath } from "./types.ts";
 
 const fileNameIncludes: Record<string, string> = {
     "world": "globe2",
