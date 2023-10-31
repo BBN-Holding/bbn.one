@@ -1,6 +1,6 @@
 .file-dialog-shell {
-    width: calc(100vw - 6rem);
-    height: 80vh;
+    width: calc(100vw - 3rem);
+    height: calc(100vh - 15rem);
     display: grid;
     grid-template: 100% / 100%;
     max-width: 80rem;
