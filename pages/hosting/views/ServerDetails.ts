@@ -4,7 +4,7 @@ import { Box, Button, Custom, Entry, Form, Grid, State, StateHandler, TextInput,
 import { Server, SidecarResponse } from "../../../spec/music.ts";
 import { currentDetailsTarget, isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource } from "../loading.ts";
 import { ServerStaticInfo } from "./ServerStaticInfo.ts";
-import { editServerDialog } from "./editServerDialog.ts";
+import { editServerDialog } from "./dialogs/editServerDialog.ts";
 import { auditEntry, hostingMenu } from "./menu.ts";
 import { auditLogs, path } from "./state.ts";
 import { TerminalComponent } from "./terminal.ts";

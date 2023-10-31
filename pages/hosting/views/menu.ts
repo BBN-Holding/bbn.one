@@ -8,9 +8,9 @@ import { state } from "../data.ts";
 import { startSidecarConnection, stopSidecarConnection, streamingPool } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import { ChangeStateButton } from "./changeStateButton.ts";
-import { deleteServer } from "./deleteServer.ts";
 import './details.css';
-import { editServerDialog } from "./editServerDialog.ts";
+import { deleteServerDialog } from "./dialogs/deleteServerDialog.ts";
+import { editServerDialog } from "./dialogs/editServerDialog.ts";
 import './fileBrowser.css';
 import { FileBrowser } from "./FileBrowser.ts";
 import './list.css';
@@ -112,7 +112,7 @@ export const hostingMenu = Navigation({
                                 id: "delete",
                                 title: "Delete Server",
                                 subtitle: "Delete everything. Click once, gone forever.",
-                                clickHandler: () => deleteServer(server._id)
+                                clickHandler: () => deleteServerDialog(server._id)
                             }
                         ]
                     }

@@ -1,6 +1,9 @@
+import { deferred } from "std/async/deferred.ts";
 import { format } from "std/fmt/bytes.ts";
 import { BasicLabel, BIcon, Box, Entry, Grid, IconButton, Label, MIcon } from "webgen/mod.ts";
-import { downloadFile, listFiles } from "../loading.ts";
+import { SidecarResponse } from "../../../spec/music.ts";
+import { downloadFile, listFiles, messageQueueSidecar } from "../loading.ts";
+import { deleteFileDialog } from "./dialogs/deleteFileDialog.ts";
 import { DropHandler } from "./dropHandler.ts";
 import { droppingFileHandler } from "./droppingFileHandler.ts";
 import { fileTypeName } from "./fileTypeName.ts";
@@ -47,7 +50,28 @@ export function FileBrowser() {
                         data.fileMimeType && data.canWrite
                             ? IconButton(MIcon("delete"), "Delete")
                                 .addClass("table-button", "red")
-                                .onClick(() => {
+                                .onClick(async () => {
+                                    if (!await deleteFileDialog())
+                                        return;
+                                    const response = deferred<SidecarResponse>();
+                                    messageQueueSidecar.push({
+                                        request: {
+                                            type: "delete",
+                                            path: path.getValue() + data.name
+                                        },
+                                        response
+                                    });
+
+                                    // TODO: Backend should send a message when the file is deleted
+                                    loading.setValue(true);
+                                    listFiles(path.getValue()).finally(() => loading.setValue(false));
+
+                                    setTimeout(() => {
+                                        loading.setValue(true);
+                                        listFiles(path.getValue()).finally(() => loading.setValue(false));
+                                    }, 1000);
+                                    await response;
+
                                 })
                             : Box()
                     ).setEvenColumns(3))

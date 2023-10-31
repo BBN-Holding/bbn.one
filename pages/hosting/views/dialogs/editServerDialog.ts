@@ -1,14 +1,12 @@
 import { API, SliderInput, stupidErrorAlert } from "shared";
 import { format } from "std/fmt/bytes.ts";
 import { Color, Dialog, DropDownInput, Grid, Label, MediaQuery, State, StateHandler, TextInput, Vertical } from "webgen/mod.ts";
-import locations from "../../../data/locations.json";
-import serverTypes from "../../../data/servers.json";
-import { Server } from "../../../spec/music.ts";
-import { MB, state } from "../data.ts";
-import { deleteServer } from "./deleteServer.ts";
-import { moveDialog } from "./list.ts";
-
-
+import locations from "../../../../data/locations.json" assert { type: "json" };
+import serverTypes from "../../../../data/servers.json" assert { type: "json" };
+import { Server } from "../../../../spec/music.ts";
+import { MB, state } from "../../data.ts";
+import { moveDialog } from "../list.ts";
+import { deleteServerDialog } from "./deleteServerDialog.ts";
 
 export function editServerDialog(server: StateHandler<Server>) {
     const data = State({
@@ -58,7 +56,7 @@ export function editServerDialog(server: StateHandler<Server>) {
         .setTitle(`Edit '${server.name}'`)
         .allowUserClose()
         .addButton("Delete Server", () => {
-            deleteServer(server._id);
+            deleteServerDialog(server._id);
             return "remove";
         }, Color.Critical)
         .addButton("Close", "remove")
