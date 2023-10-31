@@ -87,7 +87,7 @@ export const editFileDialog = Dialog(() =>
 )
     .allowUserClose()
     .setTitle("Edit File")
-    .addButton("Exit", "close")
+    .addButton("Cancel", "close")
     .addButton("Save", async () => {
         if (editFileDownloading.getValue())
             return alert("File is still downloading");
@@ -96,7 +96,7 @@ export const editFileDialog = Dialog(() =>
         await uploadFile(
             editFilePath.getValue(),
             new File([ editor.getValue() ], editFilePath.getValue()),
-            () => { }
+            asPointer(0)
         );
         editFileUploading.setValue(false);
         await delay(300);
