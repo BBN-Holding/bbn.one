@@ -1,5 +1,5 @@
 import { API } from "shared";
-import { createElement } from "webgen/mod.ts";
+import { Pointer, asPointer, createElement } from "webgen/mod.ts";
 
 export type StreamingUploadEvents = {
     credentials: () => string,
@@ -19,20 +19,27 @@ export function uploadFilesDialog(onData: (files: File[]) => void, accept: strin
     };
 }
 
+export function ProgressTracker(percentage: Pointer<number>, expectedSize: number) {
+    let bytesUploaded = 0;
+
+    return new TransformStream({
+        transform(chunk, controller) {
+            bytesUploaded += chunk.length;
+            percentage.setValue((bytesUploaded / expectedSize) * 100);
+            controller.enqueue(chunk);
+        }
+    });
+}
+
 export function StreamingUploadHandler(path: string, events: StreamingUploadEvents, file: File) {
     try {
         const ws = new WebSocket(`${API.BASE_URL.replace("https", "wss").replace("http", "ws")}${path}`);
-        let bytesUploaded = 0;
+        const progress = asPointer(0);
+        progress.listen((percentage) => { events.onUploadTick(percentage); });
+
         const stream = file
             .stream()
-            .pipeThrough(new TransformStream({
-                async transform(chunk, controller) {
-                    bytesUploaded += chunk.length;
-                    const percentage = (bytesUploaded / file.size) * 100;
-                    await events.onUploadTick(percentage);
-                    controller.enqueue(chunk);
-                }
-            }));
+            .pipeThrough(ProgressTracker(progress, file.size));
         ws.onopen = () => {
             ws.send(`JWT ${events.credentials()}`);
         };

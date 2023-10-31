@@ -85,3 +85,12 @@
     color: #ffd42e;
     margin: 12px 0 0;
 }
+
+.fileProgressBar {
+    grid-column: 3 span;
+    margin: 0 5px;
+}
+
+.fileProgressBar progress {
+    width: 100%;
+}

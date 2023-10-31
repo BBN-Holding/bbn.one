@@ -2,6 +2,7 @@ import { deferred } from "std/async/deferred.ts";
 import { format } from "std/fmt/bytes.ts";
 import { BasicLabel, BIcon, Box, Entry, Grid, IconButton, Label, MIcon } from "webgen/mod.ts";
 import { SidecarResponse } from "../../../spec/music.ts";
+import { Progress } from "../../shared/Progress.ts";
 import { downloadFile, listFiles, messageQueueSidecar } from "../loading.ts";
 import { deleteFileDialog } from "./dialogs/deleteFileDialog.ts";
 import { editFileDialog, editFileLanguage, editFilePath, editFilestreamingText } from "./dialogs/editFileDialog.ts";
@@ -29,12 +30,18 @@ export function FileBrowser() {
                     Label("This folder is Read-only. You can't upload files here.")
                 ).addClass("read-only-path")).asRefComponent(),
                 new Table2(allFiles)
-                    .addColumn("Name", (data) => Box(BIcon(mapFiletoIcon(data)), BasicLabel({ title: data.name }).addClass("small-text")).addClass("file-item"))
+                    .addColumn("Name", (data) => Box(
+                        BIcon(mapFiletoIcon(data)),
+                        BasicLabel({ title: data.name })
+                            .addClass("small-text"),
+                        ...data.uploadingRatio !== undefined ? [ MIcon("cloud") ] : [],
+                    ).addClass("file-item"))
                     .addColumn("Last Modified", (data) => data.lastModified !== undefined ? Label(new Date(data.lastModified).toLocaleString()) : Box())
                     .addColumn("Type", (data) => data.fileMimeType !== undefined ? Label(fileTypeName(data.fileMimeType)) : Label("Folder"))
                     .addColumn("Size", (data) => data.size !== undefined ? Label(format(parseInt(data.size))).addClass('text-align-right') : Box())
                     .addColumn("", (data) => Grid(
-                        data.fileMimeType && [ "text/yaml", "application/json" ].includes(data.fileMimeType.split(";")[ 0 ])
+                        data.uploadingRatio !== undefined ? Progress(data.uploadingRatio).addClass("fileProgressBar") : Box().removeFromLayout(),
+                        data.fileMimeType && [ "text/yaml", "application/json" ].includes(data.fileMimeType.split(";")[ 0 ]) && data.uploadingRatio === undefined
                             ? IconButton(MIcon("file_open"), "Open file")
                                 .addClass("table-button")
                                 .onClick(() => {
@@ -53,7 +60,7 @@ export function FileBrowser() {
                                     }, 200);
                                 })
                             : Box(),
-                        data.fileMimeType
+                        data.fileMimeType && data.uploadingRatio === undefined
                             ? IconButton(MIcon("download"), "Download")
                                 .addClass("table-button")
                                 .onClick(async () => {
@@ -61,7 +68,7 @@ export function FileBrowser() {
                                     await stream.pipeTo(createDownloadStream(data.name));
                                 })
                             : Box(),
-                        data.fileMimeType && data.canWrite
+                        data.fileMimeType && data.canWrite && data.uploadingRatio === undefined
                             ? IconButton(MIcon("delete"), "Delete")
                                 .addClass("table-button", "red")
                                 .onClick(async () => {

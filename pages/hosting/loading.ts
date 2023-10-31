@@ -1,8 +1,8 @@
 import { HmRequest, LoginRequest, MessageType, SyncResponse, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
-import { API } from "shared";
+import { API, ProgressTracker } from "shared";
 import { Deferred, deferred } from "std/async/deferred.ts";
 import { decodeBase64, encodeBase64 } from "std/encoding/base64.ts";
-import { State, asPointer, lazyInit } from "webgen/mod.ts";
+import { Pointer, State, asPointer, lazyInit } from "webgen/mod.ts";
 import { Server, ServerDetails, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
@@ -232,7 +232,7 @@ export function downloadFile(path: string) {
         }
     });
 }
-export async function uploadFile(_path: string, file: File, progress: (ratio: number) => void) {
+export async function uploadFile(_path: string, file: File, progress: Pointer<number>) {
     const check = deferred<SidecarResponse>();
     messageQueueSidecar.push({
         request: {
@@ -242,8 +242,10 @@ export async function uploadFile(_path: string, file: File, progress: (ratio: nu
         response: check
     });
     await check;
-    progress(0);
-    for await (const iterator of file.stream()) {
+
+    const stream = file.stream()
+        .pipeThrough(ProgressTracker(progress, file.size));
+    for await (const iterator of stream) {
         const nextChunk = deferred<SidecarResponse>();
         messageQueueSidecar.push({
             request: {
@@ -253,9 +255,7 @@ export async function uploadFile(_path: string, file: File, progress: (ratio: nu
             },
             response: nextChunk
         });
-        const rsp = await nextChunk;
-        console.log(rsp);
-        // TODO: Add progress
+        await nextChunk;
     }
-    progress(1);
+    progress.setValue(100);
 }

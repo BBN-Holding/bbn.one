@@ -1,3 +1,4 @@
+export * from "./Progress.ts";
 export * from "./cache.ts";
 export * from "./components.ts";
 export * from "./list.ts";

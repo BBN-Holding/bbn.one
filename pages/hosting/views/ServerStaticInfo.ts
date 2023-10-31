@@ -19,7 +19,7 @@ export function ServerStaticInfo(mobile: boolean, server: StateHandler<Server>, 
         title: refMerge({
             state: server.$stateSince,
             time
-        }).map(({ state, time }) => state ? calculateUptime(new Date(time)) : "---"),
+        }).map(({ state }) => state ? calculateUptime(new Date(state)) : "---"),
         subtitle: server.$state.map(it => it == "running" ? "uptime" : "since"),
     });
 

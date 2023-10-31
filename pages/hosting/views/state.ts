@@ -4,16 +4,16 @@ import { asPointer, Component, refMerge } from "webgen/mod.ts";
 import { RemotePath } from "./types.ts";
 
 export const currentFiles = asPointer(<RemotePath[]>[]);
-export const currentPath = asPointer("/");
-
 export const hostingButtons = asPointer(<Component[]>[]);
 export const auditLogs = asPointer(<RenderItem[]>[]);
-export const uploadingFiles = asPointer(<Record<string, number | "failed">>{});
+
+export const uploadingFiles = asPointer(<Record<string, RemotePath>>{});
+uploadingFiles.listen(value => console.log(value));
 export const allFiles = refMerge({
     uploadingFiles: uploadingFiles
         .map(files => Object.entries(files)
-            .filter(([ path ]) => dirname(path) === currentPath.getValue())
-            .map(([ name, uploadingRatio ]) => (<RemotePath>{ name: name.replace("/", ""), uploadingRatio }))
+            .filter(([ filePath ]) => dirname(filePath) === path.getValue().replace(/\/$/, ""))
+            .map(([ _path, file ]) => file)
         ),
     currentFiles: currentFiles.map(it => {
         const { compare } = new Intl.Collator();

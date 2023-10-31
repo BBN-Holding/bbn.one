@@ -1,20 +1,10 @@
-import { Box, ButtonStyle, Checkbox, Color, createElement, Custom, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, State, StateHandler, Table, View } from "webgen/mod.ts";
+import { Progress } from "shared";
+import { Box, ButtonStyle, Checkbox, Color, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, State, StateHandler, Table, View } from "webgen/mod.ts";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };
 import secondary from "../../../data/secondary.json" assert { type: "json" };
 import { Drop } from "../../../spec/music.ts";
-import { EditArtists, getSecondary, getYearList, ProfilePicture } from "../helper.ts";
-
-function Progress(progress: number) {
-    return Box(
-        Custom((() => {
-            if (progress == -1) return Label("⚠️ Failed to upload!").addClass("error-message").setFont(0.8).draw();
-            const element = createElement("progress");
-            element.max = 110;
-            element.value = progress;
-            return element;
-        })()).addClass("low-level"));
-}
+import { EditArtists, ProfilePicture, getSecondary, getYearList } from "../helper.ts";
 
 export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
     const tableView = View(() =>
