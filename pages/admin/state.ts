@@ -24,7 +24,6 @@ export const state = State({
 });
 
 export const reviewState = State({
-    drop: <Drop | undefined>undefined,
-    user: <ProfileData | undefined>undefined,
+    drop: <any | undefined>undefined,
     drops: <Drop[] | undefined>undefined,
 });

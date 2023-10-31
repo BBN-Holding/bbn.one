@@ -294,20 +294,20 @@ export const API = {
                     .then(json<Drop[]>())
                     .catch(reject);
             },
+            id: async (id: string) => {
+                return await fetch(`${API.BASE_URL}admin/drops/${id}`, {
+                    headers: headers(API.getToken())
+                })
+                    .then(json<any>())
+                    .catch(reject);
+            },
         },
         payouts: {
-            get: async () => await fetch(`${API.BASE_URL}admin/payouts`, {
+            list: async () => await fetch(`${API.BASE_URL}admin/payouts`, {
                 headers: headers(API.getToken())
             })
                 .then(json<Payout[]>())
-                .catch(reject),
-            id: (id: string) => ({
-                get: async () => await fetch(`${API.BASE_URL}admin/payouts/${id}`, {
-                    headers: headers(API.getToken())
-                })
-                    .then(json<Payout>())
-                    .catch(reject)
-            })
+                .catch(reject)
         },
         servers: {
             list: async (offset = 0, limit = 31) => {

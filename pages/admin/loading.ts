@@ -14,7 +14,7 @@ export async function refreshState() {
         (async () => state.drops.drafts = await API.admin.drops.list(DropType.Unsubmitted))(),
         (async () => state.users = await API.admin.users.list())(),
         (async () => state.groups = await API.admin.groups.list())(),
-        (async () => state.payouts = await API.admin.payouts.get())(),
+        (async () => state.payouts = await API.admin.payouts.list())(),
         (async () => state.files = await API.admin.files.list())(),
         (async () => state.servers = await API.admin.servers.list())(),
         (async () => state.wallets = await API.admin.wallets.list())(),

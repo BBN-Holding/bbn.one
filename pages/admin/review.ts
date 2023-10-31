@@ -38,11 +38,11 @@ View(() => Vertical(
     Grid(
         Vertical(
             Label("User Details", "h1").setAlign("center"),
-            reviewState.$user.map(user => user ? Vertical(
-                showProfilePicture(user),
-                Label(`Username: ${user.profile.username}`),
-                Label(`Email: ${user.profile.email}`),
-                Label(`ID: ${user._id}`),
+            reviewState.$drop.map(drop => drop ? Vertical(
+                showProfilePicture(drop.user),
+                Label(`Username: ${drop.user.profile.username}`),
+                Label(`Email: ${drop.user.profile.email}`),
+                Label(`ID: ${drop.user._id}`),
             ).setGap("var(--gap)") : LoadingSpinner()).asRefComponent(),
             Label("User's Drops", "h1").setAlign("center"),
             reviewState.$drops.map(drops => drops ? Vertical(
@@ -109,6 +109,11 @@ View(() => Vertical(
         ).asRefComponent().setJustify("center").setAlign("center"),
         Vertical(
             Label("Drop History", "h1").setAlign("center"),
+            reviewState.$drop.map(drop => drop ? Vertical(
+                ...drop.events.map(entry => Vertical(
+                    Label(entry.meta.action),
+                    Label(entry.userId),
+                ).setGap("var(--gap)"))).setGap("var(--gap)") : LoadingSpinner()).asRefComponent(),
             Spacer(),
             Button("Change Drop Type")
                 .setStyle(ButtonStyle.Inline)
@@ -152,7 +157,6 @@ renewAccessTokenIfNeeded()
     .then(() => refreshReviewState());
 
 async function refreshReviewState() {
-    reviewState.drop = await API.music.id(data.id).get().then(stupidErrorAlert);
-    reviewState.user = await API.admin.users.get(reviewState.drop!.user).then(stupidErrorAlert);
-    reviewState.drops = await API.admin.drops.user(reviewState.drop!.user).then(stupidErrorAlert);
+    reviewState.drop = await API.admin.drops.id(data.id).then(stupidErrorAlert);
+    reviewState.drops = await API.admin.drops.user(reviewState.drop!.user._id).then(stupidErrorAlert);
 }
