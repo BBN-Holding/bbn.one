@@ -30,5 +30,6 @@
     "editor.codeActionsOnSave": {
         "source.organizeImports": true,
     },
-    "deno.cacheOnSave": true
+    "deno.cacheOnSave": true,
+    "colorWheel.settings.workspaceColor": "hsl(56,69%,12%)"
 }
