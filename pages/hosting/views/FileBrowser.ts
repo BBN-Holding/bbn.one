@@ -4,6 +4,7 @@ import { BasicLabel, BIcon, Box, Entry, Grid, IconButton, Label, MIcon } from "w
 import { SidecarResponse } from "../../../spec/music.ts";
 import { downloadFile, listFiles, messageQueueSidecar } from "../loading.ts";
 import { deleteFileDialog } from "./dialogs/deleteFileDialog.ts";
+import { editFileDialog, editFileLanguage, editFilePath, editFilestreamingText } from "./dialogs/editFileDialog.ts";
 import { DropHandler } from "./dropHandler.ts";
 import { droppingFileHandler } from "./droppingFileHandler.ts";
 import { fileTypeName } from "./fileTypeName.ts";
@@ -37,6 +38,19 @@ export function FileBrowser() {
                             ? IconButton(MIcon("file_open"), "Open file")
                                 .addClass("table-button")
                                 .onClick(() => {
+                                    if (!data.fileMimeType) return;
+
+                                    editFileLanguage.setValue(data.fileMimeType
+                                        .split(";")[ 0 ]
+                                        .split("/")[ 1 ]
+                                    );
+                                    editFilePath.setValue(path.getValue() + data.name);
+                                    const stream = downloadFile(editFilePath.getValue());
+                                    editFilestreamingText.setValue(stream.pipeThrough(new TextDecoderStream()));
+                                    // Adding a Timeout so the first chunk is already loaded
+                                    setTimeout(() => {
+                                        editFileDialog.open();
+                                    }, 200);
                                 })
                             : Box(),
                         data.fileMimeType
