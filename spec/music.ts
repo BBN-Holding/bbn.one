@@ -350,6 +350,16 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
     })
 ]);
 
+const addon = zod.object({
+    id: zod.string(),
+    name: zod.string(),
+    description: zod.string(),
+    downloads: zod.number(),
+    lastUpdated: zod.string(),
+    icon: zod.string(),
+    background: zod.string(),
+});
+
 export const sidecarResponse = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("list"),
@@ -397,14 +407,7 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
     }),
     zod.object({
         type: zod.literal("addons"),
-        addons: zod.object({
-            name: zod.string(),
-            description: zod.string(),
-            downloads: zod.number(),
-            lastUpdated: zod.string(),
-            icon: zod.string(),
-            background: zod.string(),
-        }).array()
+        addons: addon.array()
     })
 ]);
 
@@ -504,6 +507,7 @@ export type AdminStats = { drops: { all: number, reviews: number, publishing: nu
 export type Audit = zod.infer<typeof audit>;
 export type RequestPayoutResponse = zod.infer<typeof requestPayoutResponse>;
 export type SidecarResponse = zod.infer<typeof sidecarResponse>;
+export type Addon = zod.infer<typeof addon>;
 export type SidecarRequest = zod.infer<typeof sidecarRequest>;
 export type Artist = zod.infer<typeof artist>;
 export type BugReport = zod.infer<typeof bugReport>;

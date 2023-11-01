@@ -67,3 +67,25 @@
 .table-button.red {
     --color-grayscaled-font: rgb(238, 102, 102);
 }
+
+.addon-buttons {
+    font-weight: 500;
+    gap: 10px;
+    justify-items: center;
+}
+
+.addon-buttons .wbutton {
+    --color-grayscaled-hue: 204deg;
+    --color-grayscaled-saturation: 58%;
+    --color-grayscaled-lightness: 51%;
+    --color-grayscaled-font: white;
+}
+
+.addon-stats {
+    gap: 10px;
+    align-items: center;
+}
+
+.addon-stats.outdated {
+    color: #FFD42E;
+}

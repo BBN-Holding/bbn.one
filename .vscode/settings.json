@@ -30,5 +30,11 @@
     "editor.codeActionsOnSave": {
         "source.organizeImports": true,
     },
-    "deno.cacheOnSave": true
+    "deno.cacheOnSave": true,
+    "deno.suggest.imports.autoDiscover": true,
+    "deno.suggest.autoImports": true,
+    "deno.suggest.imports.hosts": {
+        "https://deno.land": true,
+        "https://esm.sh": true,
+    },
 }

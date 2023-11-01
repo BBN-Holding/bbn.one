@@ -151,13 +151,16 @@ export async function startSidecarConnection(id: string) {
         const msg = <SidecarResponse>JSON.parse(event.data);
         for (const iterator of syncedResponses) {
             if (
+                (iterator.request.type === "addons" && (msg.type === "addons" || msg.type === "error")) ||
                 (
-                    (iterator.request.type === "write" && (msg.type === "next-chunk" || msg.type === "error")) ||
-                    (iterator.request.type === "read" && (msg.type === "read" || msg.type === "error")) ||
-                    (iterator.request.type === "next-chunk" && (msg.type === "read" || msg.type === "error")) ||
-                    (iterator.request.type === "list" && msg.type === "list")
+                    (
+                        (iterator.request.type === "write" && (msg.type === "next-chunk" || msg.type === "error")) ||
+                        (iterator.request.type === "read" && (msg.type === "read" || msg.type === "error")) ||
+                        (iterator.request.type === "next-chunk" && (msg.type === "read" || msg.type === "error")) ||
+                        (iterator.request.type === "list" && msg.type === "list")
+                    )
+                    && iterator.request.path == msg.path
                 )
-                && iterator.request.path == msg.path
             ) {
                 syncedResponses.delete(iterator);
                 iterator.response.resolve(msg);
