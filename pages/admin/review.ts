@@ -34,7 +34,7 @@ if (!data.id) {
 }
 
 View(() => Vertical(
-    ...DynaNavigation("Admin"),
+    DynaNavigation("Admin"),
     Grid(
         Vertical(
             Label("User Details", "h1").setAlign("center"),

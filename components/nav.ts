@@ -36,63 +36,61 @@ const dropOver = activeUser.$permission.map(() => Vertical(
 dropOver.onblur = () => dropOver.classList.remove("open");
 dropOver.tabIndex = 0;
 export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" | "Admin" | "Wallet") {
-    return [
-        Nav(
-            Grid(
-                Horizontal(
-                    Custom(dropOver),
+    return Nav(
+        Grid(
+            Horizontal(
+                Custom(dropOver),
+                Vertical(
+                    MIcon("apps"),
                     Vertical(
-                        MIcon("apps"),
-                        Vertical(
-                            Image(activeLogo(type), "Selected Service")
-                        ),
-                    )
-                        .setGap(".5rem")
-                        .setDirection("row")
-                        .setAlign("center")
-                        .addClass("justify-content-center", "clickable")
-                        .onClick(() => {
-                            dropOver.classList.add("open");
-                            dropOver.focus();
-                        }),
-                    Spacer(),
-                    (activeUser.$email.map(email => email ?
-                        Button(
-                            Grid(
-                                showProfilePicture(IsLoggedIn()!),
-                                Label(activeUser.$username),
-                            )
-                                .setRawColumns("max-content max-content")
-                                .setAlign("center")
-                                .setGap(".7rem")
-
+                        Image(activeLogo(type), "Selected Service")
+                    ),
+                )
+                    .setGap(".5rem")
+                    .setDirection("row")
+                    .setAlign("center")
+                    .addClass("justify-content-center", "clickable")
+                    .onClick(() => {
+                        dropOver.classList.add("open");
+                        dropOver.focus();
+                    }),
+                Spacer(),
+                (activeUser.$email.map(email => email ?
+                    Button(
+                        Grid(
+                            showProfilePicture(IsLoggedIn()!),
+                            Label(activeUser.$username),
                         )
-                            .addClass("profile-button")
-                            .setStyle(ButtonStyle.Inline)
-                            .asLinkButton("/settings")
-                        :
-                        (type == "Home" && !location.pathname.startsWith("/signin") ?
-                            Button("Sign in")
-                                .addClass("login-button")
-                                .onClick(() => { location.href = "/signin"; })
-                            : Box())
-                    ).asRefComponent()
-                    ) ?? null,
-                ),
-                IsLoggedIn() && IsLoggedIn()!.profile.verified?.email != true ? Grid(
-                    BasicLabel({
-                        title: "Your Email is not verified. Please check your Inbox/Spam folder."
-                    }).addClass("label"),
-                    Button("Resend Verify Email")
-                        .addClass("link")
-                        .onPromiseClick(async () => {
-                            await API.user.mail.resendVerifyEmail.post();
-                            await delay(1000);
-                        })
-                ).addClass("email-banner", type.toLowerCase()) : Box().removeFromLayout(),
-            )
-                .setMargin("0.5rem auto")
-                .setGap("0.4rem"),
-        ).addClass(type.toLowerCase())
-    ];
+                            .setRawColumns("max-content max-content")
+                            .setAlign("center")
+                            .setGap(".7rem")
+
+                    )
+                        .addClass("profile-button")
+                        .setStyle(ButtonStyle.Inline)
+                        .asLinkButton("/settings")
+                    :
+                    (type == "Home" && !location.pathname.startsWith("/signin") ?
+                        Button("Sign in")
+                            .addClass("login-button")
+                            .onClick(() => { location.href = "/signin"; })
+                        : Box())
+                ).asRefComponent()
+                ) ?? null,
+            ),
+            IsLoggedIn() && IsLoggedIn()!.profile.verified?.email != true ? Grid(
+                BasicLabel({
+                    title: "Your Email is not verified. Please check your Inbox/Spam folder."
+                }).addClass("label"),
+                Button("Resend Verify Email")
+                    .addClass("link")
+                    .onPromiseClick(async () => {
+                        await API.user.mail.resendVerifyEmail.post();
+                        await delay(1000);
+                    })
+            ).addClass("email-banner", type.toLowerCase()) : Box().removeFromLayout(),
+        )
+            .setMargin("0.5rem auto")
+            .setGap("0.4rem"),
+    ).addClass(type.toLowerCase());
 }

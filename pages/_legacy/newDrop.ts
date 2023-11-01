@@ -31,7 +31,7 @@ const state = State({
 });
 
 View(() => Vertical(
-    ...DynaNavigation("Music"),
+    DynaNavigation("Music"),
     state.$restoreData.map(restoreData => restoreData ?
         wizard(restoreData).addClass("wizard-box")
         : LoadingSpinner()

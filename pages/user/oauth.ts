@@ -97,7 +97,7 @@ const list = state.$loaded.map(loaded => {
 }).asRefComponent();
 
 View(() => Vertical(
-    ...DynaNavigation("Home"),
+    DynaNavigation("Home"),
     Box().addClass("background-image"),
     list.addClass("auth-area"),
     Footer()

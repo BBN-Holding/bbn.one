@@ -13,8 +13,8 @@ WebGen({
     }
 });
 
-View(() => Vertical(...DynaNavigation("Music"), musicMenu))
+View(() => Vertical(DynaNavigation("Music"), musicMenu))
     .appendOn(document.body);
 
 renewAccessTokenIfNeeded()
-    .then(() => refreshState())
+    .then(() => refreshState());

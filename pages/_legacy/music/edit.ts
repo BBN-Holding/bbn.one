@@ -26,10 +26,10 @@ if (!data.id) {
 
 const state = State({
     drop: <Drop | undefined>undefined,
-})
+});
 
 View(() => Vertical(
-    ...DynaNavigation("Music"),
+    DynaNavigation("Music"),
     state.$drop.map(drop => drop ? Navigation({
         title: drop.title,
         children: [
@@ -69,7 +69,7 @@ View(() => Vertical(
                     title: "Cancel Review",
                     subtitle: "Need to change Something? Cancel it now",
                     clickHandler: async () => {
-                        await API.music.id(drop._id).type.post(DropType.Private)
+                        await API.music.id(drop._id).type.post(DropType.Private);
                         location.reload();
                     },
                 } : Box().removeFromLayout(),
@@ -119,7 +119,7 @@ View(() => Vertical(
         : LoadingSpinner()
     ).asRefComponent(),
 ))
-    .appendOn(document.body)
+    .appendOn(document.body);
 
 const Permissions = {
     canTakedown: (drop: Drop) => drop.type == "PUBLISHED",
@@ -128,4 +128,4 @@ const Permissions = {
     canCancelReview: (drop: Drop) => drop.type == "UNDER_REVIEW"
 };
 
-renewAccessTokenIfNeeded().then(async () => state.drop = await API.music.id(data.id).get().then(stupidErrorAlert))
+renewAccessTokenIfNeeded().then(async () => state.drop = await API.music.id(data.id).get().then(stupidErrorAlert));

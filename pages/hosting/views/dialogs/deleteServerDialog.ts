@@ -2,7 +2,7 @@ import { API, stupidErrorAlert } from "shared";
 import { Box, Color, Dialog, Label } from "webgen/mod.ts";
 
 export function deleteServerDialog(serverId: string) {
-    Dialog(() => Box(Label("Deleting this Server, will result in data loss.\nAfter this point there is no going back.")).setMargin("0 0 1.5rem"))
+    Dialog(() => Box(Label("Deleting this Server will result in data loss.\nAfter this point there is no going back.")).setMargin("0 0 1.5rem"))
         .setTitle("Are you sure?")
         .addButton("Cancel", "remove")
         .addButton("Delete", async () => {

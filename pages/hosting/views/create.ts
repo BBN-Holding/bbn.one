@@ -96,7 +96,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
 ) : LoadingSpinner());
 
 
-View(() => Vertical(...DynaNavigation("Hosting"), navigation.asRefComponent())).appendOn(document.body);
+View(() => Vertical(DynaNavigation("Hosting"), navigation.asRefComponent())).appendOn(document.body);
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())

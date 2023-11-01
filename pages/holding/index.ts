@@ -18,7 +18,7 @@ WebGen();
 await RegisterAuthRefresh();
 
 View(() => Box(
-    ...DynaNavigation("Home"),
+    DynaNavigation("Home"),
     Vertical(
         Box(
             Box().addClass("background-image"),

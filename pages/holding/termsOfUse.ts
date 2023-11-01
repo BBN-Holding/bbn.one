@@ -7,7 +7,7 @@ WebGen();
 await RegisterAuthRefresh();
 
 View(() => Box(
-    ...DynaNavigation("Home"),
+    DynaNavigation("Home"),
     Box(
         Label("Terms of Use", "h2"),
 

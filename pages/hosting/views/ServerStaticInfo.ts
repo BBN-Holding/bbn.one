@@ -41,7 +41,6 @@ export function ServerStaticInfo(mobile: boolean, server: StateHandler<Server>, 
         subtitle: "disk",
     });
 
-
     return mobile ? <Component[]>[
         Entry(Grid(
             ChangeStateButton(server),

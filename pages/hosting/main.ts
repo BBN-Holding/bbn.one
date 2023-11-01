@@ -15,9 +15,9 @@ WebGen({
     }
 });
 
-View(() => Vertical(...DynaNavigation("Hosting"), hostingMenu)).appendOn(document.body);
+View(() => Vertical(DynaNavigation("Hosting"), hostingMenu)).appendOn(document.body);
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())
     .then(() => listener())
-    .then(() => state.loaded = true)
+    .then(() => state.loaded = true);

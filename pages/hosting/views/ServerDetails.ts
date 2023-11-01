@@ -10,8 +10,6 @@ import { auditLogs, path } from "./state.ts";
 import { TerminalComponent } from "./terminal.ts";
 import { DisconnectedScreen } from "./waitingScreen.ts";
 
-
-
 export function ServerDetails(server: StateHandler<Server>) {
     const terminal = new TerminalComponent();
 

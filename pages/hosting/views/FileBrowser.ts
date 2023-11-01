@@ -41,7 +41,7 @@ export const exportingDialog = Dialog(() => Grid(
                 Label(ref`We have found ${collectedFiles} files. Please wait.`),
             )
             : Grid(
-                // Download is in progress and we need to download this many fiels
+                // Download is in progress and we need to download this many files
                 Label("We are downloading your files, please wait."),
                 Progress(globalProgress),
                 Label(ref`Downloading file ${currentFileIndex} of ${collectedFiles}`),
@@ -57,10 +57,7 @@ export const exportingDialog = Dialog(() => Grid(
     .setTitle("Download Folder");
 
 async function getDirectoryHandle(pathIndex: number, directory: FileSystemDirectoryHandle, pathArray: string[]): Promise<FileSystemDirectoryHandle> {
-    if (pathIndex === pathArray.length - 1)
-        return directory;
-    else
-        return await getDirectoryHandle(pathIndex + 1, await directory.getDirectoryHandle(pathArray[ pathIndex ], { create: true }), pathArray);
+    return pathIndex === pathArray.length - 1 ? directory : await getDirectoryHandle(pathIndex + 1, await directory.getDirectoryHandle(pathArray[ pathIndex ], { create: true }), pathArray);
 }
 
 export function FileBrowser() {
@@ -77,7 +74,6 @@ export function FileBrowser() {
                         .setColor(exportAvaiblable.map(avaiblable => avaiblable ? Color.Grayscaled : Color.Disabled))
                         .setStyle(ButtonStyle.Secondary)
                         .onClick(async () => {
-                            console.log("lol");
                             //@ts-ignore Modern feature
                             const picker: FileSystemDirectoryHandle = await showDirectoryPicker({ mode: "readwrite" });
                             exportingDialog.open();
@@ -89,7 +85,7 @@ export function FileBrowser() {
                                 messageQueueSidecar.push({
                                     request: {
                                         type: "list",
-                                        path: path
+                                        path
                                     },
                                     response
                                 });

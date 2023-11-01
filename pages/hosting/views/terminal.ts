@@ -3,7 +3,7 @@ import { asPointer } from "webgen/mod.ts";
 import { FitAddon } from "https://esm.sh/xterm-addon-fit@0.8.0";
 import { WebglAddon } from "https://esm.sh/xterm-addon-webgl@0.16.0";
 import { Terminal } from "https://esm.sh/xterm@5.3.0";
-import 'https://unpkg.com/@altronix/xterm@4.11.0-es6.5/xterm.css';
+import 'https://esm.sh/xterm@5.3.0/css/xterm.css';
 
 export class TerminalComponent extends HTMLElement {
     heap = <string[]>[];

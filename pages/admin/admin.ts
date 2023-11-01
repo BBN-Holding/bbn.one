@@ -21,7 +21,7 @@ WebGen({
     }
 });
 
-View(() => Vertical(...DynaNavigation("Admin"), adminMenu)).appendOn(document.body);
+View(() => Vertical(DynaNavigation("Admin"), adminMenu)).appendOn(document.body);
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState());

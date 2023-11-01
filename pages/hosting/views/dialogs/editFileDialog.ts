@@ -55,7 +55,6 @@ async function createMonacoEditor() {
 
 export const editFileDialog = Dialog(() =>
     Vertical(
-
         refMerge({
             downloading: editFileDownloading,
             uploading: editFileUploading

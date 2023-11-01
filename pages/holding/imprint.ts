@@ -7,7 +7,7 @@ WebGen();
 await RegisterAuthRefresh();
 
 View(() => Box(
-    ...DynaNavigation("Home"),
+    DynaNavigation("Home"),
     Box(
         Label("Imprint", "h2"),
         Label(`BBN Holding Inc.`).setFont(1, 600).addClass("block"),

@@ -1,5 +1,5 @@
 // @deno-types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/canvas-confetti/index.d.ts"
-import confetti from "https://unpkg.com/canvas-confetti@1.6.0/src/confetti.js";
+import confetti from "https://unpkg.com/canvas-confetti@1.9.0/src/confetti.js";
 import { API, stupidErrorAlert } from "shared";
 import { format } from "std/fmt/bytes.ts";
 import { Box, Button, ButtonStyle, Color, Dialog, Entry, Grid, Horizontal, Label, MediaQuery, Pointable, Spacer, TextInput, Vertical } from "webgen/mod.ts";
@@ -8,12 +8,12 @@ import { MB, state } from "../data.ts";
 import { refreshState } from "../loading.ts";
 import './profile.css';
 
-function confettiFromElement(element: MouseEvent, opts: confetti.Options = {}) {
+function confettiFromElement(element: MouseEvent) {
     const { top, height, left, width, } = (<HTMLElement>element.target!).getBoundingClientRect();
     const x = (left + width / 2) / window.innerWidth;
     const y = (top + height / 2) / window.innerHeight;
     const origin = { x, y };
-    confetti({ origin, ...opts });
+    confetti({ origin });
 }
 export const migrationInfo = {
     title: "Welcome to our New Dashboard!",

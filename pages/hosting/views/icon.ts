@@ -80,7 +80,7 @@ export function mapFiletoIcon(file: RemotePath) {
     const filetype = file.name.split('.').at(-1);
     if (!filetype) return "file-earmark";
     if (supportedFiletypes.includes(filetype))
-        return "filetype-" + filetype;
+        return `filetype-${filetype}`;
     if (otherFiletypes[ filetype ])
         return otherFiletypes[ filetype ];
     return "file-earmark";

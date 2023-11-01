@@ -27,97 +27,97 @@ export const hostingMenu = Navigation({
             id: "servers",
             title: ref`Servers ${count(state.$servers)}`,
             children: state.$servers.map(servers => servers.length == 0 ? [ placeholder("Oh soo empty!", "You servers will be here when you create some!") ] : servers.map(server =>
-            (<RenderItem>{
-                id: server._id,
-                title: server.$name,
-                replacement: Grid(
-                    Box().addClass(server.$state, "dot"),
-                    BasicLabel({
-                        title: server.$name,
-                        subtitle: ref`${server.$type.map(it => serverTypes[ it ].name)} @ ${server.$state.map(it => it == "moving" ? "Moving to " : "")}${server.$location.map(it => locations[ it ] ?? "(no location)")}`
-                    })
-                        .addClass(isMobile.map(mobile => mobile ? "small" : "desktop"))
-                        .addSuffix(server.$labels
-                            .map(it => Grid(
-                                ...it
-                                    .map(it => BasicLabel({ title: labels[ it ] }))
+                <RenderItem>{
+                    id: server._id,
+                    title: server.$name,
+                    replacement: Grid(
+                        Box().addClass(server.$state, "dot"),
+                        BasicLabel({
+                            title: server.$name,
+                            subtitle: ref`${server.$type.map(it => serverTypes[ it ].name)} @ ${server.$state.map(it => it == "moving" ? "Moving to " : "")}${server.$location.map(it => locations[ it ] ?? "(no location)")}`
+                        })
+                            .addClass(isMobile.map(mobile => mobile ? "small" : "desktop"))
+                            .addSuffix(server.$labels
+                                .map(it => Grid(
+                                    ...it
+                                        .map(it => BasicLabel({ title: labels[ it ] }))
+                                )
+                                    .addClass("tag-node")
+                                )
+                                .asRefComponent()
                             )
-                                .addClass("tag-node")
-                            )
-                            .asRefComponent()
-                        )
-                )
-                    .setRawColumns("max-content auto")
-                    .setGap("1rem")
-                    .setAlign("center"),
-                suffix: ChangeStateButton(server),
-                clickHandler: async () => {
-                    await streamingPool();
-                    if (!server.identifier)
-                        startSidecarConnection(server._id);
-                    // TODO wait until first data is showing to prevent blinking
-                },
-                children: [
-                    ServerDetails(server),
-                    {
-                        id: "storage",
-                        hidden: true,
-                        title: "Storage",
-                        children: [
-                            {
-                                id: "database",
-                                title: "Manage Databases",
-                                subtitle: "Create a MariaDB Database",
-                                suffix: Label("Coming Soon")
-                                    .setFont(1, 500)
-                                    .setMargin("0 1rem")
-                            },
-                            {
-                                id: "assets",
-                                title: "Add Assets",
-                                subtitle: "Get new Plugins, Mods and Datapacks",
-                                suffix: Label("Coming Soon")
-                                    .setFont(1, 500)
-                                    .setMargin("0 1rem")
-                            },
-                            FileBrowser()
-                        ]
+                    )
+                        .setRawColumns("max-content auto")
+                        .setGap("1rem")
+                        .setAlign("center"),
+                    suffix: ChangeStateButton(server),
+                    clickHandler: async () => {
+                        await streamingPool();
+                        if (!server.identifier)
+                            startSidecarConnection(server._id);
+                        // TODO wait until first data is showing to prevent blinking
                     },
-                    {
-                        id: "audit-trail",
-                        hidden: true,
-                        title: "Audit Trail",
-                        children: auditLogs
-                    },
-                    {
-                        id: "settings",
-                        hidden: true,
-                        title: "Settings",
-                        children: [
-                            {
-                                id: "general",
-                                title: "General Settings",
-                                subtitle: "General Server Settings",
-                                clickHandler: () => editServerDialog(server)
-                            },
-                            {
-                                id: "core",
-                                title: "Server Settings",
-                                subtitle: "All your Settings in one place.",
-                                suffix: Label("Coming Soon")
-                                    .setFont(1, 500)
-                                    .setMargin("0 1rem")
-                            },
-                            {
-                                id: "delete",
-                                title: "Delete Server",
-                                subtitle: "Delete everything. Click once, gone forever.",
-                                clickHandler: () => deleteServerDialog(server._id)
-                            }
-                        ]
-                    }
-                ]
-            })
+                    children: [
+                        ServerDetails(server),
+                        {
+                            id: "storage",
+                            hidden: true,
+                            title: "Storage",
+                            children: [
+                                {
+                                    id: "database",
+                                    title: "Manage Databases",
+                                    subtitle: "Create a MariaDB Database",
+                                    suffix: Label("Coming Soon")
+                                        .setFont(1, 500)
+                                        .setMargin("0 1rem")
+                                },
+                                {
+                                    id: "assets",
+                                    title: "Add Assets",
+                                    subtitle: "Get new Plugins, Mods, and Datapacks",
+                                    suffix: Label("Coming Soon")
+                                        .setFont(1, 500)
+                                        .setMargin("0 1rem")
+                                },
+                                FileBrowser()
+                            ]
+                        },
+                        {
+                            id: "audit-trail",
+                            hidden: true,
+                            title: "Audit Trail",
+                            children: auditLogs
+                        },
+                        {
+                            id: "settings",
+                            hidden: true,
+                            title: "Settings",
+                            children: [
+                                {
+                                    id: "general",
+                                    title: "General Settings",
+                                    subtitle: "General Server Settings",
+                                    clickHandler: () => editServerDialog(server)
+                                },
+                                {
+                                    id: "core",
+                                    title: "Server Settings",
+                                    subtitle: "All your Settings in one place.",
+                                    suffix: Label("Coming Soon")
+                                        .setFont(1, 500)
+                                        .setMargin("0 1rem")
+                                },
+                                {
+                                    id: "delete",
+                                    title: "Delete Server",
+                                    subtitle: "Delete everything. Click once, gone forever.",
+                                    clickHandler: () => deleteServerDialog(server._id)
+                                }
+                            ]
+                        }
+                    ]
+                }
             ))
         },
         {
@@ -146,11 +146,11 @@ state.$loaded.listen(loaded => {
 });
 
 hostingMenu.path.listen(path => {
-    if ([ "servers/", "resources/", "legacy-servers/" ].includes(path)) {
+    if ([ "servers/", "resources/", "servers/" ].includes(path)) {
         hostingButtons.setValue(
             [
                 Button("Start new Server")
-                    .setColor(state.$meta.map(() => !state.meta || (state.meta.used.slots >= state.meta.limits.slots) ? Color.Disabled : Color.Grayscaled))
+                    .setColor(state.$meta.map(meta => !meta || (meta.used.slots >= meta.limits.slots) ? Color.Disabled : Color.Grayscaled))
                     .onClick(() => {
                         location.href = "/hosting/create";
                     })

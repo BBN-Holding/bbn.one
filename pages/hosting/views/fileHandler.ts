@@ -1,9 +1,6 @@
 
 import { readableStreamFromIterable } from "https://deno.land/std@0.200.0/streams/readable_stream_from_iterable.ts";
 
-/// <reference types="npm:@types/wicg-file-system-access"/>
-type FileWalkerEvent = { path: string; file: File; };
-
 export interface FileEntry {
     path: string;
     file: File;

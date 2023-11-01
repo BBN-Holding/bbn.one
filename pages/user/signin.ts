@@ -22,7 +22,7 @@ const ErrorMessage = () => state.$error.map(() => state.error != undefined
     .removeFromLayout();
 
 View(() => Vertical(
-    ...DynaNavigation("Home"),
+    DynaNavigation("Home"),
     Box().addClass("background-image"),
     Box(
         Grid(
