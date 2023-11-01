@@ -1,5 +1,5 @@
 import { HmRequest, LoginRequest, MessageType, SyncResponse, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
-import { API, ProgressTracker } from "shared";
+import { API, ProgressTracker, stupidErrorAlert } from "shared";
 import { Deferred, deferred } from "std/async/deferred.ts";
 import { decodeBase64, encodeBase64 } from "std/encoding/base64.ts";
 import { Pointer, State, asPointer, lazyInit } from "webgen/mod.ts";
@@ -11,6 +11,9 @@ import { canWriteInFolder, currentFiles } from "./views/state.ts";
 
 export async function refreshState() {
     state.servers = State((await API.hosting.servers()).map(x => State(x)));
+    const server = await API.hosting.serverId("64667d43cd05eda8384c6481").get().then(stupidErrorAlert);
+    if (!state.servers.find(it => it._id == "64667d43cd05eda8384c6481"))
+        state.servers.push(State(server));
     state.meta = State(await API.hosting.meta());
 }
 

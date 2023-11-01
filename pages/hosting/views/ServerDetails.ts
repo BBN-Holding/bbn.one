@@ -99,6 +99,7 @@ export function ServerDetails(server: StateHandler<Server>) {
                             title: "Storage",
                             subtitle: "Manage your persistence",
                         }).onClick(async () => {
+                            console.log(hostingMenu.path.getValue());
                             await listFiles("/");
                             path.setValue("/");
                             hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/storage/`);

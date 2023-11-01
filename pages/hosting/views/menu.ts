@@ -138,14 +138,8 @@ export const hostingMenu = Navigation({
     "limited-width"
 );
 
-state.$loaded.listen(loaded => {
-    if (loaded)
-        hostingMenu.path.setValue((state.servers.length == 0 ? 'resources/' : 'servers/'));
-    else
-        hostingMenu.path.setValue("-/");
-});
-
 hostingMenu.path.listen(path => {
+    history.pushState(undefined, "", `/hosting?path=${path}`);
     if ([ "servers/", "resources/" ].includes(path)) {
         hostingButtons.setValue(
             [
