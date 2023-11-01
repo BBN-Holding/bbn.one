@@ -52,7 +52,6 @@ export const hostingMenu = Navigation({
                         .setAlign("center"),
                     suffix: ChangeStateButton(server),
                     clickHandler: async () => {
-                        location.href = `/hosting/server?id=${server._id}`;
                         await streamingPool();
                         if (!server.identifier)
                             startSidecarConnection(server._id);
