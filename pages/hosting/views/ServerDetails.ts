@@ -75,8 +75,8 @@ export function ServerDetails(server: StateHandler<Server>) {
                     Entry({
                         title: "Settings",
                         subtitle: "Update your Server"
-                    }).onClick(() => {
-                        editServerDialog(server);
+                    }).onClick(async () => {
+                        editServerDialog(server, await API.hosting.versions(server.type).then(stupidErrorAlert));
                     }).addClass("small"),
                     Entry({
                         title: "Audit Trail",

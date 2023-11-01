@@ -8,13 +8,14 @@ import { MB, state } from "../../data.ts";
 import { moveDialog } from "../list.ts";
 import { deleteServerDialog } from "./deleteServerDialog.ts";
 
-export function editServerDialog(server: Server) {
+export function editServerDialog(server: Server, versions: string[]) {
     const data = State({
         name: server.name,
         memory: server.limits.memory,
         disk: server.limits.disk,
         cpu: server.limits.cpu,
         location: server.location,
+        version: server.version
     });
     Dialog(() => Vertical(
         Label(`A ${serverTypes[ server.type ].name} Server.`),
@@ -44,8 +45,9 @@ export function editServerDialog(server: Server) {
                 .setMin(1)
                 .setMax(state.meta.limits.cpu - state.meta.used.cpu + server.limits.cpu)
                 .sync(data, "cpu")
-                .setRender((val) => `${val.toString()} %`)
-
+                .setRender((val) => `${val.toString()} %`),
+            DropDownInput("Version", versions)
+                .sync(data, "version")
         )
             .setGap("var(--gap)")
             .setEvenColumns(small ? 1 : 3)

@@ -1,4 +1,4 @@
-import { count, LoadingSpinner, Navigation, placeholder, RenderItem } from "shared";
+import { API, count, LoadingSpinner, Navigation, placeholder, RenderItem, stupidErrorAlert } from "shared";
 import { BasicLabel, Box, Button, Color, Entry, Grid, isMobile, Label, ref } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
@@ -98,7 +98,7 @@ export const hostingMenu = Navigation({
                                     id: "general",
                                     title: "General Settings",
                                     subtitle: "General Server Settings",
-                                    clickHandler: () => editServerDialog(server)
+                                    clickHandler: async () => editServerDialog(server, await API.hosting.versions(server.type).then(stupidErrorAlert))
                                 },
                                 {
                                     id: "core",
