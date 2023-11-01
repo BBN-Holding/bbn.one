@@ -324,6 +324,12 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
         path: zod.string(),
     }),
     zod.object({
+        type: zod.literal("addons"),
+        search: zod.string().optional(),
+        sortBy: zod.enum([ "relevance", "downloads", "newest" ]).optional(),
+        offset: zod.number().optional(),
+    }),
+    zod.object({
         type: zod.literal("write"),
         path: zod.string(),
         chunk: zod.string().optional(),
@@ -386,6 +392,17 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
             memory: zod.number(),
             disk: zod.number(),
         })
+    }),
+    zod.object({
+        type: zod.literal("addons"),
+        addons: zod.object({
+            name: zod.string(),
+            description: zod.string(),
+            downloads: zod.number(),
+            lastUpdated: zod.string(),
+            icon: zod.string(),
+            background: zod.string(),
+        }).array()
     })
 ]);
 
