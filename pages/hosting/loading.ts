@@ -11,9 +11,6 @@ import { canWriteInFolder, currentFiles } from "./views/state.ts";
 
 export async function refreshState() {
     state.servers = State((await API.hosting.servers()).map(x => State(x)));
-    // const server = await API.hosting.serverId("64667d43cd05eda8384c6481").get().then(stupidErrorAlert);
-    // if (!state.servers.find(it => it._id == "64667d43cd05eda8384c6481"))
-    //     state.servers.push(State(server));
     state.meta = State(await API.hosting.meta());
 }
 

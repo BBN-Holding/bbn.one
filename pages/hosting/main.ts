@@ -24,22 +24,25 @@ WebGen({
 View(() => Vertical(DynaNavigation("Hosting"), state.$loaded.map(loaded => loaded ? hostingMenu : LoadingSpinner()).asRefComponent())).appendOn(document.body);
 
 renewAccessTokenIfNeeded()
-    .then(() => refreshState())
-    .then(() => listener())
     .then(async () => {
         if (!urlPath) {
-            state.loaded = true;
+            await refreshState();
             return;
-        }
-        const serverId = urlPath.split("/")[ 1 ];
-        if (serverId) {
-            const server = await API.hosting.serverId(serverId).get().then(stupidErrorAlert);
-            if (!state.servers.find(it => it._id == serverId))
+        } else {
+            state.meta = State(await API.hosting.meta());
+            const serverId = urlPath.split("/")[ 1 ];
+            if (serverId) {
+                const server = await API.hosting.serverId(serverId).get().then(stupidErrorAlert);
                 state.servers.push(State(server));
-            await streamingPool();
-            if (!server.identifier)
-                startSidecarConnection(serverId);
+                await streamingPool();
+                if (!server.identifier)
+                    startSidecarConnection(serverId);
+            } else {
+                await refreshState();
+            }
+            console.log(urlPath);
+            hostingMenu.path.setValue(urlPath);
+            state.loaded = true;
         }
-        state.loaded = true;
-        hostingMenu.path.setValue(urlPath);
-    });
+    })
+    .then(() => listener());

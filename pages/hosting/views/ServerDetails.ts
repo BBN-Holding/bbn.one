@@ -84,7 +84,7 @@ export function ServerDetails(server: StateHandler<Server>) {
                     }).onClick(async () => {
                         const audit = await API.hosting.serverId(server._id).audit().then(stupidErrorAlert);
                         auditLogs.setValue(auditEntry(audit));
-                        hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/audit-trail/`);
+                        hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/audit-trail`);
                     }).addClass("small"),
                     Entry({
                         title: "Legacy",
@@ -102,7 +102,7 @@ export function ServerDetails(server: StateHandler<Server>) {
                             console.log(hostingMenu.path.getValue());
                             await listFiles("/");
                             path.setValue("/");
-                            hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/storage/`);
+                            hostingMenu.path.setValue(`${hostingMenu.path.getValue()}storage/`);
                         }).addClass("small"),
                         Entry({
                             title: "Audit Trail",
@@ -110,21 +110,21 @@ export function ServerDetails(server: StateHandler<Server>) {
                         }).onClick(async () => {
                             const audit = await API.hosting.serverId(server._id).audit().then(stupidErrorAlert);
                             auditLogs.setValue(auditEntry(audit));
-                            hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/audit-trail/`);
+                            hostingMenu.path.setValue(`${hostingMenu.path.getValue()}audit-trail/`);
                         }).addClass("small"),
-                        Entry({
-                            title: "Sub-User",
-                            subtitle: "Add friends to manage your server",
-                        }).onClick(async () => {
-                            const audit = await API.hosting.serverId(server._id).audit().then(stupidErrorAlert);
-                            auditLogs.setValue(auditEntry(audit));
-                            hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/audit-trail/`);
-                        }).addClass("small"),
+                        // Entry({
+                        //     title: "Sub-User",
+                        //     subtitle: "Add friends to manage your server",
+                        // }).onClick(async () => {
+                        //     const audit = await API.hosting.serverId(server._id).audit().then(stupidErrorAlert);
+                        //     auditLogs.setValue(auditEntry(audit));
+                        //     hostingMenu.path.setValue(`${hostingMenu.path.getValue()}audit-trail/`);
+                        // }).addClass("small"),
                         Entry({
                             title: "Settings",
                             subtitle: "Update your Server"
                         }).onClick(() => {
-                            hostingMenu.path.setValue(`${hostingMenu.path.getValue()}/settings/`);
+                            hostingMenu.path.setValue(`${hostingMenu.path.getValue()}settings/`);
                         }).addClass("small")
                     )
                         .addClass("split-list")

@@ -201,7 +201,6 @@ export const hostingMenu = Navigation({
 );
 
 hostingMenu.path.listen(path => {
-    history.pushState(undefined, "", `/hosting?path=${path}`);
     if ([ "servers/", "resources/" ].includes(path)) {
         hostingButtons.setValue(
             [
@@ -216,6 +215,12 @@ hostingMenu.path.listen(path => {
     }
     else
         hostingButtons.setValue([]);
+});
+
+let firstRouteChange = false;
+hostingMenu.path.listen(path => {
+    if (!firstRouteChange) return firstRouteChange = true;
+    history.pushState(undefined, "", `/hosting?path=${path}`);
 });
 
 export const addons = asPointer<Addon[]>([]);
