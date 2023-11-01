@@ -28,6 +28,7 @@ renewAccessTokenIfNeeded()
     .then(async () => {
         if (!urlPath) {
             await refreshState();
+            state.loaded = true;
             return;
         } else {
             state.meta = State(await API.hosting.meta());
@@ -45,7 +46,6 @@ renewAccessTokenIfNeeded()
             } else {
                 await refreshState();
             }
-            console.log(urlPath);
             hostingMenu.path.setValue(urlPath);
             state.loaded = true;
         }
