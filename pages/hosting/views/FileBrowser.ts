@@ -151,7 +151,7 @@ export function FileBrowser() {
                     .addColumn("Size", (data) => data.size !== undefined ? Label(format(parseInt(data.size))).addClass('text-align-right') : Box())
                     .addColumn("", (data) => Grid(
                         data.uploadingRatio !== undefined ? Progress(data.uploadingRatio).addClass("fileProgressBar") : Box().removeFromLayout(),
-                        data.fileMimeType && [ "text/yaml", "application/json" ].includes(data.fileMimeType.split(";")[ 0 ]) && data.uploadingRatio === undefined
+                        data.fileMimeType && [ "text/yaml", "application/json", "text/plain" ].includes(data.fileMimeType.split(";")[ 0 ]) && data.uploadingRatio === undefined
                             ? IconButton(MIcon("file_open"), "Open file")
                                 .addClass("table-button")
                                 .onClick(() => {
