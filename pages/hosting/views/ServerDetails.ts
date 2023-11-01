@@ -1,7 +1,8 @@
 import { API, stupidErrorAlert } from "shared";
 import { deferred } from "std/async/deferred.ts";
-import { Box, Button, Custom, Entry, Form, Grid, State, StateHandler, TextInput, isMobile, refMerge } from "webgen/mod.ts";
-import { Server, SidecarResponse } from "../../../spec/music.ts";
+import { Box, Button, Custom, Entry, Form, Grid, State, TextInput, isMobile, refMerge } from "webgen/mod.ts";
+import { SidecarResponse } from "../../../spec/music.ts";
+import { detailsState } from "../data.ts";
 import { currentDetailsTarget, isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource } from "../loading.ts";
 import { ServerStaticInfo } from "./ServerStaticInfo.ts";
 import { editServerDialog } from "./dialogs/editServerDialog.ts";
@@ -10,7 +11,8 @@ import { auditLogs, path } from "./state.ts";
 import { TerminalComponent } from "./terminal.ts";
 import { DisconnectedScreen } from "./waitingScreen.ts";
 
-export function ServerDetails(server: StateHandler<Server>) {
+export function ServerDetails() {
+    const server = detailsState.server!;
     const terminal = new TerminalComponent();
 
     const input = State({

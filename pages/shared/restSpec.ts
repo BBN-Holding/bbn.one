@@ -54,6 +54,7 @@ function blob() {
         return await asExternal(rsp.blob());
     };
 }
+}
 
 export function stupidErrorAlert<T>(data: PromiseSettledResult<T>): T {
     if (data.status === "fulfilled")
@@ -408,6 +409,11 @@ export const API = {
             headers: headers(API.getToken())
         }).then(x => x.json()),
         serverId: (id: string) => ({
+            get: async () => await fetch(`${API.BASE_URL}hosting/servers/${id}`, {
+                headers: headers(API.getToken())
+            })
+                .then(json<Server>())
+                .catch(reject),
             edit: (data: { name?: string, memory?: number, disk?: number, cpu?: number; }) => fetch(`${API.BASE_URL}hosting/servers/${id}`, {
                 method: 'PATCH',
                 body: JSON.stringify(data),
@@ -415,13 +421,6 @@ export const API = {
             })
                 .then(none())
                 .catch(reject),
-            power: (data: PowerAction) => fetch(`${API.BASE_URL}hosting/${id}/power`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    signal: data
-                }),
-                headers: headers(API.getToken())
-            }).then(x => x.json()),
             delete: () => fetch(`${API.BASE_URL}hosting/servers/${id}`, {
                 method: 'DELETE',
                 headers: headers(API.getToken())

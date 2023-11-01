@@ -13,3 +13,8 @@ export const creationState = State({
     loading: false,
     type: <ServerTypes | undefined>undefined,
 });
+
+export const detailsState = State({
+    loaded: false,
+    server: <Server | undefined>undefined,
+});
