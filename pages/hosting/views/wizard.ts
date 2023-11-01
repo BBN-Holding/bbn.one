@@ -58,9 +58,6 @@ export const creationView = () => creationState.$loading.map(loading => {
                             DropDownInput("Location", Object.keys(locations))
                                 .setRender((val) => locations[ val as keyof typeof locations ])
                                 .sync(data, "location"),
-                            /*DropDownInput("Version", Object.keys(locations))
-                                .setRender((val) => locations[ val as keyof typeof locations ])
-                                .sync(data, "location")*/
                         )
                             .setDynamicColumns(10)
                             .setMargin(".5rem 0 2rem")
