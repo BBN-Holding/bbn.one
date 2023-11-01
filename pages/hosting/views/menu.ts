@@ -1,11 +1,9 @@
 import { API, count, LoadingSpinner, Navigation, placeholder, RenderItem, stupidErrorAlert } from "shared";
 import { deferred } from "std/async/deferred.ts";
-import { delay } from "std/async/delay.ts";
-import { WEEK } from "std/datetime/constants.ts";
-import { asPointer, BasicLabel, Box, Button, Color, Entry, Grid, Image, isMobile, Label, MIcon, ref } from "webgen/mod.ts";
+import { asPointer, BasicLabel, Box, Button, Color, Entry, Grid, isMobile, Label, ref } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
-import { Addon, AuditTypes, ServerTypes, SidecarResponse } from "../../../spec/music.ts";
+import { Addon, AuditTypes, SidecarResponse } from "../../../spec/music.ts";
 import { activeUser, showProfilePicture } from "../../_legacy/helper.ts";
 import { state } from "../data.ts";
 import { messageQueueSidecar, startSidecarConnection, stopSidecarConnection, streamingPool } from "../loading.ts";
@@ -21,7 +19,6 @@ import { ServerDetails } from "./ServerDetails.ts";
 import { auditLogs, hostingButtons } from "./state.ts";
 import './table2.css';
 import { auditLabels, labels } from "./translation.ts";
-import { calculateUptime } from "./uptime.ts";
 
 export const hostingMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
@@ -76,72 +73,80 @@ export const hostingMenu = Navigation({
                                         .setFont(1, 500)
                                         .setMargin("0 1rem")
                                 },
-                                server.type !== ServerTypes.Default ?
-                                    {
-                                        id: "assets",
-                                        title: "Add Assets",
-                                        subtitle: "Get new Plugins, Mods, and Datapacks",
-                                        suffix: Label("(Recommended Only)")
-                                            .setFont(1, 500)
-                                            .setMargin("0 1rem")
-                                    } : {
-                                        id: "assets",
-                                        title: "Add Assets",
-                                        subtitle: "Get new Plugins, Mods, and Datapacks",
-                                        clickHandler: async () => {
-                                            addons.setValue(await fetchPlugins());
-                                        },
-                                        children: addons.map(addonList => addonList.length == 0
-                                            ? [ placeholder("Oh soo empty!", "You addons will be here when you add some!") ]
-                                            : [
-                                                addonList
-                                                    .filter((_, index) => (index + 1) % 20 != 0)
-                                                    .map(plugin => (<RenderItem>{
-                                                        id: plugin.id ?? plugin.name,
-                                                        title: plugin.name,
-                                                        subtitle: plugin.description,
-                                                        replacement: Grid(
-                                                            Image(plugin.icon, `Image of ${plugin.name}`),
-                                                            BasicLabel({
-                                                                title: plugin.name,
-                                                                subtitle: plugin.description,
-                                                            })
-                                                        )
-                                                            .setAlign("center")
-                                                            .setRawColumns("100px auto")
-                                                            .setGap("25px"),
-                                                        suffix: Grid(
-                                                            Grid(
-                                                                MIcon("cloud_download"),
-                                                                Label(plugin.downloads.toString())
-                                                            )
-                                                                .addClass("addon-stats")
-                                                                .setRawColumns("max-content max-content"),
-                                                            Button("Add to Server"),
-                                                            Grid(
-                                                                // last upload
-                                                                MIcon("update"),
-                                                                Label(calculateUptime(new Date(plugin.lastUpdated)))
-                                                            )
-                                                                .addClass(new Date(plugin.lastUpdated).getTime() > (Date.now() - 15 * WEEK) ? "up-top-date" : "outdated")
-                                                                .addClass("addon-stats")
-                                                                .setRawColumns("max-content max-content"),
-                                                        ).addClass("addon-buttons"),
-                                                    })),
-                                                // Add a load more button when there is more available then displayed. Loading happens 21-offset based while only 20 are displayed.
-                                                addonList.length % 20 !== 0 && !emptyResponse.getValue() ? Box(Button("Load More").onPromiseClick(async () => {
-                                                    await delay(1000);
-                                                    const data = await fetchPlugins(addonList.length - 1);
-                                                    console.log(data);
-                                                    if (!data) return;
-                                                    if (data.length == 0) {
-                                                        emptyResponse.setValue(true);
-                                                        return;
-                                                    }
-                                                    addons.setValue([ ...addonList, ...data ]);
-                                                })) : Box().removeFromLayout()
-                                            ].flat())
-                                    },
+                                {
+                                    id: "assets",
+                                    title: "Manage Assets",
+                                    subtitle: "Get new Plugins, Mods, and Datapacks",
+                                    suffix: Label("Coming Soon")
+                                        .setFont(1, 500)
+                                        .setMargin("0 1rem")
+                                },
+                                // server.type !== ServerTypes.Default ?
+                                //     {
+                                //         id: "assets",
+                                //         title: "Add Assets",
+                                //         subtitle: "Get new Plugins, Mods, and Datapacks",
+                                //         suffix: Label("(Recommended Only)")
+                                //             .setFont(1, 500)
+                                //             .setMargin("0 1rem")
+                                //     } : {
+                                //         id: "assets",
+                                //         title: "Add Assets",
+                                //         subtitle: "Get new Plugins, Mods, and Datapacks",
+                                //         clickHandler: async () => {
+                                //             addons.setValue(await fetchPlugins());
+                                //         },
+                                //         children: addons.map(addonList => addonList.length == 0
+                                //             ? [ placeholder("Oh soo empty!", "You addons will be here when you add some!") ]
+                                //             : [
+                                //                 addonList
+                                //                     .filter((_, index) => (index + 1) % 20 != 0)
+                                //                     .map(plugin => (<RenderItem>{
+                                //                         id: plugin.id ?? plugin.name,
+                                //                         title: plugin.name,
+                                //                         subtitle: plugin.description,
+                                //                         replacement: Grid(
+                                //                             Image(plugin.icon, `Image of ${plugin.name}`),
+                                //                             BasicLabel({
+                                //                                 title: plugin.name,
+                                //                                 subtitle: plugin.description,
+                                //                             })
+                                //                         )
+                                //                             .setAlign("center")
+                                //                             .setRawColumns("100px auto")
+                                //                             .setGap("25px"),
+                                //                         suffix: Grid(
+                                //                             Grid(
+                                //                                 MIcon("cloud_download"),
+                                //                                 Label(plugin.downloads.toString())
+                                //                             )
+                                //                                 .addClass("addon-stats")
+                                //                                 .setRawColumns("max-content max-content"),
+                                //                             Button("Add to Server"),
+                                //                             Grid(
+                                //                                 // last upload
+                                //                                 MIcon("update"),
+                                //                                 Label(calculateUptime(new Date(plugin.lastUpdated)))
+                                //                             )
+                                //                                 .addClass(new Date(plugin.lastUpdated).getTime() > (Date.now() - 15 * WEEK) ? "up-top-date" : "outdated")
+                                //                                 .addClass("addon-stats")
+                                //                                 .setRawColumns("max-content max-content"),
+                                //                         ).addClass("addon-buttons"),
+                                //                     })),
+                                //                 // Add a load more button when there is more available then displayed. Loading happens 21-offset based while only 20 are displayed.
+                                //                 addonList.length % 20 !== 0 && !emptyResponse.getValue() ? Box(Button("Load More").onPromiseClick(async () => {
+                                //                     await delay(1000);
+                                //                     const data = await fetchPlugins(addonList.length - 1);
+                                //                     console.log(data);
+                                //                     if (!data) return;
+                                //                     if (data.length == 0) {
+                                //                         emptyResponse.setValue(true);
+                                //                         return;
+                                //                     }
+                                //                     addons.setValue([ ...addonList, ...data ]);
+                                //                 })) : Box().removeFromLayout()
+                                //             ].flat())
+                                //     },
                                 FileBrowser()
                             ]
                         },
@@ -207,6 +212,7 @@ hostingMenu.path.listen(path => {
                 Button("Start new Server")
                     .setColor(state.$meta.map(meta => !meta || (meta.used.slots >= meta.limits.slots) ? Color.Disabled : Color.Grayscaled))
                     .onClick(() => {
+                        alert(1);
                         location.href = "/hosting/create";
                     })
             ]

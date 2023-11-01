@@ -35,6 +35,7 @@ renewAccessTokenIfNeeded()
             const [ source, serverId, subView ] = urlPath.split("/");
             if (source === "servers" && serverId) {
                 const server = await API.hosting.serverId(serverId).get().then(stupidErrorAlert);
+                refreshState();
                 state.servers.push(State(server));
                 await streamingPool();
                 if (!server.identifier)
