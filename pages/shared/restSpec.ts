@@ -30,7 +30,6 @@ export async function asExternal<T>(promise: Promise<T>): Promise<PromiseSettled
         };
     }
 }
-}
 
 function json<T>() {
     return async (rsp: Response) => {
