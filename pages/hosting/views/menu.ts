@@ -212,7 +212,6 @@ hostingMenu.path.listen(path => {
                 Button("Start new Server")
                     .setColor(state.$meta.map(meta => !meta || (meta.used.slots >= meta.limits.slots) ? Color.Disabled : Color.Grayscaled))
                     .onClick(() => {
-                        alert(1);
                         location.href = "/hosting/create";
                     })
             ]
