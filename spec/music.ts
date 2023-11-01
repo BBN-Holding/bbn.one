@@ -217,7 +217,8 @@ export const server = zod.object({
     user: zod.string(),
     identifier: zod.string().optional(),
     stateSince: zod.number().describe("unix timestamp"),
-    labels: zod.enum([ "legacy", "suspended", "contact-support" ]).array()
+    labels: zod.enum([ "legacy", "suspended", "contact-support" ]).array(),
+    version: zod.string(),
 });
 
 export const serverCreate = zod.object({
