@@ -71,14 +71,17 @@ export const creationView = () => creationState.$loading.map(loading => {
                         Grid(
                             SliderInput("Memory (RAM)")
                                 .setMax(state.meta.limits.memory - state.meta.used.memory)
+                                .setMin(1)
                                 .sync(data.limits, "memory")
                                 .setRender((val) => format(val * MB)),
                             SliderInput("Storage (Disk)")
                                 .setMax(state.meta.limits.disk - state.meta.used.disk)
+                                .setMin(1)
                                 .sync(data.limits, "disk")
                                 .setRender((val) => format(val * MB)),
                             SliderInput("Processor (CPU)")
                                 .setMax(state.meta.limits.cpu - state.meta.used.cpu)
+                                .setMin(1)
                                 .sync(data.limits, "cpu")
                                 .setRender((val) => `${val.toString()} %`),
                         )
