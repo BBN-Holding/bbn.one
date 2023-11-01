@@ -12,6 +12,7 @@ export const state = State({
 export const creationState = State({
     loading: false,
     type: <ServerTypes | undefined>undefined,
+    versions: <string[]>[]
 });
 
 export const detailsState = State({

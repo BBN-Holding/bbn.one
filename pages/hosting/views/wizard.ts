@@ -1,6 +1,6 @@
 import { API, displayError, LoadingSpinner, SliderInput } from "shared";
 import { format } from "std/fmt/bytes.ts";
-import { BasicLabel, Box, Dialog, DropDownInput, Grid, Label, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
+import { BasicLabel, Box, Dialog, DropDownInput, Grid, Label, Page, refMerge, TextInput, Vertical, Wizard } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import { ServerCreate, serverCreate } from "../../../spec/music.ts";
 import { creationState, MB, state } from "../data.ts";
@@ -8,8 +8,10 @@ import { creationState, MB, state } from "../data.ts";
 export const creationView = () => creationState.$loading.map(loading => {
     if (loading)
         return LoadingSpinner();
-
-    return creationState.$type.map(() => Vertical(
+    return refMerge({
+        type: creationState.$type,
+        versions: creationState.$versions
+    }).map(({ versions }) => Vertical(
         Label("Final Steps!")
             .addClass("same-height")
             .setFont(2, 700)
@@ -47,7 +49,8 @@ export const creationView = () => creationState.$loading.map(loading => {
                         memory: state.meta.limits.memory - state.meta.used.memory,
                         disk: state.meta.limits.disk - state.meta.used.disk,
                         cpu: state.meta.limits.cpu - state.meta.used.cpu
-                    }
+                    },
+                    version: "LATEST"
                 }, (data) => [
                     Box(
                         Label("About your Server")
@@ -81,6 +84,7 @@ export const creationView = () => creationState.$loading.map(loading => {
                                 .setMin(1)
                                 .sync(data.limits, "cpu")
                                 .setRender((val) => `${val.toString()} %`),
+                            DropDownInput("Version", versions).sync(data, "version"),
                         )
                             .setDynamicColumns(10)
                             .setMargin(".5rem 0 1.5rem")

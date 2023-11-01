@@ -226,6 +226,7 @@ export const serverCreate = zod.object({
     type: zod.nativeEnum(ServerTypes),
     location,
     limits,
+    version: zod.string()
 });
 
 export const metaLimti = limits.extend({
@@ -346,9 +347,6 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("state"),
         state: serverPowerActions
-    }),
-    zod.object({
-        type: zod.literal("versions")
     })
 ]);
 
@@ -407,10 +405,6 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
             icon: zod.string(),
             background: zod.string(),
         }).array()
-    }),
-    zod.object({
-        type: zod.literal("versions"),
-        versions: zod.array(zod.string())
     })
 ]);
 

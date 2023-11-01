@@ -1,4 +1,4 @@
-import { AdminStats, BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerCreate, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
+import { AdminStats, BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerCreate, ServerTypes, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
@@ -394,6 +394,11 @@ export const API = {
         },
     }),
     hosting: ({
+        versions: (type: ServerTypes) => fetch(`${API.BASE_URL}hosting/versions`, {
+            method: "PUT",
+            body: JSON.stringify({ type }),
+            headers: headers(API.getToken())
+        }).then(json<string[]>()).catch(reject),
         servers: (): Promise<Server[]> => fetch(`${API.BASE_URL}hosting/servers`, {
             headers: headers(API.getToken())
         }).then(x => x.json()),
