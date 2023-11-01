@@ -146,7 +146,7 @@ state.$loaded.listen(loaded => {
 });
 
 hostingMenu.path.listen(path => {
-    if ([ "servers/", "resources/", "servers/" ].includes(path)) {
+    if ([ "servers/", "resources/" ].includes(path)) {
         hostingButtons.setValue(
             [
                 Button("Start new Server")
