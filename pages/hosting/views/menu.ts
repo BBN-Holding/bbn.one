@@ -205,22 +205,24 @@ export const hostingMenu = Navigation({
     "limited-width"
 );
 
-hostingMenu.path.listen(path => {
-    if ([ "servers/", "resources/" ].includes(path)) {
-        hostingButtons.setValue(
-            [
-                Button("Start new Server")
-                    .setColor(state.$meta.map(meta => !meta || (meta.used.slots >= meta.limits.slots) ? Color.Disabled : Color.Grayscaled))
-                    .onClick(() => {
-                        location.href = "/hosting/create";
-                    })
-            ]
-        );
-        stopSidecarConnection();
-    }
-    else
-        hostingButtons.setValue([]);
-});
+state.$meta.listen(() =>
+    hostingMenu.path.listen(path => {
+        if ([ "servers/", "resources/" ].includes(path)) {
+            hostingButtons.setValue(
+                [
+                    Button("Start new Server")
+                        .setColor(state.$meta.map(meta => !meta || (meta.used.slots >= meta.limits.slots) ? Color.Disabled : Color.Grayscaled))
+                        .onClick(() => {
+                            location.href = "/hosting/create";
+                        })
+                ]
+            );
+            stopSidecarConnection();
+        }
+        else
+            hostingButtons.setValue([]);
+    })
+);
 
 let firstRouteChange = false;
 hostingMenu.path.listen(path => {

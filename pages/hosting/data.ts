@@ -1,7 +1,7 @@
 import { State } from "webgen/mod.ts";
 import { Meta, Server, ServerTypes } from "../../spec/music.ts";
 
-export const MB = 1000_000;
+export const MB = 1000000;
 
 export const state = State({
     loaded: false,
@@ -13,9 +13,4 @@ export const creationState = State({
     loading: false,
     type: <ServerTypes | undefined>undefined,
     versions: <string[]>[]
-});
-
-export const detailsState = State({
-    loaded: false,
-    server: <Server | undefined>undefined,
 });

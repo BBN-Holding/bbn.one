@@ -25,17 +25,12 @@ WebGen({
 View(() => Vertical(DynaNavigation("Hosting"), state.$loaded.map(loaded => loaded ? hostingMenu : LoadingSpinner()).asRefComponent())).appendOn(document.body);
 
 renewAccessTokenIfNeeded()
+    .then(() => refreshState())
     .then(async () => {
-        if (!urlPath) {
-            await refreshState();
-            state.loaded = true;
-            return;
-        } else {
-            state.meta = State(await API.hosting.meta());
+        if (urlPath) {
             const [ source, serverId, subView ] = urlPath.split("/");
             if (source === "servers" && serverId) {
                 const server = await API.hosting.serverId(serverId).get().then(stupidErrorAlert);
-                refreshState();
                 state.servers.push(State(server));
                 await streamingPool();
                 if (!server.identifier)
@@ -44,11 +39,9 @@ renewAccessTokenIfNeeded()
                     await listFiles("/");
                     path.setValue("/");
                 }
-            } else {
-                await refreshState();
             }
             hostingMenu.path.setValue(urlPath);
-            state.loaded = true;
         }
     })
-    .then(() => listener());
+    .then(() => listener())
+    .then(() => state.loaded = true);
