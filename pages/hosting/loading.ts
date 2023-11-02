@@ -1,13 +1,12 @@
-import { HmRequest, LoginRequest, MessageType, SyncResponse, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
+import { LoginRequest, MessageType, SyncResponse, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API, ProgressTracker } from "shared";
 import { Deferred, deferred } from "std/async/deferred.ts";
 import { decodeBase64, encodeBase64 } from "std/encoding/base64.ts";
-import { Pointer, State, asPointer, lazyInit } from "webgen/mod.ts";
-import { Server, ServerDetails, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
+import { Pointer, State, asPointer } from "webgen/mod.ts";
+import { Server, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 import { canWriteInFolder, currentFiles } from "./views/state.ts";
-
 
 export async function refreshState() {
     state.servers = State((await API.hosting.servers()).map(x => State(x)));
@@ -64,65 +63,6 @@ export function listener() {
     ws.onclose = () => setTimeout(() => listener(), 1000);
 }
 
-export const currentDetailsTarget = asPointer(<string | undefined>undefined);
-export const currentDetailsSource = asPointer((_data: ServerDetails) => { });
-
-export const messageQueue = <HmRequest[]>[];
-// deno-lint-ignore require-await
-export const streamingPool = lazyInit(async () => {
-    function connect() {
-        const ws = new WebSocket(API.WS_URL);
-        let firstTime = true;
-        ws.onmessage = ({ data }) => {
-            const json = JSON.parse(data);
-
-            if (json.login === "require authentication" && tokens.accessToken) ws.send(JSON.stringify(<LoginRequest>{
-                action: MessageType.Login,
-                type: "client",
-                token: API.getToken(),
-                id: activeUser.id
-            }));
-
-            if (json.login === true && firstTime === true) {
-                firstTime = false;
-                currentDetailsTarget.listen((id, _oldId) => {
-                    if (id)
-                        ws.send(JSON.stringify(<TriggerRequest>{
-                            action: MessageType.Trigger,
-                            type: "@bbn/hosting/details",
-                            data: {
-                                id
-                            },
-                            auth: {
-                                token: API.getToken(),
-                                id: activeUser.id
-                            }
-                        }));
-                    else if (_oldId != undefined) {
-                        // Else somehow unregister the oldId
-                        // Can't current unregister the conversation. Thats why we just restart the pool.
-                        ws.close();
-                    }
-
-                });
-            }
-            if (json.type == "sync" && json.data.type == "@bbn/hosting/details") {
-                currentDetailsSource.getValue()?.(json.data.data);
-            }
-        };
-        ws.onerror = () => {
-
-        };
-        setInterval(() => {
-            if (ws.readyState != ws.OPEN || messageQueue.length == 0) return;
-
-            ws.send(JSON.stringify(messageQueue.shift()));
-        }, 100);
-        ws.onclose = () => setTimeout(() => connect(), 1000);
-    }
-    connect();
-});
-
 export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
 let activeSideCar: Deferred<void> | undefined = undefined;
 export const isSidecarConnect = asPointer(false);
@@ -137,7 +77,7 @@ export async function startSidecarConnection(id: string) {
     }
 
     const url = new URL(`wss://bbn.one/api/@bbn/sidecar/${id}/ws`);
-    url.searchParams.set("TOKEN", localStorage[ "access-token" ]);
+    url.searchParams.set("TOKEN", API.getToken());
     const ws = new WebSocket(url.toString());
     activeSideCar = deferred();
 
@@ -192,12 +132,12 @@ export async function startSidecarConnection(id: string) {
     ws.close();
 }
 
-export async function listFiles(_path: string) {
+export async function listFiles(path: string) {
     const response = deferred<SidecarResponse>();
     messageQueueSidecar.push({
         request: {
             type: "list",
-            path: _path
+            path
         },
         response
     });
@@ -216,7 +156,7 @@ export function downloadFile(path: string) {
             messageQueueSidecar.push({
                 request: {
                     type: firstTime ? "read" : "next-chunk",
-                    path: path
+                    path
                 },
                 response: nextChunk
             });
@@ -235,12 +175,12 @@ export function downloadFile(path: string) {
         }
     });
 }
-export async function uploadFile(_path: string, file: File, progress: Pointer<number>) {
+export async function uploadFile(path: string, file: File, progress: Pointer<number>) {
     const check = deferred<SidecarResponse>();
     messageQueueSidecar.push({
         request: {
             type: "write",
-            path: _path
+            path
         },
         response: check
     });
@@ -253,7 +193,7 @@ export async function uploadFile(_path: string, file: File, progress: Pointer<nu
         messageQueueSidecar.push({
             request: {
                 type: "write",
-                path: _path,
+                path,
                 chunk: encodeBase64(iterator)
             },
             response: nextChunk

@@ -6,7 +6,7 @@ import serverTypes from "../../../data/servers.json" assert { type: "json" };
 import { Addon, AuditTypes, SidecarResponse } from "../../../spec/music.ts";
 import { activeUser, showProfilePicture } from "../../_legacy/helper.ts";
 import { state } from "../data.ts";
-import { messageQueueSidecar, startSidecarConnection, stopSidecarConnection, streamingPool } from "../loading.ts";
+import { messageQueueSidecar, startSidecarConnection, stopSidecarConnection } from "../loading.ts";
 import { profileView } from "../views/profile.ts";
 import { ChangeStateButton } from "./changeStateButton.ts";
 import './details.css';
@@ -52,8 +52,7 @@ export const hostingMenu = Navigation({
                         .setGap("1rem")
                         .setAlign("center"),
                     suffix: ChangeStateButton(server),
-                    clickHandler: async () => {
-                        await streamingPool();
+                    clickHandler: () => {
                         if (!server.identifier)
                             startSidecarConnection(server._id);
                         // TODO wait until first data is showing to prevent blinking

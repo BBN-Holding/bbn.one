@@ -1,8 +1,8 @@
 import { API, stupidErrorAlert } from "shared";
 import { deferred } from "std/async/deferred.ts";
-import { Box, Button, Custom, Entry, Form, Grid, State, StateHandler, TextInput, isMobile, refMerge } from "webgen/mod.ts";
+import { Box, Button, Custom, Entry, Form, Grid, Label, State, StateHandler, TextInput, isMobile, refMerge } from "webgen/mod.ts";
 import { Server, SidecarResponse } from "../../../spec/music.ts";
-import { currentDetailsTarget, isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource } from "../loading.ts";
+import { isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource } from "../loading.ts";
 import { ServerStaticInfo } from "./ServerStaticInfo.ts";
 import { editServerDialog } from "./dialogs/editServerDialog.ts";
 import { auditEntry, hostingMenu } from "./menu.ts";
@@ -22,7 +22,6 @@ export function ServerDetails(server: StateHandler<Server>) {
 
     terminal.connected.listen(val => {
         if (val) {
-            currentDetailsTarget.setValue(server._id);
             sidecarDetailsSource.setValue((data: SidecarResponse) => {
                 if (data.type == "log") {
                     if (data.backlog)
@@ -45,32 +44,38 @@ export function ServerDetails(server: StateHandler<Server>) {
         .map(({ connected, mobile }) => (() => {
             const items = Grid(
                 ...ServerStaticInfo(mobile, server, input),
-                !server.identifier && !connected
-                    ? DisconnectedScreen()
-                    : Entry(
-                        Grid(
-                            Box(Custom(terminal).addClass("terminal-window")).removeFromLayout(),
-                            Form(Grid(
-                                TextInput("text", "Send a Command")
-                                    .sync(input, "message"),
-                                Button("Send")
-                                    .setId("submit-button")
-                                    .onClick(() => {
-                                        messageQueueSidecar.push({
-                                            request: {
-                                                type: "command",
-                                                command: input.message
-                                            },
-                                            response: deferred()
-                                        });
-                                        input.message = "";
-                                    })
-                            )
-                                .setRawColumns("auto max-content")
-                                .setGap(".5rem"))
-                                .activeSubmitTo("#submit-button")
-                        ).addClass("internal-grid")
-                    ).addClass("terminal-card"),
+                server.identifier ? Grid(
+                    Grid(
+                        Label("Please migrate", "h1"),
+                        Label("This server is still running on our legacy system. Please re-create it.", "h2")
+                    ).setJustify("center")
+                ).addClass("disconnected-screen") :
+                    connected
+                        ? Entry(
+                            Grid(
+                                Box(Custom(terminal).addClass("terminal-window")).removeFromLayout(),
+                                Form(Grid(
+                                    TextInput("text", "Send a Command")
+                                        .sync(input, "message"),
+                                    Button("Send")
+                                        .setId("submit-button")
+                                        .onClick(() => {
+                                            messageQueueSidecar.push({
+                                                request: {
+                                                    type: "command",
+                                                    command: input.message
+                                                },
+                                                response: deferred()
+                                            });
+                                            input.message = "";
+                                        })
+                                )
+                                    .setRawColumns("auto max-content")
+                                    .setGap(".5rem"))
+                                    .activeSubmitTo("#submit-button")
+                            ).addClass("internal-grid")
+                        ).addClass("terminal-card")
+                        : DisconnectedScreen(),
                 server.identifier ? Grid(
                     Entry({
                         title: "Settings",
@@ -99,7 +104,6 @@ export function ServerDetails(server: StateHandler<Server>) {
                             title: "Storage",
                             subtitle: "Manage your persistence",
                         }).onClick(async () => {
-                            console.log(hostingMenu.path.getValue());
                             await listFiles("/");
                             path.setValue("/");
                             hostingMenu.path.setValue(`${hostingMenu.path.getValue()}storage/`);

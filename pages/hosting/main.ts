@@ -3,7 +3,7 @@ import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
-import { listFiles, listener, refreshState, startSidecarConnection, streamingPool } from "./loading.ts";
+import { listFiles, listener, refreshState, startSidecarConnection } from "./loading.ts";
 import { hostingMenu } from "./views/menu.ts";
 
 import '../../assets/css/hosting.css';
@@ -31,8 +31,8 @@ renewAccessTokenIfNeeded()
             const [ source, serverId, subView ] = urlPath.split("/");
             if (source === "servers" && serverId) {
                 const server = await API.hosting.serverId(serverId).get().then(stupidErrorAlert);
-                state.servers.push(State(server));
-                await streamingPool();
+                if (!state.servers.find(s => s._id == serverId))
+                    state.servers.push(State(server));
                 if (!server.identifier)
                     startSidecarConnection(serverId);
                 if (subView === "storage") {

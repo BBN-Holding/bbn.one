@@ -54,6 +54,7 @@ function blob() {
         return await asExternal(rsp.blob());
     };
 }
+}
 
 export function stupidErrorAlert<T>(data: PromiseSettledResult<T>): T {
     if (data.status === "fulfilled")
