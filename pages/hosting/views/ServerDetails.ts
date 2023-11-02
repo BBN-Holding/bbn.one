@@ -1,15 +1,15 @@
 import { API, stupidErrorAlert } from "shared";
 import { deferred } from "std/async/deferred.ts";
-import { Box, Button, Custom, Entry, Form, Grid, Label, State, StateHandler, TextInput, isMobile, refMerge } from "webgen/mod.ts";
+import { Box, Button, Custom, Entry, Form, Grid, MIcon, State, StateHandler, TextInput, isMobile, refMerge } from "webgen/mod.ts";
 import { Server, SidecarResponse } from "../../../spec/music.ts";
 import { isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource } from "../loading.ts";
 import { ServerStaticInfo } from "./ServerStaticInfo.ts";
 import { editServerDialog } from "./dialogs/editServerDialog.ts";
+import './lol.css';
 import { auditEntry, hostingMenu } from "./menu.ts";
 import { auditLogs, path } from "./state.ts";
 import { TerminalComponent } from "./terminal.ts";
 import { DisconnectedScreen } from "./waitingScreen.ts";
-
 export function ServerDetails(server: StateHandler<Server>) {
     const terminal = new TerminalComponent();
 
@@ -44,12 +44,12 @@ export function ServerDetails(server: StateHandler<Server>) {
         .map(({ connected, mobile }) => (() => {
             const items = Grid(
                 ...ServerStaticInfo(mobile, server, input),
-                server.identifier ? Grid(
-                    Grid(
-                        Label("Please migrate", "h1"),
-                        Label("This server is still running on our legacy system. Please re-create it.", "h2")
-                    ).setJustify("center")
-                ).addClass("disconnected-screen") :
+                server.identifier ? Box(
+                    Entry({
+                        title: "Please migrate",
+                        subtitle: "This server is still running on our legacy system. Please re-create it."
+                    }).addPrefix(MIcon("warning").addClass("warning-icon"))
+                ) :
                     connected
                         ? Entry(
                             Grid(
