@@ -200,7 +200,7 @@ export enum ServerTypes {
     LegacyPGF = "/minecraft/legacy/pgf/",
 }
 
-export const serverPowerState = zod.enum([ "starting", "installing", "stopping", "moving", "running", "offline" ]);
+export const serverPowerState = zod.enum([ "starting", "installing", "stopping", "running", "offline" ]);
 export const serverPowerActions = zod.enum([ "start", "stop", "kill" ]);
 
 export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-mum", "bbn-sgp" ]);
@@ -229,7 +229,7 @@ export const serverCreate = zod.object({
     version: zod.string()
 });
 
-export const metaLimti = limits.extend({
+export const metaLimit = limits.extend({
     slots: zod.number()
 });
 
@@ -241,8 +241,8 @@ export const meta = zod.object({
     pteroId: zod.number().optional(),
     migrationPassword: zod.string().optional(),
     coins: zod.number(),
-    limits: metaLimti,
-    used: metaLimti,
+    limits: metaLimit,
+    used: metaLimit,
     pricing: zod.record(storeItems, zod.object({
         price: zod.number(),
         amount: zod.number()
@@ -275,42 +275,6 @@ export const transcript = zod.object({
     with: zod.string(),
     _id: zod.string(),
 });
-
-export const serverDetails = zod.union([
-    zod.object({
-        type: zod.literal("features"),
-        enabled: zod.enum([
-            "stdin",
-            "stdout",
-            "mc-java-players",
-            // "mc-java-files",
-            // "mc-java-settings"
-        ]).array()
-    }),
-    zod.object({
-        type: zod.literal("deleted"),
-    }),
-    zod.object({
-        type: zod.literal("unreachable"),
-    }),
-    zod.object({
-        type: zod.literal("stdout"),
-        chunk: zod.string(),
-        clearConsole: zod.literal(true).optional()
-    }),
-    zod.object({
-        type: zod.literal("mc-java-players"),
-        // TODO: Add spec data
-    }),
-    zod.object({
-        type: zod.literal("stats"),
-        cpu: zod.number(),
-        memory: zod.number(),
-        disk: zod.number(),
-    }),
-]).and(zod.object({
-    _id: zod.string()
-}));
 
 export const sidecarRequest = zod.discriminatedUnion("type", [
     zod.object({
@@ -521,7 +485,6 @@ export type PowerState = zod.infer<typeof serverPowerState>;
 export type PureDrop = zod.infer<typeof pureDrop>;
 export type Server = zod.infer<typeof server>;
 export type ServerCreate = zod.infer<typeof serverCreate>;
-export type ServerDetails = zod.infer<typeof serverDetails>;
 export type Song = zod.infer<typeof song>;
 export type StoreItems = zod.infer<typeof storeItems>;
 export type Transcript = zod.infer<typeof transcript>;

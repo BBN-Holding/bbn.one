@@ -10,7 +10,7 @@ import { creationState, state } from "./../data.ts";
 import { creationView } from "./wizard.ts";
 
 await RegisterAuthRefresh();
-WebGen(); 
+WebGen();
 
 const clickHandler = async (serverType: string) => { creationState.type = serverType.replace("-", "") as ServerTypes; creationState.versions = State(await API.hosting.versions(creationState.type).then(stupidErrorAlert)); };
 
@@ -26,7 +26,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                     title: "Recommended",
                     id: "default",
                     subtitle: "Play on Efficiency-First Servers with Plugins (Paper/Purpur)",
-                    clickHandler: clickHandler,
+                    clickHandler,
                     children: [
                         creationView()
                     ]
@@ -35,7 +35,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                     title: "Vanilla",
                     id: "vanilla",
                     subtitle: "Playing on Snapshots? Play on the Vanilla Server",
-                    clickHandler: clickHandler,
+                    clickHandler,
                     children: [
                         creationView()
                     ]
@@ -49,7 +49,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                             title: "Fabric",
                             id: "fabric",
                             subtitle: "Lightweight modding, customization, and optimized performance",
-                            clickHandler: clickHandler,
+                            clickHandler,
                             children: [
                                 creationView()
                             ]
@@ -58,7 +58,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                             title: "Forge",
                             id: "forge",
                             subtitle: "Extensive modding capabilities and customization options",
-                            clickHandler: clickHandler,
+                            clickHandler,
                             children: [
                                 creationView()
                             ]
@@ -69,7 +69,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                     title: "Bedrock",
                     id: "bedrock",
                     subtitle: "Bedrock Edition (also known as the Bedrock Version or just Bedrock)",
-                    clickHandler: clickHandler,
+                    clickHandler,
                     children: [
                         creationView()
                     ]
@@ -78,7 +78,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
                     title: "PocketMineMP",
                     id: "pocketmine",
                     subtitle: "Bedrock server, providing customization and plugin support",
-                    clickHandler: clickHandler,
+                    clickHandler,
                     children: [
                         creationView()
                     ]

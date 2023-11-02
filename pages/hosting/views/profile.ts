@@ -59,7 +59,7 @@ export const profileView = () =>
     MediaQuery("(max-width: 700px)", (small) =>
         state.$meta.map(meta =>
             Grid(
-                meta.pteroId ? Entry(
+                state.servers.find(server => server.identifier) ? Entry(
                     Grid(
                         Label(migrationInfo.title)
                             .setFont(2, 700),

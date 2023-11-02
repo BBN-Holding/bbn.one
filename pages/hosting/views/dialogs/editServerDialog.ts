@@ -5,7 +5,6 @@ import locations from "../../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../../data/servers.json" assert { type: "json" };
 import { Server } from "../../../../spec/music.ts";
 import { MB, state } from "../../data.ts";
-import { moveDialog } from "../list.ts";
 import { deleteServerDialog } from "./deleteServerDialog.ts";
 
 export function editServerDialog(server: Server, versions: string[]) {
@@ -63,9 +62,6 @@ export function editServerDialog(server: Server, versions: string[]) {
         }, Color.Critical)
         .addButton("Close", "remove")
         .addButton("Save", async () => {
-            if (data.location != server.location)
-                moveDialog(data.name, server.location, data.location);
-
             await API.hosting.serverId(server._id)
                 .edit(data)
                 .then(stupidErrorAlert);

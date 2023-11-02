@@ -14,7 +14,7 @@ import { deleteServerDialog } from "./dialogs/deleteServerDialog.ts";
 import { editServerDialog } from "./dialogs/editServerDialog.ts";
 import './fileBrowser.css';
 import { FileBrowser } from "./FileBrowser.ts";
-import './list.css';
+import './menu.css';
 import { ServerDetails } from "./ServerDetails.ts";
 import { auditLogs, hostingButtons } from "./state.ts";
 import './table2.css';
@@ -35,7 +35,7 @@ export const hostingMenu = Navigation({
                         Box().addClass(server.$state, "dot"),
                         BasicLabel({
                             title: server.$name,
-                            subtitle: ref`${server.$type.map(it => serverTypes[ it ].name)} @ ${server.$state.map(it => it == "moving" ? "Moving to " : "")}${server.$location.map(it => locations[ it ] ?? "(no location)")}`
+                            subtitle: ref`${server.$type.map(it => serverTypes[ it ].name)} @ ${server.$location.map(it => locations[ it ])}`
                         })
                             .addClass(isMobile.map(mobile => mobile ? "small" : "desktop"))
                             .addSuffix(server.$labels
