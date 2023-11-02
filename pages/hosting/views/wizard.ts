@@ -50,7 +50,7 @@ export const creationView = () => creationState.$loading.map(loading => {
                         disk: state.meta.limits.disk - state.meta.used.disk,
                         cpu: state.meta.limits.cpu - state.meta.used.cpu
                     },
-                    version: versions[ 0 ]
+                    version: versions[ 0 ] ?? "LATEST"
                 }, (data) => [
                     Box(
                         Label("About your Server")
