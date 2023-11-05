@@ -225,7 +225,11 @@ export const serverCreate = zod.object({
     name: zod.string().min(3).max(20),
     type: zod.nativeEnum(ServerTypes),
     location,
-    limits,
+    limits: zod.object({
+        memory: limits.shape.memory.min(300, "Minimum memory is 300MB"),
+        disk: limits.shape.disk.min(200, "Minimum disk is 200MB"),
+        cpu: limits.shape.cpu.min(3, "Minimum cpu is 3% of a core")
+    }),
     version: zod.string()
 });
 
