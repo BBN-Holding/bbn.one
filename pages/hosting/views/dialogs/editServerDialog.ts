@@ -24,6 +24,7 @@ export function editServerDialog(server: Server, versions: string[]) {
                     width: small ? 1 : 2
                 },
                 TextInput("text", "Friendly Name")
+                    .setColor(server.identifier ? Color.Disabled : Color.Grayscaled)
                     .sync(data, "name")
             ],
             DropDownInput("Location", Object.keys(locations))
