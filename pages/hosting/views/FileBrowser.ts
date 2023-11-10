@@ -137,7 +137,7 @@ export function FileBrowser() {
                 pathNavigation(),
                 canWriteInFolder.map(writeable => writeable ? Box() : Box(
                     MIcon("warning"),
-                    Label("This folder is read-only. You can't upload files here.")
+                    Label("This folder is read-only. Change the folder to upload files.")
                 ).addClass("read-only-path")).asRefComponent(),
                 new Table2(allFiles)
                     .addColumn("Name", (data) => Box(
