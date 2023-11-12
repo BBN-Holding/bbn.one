@@ -4,7 +4,7 @@ import { Box, Button, Custom, Entry, Form, Grid, MIcon, State, StateHandler, Tex
 import { Server, SidecarResponse } from "../../../spec/music.ts";
 import { isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource } from "../loading.ts";
 import { ServerStaticInfo } from "./ServerStaticInfo.ts";
-import { editServerDialog } from "./dialogs/editServerDialog.ts";
+import { deleteServerDialog } from "./dialogs/deleteServerDialog.ts";
 import './lol.css';
 import { auditEntry, hostingMenu } from "./menu.ts";
 import { auditLogs, path } from "./state.ts";
@@ -78,10 +78,10 @@ export function ServerDetails(server: StateHandler<Server>) {
                         : DisconnectedScreen(),
                 server.identifier ? Grid(
                     Entry({
-                        title: "Settings",
-                        subtitle: "Update your Server"
-                    }).onClick(async () => {
-                        editServerDialog(server, await API.hosting.versions(server.type).then(stupidErrorAlert));
+                        title: "Delete Server",
+                        subtitle: "Delete your Server"
+                    }).onClick(() => {
+                        deleteServerDialog(server._id);
                     }).addClass("small"),
                     Entry({
                         title: "Audit Trail",

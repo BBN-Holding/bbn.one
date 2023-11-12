@@ -24,11 +24,9 @@ export function editServerDialog(server: Server, versions: string[]) {
                     width: small ? 1 : 2
                 },
                 TextInput("text", "Friendly Name")
-                    .setColor(server.identifier ? Color.Disabled : Color.Grayscaled)
                     .sync(data, "name")
             ],
             DropDownInput("Location", Object.keys(locations))
-                .setColor(server.identifier ? Color.Disabled : Color.Grayscaled)
                 .setRender(location => locations[ location as keyof typeof locations ])
                 .sync(data, "location"),
             SliderInput("Memory (RAM)")
@@ -37,7 +35,7 @@ export function editServerDialog(server: Server, versions: string[]) {
                 .sync(data, "memory")
                 .setRender((val) => format(val * MB)),
             SliderInput("Disk (Storage)")
-                .setMin(server.identifier ? 1 : server.limits.disk)
+                .setMin(server.limits.disk)
                 .setMax(state.meta.limits.disk - state.meta.used.disk + server.limits.disk)
                 .sync(data, "disk")
                 .setRender((val) => format(val * MB)),
