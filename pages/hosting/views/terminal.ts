@@ -19,6 +19,7 @@ export class TerminalComponent extends HTMLElement {
         this.terminal = new Terminal({
             fontSize: 11,
             disableStdin: true,
+            cursorBlink: true,
             convertEol: true
         });
 
@@ -42,7 +43,9 @@ export class TerminalComponent extends HTMLElement {
         }
 
         this.resize = new ResizeObserver(() => {
-            fitAddon.fit();
+            for (let index = 0; index < 5; index++) {
+                fitAddon.fit();
+            }
         });
 
         this.resize.observe(this);
@@ -52,6 +55,8 @@ export class TerminalComponent extends HTMLElement {
 
     reset() {
         this.terminal.reset();
+        // hide the cursor
+        this.terminal.write('\x1b[?25l');
     }
 
     write(data: string) {
