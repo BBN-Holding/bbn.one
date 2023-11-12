@@ -73,7 +73,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     (type == "Home" && !location.pathname.startsWith("/signin") ?
                         Button("Sign in")
                             .addClass("login-button")
-                            .onClick(() => { location.href = "/signin"; })
+                            .asLinkButton("/signin")
                         : Box())
                 ).asRefComponent()
                 ) ?? null,

@@ -109,6 +109,7 @@ export function resetTokens() {
 export function gotoGoal() {
     location.href = localStorage.goal || "/music";
 }
+
 export async function renewAccessTokenIfNeeded() {
     if (!localStorage.getItem("access-token")) return;
     const { exp } = rawAccessToken();
@@ -123,6 +124,7 @@ export const tokens = State({
     accessToken: localStorage[ "access-token" ],
     refreshToken: localStorage[ "refresh-token" ]
 });
+
 export async function forceRefreshToken() {
     try {
         const access = await API.auth.refreshAccessToken.post(localStorage[ "refresh-token" ]).then(stupidErrorAlert);

@@ -79,8 +79,8 @@ export function entryFile(file: File) {
     }).addPrefix(Cache(`file-icon-${file._id}`, () => loadFilePreview(file._id), (type, val) => {
         if (type == "cache")
             return Image({ type: "loading" }, "Loading");
-        const imageSource = type == "loaded" && file.metadata.type.startsWith("image/") && val?.status === "fulfilled"
-            ? Image({ type: "direct", source: () => Promise.resolve(val.value) }, "A Song Artwork")
+        const imageSource = type == "loaded" && file.metadata.type.startsWith("image/") && val
+            ? Image({ type: "direct", source: () => Promise.resolve(val) }, "A Song Artwork")
             : Image(templateArtwork, "A Placeholder Artwork.");
         return Box(imageSource)
             .addClass("image-square");
