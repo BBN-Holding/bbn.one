@@ -295,9 +295,7 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
     }),
     zod.object({
         type: zod.literal("addons"),
-        search: zod.string().optional(),
-        sortBy: zod.enum([ "relevance", "downloads", "newest" ]).optional(),
-        offset: zod.number().optional(),
+        projectId: zod.string(),
     }),
     zod.object({
         type: zod.literal("write"),
@@ -375,7 +373,7 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
     }),
     zod.object({
         type: zod.literal("addons"),
-        addons: addon.array()
+        success: zod.boolean(),
     })
 ]);
 
