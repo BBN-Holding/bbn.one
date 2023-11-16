@@ -295,7 +295,7 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
     }),
     zod.object({
         type: zod.literal("addons"),
-        projectId: zod.string(),
+        versionId: zod.string(),
     }),
     zod.object({
         type: zod.literal("write"),
