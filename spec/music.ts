@@ -25,9 +25,7 @@ export enum DropType {
             - Takedown Pending: None (On Store Label)
             - Takedowns: None
         History:
-            When in Editing Mode, changes are saved to other object,
-                when approved or declined, the changes are pushed into history array,
-                when approved, the changes are applied to the main object
+            Save changes in user-events collection along with the already existing action event
     */
 }
 
