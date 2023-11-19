@@ -415,27 +415,28 @@ export enum AuditTypes {
     CommandExecute = "command-execute",
 }
 
-export const audit = zod.discriminatedUnion("type", [
+export const audit = zod.discriminatedUnion("action", [
     zod.object({
-        type: zod.literal(AuditTypes.StorePurchase),
+        action: zod.literal(AuditTypes.StorePurchase),
         user: zod.string(),
-        item: zod.enum([ "memory", "disk", "cpu", "slot" ]),
+        type: zod.enum([ "memory", "disk", "cpu", "slots" ]),
     }),
     zod.object({
-        type: zod.literal(AuditTypes.ServerCreate),
+        action: zod.literal(AuditTypes.ServerCreate),
         user: zod.string(),
-        server: zod.string(),
+        serverId: zod.string(),
+        data: zod.any()
     }),
     zod.object({
-        type: zod.literal(AuditTypes.ServerPowerChange),
+        action: zod.literal(AuditTypes.ServerPowerChange),
         user: zod.string(),
         server: zod.string(),
-        action: serverPowerActions
+        power: serverPowerActions
     }),
     zod.object({
-        type: zod.literal(AuditTypes.ServerModify),
+        action: zod.literal(AuditTypes.ServerModify),
         user: zod.string(),
-        server: zod.string(),
+        serverId: zod.string(),
         changes: zod.object({
             name: zod.string(),
             location: zod.string(),
@@ -447,27 +448,27 @@ export const audit = zod.discriminatedUnion("type", [
         }).partial()
     }),
     zod.object({
-        type: zod.literal(AuditTypes.ServerDelete),
+        action: zod.literal(AuditTypes.ServerDelete),
         user: zod.string(),
-        server: zod.string(),
+        serverId: zod.string(),
     }),
     zod.object({
-        type: zod.literal(AuditTypes.FileUpload),
-        user: zod.string(),
-        file: zod.string(),
-    }),
-    zod.object({
-        type: zod.literal(AuditTypes.FileDelete),
+        action: zod.literal(AuditTypes.FileUpload),
         user: zod.string(),
         file: zod.string(),
     }),
     zod.object({
-        type: zod.literal(AuditTypes.FileRead),
+        action: zod.literal(AuditTypes.FileDelete),
         user: zod.string(),
         file: zod.string(),
     }),
     zod.object({
-        type: zod.literal(AuditTypes.CommandExecute),
+        action: zod.literal(AuditTypes.FileRead),
+        user: zod.string(),
+        file: zod.string(),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.CommandExecute),
         user: zod.string(),
         server: zod.string(),
         command: zod.string(),
