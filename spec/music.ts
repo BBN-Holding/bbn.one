@@ -311,6 +311,10 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("state"),
         state: serverPowerActions
+    }),
+    zod.object({
+        type: zod.literal("tree"),
+        path: zod.string()
     })
 ]);
 
@@ -324,18 +328,21 @@ const addon = zod.object({
     background: zod.string(),
 });
 
+export const sidecarFile = zod.object({
+    name: zod.string(),
+    canWrite: zod.boolean(),
+    isFile: zod.boolean(),
+    fileMimeType: zod.string().optional(),
+    lastModified: zod.number().optional(),
+    size: zod.number().optional(),
+});
+
 export const sidecarResponse = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("list"),
         path: zod.string(),
         canWrite: zod.boolean(),
-        list: zod.object({
-            name: zod.string(),
-            canWrite: zod.boolean().optional(),
-            fileMimeType: zod.string().optional(),
-            lastModified: zod.number().optional(),
-            size: zod.number().optional(),
-        }).array()
+        list: sidecarFile.array()
     }),
     zod.object({
         type: zod.literal("read"),
@@ -372,6 +379,12 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("addons"),
         success: zod.boolean(),
+    }),
+    zod.object({
+        type: zod.literal("tree"),
+        path: zod.string(),
+        canWrite: zod.boolean(),
+        files: sidecarFile.array()
     })
 ]);
 
@@ -489,3 +502,4 @@ export type Song = zod.infer<typeof song>;
 export type StoreItems = zod.infer<typeof storeItems>;
 export type Transcript = zod.infer<typeof transcript>;
 export type Wallet = zod.infer<typeof wallet>;
+export type SidecarFile = zod.infer<typeof sidecarFile>;
