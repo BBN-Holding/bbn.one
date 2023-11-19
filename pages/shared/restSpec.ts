@@ -435,7 +435,14 @@ export const API = {
                 headers: headers(API.getToken())
             })
                 .then(json<any[]>())
-                .catch(reject)
+                .catch(reject),
+            forcerestart: () => fetch(`${API.BASE_URL}hosting/servers`, {
+                method: 'PUT',
+                body: JSON.stringify({ id }),
+                headers: headers(API.getToken())
+            })
+                .then(none())
+                .catch(reject),
         }),
         store: ({
             create: (type: StoreItems) => fetch(`${API.BASE_URL}hosting/store`, {

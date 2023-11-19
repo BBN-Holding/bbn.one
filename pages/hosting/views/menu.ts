@@ -12,6 +12,7 @@ import { ChangeStateButton } from "./changeStateButton.ts";
 import './details.css';
 import { deleteServerDialog } from "./dialogs/deleteServerDialog.ts";
 import { editServerDialog } from "./dialogs/editServerDialog.ts";
+import { forceRestartDialog } from "./dialogs/forceRestartDialog.ts";
 import './fileBrowser.css';
 import { FileBrowser } from "./FileBrowser.ts";
 import './menu.css';
@@ -179,6 +180,12 @@ export const hostingMenu = Navigation({
                                     title: "Delete Server",
                                     subtitle: "Delete everything. Click once, gone forever.",
                                     clickHandler: () => deleteServerDialog(server._id)
+                                },
+                                {
+                                    id: "forcerestart",
+                                    title: "Force Restart",
+                                    subtitle: "Force a restart of your server. Sometimes even the best servers need a restart.",
+                                    clickHandler: () => forceRestartDialog(server._id)
                                 }
                             ]
                         }
