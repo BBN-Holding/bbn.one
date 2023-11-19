@@ -413,6 +413,12 @@ export enum AuditTypes {
     FileDelete = "file-delete",
     FileRead = "file-read",
     CommandExecute = "command-execute",
+    ResetPassword = "reset-password",
+    DropReview = "drop-review",
+    DropTypeChange = "drop-type-change",
+    DropCreate = "drop-create",
+    OAuthValidate = "oauth-validate",
+    OAuthAuthorize = "oauth-authorize",
 }
 
 export const audit = zod.discriminatedUnion("action", [
@@ -472,6 +478,32 @@ export const audit = zod.discriminatedUnion("action", [
         user: zod.string(),
         server: zod.string(),
         command: zod.string(),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.ResetPassword),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.DropReview),
+        dropId: zod.string(),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.DropTypeChange),
+        dropId: zod.string(),
+        type: zod.nativeEnum(DropType),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.DropCreate),
+        dropId: zod.string(),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.OAuthValidate),
+        appId: zod.string(),
+        scopes: zod.array(zod.string()),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.OAuthAuthorize),
+        appId: zod.string(),
+        scopes: zod.array(zod.string()),
     }),
 ]);
 
