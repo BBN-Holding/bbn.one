@@ -1,4 +1,4 @@
-import { AdminStats, BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerCreate, ServerTypes, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
+import { AdminStats, BugReport, Drop, DropType, File, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
@@ -434,7 +434,7 @@ export const API = {
             audit: async () => await fetch(`${API.BASE_URL}hosting/servers/${id}/audit`, {
                 headers: headers(API.getToken())
             })
-                .then(json<any[]>())
+                .then(json<ServerAudit[]>())
                 .catch(reject),
             forcerestart: () => fetch(`${API.BASE_URL}hosting/servers`, {
                 method: 'PUT',

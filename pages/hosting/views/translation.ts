@@ -16,4 +16,10 @@ export const auditLabels = {
     "file-delete": "File Deleted",
     "file-read": "File Read",
     "command-execute": "Command Executed",
+    "reset-password": "Reset Password",
+    "drop-review": "Drop Review",
+    "drop-type-change": "Drop Type Change",
+    "drop-create": "Drop Created",
+    "oauth-validate": "OAuth Validation",
+    "oauth-authorize": "OAuth Authorization",
 } satisfies Record<AuditTypes, string>;

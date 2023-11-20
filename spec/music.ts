@@ -507,6 +507,18 @@ export const audit = zod.discriminatedUnion("action", [
     }),
 ]);
 
+export const serverAudit = zod.object({
+    id: zod.string(),
+    _id: zod.string().optional(), // Remove after some time
+    meta: audit,
+    user: zod.object({
+        profile: zod.object({
+            username: zod.string(),
+            avatar: zod.string(),
+        })
+    })
+});
+
 export enum OAuthScopes {
     Profile = "profile",
     Email = "email",
@@ -515,6 +527,7 @@ export enum OAuthScopes {
 
 export type AdminStats = { drops: { all: number, reviews: number, publishing: number, published: number, private: number, rejected: number, drafts: number; }, users: number, payouts: number, oauthApps: number, files: number, servers: number, wallets: number; };
 export type Audit = zod.infer<typeof audit>;
+export type ServerAudit = zod.infer<typeof serverAudit>;
 export type RequestPayoutResponse = zod.infer<typeof requestPayoutResponse>;
 export type SidecarResponse = zod.infer<typeof sidecarResponse>;
 export type Addon = zod.infer<typeof addon>;
