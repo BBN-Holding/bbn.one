@@ -1,6 +1,6 @@
 {
     "imports": {
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/a23b2fb/",
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/99f109f/",
         // "webgen/": "../WebGen/",
         "std/": "https://deno.land/std@0.207.0/",
         "shared": "./pages/shared/mod.ts"

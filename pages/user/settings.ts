@@ -1,4 +1,4 @@
-import zod from "https://deno.land/x/zod@v3.21.4/index.ts";
+import zod from "https://deno.land/x/zod@v3.22.4/index.ts";
 import { API, Navigation } from "shared";
 import { Grid, Page, TextInput, Vertical, View, WebGen, Wizard, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
