@@ -44,7 +44,7 @@ export const creationView = () => creationState.$loading.map(loading => {
                 Page(<ServerCreate>{
                     name: "",
                     type: creationState.type,
-                    location: "bbn-fsn",
+                    location: "bbn-hel",
                     limits: {
                         memory: state.meta.limits.memory - state.meta.used.memory,
                         disk: state.meta.limits.disk - state.meta.used.disk,
