@@ -1,3 +1,5 @@
+import { retry } from "https://deno.land/std@0.191.0/async/mod.ts";
+import { assert } from "std/assert/assert.ts";
 import { ServerTypes } from "../../spec/music.ts";
 
 const apiUrl = "https://api.modrinth.com/v2";
@@ -63,7 +65,10 @@ const ServerTypeToModrinthTypeMap: Record<ServerTypes, string[]> = {
     [ ServerTypes.Forge ]: [ "forge" ],
 };
 
-async function find(versions: string[], type: ServerTypes, offset = 0, limit = 10) {
+// TODO: Add an WeightedRateLimitedQueryPipeline
+// Idea: It should be able to return a list (which you can add your queries too) and it will execute them in order (sorted by weight) and will always wait for the rate limit to be reset before executing the next query
+
+async function find(versions: string[], type: ServerTypes, offset = 0, limit = 21) {
     const path = new URL(`${apiUrl}/search`);
     path.searchParams.set("index", "relevance");
     if (!Object.keys(ServerTypeToModrinthTypeMap).includes(type)) throw new Error("Invalid server type");
@@ -75,17 +80,33 @@ async function find(versions: string[], type: ServerTypes, offset = 0, limit = 1
     ]));
     path.searchParams.set("limit", limit.toString());
     path.searchParams.set("offset", offset.toString());
-    const json = await (await fetch(path)).json() as SearchResponse;
+    const json = await retry<SearchResponse>(async () => {
+        const response = await fetch(path);
+        assert(response.ok);
+        return response.json();
+    });
+
     return json.hits;
 }
 
+const downloadCache = new Map<string, ModrinthDownload | undefined>();
 async function getLatestDownload(versions: string[], type: ServerTypes, projectid: string) {
+    if (downloadCache.has(`${apiUrl}/project/${projectid}/version`))
+        return downloadCache.get(`${apiUrl}/project/${projectid}/version`);
+
     const path = new URL(`${apiUrl}/project/${projectid}/version`);
     path.searchParams.set("loaders", JSON.stringify(ServerTypeToModrinthTypeMap[ type ]));
     path.searchParams.set("game_versions", JSON.stringify(versions));
 
-    const json = await (await fetch(path)).json();
-    return json[ 0 ] as ModrinthDownload;
+    const json = await retry(async () => {
+        const response = await fetch(path);
+        assert(response.ok);
+        return response.json();
+    });
+
+    const response = json[ 0 ] as ModrinthDownload | undefined;
+    downloadCache.set(`${apiUrl}/project/${projectid}/version`, response);
+    return response;
 }
 
 async function getSpecificDownload(versionId: string) {
@@ -102,15 +123,21 @@ async function collectDownloadList(versions: string[], type: ServerTypes, projec
         ...await Promise.all(
             download.dependencies
                 .filter(v => v.dependency_type === "required")
-                .map((v) => collectDownloadList(versions, type, v.project_id, v.version_id ?? undefined)))
-    ] as string[];
+                .map((v) => collectDownloadList(versions, type, v.project_id, v.version_id ?? undefined))
+        )
+    ].flat();
 }
 
-async function getRealFiltered(versions: string[], type: ServerTypes, offset = 0) {
-    const projects = await find(versions, type, offset);
-    const downloads = await Promise.all(projects.map(async (project, index) => ({ project, index, download: await getLatestDownload(versions, type, project.project_id) })));
-    const firstten = downloads.filter(v => v.download !== null).slice(0, 10); // We just hope that there are 10 projects with downloads
-    return { lastindex: firstten.at(-1)?.index ?? -1, projects: firstten.map(v => ({ project: v.project, download: v.download })) };
+export type ModrinthLink = {
+    download: Promise<ModrinthDownload | undefined>;
+} & ModrinthProject;
+
+export async function getRealFiltered(versions: string[], type: ServerTypes, offset: number, limit: number): Promise<ModrinthLink[]> {
+    const projects = await find(versions, type, offset, limit);
+    return projects.map(project => ({
+        ...project,
+        download: getLatestDownload(versions, type, project.project_id)
+    }));
 }
 
 // console.log(await getRealFiltered(["1.20.2", "1.20"], ServerTypes.Default)); // Gets a list of projects with fitting downloads, returns the last index of the last project for the offset for next req and the projects

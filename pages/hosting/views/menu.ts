@@ -1,12 +1,14 @@
 import { API, count, LoadingSpinner, Navigation, placeholder, RenderItem, stupidErrorAlert } from "shared";
-import { deferred } from "std/async/deferred.ts";
-import { asPointer, BasicLabel, Box, Button, Color, Entry, Grid, isMobile, Label, ref } from "webgen/mod.ts";
+import { WEEK } from "std/datetime/constants.ts";
+import { BasicLabel, Box, Button, Cache, Color, Entry, Grid, Image, isMobile, Label, MIcon, ref, refMerge, State, StateHandler, TextInput } from "webgen/mod.ts";
+import { createCachedLoader, createIndexPaginationLoader } from "webgen/network.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
-import { Addon, AuditTypes, SidecarResponse } from "../../../spec/music.ts";
-import { activeUser, showProfilePicture } from "../../_legacy/helper.ts";
+import { AuditTypes, Server, ServerAudit, ServerTypes } from "../../../spec/music.ts";
+import { activeUser, ProfileData, showProfilePicture } from "../../_legacy/helper.ts";
 import { state } from "../data.ts";
-import { messageQueueSidecar, startSidecarConnection, stopSidecarConnection } from "../loading.ts";
+import { startSidecarConnection, stopSidecarConnection } from "../loading.ts";
+import { getRealFiltered } from "../modrinth.ts";
 import { profileView } from "../views/profile.ts";
 import { ChangeStateButton } from "./changeStateButton.ts";
 import './details.css';
@@ -15,11 +17,13 @@ import { editServerDialog } from "./dialogs/editServerDialog.ts";
 import { forceRestartDialog } from "./dialogs/forceRestartDialog.ts";
 import './fileBrowser.css';
 import { FileBrowser } from "./FileBrowser.ts";
+import { Loader } from "./Loader.ts";
 import './menu.css';
 import { ServerDetails } from "./ServerDetails.ts";
 import { auditLogs, hostingButtons } from "./state.ts";
 import './table2.css';
 import { auditLabels, labels } from "./translation.ts";
+import { calculateUptime } from "./uptime.ts";
 
 export const hostingMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
@@ -65,88 +69,7 @@ export const hostingMenu = Navigation({
                             hidden: true,
                             title: "Storage",
                             children: [
-                                {
-                                    id: "database",
-                                    title: "Manage Databases",
-                                    subtitle: "Create a MariaDB Database",
-                                    suffix: Label("Coming Soon")
-                                        .setFont(1, 500)
-                                        .setMargin("0 1rem")
-                                },
-                                {
-                                    id: "assets",
-                                    title: "Manage Assets",
-                                    subtitle: "Get new Plugins, Mods, and Datapacks",
-                                    suffix: Label("Coming Soon")
-                                        .setFont(1, 500)
-                                        .setMargin("0 1rem")
-                                },
-                                // server.type !== ServerTypes.Default ?
-                                //     {
-                                //         id: "assets",
-                                //         title: "Add Assets",
-                                //         subtitle: "Get new Plugins, Mods, and Datapacks",
-                                //         suffix: Label("(Recommended Only)")
-                                //             .setFont(1, 500)
-                                //             .setMargin("0 1rem")
-                                //     } : {
-                                //         id: "assets",
-                                //         title: "Add Assets",
-                                //         subtitle: "Get new Plugins, Mods, and Datapacks",
-                                //         clickHandler: async () => {
-                                //             addons.setValue(await fetchPlugins());
-                                //         },
-                                //         children: addons.map(addonList => addonList.length == 0
-                                //             ? [ placeholder("Oh soo empty!", "You addons will be here when you add some!") ]
-                                //             : [
-                                //                 addonList
-                                //                     .filter((_, index) => (index + 1) % 20 != 0)
-                                //                     .map(plugin => (<RenderItem>{
-                                //                         id: plugin.id ?? plugin.name,
-                                //                         title: plugin.name,
-                                //                         subtitle: plugin.description,
-                                //                         replacement: Grid(
-                                //                             Image(plugin.icon, `Image of ${plugin.name}`),
-                                //                             BasicLabel({
-                                //                                 title: plugin.name,
-                                //                                 subtitle: plugin.description,
-                                //                             })
-                                //                         )
-                                //                             .setAlign("center")
-                                //                             .setRawColumns("100px auto")
-                                //                             .setGap("25px"),
-                                //                         suffix: Grid(
-                                //                             Grid(
-                                //                                 MIcon("cloud_download"),
-                                //                                 Label(plugin.downloads.toString())
-                                //                             )
-                                //                                 .addClass("addon-stats")
-                                //                                 .setRawColumns("max-content max-content"),
-                                //                             Button("Add to Server"),
-                                //                             Grid(
-                                //                                 // last upload
-                                //                                 MIcon("update"),
-                                //                                 Label(calculateUptime(new Date(plugin.lastUpdated)))
-                                //                             )
-                                //                                 .addClass(new Date(plugin.lastUpdated).getTime() > (Date.now() - 15 * WEEK) ? "up-top-date" : "outdated")
-                                //                                 .addClass("addon-stats")
-                                //                                 .setRawColumns("max-content max-content"),
-                                //                         ).addClass("addon-buttons"),
-                                //                     })),
-                                //                 // Add a load more button when there is more available then displayed. Loading happens 21-offset based while only 20 are displayed.
-                                //                 addonList.length % 20 !== 0 && !emptyResponse.getValue() ? Box(Button("Load More").onPromiseClick(async () => {
-                                //                     await delay(1000);
-                                //                     const data = await fetchPlugins(addonList.length - 1);
-                                //                     console.log(data);
-                                //                     if (!data) return;
-                                //                     if (data.length == 0) {
-                                //                         emptyResponse.setValue(true);
-                                //                         return;
-                                //                     }
-                                //                     addons.setValue([ ...addonList, ...data ]);
-                                //                 })) : Box().removeFromLayout()
-                                //             ].flat())
-                                //     },
+                                addonBrowser(server),
                                 FileBrowser()
                             ]
                         },
@@ -236,32 +159,118 @@ hostingMenu.path.listen(path => {
     history.pushState(undefined, "", `/hosting?path=${path}`);
 });
 
-export const addons = asPointer<Addon[]>([]);
-export const emptyResponse = asPointer<boolean>(false);
+export const searchBox = State({
+    search: ""
+});
 
-async function fetchPlugins(offset = 0) {
-    const response = deferred<SidecarResponse>();
-    messageQueueSidecar.push({
-        request: {
-            type: "addons",
-            offset,
+function addonBrowser(server: StateHandler<Server>): RenderItem {
+    const supported = [ ServerTypes.Default, ServerTypes.Fabric, ServerTypes.Forge ].includes(server.type);
+
+    if (!supported)
+        return {
+            id: "assets",
+            title: "Add Assets",
+            subtitle: "Get new Plugins, Mods, and Datapacks",
+            suffix: Label("(Recommended Only)")
+                .setFont(1, 500)
+                .setMargin("0 1rem")
+        };
+
+    const loader = createCachedLoader(createIndexPaginationLoader({
+        limit: 30,
+        loader: (offset, limit) => getRealFiltered([ server.version ], server.type, offset, limit),
+    }));
+    return {
+        id: "assets",
+        title: "Add Assets",
+        subtitle: "Get new Plugins, Mods, and Datapacks",
+        clickHandler: async () => {
+            loader.reset();
+            await loader.next();
         },
-        response: response
-    });
-    const rsp = await response;
-    if (rsp.type == "addons") {
-        return rsp.addons;
-    }
+        children: [
+            Grid(
+                TextInput("text", "Search")
+                    .sync(searchBox, "search"),
+            ).setJustify("end"),
+            Loader(
+                loader,
+                ({ items, hasMore, loadMore }) =>
+                    refMerge({
+                        items: items,
+                        searchString: searchBox.$search,
+                        hasMore
+                    })
+                        .map(({ items, hasMore, searchString }) => ({
+                            items: items.filter(it => it.title.toLowerCase().includes(searchString.toLowerCase())),
+                            hasMore
+                        }))
+                        .map(({ items, hasMore }) => items.length == 0
+                            ? placeholder("Oh soo empty!", "We probably couldn't find find anything matching your search.")
+                            : Grid(...items.map(addon =>
+                                Entry({
+                                    title: addon.title,
+                                    subtitle: addon.description,
+                                })
+                                    .addPrefix(
+                                        Cache
+                                            (`${addon.slug}:${addon.icon_url}`,
+                                                undefined,
+                                                () => Image(addon.icon_url, `Image of ${addon.title}`)
+                                                    .setWidth("100px")
+                                            )
+                                    )
+                                    .addSuffix(
+                                        Cache(addon.slug, () => addon.download, (type, val) => {
+                                            if (type === "cache")
+                                                return Label("Loading");
+
+                                            if (val === undefined)
+                                                return Button("Not Available")
+                                                    .setColor(Color.Disabled);
+
+                                            return Grid(
+                                                Grid(
+                                                    MIcon("cloud_download"),
+                                                    Label(addon.downloads.toString())
+                                                )
+                                                    .addClass("addon-stats")
+                                                    .setRawColumns("max-content max-content"),
+                                                Button("Add to Server"),
+                                                Grid(
+                                                    MIcon("update"),
+                                                    Label(calculateUptime(new Date(addon.date_modified)))
+                                                )
+                                                    .addClass(new Date(addon.date_modified).getTime() > (Date.now() - 15 * WEEK) ? "up-top-date" : "outdated")
+                                                    .addClass("addon-stats")
+                                                    .setRawColumns("max-content max-content")
+                                            ).addClass("addon-buttons").setMargin("0 0 0 1rem");
+                                        })
+                                    )
+
+                            ),
+                                hasMore ? Grid(
+                                    Button("Load More")
+                                        .onPromiseClick(() => loadMore())
+                                )
+                                    .setJustify("center")
+                                    : Box().removeFromLayout()
+                            )
+                                .setGap()
+                        ).asRefComponent()
+            )
+        ]
+    };
 }
 
-export function auditEntry(audit: any): RenderItem[] {
-    return audit.map((x: any) => Entry(Grid(
+export function auditEntry(audit: ServerAudit[]): RenderItem[] {
+    return audit.map((x) => Entry(Grid(
         BasicLabel({
-            title: `${auditLabels[ x.meta.action as AuditTypes ].replaceAll("$powerChange", x.meta.power ?? "")}`,
+            title: `${auditLabels[ x.meta.action ].replaceAll("$powerChange", x.meta.action === AuditTypes.ServerPowerChange ? x.meta.power ?? "" : "")}`,
             subtitle: `Executed by ${x.user.profile.username}`
         }),
-        Label(new Date(parseInt(x._id.substring(0, 8), 16) * 1000).toLocaleDateString())
+        Label(new Date(parseInt((x._id ?? x.id).substring(0, 8), 16) * 1000).toLocaleDateString())
     ))
-        .addPrefix(showProfilePicture(x.user))
+        .addPrefix(showProfilePicture(x.user as ProfileData))
         .addClass("small"));
 }
