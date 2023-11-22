@@ -3,11 +3,11 @@ import { API, ProgressTracker } from "shared/mod.ts";
 import { Deferred, deferred } from "std/async/deferred.ts";
 import { decodeBase64, encodeBase64 } from "std/encoding/base64.ts";
 import { Pointer, State, asPointer, lazyInit } from "webgen/mod.ts";
+import { createStableWebSocket } from "webgen/network.ts";
 import { Server, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 import { canWriteInFolder, currentFiles } from "./views/state.ts";
-import { createStableWebSocket } from "webgen/network.ts";
 
 export async function refreshState() {
     state.servers = State((await API.hosting.servers()).map(x => State(x)));
@@ -28,7 +28,7 @@ export const liveUpdates = lazyInit(async () => {
             firstTime = true;
         },
         onMessage: (msg) => {
-            if(typeof msg !== "string") return;
+            if (typeof msg !== "string") return;
             const json = JSON.parse(msg);
             if (json.login === "require authentication") {
                 tokens.$accessToken.listen((val) => val && connection.send(JSON.stringify(<LoginRequest>{
@@ -66,8 +66,8 @@ export const liveUpdates = lazyInit(async () => {
                 }
             }
         }
-    })
-})
+    });
+});
 
 export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
 export const isSidecarConnect = asPointer(false);
@@ -93,11 +93,12 @@ export async function startSidecarConnection(id: string) {
         url: url.toString()
     }, {
         onMessage: (event) => {
-            if(typeof event !== "string") return;
+            if (typeof event !== "string") return;
             const msg = <SidecarResponse>JSON.parse(event);
             for (const iterator of syncedResponses) {
                 if (
-                    (iterator.request.type === "addons" && (msg.type === "addons" || msg.type === "error")) ||
+                    (iterator.request.type === "install-addons" && (msg.type === "install-addons" || msg.type === "error")) ||
+                    (iterator.request.type === "installed-addons" && (msg.type === "installed-addons" || msg.type === "error")) ||
                     (
                         (
                             (iterator.request.type === "write" && (msg.type === "next-chunk" || msg.type === "error")) ||
@@ -206,4 +207,17 @@ export async function uploadFile(path: string, file: File, progress: Pointer<num
         await nextChunk;
     }
     progress.setValue(100);
+}
+
+export async function installAddon(addons: {
+    projectId: string;
+    versionId: string;
+}[]) {
+    // TODO: Implement this
+    await addons;
+}
+
+export async function getInstalledAddons(): Promise<{ projectId: string; versionId: string; }[]> {
+    // TODO: Implement this
+    return await [];
 }

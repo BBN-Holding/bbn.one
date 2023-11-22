@@ -117,11 +117,15 @@ async function getLatestDownload(versions: string[], type: ServerTypes, projecti
 
 async function getSpecificDownload(versionId: string) {
     const path = new URL(`${apiUrl}/version/${versionId}`);
-    const json = await (await fetch(path)).json();
+    const json = await retry(async () => {
+        const response = await pipeline.fetch(SchedulerPriority.High, path.toString());
+        assert(response.ok);
+        return response.json();
+    });
     return json as ModrinthDownload;
 }
 
-async function collectDownloadList(versions: string[], type: ServerTypes, projectid: string, versionId?: string): Promise<string[]> {
+export async function collectDownloadList(versions: string[], type: ServerTypes, projectid: string, versionId?: string): Promise<string[]> {
     const download = versionId ? await getSpecificDownload(versionId) : await getLatestDownload(versions, type, projectid);
     if (!download) return [];
     return [
