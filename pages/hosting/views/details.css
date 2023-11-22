@@ -72,12 +72,22 @@
     font-weight: 500;
     gap: 10px;
     justify-items: center;
+    min-width: 120px;
 }
 
 .addon-buttons .wbutton {
     --color-grayscaled-hue: 204deg;
     --color-grayscaled-saturation: 58%;
     --color-grayscaled-lightness: 51%;
+    --color-grayscaled-font: white;
+    min-width: 80px;
+    justify-content: center;
+}
+
+.addon-buttons .danger-button {
+    --color-grayscaled-hue: 0deg;
+    --color-grayscaled-saturation: 54%;
+    --color-grayscaled-lightness: 49%;
     --color-grayscaled-font: white;
 }
 

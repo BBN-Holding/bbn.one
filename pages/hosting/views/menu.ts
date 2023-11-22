@@ -1,16 +1,17 @@
 import { API, count, LoadingSpinner, Navigation, placeholder, RenderItem, stupidErrorAlert } from "shared/mod.ts";
 import { calculateUptime } from "shared/uptime.ts";
 import { debounce } from "std/async/debounce.ts";
+import { delay } from "std/async/delay.ts";
 import { WEEK } from "std/datetime/constants.ts";
-import { BasicLabel, Box, Button, Cache, Color, Entry, Grid, Image, isMobile, Label, MIcon, ref, refMerge, State, StateHandler, TextInput } from "webgen/mod.ts";
+import { asPointer, BasicLabel, Box, Button, Cache, Color, Entry, Grid, Image, isMobile, Label, MIcon, ref, refMerge, State, StateHandler, TextInput } from "webgen/mod.ts";
 import { createCachedLoader, createIndexPaginationLoader } from "webgen/network.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
-import { AuditTypes, Server, ServerAudit, ServerTypes } from "../../../spec/music.ts";
+import { AuditTypes, InstalledAddon, Server, ServerAudit, ServerTypes } from "../../../spec/music.ts";
 import { activeUser, ProfileData, showProfilePicture } from "../../_legacy/helper.ts";
 import { state } from "../data.ts";
-import { installAddon, startSidecarConnection, stopSidecarConnection } from "../loading.ts";
+import { installAddon, startSidecarConnection, stopSidecarConnection, uninstallAddon } from "../loading.ts";
 import { collectDownloadList, getRealFiltered, ModrinthDownload } from "../modrinth.ts";
 import { auditLabels, labels } from "../translation.ts";
 import { profileView } from "../views/profile.ts";
@@ -172,6 +173,8 @@ searchBox.$search.listen(debounce(() => {
     // TODO: Search for addons and add them to the list
 }, 500));
 
+export const installedAddons = asPointer<InstalledAddon[]>([]);
+
 function addonBrowser(server: StateHandler<Server>): RenderItem {
     const supported = [ ServerTypes.Default, ServerTypes.Fabric, ServerTypes.Forge ].includes(server.type);
 
@@ -242,10 +245,22 @@ function addonBrowser(server: StateHandler<Server>): RenderItem {
                                             return Button("Not Available")
                                                 .setColor(Color.Disabled);
 
-                                        return Button("Add to Server").onPromiseClick(async () => {
-                                            const downloadList = await collectDownloadList([ server.version ], server.type, val.project_id);
-                                            await installAddon(downloadList);
-                                        });
+                                        return installedAddons.map(it => !it.find(it => it.projectId === addon.project_id)).map(installed => installed
+                                            ? Button("Add to Server")
+                                                .onPromiseClick(async () => {
+                                                    const downloadList = await collectDownloadList([ server.version ], server.type, val.project_id);
+                                                    await installAddon(downloadList);
+                                                    await delay(1000);
+                                                    installedAddons.setValue([ ...installedAddons.getValue(), ...downloadList ]);
+                                                })
+                                            : Button("Uninstall")
+                                                .addClass("danger-button")
+                                                .onPromiseClick(async () => {
+                                                    await uninstallAddon(addon.project_id);
+                                                    await delay(1000);
+                                                    installedAddons.setValue(installedAddons.getValue().filter(it => it.projectId !== addon.project_id));
+                                                })
+                                        ).asRefComponent();
                                     }).removeFromLayout(),
                                     Grid(
                                         MIcon("update"),

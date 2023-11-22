@@ -214,6 +214,11 @@ export async function installAddon(addons: InstalledAddon[]) {
     await addons;
 }
 
+export async function uninstallAddon(projectId: string) {
+    // TODO: Implement this
+    await projectId;
+}
+
 export async function getInstalledAddons(): Promise<InstalledAddon[]> {
     // TODO: Implement this
     return await [];
