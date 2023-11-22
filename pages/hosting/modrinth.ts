@@ -1,7 +1,7 @@
 import { assert } from "std/assert/assert.ts";
 import { retry } from "std/async/mod.ts";
 import { SchedulerPriority, ThrottleStrategy, createThrottledPipeline } from "webgen/network.ts";
-import { ServerTypes } from "../../spec/music.ts";
+import { InstalledAddon, ServerTypes } from "../../spec/music.ts";
 const apiUrl = "https://api.modrinth.com/v2";
 
 type SearchResponse = {
@@ -34,7 +34,7 @@ type ModrinthProject = {
     color: number,
 };
 
-type ModrinthDownload = {
+export type ModrinthDownload = {
     id: string,
     project_id: string,
     author_id: string,
@@ -125,11 +125,14 @@ async function getSpecificDownload(versionId: string) {
     return json as ModrinthDownload;
 }
 
-export async function collectDownloadList(versions: string[], type: ServerTypes, projectid: string, versionId?: string): Promise<string[]> {
+export async function collectDownloadList(versions: string[], type: ServerTypes, projectid: string, versionId?: string): Promise<InstalledAddon[]> {
     const download = versionId ? await getSpecificDownload(versionId) : await getLatestDownload(versions, type, projectid);
     if (!download) return [];
     return [
-        download.id,
+        <InstalledAddon>{
+            projectId: download.project_id,
+            versionId: download.id,
+        },
         ...await Promise.all(
             download.dependencies
                 .filter(v => v.dependency_type === "required")

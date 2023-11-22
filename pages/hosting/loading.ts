@@ -4,7 +4,7 @@ import { Deferred, deferred } from "std/async/deferred.ts";
 import { decodeBase64, encodeBase64 } from "std/encoding/base64.ts";
 import { Pointer, State, asPointer, lazyInit } from "webgen/mod.ts";
 import { createStableWebSocket } from "webgen/network.ts";
-import { Server, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
+import { InstalledAddon, Server, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 import { canWriteInFolder, currentFiles } from "./views/state.ts";
@@ -209,15 +209,12 @@ export async function uploadFile(path: string, file: File, progress: Pointer<num
     progress.setValue(100);
 }
 
-export async function installAddon(addons: {
-    projectId: string;
-    versionId: string;
-}[]) {
+export async function installAddon(addons: InstalledAddon[]) {
     // TODO: Implement this
     await addons;
 }
 
-export async function getInstalledAddons(): Promise<{ projectId: string; versionId: string; }[]> {
+export async function getInstalledAddons(): Promise<InstalledAddon[]> {
     // TODO: Implement this
     return await [];
 }

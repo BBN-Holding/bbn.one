@@ -19,7 +19,6 @@ export function List<T, Key extends string>(list: Pointer<T[]>, keyFunc: (data: 
         const newElements = newValue.map(item => keyFunc(item));
 
         newElements.filter(key => !oldElements.includes(key)).forEach(key => {
-            console.log("Adding", key);
             const element = container.querySelector(`[data-key="${key}"]`);
             if (element) return;
 
@@ -32,7 +31,6 @@ export function List<T, Key extends string>(list: Pointer<T[]>, keyFunc: (data: 
         });
 
         oldElements.filter(key => !newElements.includes(key)).forEach(key => {
-            console.log("Removing", key);
             const element = container.querySelector(`[data-key="${key}"]`);
             element?.remove();
         });

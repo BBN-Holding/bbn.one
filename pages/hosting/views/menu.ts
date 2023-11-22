@@ -10,8 +10,8 @@ import serverTypes from "../../../data/servers.json" assert { type: "json" };
 import { AuditTypes, Server, ServerAudit, ServerTypes } from "../../../spec/music.ts";
 import { activeUser, ProfileData, showProfilePicture } from "../../_legacy/helper.ts";
 import { state } from "../data.ts";
-import { startSidecarConnection, stopSidecarConnection } from "../loading.ts";
-import { getRealFiltered } from "../modrinth.ts";
+import { installAddon, startSidecarConnection, stopSidecarConnection } from "../loading.ts";
+import { collectDownloadList, getRealFiltered, ModrinthDownload } from "../modrinth.ts";
 import { auditLabels, labels } from "../translation.ts";
 import { profileView } from "../views/profile.ts";
 import { ChangeStateButton } from "./changeStateButton.ts";
@@ -233,7 +233,7 @@ function addonBrowser(server: StateHandler<Server>): RenderItem {
                                     )
                                         .addClass("addon-stats")
                                         .setRawColumns("max-content max-content"),
-                                    Cache(addon.slug, () => addon.download, (type, val) => {
+                                    Cache<ModrinthDownload | undefined>(addon.slug, () => addon.download, (type, val) => {
                                         if (type === "cache")
                                             return Button("Loading...")
                                                 .setColor(Color.Disabled);
@@ -242,7 +242,10 @@ function addonBrowser(server: StateHandler<Server>): RenderItem {
                                             return Button("Not Available")
                                                 .setColor(Color.Disabled);
 
-                                        return Button("Add to Server");
+                                        return Button("Add to Server").onPromiseClick(async () => {
+                                            const downloadList = await collectDownloadList([ server.version ], server.type, val.project_id);
+                                            await installAddon(downloadList);
+                                        });
                                     }).removeFromLayout(),
                                     Grid(
                                         MIcon("update"),

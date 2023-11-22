@@ -278,6 +278,11 @@ export const transcript = zod.object({
     _id: zod.string(),
 });
 
+export const installedAddon = zod.object({
+    projectId: zod.string(),
+    versionId: zod.string(),
+});
+
 export const sidecarRequest = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("list"),
@@ -293,10 +298,7 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
     }),
     zod.object({
         type: zod.literal("install-addons"),
-        versionId: zod.object({
-            projectId: zod.string(),
-            versionId: zod.string(),
-        }).array(),
+        addons: installedAddon.array(),
     }),
     zod.object({
         type: zod.literal("installed-addons"),
@@ -388,10 +390,7 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
     }),
     zod.object({
         type: zod.literal("installed-addons"),
-        addons: zod.object({
-            projectId: zod.string(),
-            versionId: zod.string(),
-        }).array(),
+        addons: installedAddon.array(),
     }),
     zod.object({
         type: zod.literal("tree"),
@@ -544,6 +543,7 @@ export const group = zod.object({
     permission: zod.string()
 });
 
+export type InstalledAddon = zod.infer<typeof installedAddon>;
 export type Group = zod.infer<typeof group>;
 export type AdminStats = { drops: { all: number, reviews: number, publishing: number, published: number, private: number, rejected: number, drafts: number; }, users: number, payouts: number, oauthApps: number, files: number, servers: number, wallets: number; };
 export type Audit = zod.infer<typeof audit>;
