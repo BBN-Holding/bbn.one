@@ -1,9 +1,9 @@
-import { LoadingSpinner } from "shared";
+import { LoadingSpinner } from "shared/mod.ts";
 import { deferred } from "std/async/deferred.ts";
 import { Box, Color, Component, IconButton, isMobile, MIcon, StateHandler } from "webgen/mod.ts";
 import { Server, SidecarResponse } from "../../../spec/music.ts";
 import { messageQueueSidecar, startSidecarConnection } from "../loading.ts";
-import { StateActions } from "./types.ts";
+import { StateActions } from "../types.ts";
 
 export function ChangeStateButton(server: StateHandler<Server>): Component {
     return server.$state.map((state) => ((<StateActions>{

@@ -1,4 +1,4 @@
-import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared";
+import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
 import { State, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import '../../../assets/css/hosting.css';
 import '../../../assets/css/main.css';

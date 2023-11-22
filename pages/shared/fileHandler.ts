@@ -6,6 +6,12 @@ export interface FileEntry {
     file: File;
 }
 
+declare global {
+    interface FileSystemDirectoryHandle {
+        values: () => ReadableStream<FileSystemDirectoryHandle | FileSystemFileHandle>;
+    }
+}
+
 async function* walkFileTree(handle: FileSystemHandle, path?: string): AsyncGenerator<FileEntry> {
     const realpath = path ?? `${handle.name}`;
     if (handle.kind === 'file') {

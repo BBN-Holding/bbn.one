@@ -1,5 +1,5 @@
-import { retry } from "https://deno.land/std@0.191.0/async/mod.ts";
 import { assert } from "std/assert/assert.ts";
+import { retry } from "std/async/mod.ts";
 import { ServerTypes } from "../../spec/music.ts";
 
 const apiUrl = "https://api.modrinth.com/v2";
@@ -66,7 +66,7 @@ const ServerTypeToModrinthTypeMap: Record<ServerTypes, string[]> = {
 };
 
 // TODO: Add an WeightedRateLimitedQueryPipeline
-// Idea: It should be able to return a list (which you can add your queries too) and it will execute them in order (sorted by weight) and will always wait for the rate limit to be reset before executing the next query
+// Idea: It should be able to return a list (which you can add your queries to) and it will execute them in order (sorted by weight) and will always wait for the rate limit to be reset before executing the next query
 
 async function find(versions: string[], type: ServerTypes, offset = 0, limit = 21) {
     const path = new URL(`${apiUrl}/search`);

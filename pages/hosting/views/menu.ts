@@ -1,4 +1,4 @@
-import { API, count, LoadingSpinner, Navigation, placeholder, RenderItem, stupidErrorAlert } from "shared";
+import { API, count, LoadingSpinner, Navigation, placeholder, RenderItem, stupidErrorAlert } from "shared/mod.ts";
 import { WEEK } from "std/datetime/constants.ts";
 import { BasicLabel, Box, Button, Cache, Color, Entry, Grid, Image, isMobile, Label, MIcon, ref, refMerge, State, StateHandler, TextInput } from "webgen/mod.ts";
 import { createCachedLoader, createIndexPaginationLoader } from "webgen/network.ts";
@@ -6,9 +6,11 @@ import locations from "../../../data/locations.json" assert { type: "json" };
 import serverTypes from "../../../data/servers.json" assert { type: "json" };
 import { AuditTypes, Server, ServerAudit, ServerTypes } from "../../../spec/music.ts";
 import { activeUser, ProfileData, showProfilePicture } from "../../_legacy/helper.ts";
+import { calculateUptime } from "shared/uptime.ts";
 import { state } from "../data.ts";
 import { startSidecarConnection, stopSidecarConnection } from "../loading.ts";
 import { getRealFiltered } from "../modrinth.ts";
+import { auditLabels, labels } from "../translation.ts";
 import { profileView } from "../views/profile.ts";
 import { ChangeStateButton } from "./changeStateButton.ts";
 import './details.css';
@@ -22,8 +24,6 @@ import './menu.css';
 import { ServerDetails } from "./ServerDetails.ts";
 import { auditLogs, hostingButtons } from "./state.ts";
 import './table2.css';
-import { auditLabels, labels } from "./translation.ts";
-import { calculateUptime } from "./uptime.ts";
 
 export const hostingMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,

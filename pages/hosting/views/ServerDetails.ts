@@ -1,4 +1,4 @@
-import { API, stupidErrorAlert } from "shared";
+import { API, stupidErrorAlert } from "shared/mod.ts";
 import { deferred } from "std/async/deferred.ts";
 import { Box, Button, Custom, Entry, Form, Grid, MIcon, State, StateHandler, TextInput, isMobile, refMerge } from "webgen/mod.ts";
 import { Server, SidecarResponse } from "../../../spec/music.ts";

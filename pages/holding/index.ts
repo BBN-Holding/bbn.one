@@ -5,14 +5,19 @@ import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import './landing.css';
 import { data, streamingPool } from "./loading.ts";
 // Main
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import bbnHosting from "./resources/bbnHosting.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import bbnMusic from "./resources/bbnMusic.svg";
 
 // External
-import { Counter } from "../shared/counter.ts";
-import { Footer } from "../shared/footer.ts";
+import { Counter } from "shared/counter.ts";
+import { Footer } from "shared/mod.ts";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import bbnCard from "./resources/bbnCard.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import bbnGameStudios from "./resources/bbnGameStudios.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import bbnPublishing from "./resources/bbnPublishing.svg";
 WebGen();
 await RegisterAuthRefresh();

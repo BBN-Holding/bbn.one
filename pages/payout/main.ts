@@ -1,4 +1,4 @@
-import { API, MenuNode, Navigation, stupidErrorAlert } from "shared";
+import { API, MenuNode, Navigation, stupidErrorAlert } from "shared/mod.ts";
 import { groupBy } from "std/collections/group_by.ts";
 import { sortBy } from "std/collections/sort_by.ts";
 import { sumOf } from "std/collections/sum_of.ts";

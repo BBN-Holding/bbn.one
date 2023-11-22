@@ -1,4 +1,5 @@
 import { Entry } from "webgen/mod.ts";
+import { Group } from "../../../spec/music.ts";
 import { ProfileData, showProfilePicture } from "../../_legacy/helper.ts";
 
 export function UserEntry(x: ProfileData) {
@@ -10,7 +11,7 @@ export function UserEntry(x: ProfileData) {
         .addPrefix(showProfilePicture(x));
 }
 
-export function GroupEntry(x: any) {
+export function GroupEntry(x: Group) {
     return Entry({
         title: x.displayName,
         subtitle: `${x._id} - ${x.permission}`

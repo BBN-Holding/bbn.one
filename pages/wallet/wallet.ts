@@ -1,4 +1,4 @@
-import { API, Navigation, stupidErrorAlert } from "shared";
+import { API, Navigation, stupidErrorAlert } from "shared/mod.ts";
 import { Button, Card, Color, Dialog, Grid, Label, MediaQuery, State, Table, TextInput, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
@@ -42,7 +42,7 @@ async function handlePayoutResponse(amount: number) {
                 }
             }).open();
         } else {
-            Dialog(() => {}).addButton("Close", "close").setTitle("Sucess!").onClose(() => refreshState()).open();
+            Dialog(() => { }).addButton("Close", "close").setTitle("Sucess!").onClose(() => refreshState()).open();
         }
     }
 }

@@ -9,9 +9,9 @@ import bbnAdminLogo from '../assets/img/bbnAdmin.svg';
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import bbnWalletLogo from '../assets/img/bbnWallet.svg';
 
-import { Permission } from "shared";
+import { Permission } from "shared/mod.ts";
 
-export const pages: [ logo: any, perm: Array<Permission>, route: string ][] = [
+export const pages: [ logo: string, perm: Array<Permission>, route: string ][] = [
     [ bbnHolding, [], "/" ],
     [ bbnMusicLogo, [], "/music" ],
     [ bbnHostingLogo, [], "/hosting" ],

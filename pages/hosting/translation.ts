@@ -1,4 +1,4 @@
-import { AuditTypes, Server } from "../../../spec/music.ts";
+import { AuditTypes, Server } from "../../spec/music.ts";
 
 export const labels = {
     legacy: "Legacy",

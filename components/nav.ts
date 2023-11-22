@@ -1,4 +1,4 @@
-import { API } from "shared";
+import { API } from "shared/mod.ts";
 import { delay } from "std/async/delay.ts";
 import { BasicLabel, Box, Button, ButtonStyle, Component, Custom, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement } from "webgen/mod.ts";
 import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/_legacy/helper.ts";

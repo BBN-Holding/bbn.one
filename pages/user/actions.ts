@@ -1,4 +1,4 @@
-import { API, displayError, stupidErrorAlert } from "shared";
+import { API, displayError, stupidErrorAlert } from "shared/mod.ts";
 import { assert } from "std/assert/assert.ts";
 import { delay } from "std/async/delay.ts";
 import { forceRefreshToken, gotoGoal } from "../_legacy/helper.ts";

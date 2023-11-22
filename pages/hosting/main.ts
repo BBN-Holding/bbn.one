@@ -3,7 +3,7 @@ import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
-import { listFiles, listener, refreshState, startSidecarConnection } from "./loading.ts";
+import { listFiles, liveUpdates, refreshState, startSidecarConnection } from "./loading.ts";
 import { hostingMenu } from "./views/menu.ts";
 
 import '../../assets/css/hosting.css';
@@ -43,5 +43,5 @@ renewAccessTokenIfNeeded()
             hostingMenu.path.setValue(urlPath);
         }
     })
-    .then(() => listener())
+    .then(() => liveUpdates())
     .then(() => state.loaded = true);

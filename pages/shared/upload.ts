@@ -1,4 +1,4 @@
-import { API } from "shared";
+import { API } from "shared/mod.ts";
 import { Pointer, asPointer, createElement } from "webgen/mod.ts";
 
 export type StreamingUploadEvents = {

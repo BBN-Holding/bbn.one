@@ -1,4 +1,4 @@
-import { API, uploadFilesDialog } from "shared";
+import { API, uploadFilesDialog } from "shared/mod.ts";
 import { Button, Grid, Horizontal, Page, Spacer, Wizard } from "webgen/mod.ts";
 import { Drop, pageFive } from "../../../spec/music.ts";
 import { allowedAudioFormats, getDropFromPages } from "../helper.ts";

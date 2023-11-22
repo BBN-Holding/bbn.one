@@ -1,4 +1,4 @@
-import { placeholder } from "shared";
+import { placeholder } from "shared/mod.ts";
 import { Component, Label, MediaQuery, Vertical } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { DropEntry } from "./entry.ts";

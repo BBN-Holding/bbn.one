@@ -1,4 +1,4 @@
-import { API, StreamingUploadHandler } from "shared";
+import { API, StreamingUploadHandler } from "shared/mod.ts";
 import { delay } from "std/async/delay.ts";
 import { AdvancedImage, State, StateHandler } from "webgen/mod.ts";
 import { Drop } from "../../../spec/music.ts";

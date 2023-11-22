@@ -525,6 +525,13 @@ export enum OAuthScopes {
     Phone = "phone",
 }
 
+export const group = zod.object({
+    displayName: zod.string(),
+    _id: zod.string(), // Replace with id
+    permission: zod.string()
+});
+
+export type Group = zod.infer<typeof group>;
 export type AdminStats = { drops: { all: number, reviews: number, publishing: number, published: number, private: number, rejected: number, drafts: number; }, users: number, payouts: number, oauthApps: number, files: number, servers: number, wallets: number; };
 export type Audit = zod.infer<typeof audit>;
 export type ServerAudit = zod.infer<typeof serverAudit>;

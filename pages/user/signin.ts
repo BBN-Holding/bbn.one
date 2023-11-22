@@ -1,11 +1,10 @@
-import { API, LoadingSpinner } from "shared";
+import { API, Footer, LoadingSpinner } from "shared/mod.ts";
 import { assert } from "std/assert/assert.ts";
 import { Box, Button, ButtonStyle, Color, Form, Grid, Horizontal, Image, Label, Spacer, TextInput, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
-import { Footer } from "../shared/footer.ts";
 import { handleStateChange, loginUser, registerUser } from "./actions.ts";
 import './signin.css';
 import { state } from "./state.ts";

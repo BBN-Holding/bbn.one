@@ -1,4 +1,4 @@
-import { API, count, HeavyList, LoadingSpinner, Navigation, placeholder, stupidErrorAlert } from "shared";
+import { API, count, HeavyList, LoadingSpinner, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
 import { Button, Entry, isMobile, ref } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
