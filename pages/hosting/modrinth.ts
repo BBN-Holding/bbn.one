@@ -72,9 +72,10 @@ const pipeline = createThrottledPipeline({
     concurrency: 5,
 });
 
-async function find(versions: string[], type: ServerTypes, offset = 0, limit = 21) {
+async function find(versions: string[], type: ServerTypes, offset = 0, limit = 21, query = "") {
     const path = new URL(`${apiUrl}/search`);
     path.searchParams.set("index", "relevance");
+    path.searchParams.set("query", query);
     if (!Object.keys(ServerTypeToModrinthTypeMap).includes(type)) throw new Error("Invalid server type");
     path.searchParams.set("facets", JSON.stringify([
         ServerTypeToModrinthTypeMap[ type ].map((v) => `categories:${v}`),
@@ -137,8 +138,8 @@ export type ModrinthLink = {
     download: Promise<ModrinthDownload | undefined>;
 } & ModrinthProject;
 
-export async function getRealFiltered(versions: string[], type: ServerTypes, offset: number, limit: number): Promise<ModrinthLink[]> {
-    const projects = await find(versions, type, offset, limit);
+export async function getRealFiltered(versions: string[], type: ServerTypes, offset: number, limit: number, query = ""): Promise<ModrinthLink[]> {
+    const projects = await find(versions, type, offset, limit, query);
     return projects.map(project => ({
         ...project,
         download: getLatestDownload(versions, type, project.project_id)
