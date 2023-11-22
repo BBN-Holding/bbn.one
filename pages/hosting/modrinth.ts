@@ -1,7 +1,7 @@
 import { assert } from "std/assert/assert.ts";
 import { retry } from "std/async/mod.ts";
+import { SchedulerPriority, ThrottleStrategy, createThrottledPipeline } from "webgen/network.ts";
 import { ServerTypes } from "../../spec/music.ts";
-
 const apiUrl = "https://api.modrinth.com/v2";
 
 type SearchResponse = {
@@ -65,8 +65,12 @@ const ServerTypeToModrinthTypeMap: Record<ServerTypes, string[]> = {
     [ ServerTypes.Forge ]: [ "forge" ],
 };
 
-// TODO: Add an WeightedRateLimitedQueryPipeline
-// Idea: It should be able to return a list (which you can add your queries to) and it will execute them in order (sorted by weight) and will always wait for the rate limit to be reset before executing the next query
+const pipeline = createThrottledPipeline({
+    strategy: ThrottleStrategy.Static,
+    throughputPerMinute: 300,
+    curve: 5,
+    concurrency: 5,
+});
 
 async function find(versions: string[], type: ServerTypes, offset = 0, limit = 21) {
     const path = new URL(`${apiUrl}/search`);
@@ -80,8 +84,9 @@ async function find(versions: string[], type: ServerTypes, offset = 0, limit = 2
     ]));
     path.searchParams.set("limit", limit.toString());
     path.searchParams.set("offset", offset.toString());
+
     const json = await retry<SearchResponse>(async () => {
-        const response = await fetch(path);
+        const response = await pipeline.fetch(SchedulerPriority.High, path.toString());
         assert(response.ok);
         return response.json();
     });
@@ -99,7 +104,7 @@ async function getLatestDownload(versions: string[], type: ServerTypes, projecti
     path.searchParams.set("game_versions", JSON.stringify(versions));
 
     const json = await retry(async () => {
-        const response = await fetch(path);
+        const response = await pipeline.fetch(SchedulerPriority.Low, path.toString());
         assert(response.ok);
         return response.json();
     });

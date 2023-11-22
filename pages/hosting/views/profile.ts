@@ -66,7 +66,7 @@ export const profileView = () =>
                         )
                     )
                         .addClass("details-item")
-                ).addClass("full-width") : Box(),
+                ).addClass("full-width") : Box().removeFromLayout(),
                 Entry(
                     Grid(
                         Label(meta.coins.toLocaleString())
