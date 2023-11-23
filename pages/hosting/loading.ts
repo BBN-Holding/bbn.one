@@ -227,12 +227,12 @@ export async function installAddon(addons: InstalledAddon[]) {
     return false;
 }
 
-export async function uninstallAddon(addons: InstalledAddon[]) {
+export async function uninstallAddon(projectId: string) {
     const response = deferred<SidecarResponse>();
     messageQueueSidecar.push({
         request: {
-            type: "uninstall-addons",
-            addons
+            type: "uninstall-addon",
+            projectId
         },
         response
     });
@@ -244,7 +244,7 @@ export async function uninstallAddon(addons: InstalledAddon[]) {
     return false;
 }
 
-export async function getInstalledAddons(): Promise<InstalledAddon[]> {
+export async function getInstalledAddons(): Promise<{addon: InstalledAddon, dependencies: InstalledAddon[]}[]> {
     const response = deferred<SidecarResponse>();
     messageQueueSidecar.push({
         request: {
