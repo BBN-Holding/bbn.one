@@ -304,6 +304,10 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
         type: zod.literal("installed-addons"),
     }),
     zod.object({
+        type: zod.literal("uninstall-addons"),
+        addons: installedAddon.array(),
+    }),
+    zod.object({
         type: zod.literal("write"),
         path: zod.string(),
         chunk: zod.string().optional(),
@@ -391,6 +395,10 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("installed-addons"),
         addons: installedAddon.array(),
+    }),
+    zod.object({
+        type: zod.literal("uninstall-addons"),
+        success: zod.boolean(),
     }),
     zod.object({
         type: zod.literal("tree"),
