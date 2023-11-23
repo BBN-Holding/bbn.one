@@ -400,7 +400,7 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
         }).array()
     }),
     zod.object({
-        type: zod.literal("uninstall-addons"),
+        type: zod.literal("uninstall-addon"),
         success: zod.boolean(),
     }),
     zod.object({

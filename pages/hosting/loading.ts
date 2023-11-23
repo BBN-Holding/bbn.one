@@ -97,7 +97,7 @@ export async function startSidecarConnection(id: string) {
             const msg = <SidecarResponse>JSON.parse(event);
             for (const iterator of syncedResponses) {
                 if (
-                    (iterator.request.type === "uninstall-addons" && (msg.type === "uninstall-addons" || msg.type === "error")) ||
+                    (iterator.request.type === "uninstall-addon" && (msg.type === "uninstall-addon" || msg.type === "error")) ||
                     (iterator.request.type === "install-addons" && (msg.type === "install-addons" || msg.type === "error")) ||
                     (iterator.request.type === "installed-addons" && (msg.type === "installed-addons" || msg.type === "error")) ||
                     (
@@ -238,7 +238,7 @@ export async function uninstallAddon(projectId: string) {
     });
 
     const data = await response;
-    if (data.type == "uninstall-addons") {
+    if (data.type == "uninstall-addon") {
         return data.success;
     }
     return false;
