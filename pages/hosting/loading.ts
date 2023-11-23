@@ -97,6 +97,7 @@ export async function startSidecarConnection(id: string) {
             const msg = <SidecarResponse>JSON.parse(event);
             for (const iterator of syncedResponses) {
                 if (
+                    (iterator.request.type === "uninstall-addons" && (msg.type === "uninstall-addons" || msg.type === "error")) ||
                     (iterator.request.type === "install-addons" && (msg.type === "install-addons" || msg.type === "error")) ||
                     (iterator.request.type === "installed-addons" && (msg.type === "installed-addons" || msg.type === "error")) ||
                     (
@@ -210,16 +211,51 @@ export async function uploadFile(path: string, file: File, progress: Pointer<num
 }
 
 export async function installAddon(addons: InstalledAddon[]) {
-    // TODO: Implement this
-    await addons;
+    const response = deferred<SidecarResponse>();
+    messageQueueSidecar.push({
+        request: {
+            type: "install-addons",
+            addons
+        },
+        response
+    });
+
+    const data = await response;
+    if (data.type == "install-addons") {
+        return data.success;
+    }
+    return false;
 }
 
-export async function uninstallAddon(projectId: string) {
-    // TODO: Implement this
-    await projectId;
+export async function uninstallAddon(addons: InstalledAddon[]) {
+    const response = deferred<SidecarResponse>();
+    messageQueueSidecar.push({
+        request: {
+            type: "uninstall-addons",
+            addons
+        },
+        response
+    });
+
+    const data = await response;
+    if (data.type == "uninstall-addons") {
+        return data.success;
+    }
+    return false;
 }
 
 export async function getInstalledAddons(): Promise<InstalledAddon[]> {
-    // TODO: Implement this
-    return await [];
+    const response = deferred<SidecarResponse>();
+    messageQueueSidecar.push({
+        request: {
+            type: "installed-addons"
+        },
+        response
+    });
+
+    const data = await response;
+    if (data.type == "installed-addons") {
+        return data.addons;
+    }
+    return [];
 }
