@@ -1,4 +1,4 @@
-import { Footer } from "shared/mod.ts";
+import { Footer } from "shared/footer.ts";
 import { Box, Label, View, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";

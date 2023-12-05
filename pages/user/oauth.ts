@@ -1,4 +1,5 @@
-import { API, Footer, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
+import { Footer } from "shared/footer.ts";
+import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
 import { Box, Button, ButtonStyle, Color, Grid, Horizontal, Image, Label, MIcon, Spacer, State, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { dots, templateArtwork } from "../../assets/imports.ts";

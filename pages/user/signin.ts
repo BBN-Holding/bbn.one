@@ -1,4 +1,6 @@
-import { API, Footer, LoadingSpinner } from "shared/mod.ts";
+import { API, LoadingSpinner } from "shared/mod.ts";
+
+import { Footer } from "shared/footer.ts";
 import { assert } from "std/assert/assert.ts";
 import { Box, Button, ButtonStyle, Color, Form, Grid, Horizontal, Image, Label, Spacer, TextInput, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';

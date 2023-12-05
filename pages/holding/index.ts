@@ -12,7 +12,7 @@ import bbnMusic from "./resources/bbnMusic.svg";
 
 // External
 import { Counter } from "shared/counter.ts";
-import { Footer } from "shared/mod.ts";
+import { Footer } from "shared/footer.ts";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import bbnCard from "./resources/bbnCard.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
