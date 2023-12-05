@@ -33,8 +33,7 @@ renewAccessTokenIfNeeded()
                 const server = await API.hosting.serverId(serverId).get().then(stupidErrorAlert);
                 if (!state.servers.find(s => s._id == serverId))
                     state.servers.push(State(server));
-                if (!server.identifier)
-                    startSidecarConnection(serverId);
+                startSidecarConnection(serverId);
                 if (subView === "storage") {
                     await listFiles("/");
                     path.setValue("/");

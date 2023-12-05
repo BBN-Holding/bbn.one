@@ -192,10 +192,6 @@ export enum ServerTypes {
     Forge = "/minecraft/modded/forge/",
     Bedrock = "/minecraft/bedrock/",
     PocketMine = "/minecraft/pocketmine/",
-    LegacyPurpur = "/minecraft/legacy/purpur/",
-    LegacyMagma = "/minecraft/legacy/magma/",
-    LegacyNukkit = "/minecraft/legacy/nukkit/",
-    LegacyPGF = "/minecraft/legacy/pgf/",
 }
 
 export const serverPowerState = zod.enum([ "starting", "installing", "stopping", "running", "offline" ]);
@@ -213,9 +209,8 @@ export const server = zod.object({
     address: zod.string().optional(),
     ports: zod.number().array(),
     user: zod.string(),
-    identifier: zod.string().optional(),
     stateSince: zod.number().describe("unix timestamp"),
-    labels: zod.enum([ "legacy", "suspended", "contact-support" ]).array(),
+    labels: zod.enum([ "suspended", "contact-support" ]).array(),
     version: zod.string(),
 });
 
@@ -240,8 +235,6 @@ export const storeItems = zod.enum([ "memory", "disk", "cpu", "slots" ]);
 export const meta = zod.object({
     _id: zod.string(),
     owner: zod.string(),
-    pteroId: zod.number().optional(),
-    migrationPassword: zod.string().optional(),
     coins: zod.number(),
     limits: metaLimit,
     used: metaLimit,
@@ -469,11 +462,10 @@ export const audit = zod.discriminatedUnion("action", [
         changes: zod.object({
             name: zod.string(),
             location: zod.string(),
-            limits: limits,
+            limits,
             state: serverPowerState,
             ports: zod.number().array(),
-            identifier: zod.string(),
-            labels: zod.enum([ "legacy", "suspended", "contact-support" ]).array()
+            labels: zod.enum([ "suspended", "contact-support" ]).array()
         }).partial()
     }),
     zod.object({

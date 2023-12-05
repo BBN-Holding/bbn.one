@@ -1,5 +1,4 @@
 import { API, MenuNode, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { groupBy } from "std/collections/group_by.ts";
 import { sortBy } from "std/collections/sort_by.ts";
 import { sumOf } from "std/collections/sum_of.ts";
 import { State, Vertical, View, WebGen, asPointer, isMobile } from "webgen/mod.ts";
@@ -60,7 +59,7 @@ View(() => Vertical(
             {
                 id: "store",
                 title: `Store`,
-                children: state.$payout ? state.$payout.map(payout => payout ? sortBy(Object.entries(payout.entries.map(entry => groupBy(entry.data, e => e.store)).reduce((a, b) => {
+                children: state.$payout ? state.$payout.map(payout => payout ? sortBy(Object.entries(payout.entries.map(entry => Object.groupBy(entry.data, e => e.store)).reduce((a, b) => {
                     Object.entries(b).forEach(([ key, value ]) => {
                         if (!a[ key ]) {
                             a[ key ] = [ 0, 0 ];
@@ -78,7 +77,7 @@ View(() => Vertical(
             {
                 id: "country",
                 title: `Country`,
-                children: state.$payout ? state.$payout.map(payout => payout ? sortBy(Object.entries(payout.entries.map(entry => groupBy(entry.data, e => e.territory)).reduce((a, b) => {
+                children: state.$payout ? state.$payout.map(payout => payout ? sortBy(Object.entries(payout.entries.map(entry => Object.groupBy(entry.data, e => e.territory)).reduce((a, b) => {
                     Object.entries(b).forEach(([ key, value ]) => {
                         if (!a[ key ]) {
                             a[ key ] = [ 0, 0 ];

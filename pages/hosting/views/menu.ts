@@ -62,8 +62,7 @@ export const hostingMenu = Navigation({
                         .setAlign("center"),
                     suffix: ChangeStateButton(server),
                     clickHandler: () => {
-                        if (!server.identifier)
-                            startSidecarConnection(server._id);
+                        startSidecarConnection(server._id);
                         // TODO wait until first data is showing to prevent blinking
                     },
                     children: [

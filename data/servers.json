@@ -19,17 +19,5 @@
     },
     "/minecraft/pocketmine/": {
         "name": "Pocketmine MP"
-    },
-    "/minecraft/legacy/magma/": {
-        "name": "Minecraft Magma"
-    },
-    "/minecraft/legacy/nukkit/": {
-        "name": "Minecraft Nukkit"
-    },
-    "/minecraft/legacy/pgf/": {
-        "name": "Minecraft Purpur Geyser Floodgate"
-    },
-    "/minecraft/legacy/purpur/": {
-        "name": "Minecraft Purpur"
     }
 }
