@@ -1,5 +1,5 @@
 import { Component, IconButtonComponent, Pointer } from "webgen/mod.ts";
-import { PowerState } from "../../../spec/music.ts";
+import { PowerState } from "../../spec/music.ts";
 
 
 export type StateActions = {

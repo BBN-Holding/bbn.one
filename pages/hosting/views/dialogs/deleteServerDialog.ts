@@ -1,4 +1,4 @@
-import { API, stupidErrorAlert } from "shared";
+import { API, stupidErrorAlert } from "shared/mod.ts";
 import { Box, Color, Dialog, Label } from "webgen/mod.ts";
 
 export function deleteServerDialog(serverId: string) {

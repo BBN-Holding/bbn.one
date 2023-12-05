@@ -1,10 +1,11 @@
 {
     "imports": {
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/99f109f/",
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/b6fafd3/",
         // "webgen/": "../WebGen/",
-        "std/": "https://deno.land/std@0.207.0/",
-        "shared": "./pages/shared/mod.ts"
+        "std/": "https://deno.land/std@0.208.0/",
+        "shared/": "./pages/shared/"
     },
+    "lock": false,
     "compilerOptions": {
         "lib": [
             "dom",

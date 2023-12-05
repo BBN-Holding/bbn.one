@@ -2,20 +2,20 @@ import { deferred } from "std/async/deferred.ts";
 import { format } from "std/fmt/bytes.ts";
 import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Dialog, Entry, Grid, IconButton, Label, MIcon, ref, refMerge } from "webgen/mod.ts";
 import { SidecarResponse } from "../../../spec/music.ts";
+import { fileTypeName } from "../../shared/fileTypeName.ts";
+import { createDownloadStream } from "../../shared/libs/streamSaver.ts";
 import { Progress } from "../../shared/Progress.ts";
 import { ProgressTracker } from "../../shared/upload.ts";
+import { mapFiletoIcon } from "../constants.ts";
 import { downloadFile, listFiles, messageQueueSidecar } from "../loading.ts";
 import { deleteFileDialog } from "./dialogs/deleteFileDialog.ts";
 import { editFileDialog, editFileLanguage, editFilePath, editFilestreamingText } from "./dialogs/editFileDialog.ts";
 import './dialogs/exportFileDialog.css';
-import { DropHandler } from "./dropHandler.ts";
-import { droppingFileHandler } from "./droppingFileHandler.ts";
-import { fileTypeName } from "./fileTypeName.ts";
-import { mapFiletoIcon } from "./icon.ts";
 import { pathNavigation } from "./pathNavigation.ts";
 import { allFiles, canWriteInFolder, loading, path, uploadingFiles } from "./state.ts";
-import { createDownloadStream } from "./streamSaver.ts";
 import { Table2 } from "./table2.ts";
+import { DropHandler } from "./uploading/dropHandler.ts";
+import { droppingFileHandler } from "./uploading/droppingFileHandler.ts";
 
 const isExporting = asPointer(false);
 

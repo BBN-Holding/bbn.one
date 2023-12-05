@@ -2,7 +2,7 @@ import 'https://cdn.jsdelivr.net/npm/native-file-system-adapter/src/getOriginPri
 import { readableStreamFromIterable } from "https://deno.land/std@0.200.0/streams/readable_stream_from_iterable.ts";
 import { sumOf } from "std/collections/sum_of.ts";
 import { Component, asPointer } from "webgen/mod.ts";
-import { FileEntry, countFileTree, getFileStream } from "./fileHandler.ts";
+import { FileEntry, countFileTree, getFileStream } from "../../../shared/fileHandler.ts";
 
 declare global {
     interface DataTransferItem {

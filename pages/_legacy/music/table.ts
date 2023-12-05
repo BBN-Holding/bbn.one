@@ -1,4 +1,4 @@
-import { Progress } from "shared";
+import { Progress } from "shared/mod.ts";
 import { Box, ButtonStyle, Checkbox, Color, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, State, StateHandler, Table, View } from "webgen/mod.ts";
 import language from "../../../data/language.json" assert { type: "json" };
 import primary from "../../../data/primary.json" assert { type: "json" };

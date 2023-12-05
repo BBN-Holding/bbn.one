@@ -1,14 +1,14 @@
-import { RenderItem } from "shared";
+import { RenderItem } from "shared/mod.ts";
 import { dirname } from "std/path/mod.ts";
 import { asPointer, Component, refMerge } from "webgen/mod.ts";
-import { RemotePath } from "./types.ts";
+import { RemotePath } from "../types.ts";
 
 export const currentFiles = asPointer(<RemotePath[]>[]);
 export const hostingButtons = asPointer(<Component[]>[]);
 export const auditLogs = asPointer(<RenderItem[]>[]);
 
 export const uploadingFiles = asPointer(<Record<string, RemotePath>>{});
-uploadingFiles.listen(value => console.log(value));
+
 export const allFiles = refMerge({
     uploadingFiles: uploadingFiles
         .map(files => Object.entries(files)

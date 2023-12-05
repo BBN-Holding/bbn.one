@@ -9,9 +9,5 @@ import dots from './img/dots.svg';
 import templateArtwork from "./img/template-artwork.png";
 
 export {
-    heroImage,
-    googleLogo,
-    discordLogo,
-    dots,
-    templateArtwork
+    discordLogo, dots, googleLogo, heroImage, templateArtwork
 };

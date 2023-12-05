@@ -192,10 +192,6 @@ export enum ServerTypes {
     Forge = "/minecraft/modded/forge/",
     Bedrock = "/minecraft/bedrock/",
     PocketMine = "/minecraft/pocketmine/",
-    LegacyPurpur = "/minecraft/legacy/purpur/",
-    LegacyMagma = "/minecraft/legacy/magma/",
-    LegacyNukkit = "/minecraft/legacy/nukkit/",
-    LegacyPGF = "/minecraft/legacy/pgf/",
 }
 
 export const serverPowerState = zod.enum([ "starting", "installing", "stopping", "running", "offline" ]);
@@ -213,9 +209,8 @@ export const server = zod.object({
     address: zod.string().optional(),
     ports: zod.number().array(),
     user: zod.string(),
-    identifier: zod.string().optional(),
     stateSince: zod.number().describe("unix timestamp"),
-    labels: zod.enum([ "legacy", "suspended", "contact-support" ]).array(),
+    labels: zod.enum([ "suspended", "contact-support" ]).array(),
     version: zod.string(),
 });
 
@@ -240,8 +235,6 @@ export const storeItems = zod.enum([ "memory", "disk", "cpu", "slots" ]);
 export const meta = zod.object({
     _id: zod.string(),
     owner: zod.string(),
-    pteroId: zod.number().optional(),
-    migrationPassword: zod.string().optional(),
     coins: zod.number(),
     limits: metaLimit,
     used: metaLimit,
@@ -278,6 +271,11 @@ export const transcript = zod.object({
     _id: zod.string(),
 });
 
+export const installedAddon = zod.object({
+    projectId: zod.string(),
+    versionId: zod.string(),
+});
+
 export const sidecarRequest = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("list"),
@@ -292,8 +290,15 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
         path: zod.string(),
     }),
     zod.object({
-        type: zod.literal("addons"),
-        versionId: zod.string(),
+        type: zod.literal("install-addons"),
+        addons: installedAddon.array(),
+    }),
+    zod.object({
+        type: zod.literal("installed-addons"),
+    }),
+    zod.object({
+        type: zod.literal("uninstall-addon"),
+        projectId: zod.string(),
     }),
     zod.object({
         type: zod.literal("write"),
@@ -377,7 +382,18 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
         })
     }),
     zod.object({
-        type: zod.literal("addons"),
+        type: zod.literal("install-addons"),
+        success: zod.boolean(),
+    }),
+    zod.object({
+        type: zod.literal("installed-addons"),
+        addons: zod.object({
+            addon: installedAddon,
+            dependencies: installedAddon.array()
+        }).array()
+    }),
+    zod.object({
+        type: zod.literal("uninstall-addon"),
         success: zod.boolean(),
     }),
     zod.object({
@@ -446,11 +462,10 @@ export const audit = zod.discriminatedUnion("action", [
         changes: zod.object({
             name: zod.string(),
             location: zod.string(),
-            limits: limits,
+            limits,
             state: serverPowerState,
             ports: zod.number().array(),
-            identifier: zod.string(),
-            labels: zod.enum([ "legacy", "suspended", "contact-support" ]).array()
+            labels: zod.enum([ "suspended", "contact-support" ]).array()
         }).partial()
     }),
     zod.object({
@@ -507,14 +522,35 @@ export const audit = zod.discriminatedUnion("action", [
     }),
 ]);
 
+export const serverAudit = zod.object({
+    id: zod.string(),
+    _id: zod.string().optional(), // Remove after some time
+    meta: audit,
+    user: zod.object({
+        profile: zod.object({
+            username: zod.string(),
+            avatar: zod.string(),
+        })
+    })
+});
+
 export enum OAuthScopes {
     Profile = "profile",
     Email = "email",
     Phone = "phone",
 }
 
+export const group = zod.object({
+    displayName: zod.string(),
+    _id: zod.string(), // Replace with id
+    permission: zod.string()
+});
+
+export type InstalledAddon = zod.infer<typeof installedAddon>;
+export type Group = zod.infer<typeof group>;
 export type AdminStats = { drops: { all: number, reviews: number, publishing: number, published: number, private: number, rejected: number, drafts: number; }, users: number, payouts: number, oauthApps: number, files: number, servers: number, wallets: number; };
 export type Audit = zod.infer<typeof audit>;
+export type ServerAudit = zod.infer<typeof serverAudit>;
 export type RequestPayoutResponse = zod.infer<typeof requestPayoutResponse>;
 export type SidecarResponse = zod.infer<typeof sidecarResponse>;
 export type Addon = zod.infer<typeof addon>;

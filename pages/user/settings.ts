@@ -1,5 +1,5 @@
 import zod from "https://deno.land/x/zod@v3.22.4/index.ts";
-import { API, Navigation } from "shared";
+import { API, Navigation } from "shared/mod.ts";
 import { Grid, Page, TextInput, Vertical, View, WebGen, Wizard, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";

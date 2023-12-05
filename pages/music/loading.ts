@@ -1,4 +1,4 @@
-import { API, stupidErrorAlert } from "shared";
+import { API, stupidErrorAlert } from "shared/mod.ts";
 import { DropType } from "../../spec/music.ts";
 import { state } from "./state.ts";
 

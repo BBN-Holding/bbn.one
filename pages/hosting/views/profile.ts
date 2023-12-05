@@ -1,80 +1,15 @@
-// @deno-types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/canvas-confetti/index.d.ts"
-import confetti from "https://unpkg.com/canvas-confetti@1.9.0/src/confetti.js";
-import { API, stupidErrorAlert } from "shared";
+import { confettiFromElement } from "shared/libs/canvasConfetti.ts";
+import { API, stupidErrorAlert } from "shared/mod.ts";
 import { format } from "std/fmt/bytes.ts";
-import { Box, Button, ButtonStyle, Color, Dialog, Entry, Grid, Horizontal, Label, MediaQuery, Pointable, Spacer, TextInput, Vertical } from "webgen/mod.ts";
-import { activeUser } from "../../_legacy/helper.ts";
+import { Box, Button, ButtonStyle, Color, Entry, Grid, Label, MediaQuery, Pointable, Vertical } from "webgen/mod.ts";
 import { MB, state } from "../data.ts";
 import { refreshState } from "../loading.ts";
 import './profile.css';
-
-function confettiFromElement(element: MouseEvent) {
-    const { top, height, left, width, } = (<HTMLElement>element.target!).getBoundingClientRect();
-    const x = (left + width / 2) / window.innerWidth;
-    const y = (top + height / 2) / window.innerHeight;
-    const origin = { x, y };
-    confetti({ origin });
-}
-export const migrationInfo = {
-    title: "Welcome to our New Dashboard!",
-    text: "In order to access your account on the old panel (Pterodactyl), simply click the button below to get access to your legacy password:",
-    button: "Get your legacy password"
-};
-
-export const migrationCredentials = () => Dialog(() =>
-    Vertical(
-        Label("If you want to login to the legacy panel (Pterodactyl) here is your migration password."),
-        Grid(
-            [
-                {
-                    width: 2
-                },
-                TextInput("email", "Username")
-                    .setColor(Color.Disabled)
-                    .setValue(activeUser.email)
-            ],
-            TextInput("text", "Password")
-                .setColor(Color.Disabled)
-                .setValue(state.meta.migrationPassword),
-            Button("Copy")
-                .onClick(() => {
-                    navigator.clipboard.writeText(state.meta.migrationPassword!);
-                })
-        )
-            .setGap("0.5rem")
-            .setMargin("1rem 0 0.5rem 0")
-            .setRawColumns("auto max-content")
-    )
-)
-    .setTitle("View legacy password")
-    .allowUserClose()
-    .addButton("Close", "remove", Color.Grayscaled, ButtonStyle.Inline)
-    .addButton("Go to legacy panel", () => {
-        open("https://panel.bbn.one/", "_blank");
-        return "remove";
-    }, Color.Colored, ButtonStyle.Inline)
-    .open();
 
 export const profileView = () =>
     MediaQuery("(max-width: 700px)", (small) =>
         state.$meta.map(meta =>
             Grid(
-                state.servers.find(server => server.identifier) ? Entry(
-                    Grid(
-                        Label(migrationInfo.title)
-                            .setFont(2, 700),
-                        Label(migrationInfo.text),
-                        Horizontal(
-                            Spacer(),
-                            Button(migrationInfo.button)
-                                .setStyle(ButtonStyle.Secondary)
-                                .onClick(() => {
-                                    migrationCredentials();
-                                })
-                        )
-                    )
-                        .addClass("details-item")
-                ).addClass("full-width") : Box(),
                 Entry(
                     Grid(
                         Label(meta.coins.toLocaleString())

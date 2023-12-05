@@ -1,6 +1,6 @@
-import { External } from "shared";
+import { External } from "shared/mod.ts";
 import { State } from "webgen/mod.ts";
-import { AdminStats, Drop, File, OAuthApp, Payout, Server, Transcript, Wallet } from "../../spec/music.ts";
+import { AdminStats, Drop, File, Group, OAuthApp, Payout, Server, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const state = State({
@@ -13,7 +13,7 @@ export const state = State({
         drafts: <External<Drop[]> | "loading">"loading",
     },
     users: <External<ProfileData[]> | "loading">"loading",
-    groups: <External<any[]> | "loading">"loading",
+    groups: <External<Group[]> | "loading">"loading",
     payouts: <External<Payout[]> | "loading">"loading",
     oauth: <External<OAuthApp[]> | "loading">"loading",
     files: <External<File[]> | "loading">"loading",
@@ -24,6 +24,6 @@ export const state = State({
 });
 
 export const reviewState = State({
-    drop: <any | undefined>undefined,
+    drop: <Drop | undefined>undefined,
     drops: <Drop[] | undefined>undefined,
 });

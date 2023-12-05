@@ -1,4 +1,4 @@
-import { API, stupidErrorAlert, uploadFilesDialog } from "shared";
+import { API, stupidErrorAlert, uploadFilesDialog } from "shared/mod.ts";
 import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, MIcon, Page, Spacer, State, TextInput, Wizard } from "webgen/mod.ts";
 import artwork from "../../../assets/img/template-artwork.png";
 import language from "../../../data/language.json" assert { type: "json" };

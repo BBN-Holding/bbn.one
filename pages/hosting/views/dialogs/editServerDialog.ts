@@ -1,4 +1,4 @@
-import { API, SliderInput, stupidErrorAlert } from "shared";
+import { API, SliderInput, stupidErrorAlert } from "shared/mod.ts";
 import { format } from "std/fmt/bytes.ts";
 import { Color, Dialog, DropDownInput, Grid, Label, MediaQuery, State, TextInput, Vertical } from "webgen/mod.ts";
 import locations from "../../../../data/locations.json" assert { type: "json" };

@@ -1,6 +1,6 @@
 // This code Will be ported to webgen
 
-import { API, fileCache, Permission, stupidErrorAlert } from "shared";
+import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
 import { Box, Button, Cache, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Style, SupportedThemes, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
@@ -234,7 +234,7 @@ export function EditArtists(list: Artist[]) {
                     Spacer(),
                     Button("Add Artist") // TODO: Remove this in the future => switch to ghost rows
                         .onClick(() => {
-                            state.list = <any>[ ...state.list, [ "", "", ArtistTypes.Primary ] ];
+                            state.list = State([ ...state.list, [ "", "", ArtistTypes.Primary ] ] as [ string, string, ArtistTypes ][]);
                         })
                 ).setPadding("0 0 3rem 0")
             )
@@ -284,7 +284,7 @@ function update(state: StateHandler<{ list: [ name: string, img: string, type: A
     state.list = [ ...state.list ];
 }
 
-export function getDropFromPages(data: StateHandler<any>[], restore?: Drop): Drop {
+export function getDropFromPages(data: StateHandler<Partial<Drop>>[], restore?: Drop): Drop {
     return <Drop>{
         ...restore,
         ...Object.assign({}, ...data)

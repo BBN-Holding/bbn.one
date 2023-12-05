@@ -1,11 +1,11 @@
-import { API, LoadingSpinner, stupidErrorAlert } from "shared";
+import { Footer } from "shared/footer.ts";
+import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
 import { Box, Button, ButtonStyle, Color, Grid, Horizontal, Image, Label, MIcon, Spacer, State, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { dots, templateArtwork } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { OAuthScopes } from "../../spec/music.ts";
 import { ProfilePicture, RegisterAuthRefresh, activeUser, getNameInital, logOut } from "../_legacy/helper.ts";
-import { Footer } from "../shared/footer.ts";
 import './oauth.css';
 import './signin.css';
 

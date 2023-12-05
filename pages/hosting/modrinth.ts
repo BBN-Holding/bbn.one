@@ -1,5 +1,7 @@
-import { ServerTypes } from "../../spec/music.ts";
-
+import { assert } from "std/assert/assert.ts";
+import { retry } from "std/async/mod.ts";
+import { SchedulerPriority, ThrottleStrategy, createThrottledPipeline } from "webgen/network.ts";
+import { InstalledAddon, ServerTypes } from "../../spec/music.ts";
 const apiUrl = "https://api.modrinth.com/v2";
 
 type SearchResponse = {
@@ -32,7 +34,7 @@ type ModrinthProject = {
     color: number,
 };
 
-type ModrinthDownload = {
+export type ModrinthDownload = {
     id: string,
     project_id: string,
     author_id: string,
@@ -63,9 +65,17 @@ const ServerTypeToModrinthTypeMap: Record<ServerTypes, string[]> = {
     [ ServerTypes.Forge ]: [ "forge" ],
 };
 
-async function find(versions: string[], type: ServerTypes, offset = 0, limit = 10) {
+const pipeline = createThrottledPipeline({
+    strategy: ThrottleStrategy.Static,
+    throughputPerMinute: 300,
+    curve: 5,
+    concurrency: 5,
+});
+
+async function find(versions: string[], type: ServerTypes, offset = 0, limit = 21, query = "") {
     const path = new URL(`${apiUrl}/search`);
     path.searchParams.set("index", "relevance");
+    path.searchParams.set("query", query);
     if (!Object.keys(ServerTypeToModrinthTypeMap).includes(type)) throw new Error("Invalid server type");
     path.searchParams.set("facets", JSON.stringify([
         ServerTypeToModrinthTypeMap[ type ].map((v) => `categories:${v}`),
@@ -75,42 +85,72 @@ async function find(versions: string[], type: ServerTypes, offset = 0, limit = 1
     ]));
     path.searchParams.set("limit", limit.toString());
     path.searchParams.set("offset", offset.toString());
-    const json = await (await fetch(path)).json() as SearchResponse;
+
+    const json = await retry<SearchResponse>(async () => {
+        const response = await pipeline.fetch(SchedulerPriority.High, path.toString());
+        assert(response.ok);
+        return response.json();
+    });
+
     return json.hits;
 }
 
+const downloadCache = new Map<string, ModrinthDownload | undefined>();
 async function getLatestDownload(versions: string[], type: ServerTypes, projectid: string) {
+    if (downloadCache.has(`${apiUrl}/project/${projectid}/version`))
+        return downloadCache.get(`${apiUrl}/project/${projectid}/version`);
+
     const path = new URL(`${apiUrl}/project/${projectid}/version`);
     path.searchParams.set("loaders", JSON.stringify(ServerTypeToModrinthTypeMap[ type ]));
     path.searchParams.set("game_versions", JSON.stringify(versions));
 
-    const json = await (await fetch(path)).json();
-    return json[ 0 ] as ModrinthDownload;
+    const json = await retry(async () => {
+        const response = await pipeline.fetch(SchedulerPriority.Low, path.toString());
+        assert(response.ok);
+        return response.json();
+    });
+
+    const response = json[ 0 ] as ModrinthDownload | undefined;
+    downloadCache.set(`${apiUrl}/project/${projectid}/version`, response);
+    return response;
 }
 
 async function getSpecificDownload(versionId: string) {
     const path = new URL(`${apiUrl}/version/${versionId}`);
-    const json = await (await fetch(path)).json();
+    const json = await retry(async () => {
+        const response = await pipeline.fetch(SchedulerPriority.High, path.toString());
+        assert(response.ok);
+        return response.json();
+    });
     return json as ModrinthDownload;
 }
 
-async function collectDownloadList(versions: string[], type: ServerTypes, projectid: string, versionId?: string): Promise<string[]> {
+export async function collectDownloadList(versions: string[], type: ServerTypes, projectid: string, versionId?: string): Promise<InstalledAddon[]> {
     const download = versionId ? await getSpecificDownload(versionId) : await getLatestDownload(versions, type, projectid);
     if (!download) return [];
     return [
-        download.id,
+        <InstalledAddon>{
+            projectId: download.project_id,
+            versionId: download.id,
+        },
         ...await Promise.all(
             download.dependencies
                 .filter(v => v.dependency_type === "required")
-                .map((v) => collectDownloadList(versions, type, v.project_id, v.version_id ?? undefined)))
-    ] as string[];
+                .map((v) => collectDownloadList(versions, type, v.project_id, v.version_id ?? undefined))
+        )
+    ].flat();
 }
 
-async function getRealFiltered(versions: string[], type: ServerTypes, offset = 0) {
-    const projects = await find(versions, type, offset);
-    const downloads = await Promise.all(projects.map(async (project, index) => ({ project, index, download: await getLatestDownload(versions, type, project.project_id) })));
-    const firstten = downloads.filter(v => v.download !== null).slice(0, 10); // We just hope that there are 10 projects with downloads
-    return { lastindex: firstten.at(-1)?.index ?? -1, projects: firstten.map(v => ({ project: v.project, download: v.download })) };
+export type ModrinthLink = {
+    download: Promise<ModrinthDownload | undefined>;
+} & ModrinthProject;
+
+export async function getRealFiltered(versions: string[], type: ServerTypes, offset: number, limit: number, query = ""): Promise<ModrinthLink[]> {
+    const projects = await find(versions, type, offset, limit, query);
+    return projects.map(project => ({
+        ...project,
+        download: getLatestDownload(versions, type, project.project_id)
+    }));
 }
 
 // console.log(await getRealFiltered(["1.20.2", "1.20"], ServerTypes.Default)); // Gets a list of projects with fitting downloads, returns the last index of the last project for the offset for next req and the projects

@@ -1,7 +1,6 @@
-import { AuditTypes, Server } from "../../../spec/music.ts";
+import { AuditTypes, Server } from "../../spec/music.ts";
 
 export const labels = {
-    legacy: "Legacy",
     suspended: "Suspended",
     "contact-support": "Contact Support"
 } satisfies Record<Server[ "labels" ][ number ], string>;
@@ -16,4 +15,10 @@ export const auditLabels = {
     "file-delete": "File Deleted",
     "file-read": "File Read",
     "command-execute": "Command Executed",
+    "reset-password": "Reset Password",
+    "drop-review": "Drop Review",
+    "drop-type-change": "Drop Type Change",
+    "drop-create": "Drop Created",
+    "oauth-validate": "OAuth Validation",
+    "oauth-authorize": "OAuth Authorization",
 } satisfies Record<AuditTypes, string>;

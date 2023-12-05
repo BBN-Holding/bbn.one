@@ -1,5 +1,6 @@
 import { lazyInit, State } from "webgen/mod.ts";
 import { API } from "../shared/restSpec.ts";
+import { createStableWebSocket } from "webgen/network.ts";
 
 export const data = State({
     stats: {
@@ -9,20 +10,14 @@ export const data = State({
     }
 });
 
-// deno-lint-ignore require-await
 export const streamingPool = lazyInit(async () => {
-    function connect() {
-        const ws = new WebSocket(API.WS_URL.replace("/ws", "/api/@bbn/public/stats"));
-
-        ws.onmessage = ({ data: msg }) => {
-            const json = JSON.parse(msg);
+    await createStableWebSocket({
+        url: API.WS_URL.replace("/ws", "/api/@bbn/public/stats")
+    }, {
+        onMessage: (msg) => {
+            if(typeof msg !== "string") return;
+            const json = JSON.parse(msg)
             data.stats = State(json as typeof data.stats);
-        };
-        ws.onerror = () => {
-
-        };
-        ws.onclose = () => setTimeout(() => connect(), 1000);
-
-    }
-    connect();
+        }
+    });
 });

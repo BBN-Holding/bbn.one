@@ -1,4 +1,4 @@
-import { API, LoadingSpinner, stupidErrorAlert, uploadFilesDialog } from "shared";
+import { API, LoadingSpinner, stupidErrorAlert, uploadFilesDialog } from "shared/mod.ts";
 import { AdvancedImage, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, State, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";

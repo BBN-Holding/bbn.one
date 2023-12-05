@@ -1,8 +1,8 @@
 import { asPointer } from "webgen/mod.ts";
-import { listFiles, uploadFile } from "../loading.ts";
-import { FileEntry } from "./fileHandler.ts";
-import { canWriteInFolder, loading, path, uploadingFiles } from "./state.ts";
-import { RemotePath } from "./types.ts";
+import { FileEntry } from "../../../shared/fileHandler.ts";
+import { listFiles, uploadFile } from "../../loading.ts";
+import { RemotePath } from "../../types.ts";
+import { canWriteInFolder, loading, path, uploadingFiles } from "../state.ts";
 
 export const droppingFileHandler = async (files: ReadableStream<FileEntry>, count: number): Promise<void> => {
     if (!canWriteInFolder.getValue()) {

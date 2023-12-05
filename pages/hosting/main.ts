@@ -3,7 +3,7 @@ import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
-import { listFiles, listener, refreshState, startSidecarConnection } from "./loading.ts";
+import { listFiles, liveUpdates, refreshState, startSidecarConnection } from "./loading.ts";
 import { hostingMenu } from "./views/menu.ts";
 
 import '../../assets/css/hosting.css';
@@ -33,8 +33,7 @@ renewAccessTokenIfNeeded()
                 const server = await API.hosting.serverId(serverId).get().then(stupidErrorAlert);
                 if (!state.servers.find(s => s._id == serverId))
                     state.servers.push(State(server));
-                if (!server.identifier)
-                    startSidecarConnection(serverId);
+                startSidecarConnection(serverId);
                 if (subView === "storage") {
                     await listFiles("/");
                     path.setValue("/");
@@ -43,5 +42,5 @@ renewAccessTokenIfNeeded()
             hostingMenu.path.setValue(urlPath);
         }
     })
-    .then(() => listener())
+    .then(() => liveUpdates())
     .then(() => state.loaded = true);
