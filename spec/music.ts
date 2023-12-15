@@ -210,7 +210,7 @@ export const server = zod.object({
     ports: zod.number().array(),
     user: zod.string(),
     stateSince: zod.number().describe("unix timestamp"),
-    labels: zod.enum([ "suspended", "contact-support" ]).array(),
+    labels: zod.enum([ "suspended", "contact-support", "maintenance" ]).array(),
     version: zod.string(),
 });
 

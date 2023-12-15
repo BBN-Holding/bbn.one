@@ -2,7 +2,8 @@ import { AuditTypes, Server } from "../../spec/music.ts";
 
 export const labels = {
     suspended: "Suspended",
-    "contact-support": "Contact Support"
+    "contact-support": "Contact Support",
+    maintenance: "Maintenance",
 } satisfies Record<Server[ "labels" ][ number ], string>;
 
 export const auditLabels = {

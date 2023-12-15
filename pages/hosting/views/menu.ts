@@ -60,12 +60,12 @@ export const hostingMenu = Navigation({
                         .setRawColumns("max-content auto")
                         .setGap("1rem")
                         .setAlign("center"),
-                    suffix: ChangeStateButton(server),
-                    clickHandler: () => {
+                    suffix: !server.labels.includes("maintenance") ? ChangeStateButton(server) : undefined,
+                    clickHandler: !server.labels.includes("maintenance") ? () => {
                         startSidecarConnection(server._id);
                         // TODO wait until first data is showing to prevent blinking
-                    },
-                    children: [
+                    } : undefined,
+                    children: !server.labels.includes("maintenance") ? [
                         ServerDetails(server),
                         {
                             id: "storage",
@@ -115,7 +115,7 @@ export const hostingMenu = Navigation({
                                 }
                             ]
                         }
-                    ]
+                    ] : undefined
                 }
             ))
         },
