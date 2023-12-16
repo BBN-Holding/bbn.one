@@ -110,7 +110,7 @@ export const hostingMenu = Navigation({
                                 {
                                     id: "forcerestart",
                                     title: "Force Restart",
-                                    subtitle: "Force a restart of your server. Sometimes even the best servers need a restart.",
+                                    subtitle: "Fully restarts your Instance. This could lead to data loss.",
                                     clickHandler: () => forceRestartDialog(server._id)
                                 }
                             ]
