@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { API } from "./pages/shared/restSpec.ts";
+import { API } from "shared/restSpec.ts";
 // @deno-types="https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/types/platform/index.d.ts"
 import browser from "https://unpkg.com/platform@1.3.6/platform.js";
 

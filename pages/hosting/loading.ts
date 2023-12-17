@@ -1,6 +1,5 @@
 import { LoginRequest, MessageType, SyncResponse, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API, ProgressTracker } from "shared/mod.ts";
-import { Deferred, deferred } from "std/async/deferred.ts";
 import { decodeBase64, encodeBase64 } from "std/encoding/base64.ts";
 import { Pointer, State, asPointer, lazyInit } from "webgen/mod.ts";
 import { createStableWebSocket } from "webgen/network.ts";
@@ -69,10 +68,10 @@ export const liveUpdates = lazyInit(async () => {
     });
 });
 
-export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
+export let messageQueueSidecar = <{ request: SidecarRequest, response: { promise: Promise<SidecarResponse>, resolve: Function, reject: Function; }; }[]>[];
 export const isSidecarConnect = asPointer(false);
 export const sidecarDetailsSource = asPointer((_data: SidecarResponse | "clear") => { });
-export let closeSignal = deferred<void>();
+export let closeSignal = Promise.withResolvers<void>();
 
 export function stopSidecarConnection() {
     closeSignal.resolve();
@@ -80,13 +79,13 @@ export function stopSidecarConnection() {
 
 export async function startSidecarConnection(id: string) {
     // Reset Global Variables
-    closeSignal = deferred<void>();
+    closeSignal = Promise.withResolvers<void>();
     messageQueueSidecar = [];
 
     // Prepare Connection
     const url = new URL(`wss://bbn.one/api/@bbn/sidecar/${id}/ws`);
     url.searchParams.set("TOKEN", API.getToken());
-    const syncedResponses = new Set<{ request: SidecarRequest, response: Deferred<SidecarResponse>; }>();
+    const syncedResponses = new Set<{ request: SidecarRequest, response: { promise: Promise<SidecarResponse>, resolve: Function, reject: Function; }; }>();
 
     // Start Conneciton
     const connection = await createStableWebSocket({
@@ -140,7 +139,7 @@ export async function startSidecarConnection(id: string) {
 }
 
 export async function listFiles(path: string) {
-    const response = deferred<SidecarResponse>();
+    const response = Promise.withResolvers<SidecarResponse>();
     messageQueueSidecar.push({
         request: {
             type: "list",
@@ -149,7 +148,7 @@ export async function listFiles(path: string) {
         response
     });
 
-    const data = await response;
+    const data = await response.promise;
     if (data.type == "list") {
         canWriteInFolder.setValue(data.canWrite);
         currentFiles.setValue(data.list);
@@ -159,7 +158,7 @@ export function downloadFile(path: string) {
     let firstTime = true;
     return new ReadableStream<Uint8Array>({
         pull: async (controller) => {
-            const nextChunk = deferred<SidecarResponse>();
+            const nextChunk = Promise.withResolvers<SidecarResponse>();
             messageQueueSidecar.push({
                 request: {
                     type: firstTime ? "read" : "next-chunk",
@@ -167,7 +166,7 @@ export function downloadFile(path: string) {
                 },
                 response: nextChunk
             });
-            const response = await nextChunk;
+            const response = await nextChunk.promise;
             if (response.type === "error") {
                 controller.error(response.error);
                 return;
@@ -183,7 +182,7 @@ export function downloadFile(path: string) {
     });
 }
 export async function uploadFile(path: string, file: File, progress: Pointer<number>) {
-    const check = deferred<SidecarResponse>();
+    const check = Promise.withResolvers<SidecarResponse>();
     messageQueueSidecar.push({
         request: {
             type: "write",
@@ -191,12 +190,12 @@ export async function uploadFile(path: string, file: File, progress: Pointer<num
         },
         response: check
     });
-    await check;
+    await check.promise;
 
     const stream = file.stream()
         .pipeThrough(ProgressTracker(progress, file.size));
     for await (const iterator of stream) {
-        const nextChunk = deferred<SidecarResponse>();
+        const nextChunk = Promise.withResolvers<SidecarResponse>();
         messageQueueSidecar.push({
             request: {
                 type: "write",
@@ -205,13 +204,13 @@ export async function uploadFile(path: string, file: File, progress: Pointer<num
             },
             response: nextChunk
         });
-        await nextChunk;
+        await nextChunk.promise;
     }
     progress.setValue(100);
 }
 
 export async function installAddon(addons: InstalledAddon[]) {
-    const response = deferred<SidecarResponse>();
+    const response = Promise.withResolvers<SidecarResponse>();
     messageQueueSidecar.push({
         request: {
             type: "install-addons",
@@ -220,7 +219,7 @@ export async function installAddon(addons: InstalledAddon[]) {
         response
     });
 
-    const data = await response;
+    const data = await response.promise;
     if (data.type == "install-addons") {
         return data.success;
     }
@@ -228,7 +227,7 @@ export async function installAddon(addons: InstalledAddon[]) {
 }
 
 export async function uninstallAddon(projectId: string) {
-    const response = deferred<SidecarResponse>();
+    const response = Promise.withResolvers<SidecarResponse>();
     messageQueueSidecar.push({
         request: {
             type: "uninstall-addon",
@@ -237,15 +236,15 @@ export async function uninstallAddon(projectId: string) {
         response
     });
 
-    const data = await response;
+    const data = await response.promise;
     if (data.type == "uninstall-addon") {
         return data.success;
     }
     return false;
 }
 
-export async function getInstalledAddons(): Promise<{addon: InstalledAddon, dependencies: InstalledAddon[]}[]> {
-    const response = deferred<SidecarResponse>();
+export async function getInstalledAddons(): Promise<{ addon: InstalledAddon, dependencies: InstalledAddon[]; }[]> {
+    const response = Promise.withResolvers<SidecarResponse>();
     messageQueueSidecar.push({
         request: {
             type: "installed-addons"
@@ -253,7 +252,7 @@ export async function getInstalledAddons(): Promise<{addon: InstalledAddon, depe
         response
     });
 
-    const data = await response;
+    const data = await response.promise;
     if (data.type == "installed-addons") {
         return data.addons;
     }

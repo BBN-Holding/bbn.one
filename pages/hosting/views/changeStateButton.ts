@@ -1,5 +1,4 @@
 import { LoadingSpinner } from "shared/mod.ts";
-import { deferred } from "std/async/deferred.ts";
 import { Box, Color, Component, IconButton, isMobile, MIcon, StateHandler } from "webgen/mod.ts";
 import { Server, SidecarResponse } from "../../../spec/music.ts";
 import { messageQueueSidecar, startSidecarConnection } from "../loading.ts";
@@ -13,7 +12,7 @@ export function ChangeStateButton(server: StateHandler<Server>): Component {
             .onClick((e) => {
                 e.stopPropagation();
                 startSidecarConnection(server._id);
-                const promise = deferred<SidecarResponse>();
+                const promise = Promise.withResolvers<SidecarResponse>();
                 messageQueueSidecar.push({
                     request: {
                         type: "state",
@@ -32,7 +31,7 @@ export function ChangeStateButton(server: StateHandler<Server>): Component {
                 e.stopPropagation();
                 server.state = "stopping";
                 startSidecarConnection(server._id);
-                const promise = deferred<SidecarResponse>();
+                const promise = Promise.withResolvers<SidecarResponse>();
                 messageQueueSidecar.push({
                     request: {
                         type: "state",

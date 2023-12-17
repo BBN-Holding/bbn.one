@@ -1,9 +1,8 @@
-import { deferred } from "std/async/deferred.ts";
+import { fileTypeName } from "shared/fileTypeName.ts";
+import { createDownloadStream } from "shared/libs/streamSaver.ts";
 import { format } from "std/fmt/bytes.ts";
 import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Dialog, Entry, Grid, IconButton, Label, MIcon, ref, refMerge } from "webgen/mod.ts";
 import { SidecarResponse } from "../../../spec/music.ts";
-import { fileTypeName } from "../../shared/fileTypeName.ts";
-import { createDownloadStream } from "../../shared/libs/streamSaver.ts";
 import { Progress } from "../../shared/Progress.ts";
 import { ProgressTracker } from "../../shared/upload.ts";
 import { mapFiletoIcon } from "../constants.ts";
@@ -81,7 +80,7 @@ export function FileBrowser() {
 
                             const downloadTree = <{ path: string, size: number; }[]>[];
                             async function indexDownloadTree(path: string) {
-                                const response = deferred<SidecarResponse>();
+                                const response = Promise.withResolvers<SidecarResponse>();
                                 messageQueueSidecar.push({
                                     request: {
                                         type: "list",
@@ -90,7 +89,7 @@ export function FileBrowser() {
                                     response
                                 });
 
-                                const data = await response;
+                                const data = await response.promise;
 
                                 if (data.type === "list") {
                                     for (const iterator of data.list) {
@@ -184,7 +183,7 @@ export function FileBrowser() {
                                 .onClick(async () => {
                                     if (!await deleteFileDialog())
                                         return;
-                                    const response = deferred<SidecarResponse>();
+                                    const response = Promise.withResolvers<SidecarResponse>();
                                     messageQueueSidecar.push({
                                         request: {
                                             type: "delete",
@@ -201,7 +200,7 @@ export function FileBrowser() {
                                         loading.setValue(true);
                                         listFiles(path.getValue()).finally(() => loading.setValue(false));
                                     }, 1000);
-                                    await response;
+                                    await response.promise;
 
                                 })
                             : Box()

@@ -1,8 +1,8 @@
 import { Progress } from "shared/mod.ts";
 import { Box, ButtonStyle, Checkbox, Color, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, State, StateHandler, Table, View } from "webgen/mod.ts";
-import language from "../../../data/language.json" assert { type: "json" };
-import primary from "../../../data/primary.json" assert { type: "json" };
-import secondary from "../../../data/secondary.json" assert { type: "json" };
+import language from "../../../data/language.json" with { type: "json" };
+import primary from "../../../data/primary.json" with { type: "json" };
+import secondary from "../../../data/secondary.json" with { type: "json" };
 import { Drop } from "../../../spec/music.ts";
 import { EditArtists, ProfilePicture, getSecondary, getYearList } from "../helper.ts";
 

@@ -1,7 +1,7 @@
 import { API, displayError, LoadingSpinner, SliderInput } from "shared/mod.ts";
 import { format } from "std/fmt/bytes.ts";
 import { BasicLabel, Box, Dialog, DropDownInput, Grid, Label, Page, refMerge, TextInput, Vertical, Wizard } from "webgen/mod.ts";
-import locations from "../../../data/locations.json" assert { type: "json" };
+import locations from "../../../data/locations.json" with { type: "json" };
 import { ServerCreate, serverCreate } from "../../../spec/music.ts";
 import { creationState, MB, state } from "../data.ts";
 

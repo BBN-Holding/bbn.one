@@ -1,9 +1,8 @@
-import { asPointer } from "webgen/mod.ts";
-
 import { FitAddon } from "https://esm.sh/xterm-addon-fit@0.8.0";
 import { WebglAddon } from "https://esm.sh/xterm-addon-webgl@0.16.0";
 import { Terminal } from "https://esm.sh/xterm@5.3.0";
 import 'https://esm.sh/xterm@5.3.0/css/xterm.css';
+import { asPointer } from "webgen/mod.ts";
 
 export class TerminalComponent extends HTMLElement {
     heap = <string[]>[];
@@ -12,8 +11,7 @@ export class TerminalComponent extends HTMLElement {
         super();
     }
     resize?: ResizeObserver;
-    // deno-lint-ignore no-explicit-any
-    terminal?: any;
+    terminal?: Terminal;
 
     connectedCallback() {
         this.terminal = new Terminal({
@@ -54,15 +52,15 @@ export class TerminalComponent extends HTMLElement {
     }
 
     reset() {
-        this.terminal.reset();
+        this.terminal!.reset();
         // hide the cursor
-        this.terminal.write('\x1b[?25l');
+        this.terminal!.write('\x1b[?25l');
     }
 
     write(data: string) {
         this.heap.push(data);
         if (this.isConnected) {
-            this.terminal.write(data);
+            this.terminal!.write(data);
         }
     }
 

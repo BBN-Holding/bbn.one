@@ -2,9 +2,9 @@ import { API, LoadingSpinner, stupidErrorAlert, uploadFilesDialog } from "shared
 import { AdvancedImage, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, State, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
-import language from "../../data/language.json" assert { type: "json" };
-import primary from "../../data/primary.json" assert { type: "json" };
-import secondary from "../../data/secondary.json" assert { type: "json" };
+import language from "../../data/language.json" with { type: "json" };
+import primary from "../../data/primary.json" with { type: "json" };
+import secondary from "../../data/secondary.json" with { type: "json" };
 import { ArtistTypes, Drop, DropType, pageFive, pageFour, pageOne, pageThree, pageTwo } from "../../spec/music.ts";
 import { CenterAndRight, EditArtists, RegisterAuthRefresh, allowedAudioFormats, allowedImageFormats, getDropFromPages, getSecondary } from "./helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";

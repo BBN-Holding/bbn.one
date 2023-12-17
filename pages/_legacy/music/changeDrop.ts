@@ -1,9 +1,9 @@
 import { API, stupidErrorAlert, uploadFilesDialog } from "shared/mod.ts";
 import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, MIcon, Page, Spacer, State, TextInput, Wizard } from "webgen/mod.ts";
 import artwork from "../../../assets/img/template-artwork.png";
-import language from "../../../data/language.json" assert { type: "json" };
-import primary from "../../../data/primary.json" assert { type: "json" };
-import secondary from "../../../data/secondary.json" assert { type: "json" };
+import language from "../../../data/language.json" with { type: "json" };
+import primary from "../../../data/primary.json" with { type: "json" };
+import secondary from "../../../data/secondary.json" with { type: "json" };
 import { ArtistTypes, Drop, pureDrop } from "../../../spec/music.ts";
 import { EditArtists, allowedImageFormats, getSecondary } from "../helper.ts";
 import { uploadArtwork } from "./data.ts";

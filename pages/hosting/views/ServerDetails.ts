@@ -1,5 +1,4 @@
 import { API, stupidErrorAlert } from "shared/mod.ts";
-import { deferred } from "std/async/deferred.ts";
 import { Box, Button, Custom, Entry, Form, Grid, State, StateHandler, TextInput, isMobile, refMerge } from "webgen/mod.ts";
 import { Server, SidecarResponse } from "../../../spec/music.ts";
 import { isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource } from "../loading.ts";
@@ -58,7 +57,7 @@ export function ServerDetails(server: StateHandler<Server>) {
                                                 type: "command",
                                                 command: input.message
                                             },
-                                            response: deferred()
+                                            response: Promise.withResolvers<SidecarResponse>()
                                         });
                                         input.message = "";
                                     })

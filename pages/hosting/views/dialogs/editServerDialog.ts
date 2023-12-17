@@ -1,8 +1,8 @@
 import { API, SliderInput, stupidErrorAlert } from "shared/mod.ts";
 import { format } from "std/fmt/bytes.ts";
 import { Color, Dialog, DropDownInput, Grid, Label, MediaQuery, State, TextInput, Vertical } from "webgen/mod.ts";
-import locations from "../../../../data/locations.json" assert { type: "json" };
-import serverTypes from "../../../../data/servers.json" assert { type: "json" };
+import locations from "../../../../data/locations.json" with { type: "json" };
+import serverTypes from "../../../../data/servers.json" with { type: "json" };
 import { Server } from "../../../../spec/music.ts";
 import { MB, state } from "../../data.ts";
 import { deleteServerDialog } from "./deleteServerDialog.ts";

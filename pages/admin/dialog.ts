@@ -1,6 +1,6 @@
 import { API } from "shared/mod.ts";
 import { Box, Checkbox, Custom, Dialog, Horizontal, Image, Label, Page, Spacer, State, Wizard, createElement } from "webgen/mod.ts";
-import reviewTexts from "../../data/reviewTexts.json" assert { type: "json" };
+import reviewTexts from "../../data/reviewTexts.json" with { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
 import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
 
