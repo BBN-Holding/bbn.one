@@ -1,12 +1,12 @@
-import { Box, Label, View, WebGen } from "webgen/mod.ts";
+import { Footer } from "shared/footer.ts";
+import { Body, Box, Label, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
-import { Footer } from "../shared/footer.ts";
 import './flowText.css';
 WebGen();
 await RegisterAuthRefresh();
 
-View(() => Box(
+Body(Box(
     DynaNavigation("Home"),
     Box(
         Label("Privacy Policy", "h2"),
@@ -88,4 +88,4 @@ View(() => Box(
 
     ).addClass("flow-text"),
     Footer()
-)).appendOn(document.body);
+));

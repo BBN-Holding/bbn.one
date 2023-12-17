@@ -47,7 +47,8 @@ const list = state.$loaded.map(loaded => {
                     Label("Connect Now!")
                         .setMargin("5rem 0 .8rem")
                         .addClass(small ? "no-custom" : "line-header", "header")
-                        .setFont(small ? 4 : 5.375, 800)
+                        .setFontWeight("extrabold")
+                        .setTextSize(small ? "6xl" : "7xl")
                 ).asRefComponent().removeFromLayout(),
                 Label("CONNECTION")
                     .addClass("label-small"),

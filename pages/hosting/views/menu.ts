@@ -98,7 +98,8 @@ export const hostingMenu = Navigation({
                                     title: "Server Settings",
                                     subtitle: "All your Settings in one place.",
                                     suffix: Label("Coming Soon")
-                                        .setFont(1, 500)
+                                        .setTextSize("xl")
+                                        .setFontWeight("medium")
                                         .setMargin("0 1rem")
                                 },
                                 {
@@ -183,7 +184,8 @@ function addonBrowser(server: StateHandler<Server>): RenderItem {
             title: "Add Assets",
             subtitle: "Get new Plugins, Mods, and Datapacks",
             suffix: Label("(Recommended Only)")
-                .setFont(1, 500)
+                .setTextSize("xl")
+                .setFontWeight("medium")
                 .setMargin("0 1rem")
         };
 

@@ -1,4 +1,4 @@
-import { State, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Body, State, Vertical, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
@@ -22,7 +22,7 @@ WebGen({
     }
 });
 
-View(() => Vertical(DynaNavigation("Hosting"), state.$loaded.map(loaded => loaded ? hostingMenu : LoadingSpinner()).asRefComponent())).appendOn(document.body);
+Body(Vertical(DynaNavigation("Hosting"), state.$loaded.map(loaded => loaded ? hostingMenu : LoadingSpinner()).asRefComponent()));
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())

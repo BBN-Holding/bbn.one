@@ -1,4 +1,4 @@
-import { Box, Color, Dialog, Label } from "webgen/mod.ts";
+import { Box, Color, Label } from "webgen/mod.ts";
 
 export function deleteFileDialog() {
     const response = Promise.withResolvers<boolean>();

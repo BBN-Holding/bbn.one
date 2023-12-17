@@ -1,10 +1,10 @@
 import { fileTypeName } from "shared/fileTypeName.ts";
 import { createDownloadStream } from "shared/libs/streamSaver.ts";
+import { Progress } from "shared/Progress.ts";
+import { ProgressTracker } from "shared/upload.ts";
 import { format } from "std/fmt/bytes.ts";
-import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Dialog, Entry, Grid, IconButton, Label, MIcon, ref, refMerge } from "webgen/mod.ts";
+import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Entry, Grid, IconButton, Label, MIcon, ref, refMerge } from "webgen/mod.ts";
 import { SidecarResponse } from "../../../spec/music.ts";
-import { Progress } from "../../shared/Progress.ts";
-import { ProgressTracker } from "../../shared/upload.ts";
 import { mapFiletoIcon } from "../constants.ts";
 import { downloadFile, listFiles, messageQueueSidecar } from "../loading.ts";
 import { deleteFileDialog } from "./dialogs/deleteFileDialog.ts";

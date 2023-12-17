@@ -1,6 +1,6 @@
 import { API, count, HeavyList, loadMore, Navigation, placeholder } from "shared/mod.ts";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Box, Button, Color, Dialog, Entry, Grid, Horizontal, isMobile, Label, ref, Spacer, State, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, Color, Entry, Grid, Horizontal, isMobile, Label, ref, Spacer, State, Table, TextInput, Vertical } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
 import { upload } from "../loading.ts";

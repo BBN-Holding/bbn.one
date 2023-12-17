@@ -65,7 +65,7 @@ export function ChangeDrop(drop: Drop) {
                             });
                         }),
                 ],
-                [ { width: 2, heigth: 2 }, Spacer() ],
+                [ { width: 2, height: 2 }, Spacer() ],
                 [
                     { width: 2 },
                     Grid(

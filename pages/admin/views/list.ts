@@ -1,5 +1,5 @@
 import { API, External, fileCache, RenderItem, stupidErrorAlert } from "shared/mod.ts";
-import { Box, Button, Cache, Color, Dialog, Entry, Grid, IconButton, Image, MIcon, ref, TextInput } from "webgen/mod.ts";
+import { Box, Button, Cache, Color, Entry, Grid, IconButton, Image, MIcon, ref, TextInput } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
 import { saveBlob } from "../../_legacy/helper.ts";

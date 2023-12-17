@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Image, Label, Vertical, View, WebGen } from "webgen/mod.ts";
+import { Body, Box, Button, Grid, Image, Label, Vertical, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
@@ -22,7 +22,7 @@ import bbnPublishing from "./resources/bbnPublishing.svg";
 WebGen();
 await RegisterAuthRefresh();
 
-View(() => Box(
+Body(Box(
     DynaNavigation("Home"),
     Vertical(
         Box(
@@ -104,8 +104,7 @@ View(() => Box(
         .setAlign("center"),
 
     Footer()
-))
-    .appendOn(document.body);
+));
 
 
 import("https://raw.githubusercontent.com/micku7zu/vanilla-tilt.js/master/dist/vanilla-tilt.min.js");

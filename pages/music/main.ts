@@ -1,4 +1,4 @@
-import { Vertical, View, WebGen } from "webgen/mod.ts";
+import { Body, Vertical, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -13,8 +13,7 @@ WebGen({
     }
 });
 
-View(() => Vertical(DynaNavigation("Music"), musicMenu))
-    .appendOn(document.body);
+Body(Vertical(DynaNavigation("Music"), musicMenu));
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState());

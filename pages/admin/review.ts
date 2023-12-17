@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, createActionList, createBreadcrumb, createTagList, stupidErrorAlert } from "shared/mod.ts";
-import { Box, Button, ButtonStyle, Color, Entry, Grid, Horizontal, Label, Spacer, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Box, Button, ButtonStyle, Color, Entry, Grid, Horizontal, Label, Spacer, Vertical, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -33,7 +33,7 @@ if (!data.id) {
     location.href = "/admin";
 }
 
-View(() => Vertical(
+Body(Vertical(
     DynaNavigation("Admin"),
     Grid(
         Vertical(
@@ -150,8 +150,7 @@ View(() => Vertical(
     )
         .setGap("var(--gap)")
         .setRawColumns("1fr 3fr 1fr"),
-))
-    .appendOn(document.body);
+));
 
 renewAccessTokenIfNeeded()
     .then(() => refreshReviewState());

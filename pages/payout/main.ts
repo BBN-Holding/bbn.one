@@ -1,7 +1,7 @@
 import { API, MenuNode, Navigation, stupidErrorAlert } from "shared/mod.ts";
 import { sortBy } from "std/collections/sort_by.ts";
 import { sumOf } from "std/collections/sum_of.ts";
-import { State, Vertical, View, WebGen, asPointer, isMobile } from "webgen/mod.ts";
+import { Body, State, Vertical, WebGen, asPointer, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -29,7 +29,7 @@ const state = State({
     loaded: false
 });
 
-View(() => Vertical(
+Body(Vertical(
     DynaNavigation("Music"),
     Navigation({
         title: "View Payout",
@@ -98,8 +98,7 @@ View(() => Vertical(
         "limited-width"
     )
     // .setActivePath(state.loaded ? "/drop/" : "/")
-)
-).appendOn(document.body);
+));
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())

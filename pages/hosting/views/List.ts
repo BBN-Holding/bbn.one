@@ -1,15 +1,5 @@
 import { Box, Component, Custom, Pointer } from "webgen/mod.ts";
 
-declare global {
-    interface Document {
-        startViewTransition(callback: () => void): void;
-    }
-
-    interface CSSStyleDeclaration {
-        viewTransitionName: string;
-    }
-}
-
 // TODO turn this into a proper component, add it to webgen and opt-in to View Transitions API
 export function List<T, Key extends string>(list: Pointer<T[]>, keyFunc: (data: T) => Key, renderFunc: (data: T) => Component) {
     const container: HTMLElement = Box().draw();

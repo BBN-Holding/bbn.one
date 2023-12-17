@@ -14,11 +14,13 @@ export const creationView = () => creationState.$loading.map(loading => {
     }).map(({ versions }) => Vertical(
         Label("Final Steps!")
             .addClass("same-height")
-            .setFont(2, 700)
+            .setTextSize("4xl")
+            .setFontWeight("bold")
             .setMargin(".8rem 0 0"),
         Label("You are almost there!")
             .addClass("gray-color")
-            .setFont(1, 700)
+            .setTextSize("base")
+            .setFontWeight("bold")
             .setMargin("0.4rem 0 0"),
 
         Vertical(
@@ -54,7 +56,8 @@ export const creationView = () => creationState.$loading.map(loading => {
                 }, (data) => [
                     Box(
                         Label("About your Server")
-                            .setFont(.8, 700),
+                            .setTextSize("sm")
+                            .setFontWeight("bold"),
                         Grid(
                             TextInput("text", "Friendly Name")
                                 .sync(data, "name"),
@@ -67,7 +70,8 @@ export const creationView = () => creationState.$loading.map(loading => {
                             .setGap("var(--gap)"),
 
                         Label("Setup Ressources")
-                            .setFont(.8, 700),
+                            .setTextSize("sm")
+                            .setFontWeight("bold"),
                         Grid(
                             SliderInput("Memory (RAM)")
                                 .setMax(state.meta.limits.memory - state.meta.used.memory)

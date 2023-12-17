@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { State, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, State, Vertical, WebGen, isMobile } from "webgen/mod.ts";
 import '../../../assets/css/hosting.css';
 import '../../../assets/css/main.css';
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -98,7 +98,7 @@ const navigation = state.$loaded.map(loaded => loaded ? Navigation({
 ) : LoadingSpinner());
 
 
-View(() => Vertical(DynaNavigation("Hosting"), navigation.asRefComponent())).appendOn(document.body);
+Body(Vertical(DynaNavigation("Hosting"), navigation.asRefComponent()));
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())

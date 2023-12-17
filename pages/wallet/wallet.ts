@@ -1,5 +1,5 @@
 import { API, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { Button, Card, Color, Dialog, Grid, Label, MediaQuery, State, Table, TextInput, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Button, Card, Color, Grid, Label, MediaQuery, State, Table, TextInput, Vertical, WebGen, isMobile } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
 import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
@@ -47,7 +47,7 @@ async function handlePayoutResponse(amount: number) {
     }
 }
 
-View(() => Vertical(
+Body(Vertical(
     DynaNavigation("Wallet"),
     state.$loaded.map(() => Vertical(
         Navigation({
@@ -77,9 +77,11 @@ View(() => Vertical(
                         Card(
                             Grid(
                                 Label(`${Number(state.wallet?.balance?.unrestrained! + state.wallet?.balance?.restrained!).toFixed(2)} £`)
-                                    .setFont(2, 700),
+                                    .setTextSize("4xl")
+                                    .setFontWeight("bold"),
                                 Label("Balance")
-                                    .setFont(1, 700)
+                                    .setTextSize("base")
+                                    .setFontWeight("bold")
                                     .addClass("gray-color")
                             )
                                 .addClass("details-item")
@@ -87,9 +89,11 @@ View(() => Vertical(
                         Card(
                             Grid(
                                 Label(`${state.wallet?.cut}%`)
-                                    .setFont(2, 700),
+                                    .setTextSize("4xl")
+                                    .setFontWeight("bold"),
                                 Label("Your Cut")
-                                    .setFont(1, 700)
+                                    .setTextSize("base")
+                                    .setFontWeight("bold")
                                     .addClass("gray-color")
                             )
                                 .addClass("details-item")
@@ -107,7 +111,7 @@ View(() => Vertical(
             ).asRefComponent()
         )
     )).asRefComponent().addClass("limited-width")
-)).appendOn(document.body);
+));
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())

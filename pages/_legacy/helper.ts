@@ -1,7 +1,7 @@
 // This code Will be ported to webgen
 
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { Box, Button, Cache, Component, Custom, Dialog, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Style, SupportedThemes, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, Cache, Component, Custom, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Style, SupportedThemes, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";

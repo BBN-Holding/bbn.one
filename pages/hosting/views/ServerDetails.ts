@@ -3,11 +3,11 @@ import { Box, Button, Custom, Entry, Form, Grid, State, StateHandler, TextInput,
 import { Server, SidecarResponse } from "../../../spec/music.ts";
 import { isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource } from "../loading.ts";
 import { ServerStaticInfo } from "./ServerStaticInfo.ts";
-import './lol.css';
 import { auditEntry, hostingMenu } from "./menu.ts";
 import { auditLogs, path } from "./state.ts";
 import { TerminalComponent } from "./terminal.ts";
 import { DisconnectedScreen } from "./waitingScreen.ts";
+
 export function ServerDetails(server: StateHandler<Server>) {
     const terminal = new TerminalComponent();
 

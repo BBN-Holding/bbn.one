@@ -1,12 +1,12 @@
 import { Footer } from "shared/footer.ts";
-import { Box, Label, View, WebGen } from "webgen/mod.ts";
+import { Body, Box, Label, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import './flowText.css';
 WebGen();
 await RegisterAuthRefresh();
 
-View(() => Box(
+Body(Box(
     DynaNavigation("Home"),
     Box(
         Label("BBN Music Distribution Agreement", "h2"),
@@ -70,4 +70,4 @@ View(() => Box(
         Label(`h. This Agreement shall be construed and enforced exclusively in accordance with the laws of the State of New York, without regard to its conflict of laws principles. Any action or proceeding brought by either party against the other arising out of or related to this Agreement shall be brought only in a state or federal court of competent jurisdiction located in New York County, New York, and the parties irrevocably consent to the in personam jurisdiction and venue of said courts. You agree that service of process by us to you by one of the methods designated above for the giving of notices will be deemed effective as personal service within New York County, and hereby consent to service of process by such methods.`).addClass("block"),
     ).addClass("flow-text"),
     Footer()
-)).appendOn(document.body);
+));

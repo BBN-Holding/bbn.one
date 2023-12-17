@@ -12,9 +12,9 @@ export const SliderInput = (label: string) => new class extends InputForm<number
         this.input.classList.add("wslider");
         this.wrapper.append(Vertical(
             Horizontal(
-                Label(label).setFont(0.8, 700),
+                Label(label).setTextSize("sm").setFontWeight("bold"),
                 Spacer(),
-                val.$value.map((val) => Label(val).setFont(0.8, 700)).asRefComponent().addClass("same-height")
+                val.$value.map((val) => Label(val).setTextSize("sm").setFontWeight("bold")).asRefComponent().addClass("same-height")
             ).setPadding("0 0.2rem"),
             Custom(this.input)
         ).setMargin("0 -0.1rem").draw());

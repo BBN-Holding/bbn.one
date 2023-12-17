@@ -1,4 +1,4 @@
-import { Vertical, View, WebGen } from "webgen/mod.ts";
+import { Body, Vertical, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, changeThemeColor, permCheck, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
@@ -21,7 +21,7 @@ WebGen({
     }
 });
 
-View(() => Vertical(DynaNavigation("Admin"), adminMenu)).appendOn(document.body);
+Body(Vertical(DynaNavigation("Admin"), adminMenu));
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState());

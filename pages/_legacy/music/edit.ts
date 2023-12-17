@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, createActionList, createBreadcrumb, createTagList, stupidErrorAlert } from "shared/mod.ts";
-import { Box, Grid, Horizontal, Label, Spacer, State, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Box, Grid, Horizontal, Label, Spacer, State, Vertical, WebGen, isMobile } from "webgen/mod.ts";
 import '../../../assets/css/main.css';
 import '../../../assets/css/music.css';
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -28,14 +28,14 @@ const state = State({
     drop: <Drop | undefined>undefined,
 });
 
-View(() => Vertical(
+Body(Vertical(
     DynaNavigation("Music"),
     state.$drop.map(drop => drop ? Navigation({
         title: drop.title,
         children: [
             Horizontal(
                 //TODO: Make this look better
-                Label(DropTypeToText(drop.type)).setFont(1.5),
+                Label(DropTypeToText(drop.type)).setTextSize("2xl"),
                 Spacer()
             ),
             {
@@ -118,8 +118,7 @@ View(() => Vertical(
         }).asRefComponent())
         : LoadingSpinner()
     ).asRefComponent(),
-))
-    .appendOn(document.body);
+));
 
 const Permissions = {
     canTakedown: (drop: Drop) => drop.type == "PUBLISHED",

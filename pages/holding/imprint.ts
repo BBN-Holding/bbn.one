@@ -1,16 +1,16 @@
 import { Footer } from "shared/footer.ts";
-import { Box, Button, ButtonStyle, Horizontal, Label, Spacer, View, WebGen } from "webgen/mod.ts";
+import { Body, Box, Button, ButtonStyle, Horizontal, Label, Spacer, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import './flowText.css';
 WebGen();
 await RegisterAuthRefresh();
 
-View(() => Box(
+Body(Box(
     DynaNavigation("Home"),
     Box(
         Label("Imprint", "h2"),
-        Label(`BBN Holding Inc.`).setFont(1, 600).addClass("block"),
+        Label(`BBN Holding Inc.`).setTextSize("base").setFontWeight("semibold").addClass("block"),
         Label(`270 Trace Colony Park Dr, Suite B`).addClass("block"),
         Box(Label(`Ridgeland - MS 39157`)),
         Box(Label(`Email: support@bbn.one`)),
@@ -31,4 +31,4 @@ View(() => Box(
         Label(`All rights to the texts, photos, graphics, video files and other objects on these Internet pages are protected by copyright.Their download, reproduction or use in other media or publications requires our written consent.All rights to all of the trademarks on this page belong exclusively to the owners of these trademark`).addClass("block")
     ).addClass("flow-text"),
     Footer()
-)).appendOn(document.body);
+));

@@ -1,5 +1,5 @@
+import { API } from "shared/restSpec.ts";
 import { lazyInit, State } from "webgen/mod.ts";
-import { API } from "../shared/restSpec.ts";
 import { createStableWebSocket } from "webgen/network.ts";
 
 export const data = State({
@@ -15,8 +15,8 @@ export const streamingPool = lazyInit(async () => {
         url: API.WS_URL.replace("/ws", "/api/@bbn/public/stats")
     }, {
         onMessage: (msg) => {
-            if(typeof msg !== "string") return;
-            const json = JSON.parse(msg)
+            if (typeof msg !== "string") return;
+            const json = JSON.parse(msg);
             data.stats = State(json as typeof data.stats);
         }
     });

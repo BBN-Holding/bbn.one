@@ -1,7 +1,7 @@
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { editor } from "https://esm.sh/monaco-editor@0.44.0/esm/vs/editor/editor.api.js";
 import { delay } from "std/async/delay.ts";
-import { Box, Cache, Custom, Dialog, Label, MIcon, Vertical, asPointer, lazyInit, refMerge } from "webgen/mod.ts";
+import { Box, Cache, Custom, Label, MIcon, Vertical, asPointer, lazyInit, refMerge } from "webgen/mod.ts";
 import { uploadFile } from "../../loading.ts";
 import './editFileDialog.css';
 

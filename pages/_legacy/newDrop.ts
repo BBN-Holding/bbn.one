@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, stupidErrorAlert, uploadFilesDialog } from "shared/mod.ts";
-import { AdvancedImage, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, State, SupportedThemes, TextInput, Vertical, View, WebGen, Wizard } from "webgen/mod.ts";
+import { AdvancedImage, Body, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, State, SupportedThemes, TextInput, Vertical, WebGen, Wizard } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import language from "../../data/language.json" with { type: "json" };
@@ -26,29 +26,27 @@ const dropId = params.get("id")!;
 const gapSize = "15px";
 const inputWidth = "436px";
 
+API.music.id(dropId).get().then(stupidErrorAlert)
+    .then(restoreData => {
+        state.restoreData = restoreData;
+    })
+    .catch((e) => {
+        alert(e);
+        setTimeout(() => location.reload(), 1000);
+    });
+
 const state = State({
     restoreData: <Drop | undefined>undefined
 });
 
-View(() => Vertical(
+Body(Vertical(
     DynaNavigation("Music"),
     state.$restoreData.map(restoreData => restoreData ?
         wizard(restoreData).addClass("wizard-box")
         : LoadingSpinner()
     ).asRefComponent().removeFromLayout()
 ))
-    .change(() => {
-        API.music.id(dropId).get().then(stupidErrorAlert)
-            .then(restoreData => {
-                state.restoreData = restoreData;
-            })
-            .catch((e) => {
-                alert(e);
-                setTimeout(() => location.reload(), 1000);
-            });
-    })
-    .addClass("fullscreen")
-    .appendOn(document.body);
+    .addClass("fullscreen");
 
 const wizard = (restore?: Drop) => Wizard({
     cancelAction: "/music",
@@ -86,7 +84,8 @@ const wizard = (restore?: Drop) => Wizard({
             (small) =>
                 Label("Lets make your Drop hit!")
                     .setWidth(small ? "max(1rem, 15rem)" : "max(1rem, 25rem)")
-                    .setFont(small ? 2 : 3.448125, 800),
+                    .setFontWeight("extrabold")
+                    .setTextSize(small ? "3xl" : "6xl"),
         ),
         Spacer(),
         Horizontal(

@@ -1,5 +1,5 @@
 import { Progress } from "shared/mod.ts";
-import { Box, ButtonStyle, Checkbox, Color, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, State, StateHandler, Table, View } from "webgen/mod.ts";
+import { Box, ButtonStyle, Checkbox, Color, Content, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, State, StateHandler, Table } from "webgen/mod.ts";
 import language from "../../../data/language.json" with { type: "json" };
 import primary from "../../../data/primary.json" with { type: "json" };
 import secondary from "../../../data/secondary.json" with { type: "json" };
@@ -7,7 +7,7 @@ import { Drop } from "../../../spec/music.ts";
 import { EditArtists, ProfilePicture, getSecondary, getYearList } from "../helper.ts";
 
 export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
-    const tableView = View(() =>
+    const tableView = Content(
         Table([
             [ "Title", "auto", ({ progress, title }, index) => progress !== undefined ? Progress(progress) : InlineTextInput("text", "blur").addClass("low-level").setValue(title).onChange(x => update(state, index, "title", x)) ],
             [ "Artists", "max-content", ({ artists }, index) =>
@@ -73,10 +73,10 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
             state.songs = state.songs?.filter((_, index) => index != i) as typeof state.songs;
         }).addClass("inverted-class", "light-mode")
     );
-    state.$on("songs", () => {
-        tableView.viewOptions().update({});
-    });
-    return tableView.asComponent().addClass("inverted-class");
+    // state.$on("songs", () => {
+    //     tableView.viewOptions().update({});
+    // });
+    return tableView.addClass("inverted-class");
 }
 
 // deno-lint-ignore no-explicit-any

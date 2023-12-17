@@ -13,9 +13,11 @@ export const profileView = () =>
                 Entry(
                     Grid(
                         Label(meta.coins.toLocaleString())
-                            .setFont(2, 700),
+                            .setTextSize("4xl")
+                            .setFontWeight("bold"),
                         Label("Coins")
-                            .setFont(1, 700)
+                            .setTextSize("base")
+                            .setFontWeight("bold")
                             .addClass("gray-color")
                     )
                         .addClass("details-item")
@@ -24,9 +26,11 @@ export const profileView = () =>
                     Entry(
                         Grid(
                             Label(`${meta.used.slots} / ${meta.limits.slots}`)
-                                .setFont(2, 700),
+                                .setTextSize("4xl")
+                                .setFontWeight("bold"),
                             Label("Servers")
-                                .setFont(1, 700)
+                                .setTextSize("base")
+                                .setFontWeight("bold")
                                 .addClass("gray-color")
                         )
                             .addClass("details-item")
@@ -50,9 +54,11 @@ export const profileView = () =>
                     Entry(
                         Grid(
                             Label(`${format(meta.used.memory * MB)} / ${format(meta.limits.memory * MB)}`)
-                                .setFont(2, 700),
+                                .setTextSize("4xl")
+                                .setFontWeight("bold"),
                             Label("Memory")
-                                .setFont(1, 700)
+                                .setTextSize("base")
+                                .setFontWeight("bold")
                                 .addClass("gray-color")
                         )
                             .addClass("details-item")
@@ -76,9 +82,11 @@ export const profileView = () =>
                     Entry(
                         Grid(
                             Label(`${format(meta.used.disk * MB)} / ${format(meta.limits.disk * MB)}`)
-                                .setFont(2, 700),
+                                .setTextSize("4xl")
+                                .setFontWeight("bold"),
                             Label("Disk")
-                                .setFont(1, 700)
+                                .setTextSize("base")
+                                .setFontWeight("bold")
                                 .addClass("gray-color")
                         )
                             .addClass("details-item")
@@ -102,9 +110,11 @@ export const profileView = () =>
                     Entry(
                         Grid(
                             Label(`${meta.used.cpu}% / ${meta.limits.cpu}%`)
-                                .setFont(2, 700),
+                                .setTextSize("4xl")
+                                .setFontWeight("bold"),
                             Label("CPU")
-                                .setFont(1, 700)
+                                .setTextSize("base")
+                                .setFontWeight("bold")
                                 .addClass("gray-color")
                         )
                             .addClass("details-item")

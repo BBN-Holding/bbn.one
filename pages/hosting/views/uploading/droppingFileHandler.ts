@@ -1,5 +1,5 @@
+import { FileEntry } from "shared/fileHandler.ts";
 import { asPointer } from "webgen/mod.ts";
-import { FileEntry } from "../../../shared/fileHandler.ts";
 import { listFiles, uploadFile } from "../../loading.ts";
 import { RemotePath } from "../../types.ts";
 import { canWriteInFolder, loading, path, uploadingFiles } from "../state.ts";

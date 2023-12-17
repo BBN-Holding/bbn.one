@@ -83,10 +83,11 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
 
 export const placeholder = (title: string, subtitle: string) => CenterV(
     Label(title)
-        .setFont(2, 700)
+        .setTextSize("4xl")
+        .setFontWeight("bold")
         .addClass("list-title"),
     Label(subtitle)
-        .setFont(1.2)
+        .setTextSize("xl")
 ).setMargin("100px 0 0").setGap("1rem").setAttribute("align", "center");
 
 export async function loadMore<T>(source: Pointer<External<T[]> | 'loading'>, func: () => Promise<External<T[]>>) {

@@ -1,5 +1,5 @@
 import { API } from "shared/mod.ts";
-import { Button, ButtonStyle, Color, Dialog, DropDownInput, Entry, State, Vertical } from "webgen/mod.ts";
+import { Button, ButtonStyle, Color, DropDownInput, Entry, State, Vertical } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { showPreviewImage } from "../../_legacy/helper.ts";
 

@@ -3,7 +3,7 @@ import { Box, createElement, Custom, isPointer, Label, Pointable } from "webgen/
 export function Progress(progress: Pointable<number>) {
     return Box(
         Custom((() => {
-            if (progress == -1) return Label("⚠️ Failed to upload!").addClass("error-message").setFont(0.8).draw();
+            if (progress == -1) return Label("⚠️ Failed to upload!").addClass("error-message").setTextSize("sm").draw();
             const element = createElement("progress");
             if (isPointer(progress)) {
                 progress.listen((value) => {

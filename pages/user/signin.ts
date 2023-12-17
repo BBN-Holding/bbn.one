@@ -1,8 +1,7 @@
-import { API, LoadingSpinner } from "shared/mod.ts";
-
 import { Footer } from "shared/footer.ts";
+import { API, LoadingSpinner } from "shared/mod.ts";
 import { assert } from "std/assert/assert.ts";
-import { Box, Button, ButtonStyle, Color, Form, Grid, Horizontal, Image, Label, Spacer, TextInput, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Box, Button, ButtonStyle, Color, Form, Grid, Horizontal, Image, Label, Spacer, TextInput, Vertical, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -22,7 +21,7 @@ const ErrorMessage = () => state.$error.map(() => state.error != undefined
     .asRefComponent()
     .removeFromLayout();
 
-View(() => Vertical(
+Body(Vertical(
     DynaNavigation("Home"),
     Box().addClass("background-image"),
     Box(
@@ -31,7 +30,8 @@ View(() => Vertical(
                 Label("Welcome back!")
                     .setMargin("5rem 0 .8rem")
                     .addClass(small ? "no-custom" : "line-header", "header")
-                    .setFont(small ? 4 : 5.375, 800)
+                    .setFontWeight("extrabold")
+                    .setTextSize(small ? "6xl" : "7xl")
             ).asRefComponent().removeFromLayout(),
             state.$type.map(() => {
                 if (state.type == "reset-password-from-email")
@@ -216,7 +216,6 @@ View(() => Vertical(
     )
         .addClass("auth-area"),
     Footer()
-))
-    .appendOn(document.body);
+));
 
 await handleStateChange();
