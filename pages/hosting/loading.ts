@@ -3,7 +3,7 @@ import { API, ProgressTracker } from "shared/mod.ts";
 import { decodeBase64, encodeBase64 } from "std/encoding/base64.ts";
 import { Pointer, State, asPointer, lazyInit } from "webgen/mod.ts";
 import { createStableWebSocket } from "webgen/network.ts";
-import { InstalledAddon, Server, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
+import { Deferred, InstalledAddon, Server, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 import { canWriteInFolder, currentFiles } from "./views/state.ts";
@@ -68,7 +68,7 @@ export const liveUpdates = lazyInit(async () => {
     });
 });
 
-export let messageQueueSidecar = <{ request: SidecarRequest, response: { promise: Promise<SidecarResponse>, resolve: Function, reject: Function; }; }[]>[];
+export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
 export const isSidecarConnect = asPointer(false);
 export const sidecarDetailsSource = asPointer((_data: SidecarResponse | "clear") => { });
 export let closeSignal = Promise.withResolvers<void>();
@@ -85,7 +85,7 @@ export async function startSidecarConnection(id: string) {
     // Prepare Connection
     const url = new URL(`wss://bbn.one/api/@bbn/sidecar/${id}/ws`);
     url.searchParams.set("TOKEN", API.getToken());
-    const syncedResponses = new Set<{ request: SidecarRequest, response: { promise: Promise<SidecarResponse>, resolve: Function, reject: Function; }; }>();
+    const syncedResponses = new Set<{ request: SidecarRequest, response: Deferred<SidecarResponse>; }>();
 
     // Start Conneciton
     const connection = await createStableWebSocket({

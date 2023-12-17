@@ -546,6 +546,13 @@ export const group = zod.object({
     permission: zod.string()
 });
 
+export interface Deferred<T> {
+    promise: Promise<T>;
+    resolve(value?: T | PromiseLike<T>): void;
+    // deno-lint-ignore no-explicit-any
+    reject(reason?: any): void;
+}
+
 export type InstalledAddon = zod.infer<typeof installedAddon>;
 export type Group = zod.infer<typeof group>;
 export type AdminStats = { drops: { all: number, reviews: number, publishing: number, published: number, private: number, rejected: number, drafts: number; }, users: number, payouts: number, oauthApps: number, files: number, servers: number, wallets: number; };
