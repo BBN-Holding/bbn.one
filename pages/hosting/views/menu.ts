@@ -3,7 +3,7 @@ import { calculateUptime } from "shared/uptime.ts";
 import { debounce } from "std/async/debounce.ts";
 import { delay } from "std/async/delay.ts";
 import { WEEK } from "std/datetime/constants.ts";
-import { asPointer, BasicLabel, Box, Button, Cache, Color, Entry, Grid, Image, isMobile, Label, MIcon, ref, refMerge, State, StateHandler, TextInput } from "webgen/mod.ts";
+import { asPointer, BasicLabel, Box, Button, Cache, Color, Empty, Entry, Grid, Image, isMobile, Label, MIcon, ref, refMerge, State, StateHandler, TextInput } from "webgen/mod.ts";
 import { createCachedLoader, createIndexPaginationLoader } from "webgen/network.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import locations from "../../../data/locations.json" with { type: "json" };
@@ -283,7 +283,7 @@ function addonBrowser(server: StateHandler<Server>): RenderItem {
                                 .onPromiseClick(() => loadMore())
                         )
                             .setJustify("center")
-                        : Box().removeFromLayout()
+                        : Empty()
                     ).asRefComponent()
                 ).setGap()
             )

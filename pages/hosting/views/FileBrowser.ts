@@ -3,7 +3,7 @@ import { createDownloadStream } from "shared/libs/streamSaver.ts";
 import { Progress } from "shared/Progress.ts";
 import { ProgressTracker } from "shared/upload.ts";
 import { format } from "std/fmt/bytes.ts";
-import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Entry, Grid, IconButton, Label, MIcon, ref, refMerge } from "webgen/mod.ts";
+import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Empty, Entry, Grid, IconButton, Label, MIcon, ref, refMerge } from "webgen/mod.ts";
 import { SidecarResponse } from "../../../spec/music.ts";
 import { mapFiletoIcon } from "../constants.ts";
 import { downloadFile, listFiles, messageQueueSidecar } from "../loading.ts";
@@ -149,7 +149,7 @@ export function FileBrowser() {
                     .addColumn("Type", (data) => data.fileMimeType !== undefined ? Label(fileTypeName(data.fileMimeType)) : Label("Folder"))
                     .addColumn("Size", (data) => data.size !== undefined ? Label(format(parseInt(data.size))).addClass('text-align-right') : Box())
                     .addColumn("", (data) => Grid(
-                        data.uploadingRatio !== undefined ? Progress(data.uploadingRatio).addClass("fileProgressBar") : Box().removeFromLayout(),
+                        data.uploadingRatio !== undefined ? Progress(data.uploadingRatio).addClass("fileProgressBar") : Empty(),
                         data.fileMimeType && [ "text/yaml", "application/json", "text/plain" ].includes(data.fileMimeType.split(";")[ 0 ]) && data.uploadingRatio === undefined
                             ? IconButton(MIcon("file_open"), "Open file")
                                 .addClass("table-button")

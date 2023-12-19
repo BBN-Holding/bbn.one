@@ -1,4 +1,4 @@
-import { Box, Button, CenterV, Component, Horizontal, Label, MIcon, Pointable, Pointer, State, Vertical, asPointer } from "webgen/mod.ts";
+import { Box, Button, CenterV, Component, Empty, Horizontal, Label, MIcon, Pointable, Pointer, State, Vertical, asPointer } from "webgen/mod.ts";
 import { LoadingSpinner } from "./components.ts";
 import { External, displayError } from "./restSpec.ts";
 
@@ -58,7 +58,7 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
                 this.wrapper.append(
                     Vertical(
                         ...val.length == 0 ? [ this.placeholder ] : val.map(x => map(x)),
-                        this.paging.$enabled.map(() => this.paging.enabled ? Button("Load More").setMargin("0 0 var(--gap)").onPromiseClick(() => this.loadMore(val.length - 2, this.paging.limit + 1)) : Box().removeFromLayout()).asRefComponent().removeFromLayout(),
+                        this.paging.$enabled.map(() => this.paging.enabled ? Button("Load More").setMargin("0 0 var(--gap)").onPromiseClick(() => this.loadMore(val.length - 2, this.paging.limit + 1)) : Empty()).asRefComponent().removeFromLayout(),
                     )
                         .setGap("var(--gap)")
                         .draw()

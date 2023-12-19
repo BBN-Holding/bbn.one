@@ -1,5 +1,5 @@
 import { assert } from "std/assert/assert.ts";
-import { Box, Component, Entry, Grid, Label, MIcon, Pointable, Pointer, Taglist, Vertical, asPointer, isMobile, isPointer } from "webgen/mod.ts";
+import { Box, Component, Empty, Entry, Grid, Label, MIcon, Pointable, Pointer, Taglist, Vertical, asPointer, isMobile, isPointer } from "webgen/mod.ts";
 import { HeavyList } from "./list.ts";
 import './navigation.css';
 
@@ -106,7 +106,7 @@ class MenuImpl extends Component {
                     return item;
 
                 if (asPointer(item.hidden).getValue())
-                    return Box().removeFromLayout();
+                    return Empty();
 
                 const entry = Entry(item.replacement ? asPointer(item.replacement).getValue() : item).addClass(isMobile.map(mobile => mobile ? "small" : "desktop"));
                 const click = this.createClickHandler(item);
@@ -183,7 +183,7 @@ function defaultHeader(menu: MenuImpl) {
 }
 
 function defaultFooter(menu: MenuImpl) {
-    return isMobile.map(mobile => mobile && menu.rootNode.actions ? Box(createActionList(menu)).addClass(asPointer(menu.rootNode.actions).map(it => it.length == 0 ? "remove-from-layout" : "normal"), "sticky-footer") : Box().removeFromLayout()).asRefComponent().removeFromLayout();
+    return isMobile.map(mobile => mobile && menu.rootNode.actions ? Box(createActionList(menu)).addClass(asPointer(menu.rootNode.actions).map(it => it.length == 0 ? "remove-from-layout" : "normal"), "sticky-footer") : Empty()).asRefComponent().removeFromLayout();
 }
 
 export function createActionList(menu: MenuImpl) {
@@ -191,7 +191,7 @@ export function createActionList(menu: MenuImpl) {
 }
 
 export function createTagList(menu: MenuImpl) {
-    if (!menu.rootNode.categories) return Box().removeFromLayout();
+    if (!menu.rootNode.categories) return Empty();
     const index = asPointer(0);
     index.listen((val, oldVal) => {
         if (oldVal != undefined) {
@@ -209,7 +209,7 @@ export function createTagList(menu: MenuImpl) {
         const [ rootId ] = path.split("/");
         const unprefixed = path.replace(rootId, "");
         const visible = unprefixed == "/";
-        return visible && menu.rootNode.categories ? Taglist(menu.rootNode.categories.map(it => it.title), index) : Box().removeFromLayout();
+        return visible && menu.rootNode.categories ? Taglist(menu.rootNode.categories.map(it => it.title), index) : Empty();
     }).asRefComponent();
 }
 

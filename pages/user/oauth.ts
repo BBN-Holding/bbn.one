@@ -1,6 +1,6 @@
 import { Footer } from "shared/footer.ts";
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { Box, Button, ButtonStyle, Color, Grid, Horizontal, Image, Label, MIcon, Spacer, State, Vertical, View, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Box, Button, ButtonStyle, Color, Grid, Horizontal, Image, Label, MIcon, Spacer, State, Vertical, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { dots, templateArtwork } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -97,13 +97,12 @@ const list = state.$loaded.map(loaded => {
     return LoadingSpinner();
 }).asRefComponent();
 
-View(() => Vertical(
+Body(Vertical(
     DynaNavigation("Home"),
     Box().addClass("background-image"),
     list.addClass("auth-area"),
     Footer()
-))
-    .appendOn(document.body);
+));
 
 async function authorize() {
     await API.oauth.authorize(params.clientId!, params.scope!, params.redirectUri!)

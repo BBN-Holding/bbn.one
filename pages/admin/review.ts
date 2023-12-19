@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, createActionList, createBreadcrumb, createTagList, stupidErrorAlert } from "shared/mod.ts";
-import { Body, Box, Button, ButtonStyle, Color, Entry, Grid, Horizontal, Label, Spacer, Vertical, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Button, ButtonStyle, Color, Empty, Entry, Grid, Horizontal, Label, Spacer, Vertical, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -94,7 +94,7 @@ Body(Vertical(
                         Grid(
                             showPreviewImage(drop).addClass("image-preview")
                         ).setEvenColumns(1, "10rem")
-                        : Box().removeFromLayout()
+                        : Empty()
                     ).asRefComponent(),
                     createBreadcrumb(menu),
                     createTagList(menu)

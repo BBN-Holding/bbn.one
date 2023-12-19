@@ -1,7 +1,7 @@
 import { confettiFromElement } from "shared/libs/canvasConfetti.ts";
 import { API, stupidErrorAlert } from "shared/mod.ts";
 import { format } from "std/fmt/bytes.ts";
-import { Box, Button, ButtonStyle, Color, Entry, Grid, Label, MediaQuery, Pointable, Vertical } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Color, Empty, Entry, Grid, Label, MediaQuery, Pointable, Vertical } from "webgen/mod.ts";
 import { MB, state } from "../data.ts";
 import { refreshState } from "../loading.ts";
 import './profile.css';
@@ -47,7 +47,7 @@ export const profileView = () =>
                             refreshState();
                         }
                     }) :
-                        Box().removeFromLayout()
+                        Empty()
                 )
                     .addClass("shop"),
                 Box(
@@ -75,7 +75,7 @@ export const profileView = () =>
                             refreshState();
                         }
                     }) :
-                        Box().removeFromLayout()
+                        Empty()
                 )
                     .addClass("shop"),
                 Box(
@@ -103,7 +103,7 @@ export const profileView = () =>
                             refreshState();
                         }
                     }) :
-                        Box().removeFromLayout()
+                        Empty()
                 )
                     .addClass("shop"),
                 Box(
@@ -131,7 +131,7 @@ export const profileView = () =>
                             refreshState();
                         }
                     }) :
-                        Box().removeFromLayout()
+                        Empty()
                 )
                     .addClass("shop")
             )

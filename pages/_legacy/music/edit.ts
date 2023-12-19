@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, createActionList, createBreadcrumb, createTagList, stupidErrorAlert } from "shared/mod.ts";
-import { Body, Box, Grid, Horizontal, Label, Spacer, State, Vertical, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Empty, Grid, Horizontal, Label, Spacer, State, Vertical, WebGen, isMobile } from "webgen/mod.ts";
 import '../../../assets/css/main.css';
 import '../../../assets/css/music.css';
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -72,7 +72,7 @@ Body(Vertical(
                         await API.music.id(drop._id).type.post(DropType.Private);
                         location.reload();
                     },
-                } : Box().removeFromLayout(),
+                } : Empty(),
             Permissions.canSubmit(drop) ?
                 {
                     id: "publish",
@@ -82,7 +82,7 @@ Body(Vertical(
                         await API.music.id(drop._id).type.post(DropType.UnderReview);
                         location.reload();
                     },
-                } : Box().removeFromLayout(),
+                } : Empty(),
             Permissions.canTakedown(drop) ?
                 {
                     id: "takedown",
@@ -92,7 +92,7 @@ Body(Vertical(
                         await API.music.id(drop._id).type.post(DropType.Private);
                         location.reload();
                     },
-                } : Box().removeFromLayout()
+                } : Empty()
         ]
     })
         .addClass(
@@ -105,7 +105,7 @@ Body(Vertical(
                     Grid(
                         showPreviewImage(drop).addClass("image-preview")
                     ).setEvenColumns(1, "10rem")
-                    : Box().removeFromLayout()
+                    : Empty()
                 ).asRefComponent(),
                 createBreadcrumb(menu),
                 createTagList(menu)

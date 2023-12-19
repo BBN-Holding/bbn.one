@@ -1,6 +1,6 @@
 import { API } from "shared/mod.ts";
 import { delay } from "std/async/delay.ts";
-import { BasicLabel, Box, Button, ButtonStyle, Component, Custom, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement } from "webgen/mod.ts";
+import { BasicLabel, Box, Button, ButtonStyle, Component, Custom, Empty, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement } from "webgen/mod.ts";
 import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/_legacy/helper.ts";
 import './nav.css';
 import { activeLogo, pages } from "./pages.ts";
@@ -88,7 +88,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                         await API.user.mail.resendVerifyEmail.post();
                         await delay(1000);
                     })
-            ).addClass("email-banner", type.toLowerCase()) : Box().removeFromLayout(),
+            ).addClass("email-banner", type.toLowerCase()) : Empty(),
         )
             .setMargin("0.5rem auto")
             .setGap("0.4rem"),
