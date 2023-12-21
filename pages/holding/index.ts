@@ -1,4 +1,4 @@
-import { Body, Box, Button, Grid, Image, Label, Vertical, WebGen } from "webgen/mod.ts";
+import { Body, Box, Grid, Image, Label, LinkButton, Vertical, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
@@ -85,9 +85,7 @@ Body(Box(
         )
             .addClass("live-stats")
             .setRawColumns("auto auto auto"),
-
-        Button("Join and grow these numbers!")
-            .asLinkButton("/hosting"),
+        LinkButton("Join and grow these numbers!", "/hosting"),
         Box(
             Label("Other things we do", "h2"),
             Label("Special goals? We are here for you.", "h3")

@@ -1,4 +1,4 @@
-import { BIcon, Box, Button, ButtonStyle, Grid, IconButton, Image, Label } from "webgen/mod.ts";
+import { BIcon, Box, ButtonStyle, Grid, IconButton, Image, Label, LinkButton } from "webgen/mod.ts";
 import splash from "../../assets/splash.png";
 import './footer.css';
 
@@ -11,8 +11,7 @@ export function Footer() {
                 Label("Delivering Excellence. Empowering Businesses and\nIndividuals with Premium Services")
                     .addClass("subtitle")
             ).addClass("text-section"),
-            Button("Get started")
-                .asLinkButton("/signin")
+            LinkButton("Get started", "/signin")
                 .addClass("round-button", "large-button"),
         ).addClass("area-fg"),
         Box(
@@ -48,10 +47,9 @@ export function Footer() {
                     Label(text)
                         .addClass("title"),
                     ...items.map(([ title, link ]) =>
-                        Button(title)
+                        LinkButton(title, link)
                             .addClass("link")
                             .setStyle(ButtonStyle.Inline)
-                            .asLinkButton(link)
                     )
                 ).addClass("column")),
             ).addClass("grouped-links"),
@@ -72,12 +70,10 @@ export function Footer() {
                                 .asLinkButton(link)
                         )
                 ).addClass("icons"),
-                Button("Join Now")
+                LinkButton("Join Now", "/signin")
                     .setStyle(ButtonStyle.Secondary)
-                    .asLinkButton("/signin")
                     .addClass("round-button"),
-                Button("Contact Us")
-                    .asLinkButton("mailto:support@bbn.one")
+                LinkButton("Contact Us", "mailto:support@bbn.one")
                     .addClass("round-button")
             )
                 .addClass("icon-bar")

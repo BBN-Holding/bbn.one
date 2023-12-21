@@ -20,7 +20,6 @@ export async function refreshState() {
         (async () => state.wallets = await API.admin.wallets.list())(),
         (async () => state.oauth = await API.oauth.list())(),
         (async () => state.transcripts = await API.admin.transcripts.list())(),
-        (async () => state.stats = await API.admin.stats())()
     ]);
 }
 

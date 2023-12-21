@@ -1,6 +1,6 @@
 import { External } from "shared/mod.ts";
 import { State } from "webgen/mod.ts";
-import { AdminStats, Drop, File, Group, OAuthApp, Payout, Server, Transcript, Wallet } from "../../spec/music.ts";
+import { Drop, File, Group, OAuthApp, Payout, Server, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const state = State({
@@ -20,7 +20,6 @@ export const state = State({
     servers: <External<Server[]> | "loading">"loading",
     wallets: <External<Wallet[]> | "loading">"loading",
     transcripts: <External<Transcript[]> | "loading">"loading",
-    stats: <External<AdminStats> | "loading">"loading",
 });
 
 export const reviewState = State({

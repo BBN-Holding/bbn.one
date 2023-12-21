@@ -1,4 +1,4 @@
-import { AdminStats, BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
+import { BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
@@ -245,11 +245,6 @@ export const API = {
             .then(none())
     }),
     admin: ({
-        stats: async () => await fetch(`${API.BASE_URL}admin/stats`, {
-            headers: headers(API.getToken())
-        })
-            .then(json<AdminStats>())
-            .catch(reject),
         files: {
             list: async (offset: number | undefined = undefined) => {
                 const paging = new URLSearchParams();

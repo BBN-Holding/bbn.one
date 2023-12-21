@@ -1,6 +1,6 @@
 import { API } from "shared/mod.ts";
 import { delay } from "std/async/delay.ts";
-import { BasicLabel, Box, Button, ButtonStyle, Component, Custom, Empty, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, createElement } from "webgen/mod.ts";
+import { BasicLabel, Box, Button, ButtonStyle, Component, Custom, Empty, Grid, Horizontal, Image, Label, LinkButton, MIcon, Spacer, Vertical, createElement } from "webgen/mod.ts";
 import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/_legacy/helper.ts";
 import './nav.css';
 import { activeLogo, pages } from "./pages.ts";
@@ -11,7 +11,7 @@ const Nav = (component: Component) => {
     return Custom(nav);
 };
 
-const dropOver = activeUser.$permission.map(() => Vertical(
+const dropOver = Box(activeUser.$permission.map(() => Vertical(
     Label("SWITCH TO").addClass("title"),
     pages.map(([ logo, permission, route ]) => permCheck(...permission) ? Horizontal(
         Image(logo, "Logo"),
@@ -29,8 +29,8 @@ const dropOver = activeUser.$permission.map(() => Vertical(
         .onClick(() => location.href = "/settings")
 ))
     .asRefComponent()
+)
     .addClass("drop-over")
-    .setId("drop-over")
     .draw();
 
 dropOver.onblur = () => dropOver.classList.remove("open");
@@ -56,24 +56,22 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     }),
                 Spacer(),
                 (activeUser.$email.map(email => email ?
-                    Button(
+                    LinkButton(
                         Grid(
                             showProfilePicture(IsLoggedIn()!),
                             Label(activeUser.$username),
                         )
                             .setRawColumns("max-content max-content")
                             .setAlign("center")
-                            .setGap(".7rem")
-
+                            .setGap(".7rem"),
+                        "/settings"
                     )
                         .addClass("profile-button")
                         .setStyle(ButtonStyle.Inline)
-                        .asLinkButton("/settings")
                     :
                     (type == "Home" && !location.pathname.startsWith("/signin") ?
-                        Button("Sign in")
+                        LinkButton("Sign in", "/signin")
                             .addClass("login-button")
-                            .asLinkButton("/signin")
                         : Box())
                 ).asRefComponent()
                 ) ?? null,

@@ -1,5 +1,5 @@
 import { Footer } from "shared/footer.ts";
-import { Body, Box, Button, ButtonStyle, Horizontal, Label, Spacer, WebGen } from "webgen/mod.ts";
+import { Body, Box, ButtonStyle, Horizontal, Label, LinkButton, Spacer, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import './flowText.css';
@@ -16,8 +16,8 @@ Body(Box(
         Box(Label(`Email: support@bbn.one`)),
         Horizontal(
             Label("See also:"),
-            Button("Privacy Policy").setStyle(ButtonStyle.Inline).asLinkButton("/p/privacy-policy"),
-            Button("Terms of Use").setStyle(ButtonStyle.Inline).asLinkButton("/p/terms-of-use"),
+            LinkButton("Privacy Policy", "/p/privacy-policy").setStyle(ButtonStyle.Inline),
+            LinkButton("Terms of Use", "/p/terms-of-use").setStyle(ButtonStyle.Inline),
             Spacer()
         ).addClass("block").setAlign("center"),
         Label(`Contents`, "h3"),

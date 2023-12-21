@@ -1,8 +1,8 @@
 {
     "imports": {
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/200f637/",
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/c4b1348/",
         // "webgen/": "../WebGen/",
-        "std/": "https://deno.land/std@0.209.0/",
+        "std/": "https://deno.land/std@0.210.0/",
         "shared/": "./pages/shared/"
     },
     "lock": false,
@@ -19,10 +19,8 @@
         "start": "deno run -A serve.ts"
     },
     "lint": {
-        "files": {
-            "exclude": [
-                "dist"
-            ]
-        }
+        "exclude": [
+            "dist"
+        ]
     }
 }

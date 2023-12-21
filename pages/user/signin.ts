@@ -1,7 +1,7 @@
 import { Footer } from "shared/footer.ts";
 import { API, LoadingSpinner } from "shared/mod.ts";
 import { assert } from "std/assert/assert.ts";
-import { Body, Box, Button, ButtonStyle, Color, Form, Grid, Horizontal, Image, Label, Spacer, TextInput, Vertical, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Box, Button, ButtonStyle, Color, Form, Grid, Horizontal, Image, Label, LinkButton, Spacer, TextInput, Vertical, WebGen, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -94,29 +94,26 @@ Body(Vertical(
 
                 if (state.type == "login")
                     return Form(Grid(
-                        Button("Sign in with Google")
+                        LinkButton("Sign in with Google", API.auth.oauthRedirect("google"))
                             .setJustify("center")
-                            .asLinkButton(API.auth.oauthRedirect("google"))
                             .addPrefix(
                                 Image(googleLogo, "Google Logo")
                                     .addClass("prefix-logo")
                             )
                             .setMargin("0 0 .6rem"),
-                        Button("Sign in with Discord")
+                        LinkButton("Sign in with Discord", API.auth.oauthRedirect("discord"))
                             .setJustify("center")
-                            .asLinkButton(API.auth.oauthRedirect("discord"))
                             .addPrefix(
                                 Image(discordLogo, "Discord Logo")
                                     .addClass("prefix-logo")
                             )
-                            // .setMargin("0 0 .6rem"),
-                            // Button("Sign in with Microsoft")
-                            // .setJustify("center")
-                            // .asLinkButton(API.auth.oauthRedirect("microsoft"))
-                            // .addPrefix(
-                            //     Image(discordLogo, "logo")
-                            //         .addClass("prefix-logo")
-                            // )
+                            //     .setMargin("0 0 .6rem"),
+                            // LinkButton("Sign in with Microsoft", API.auth.oauthRedirect("microsoft"))
+                            //     .setJustify("center")
+                            //     .addPrefix(
+                            //         Image(discordLogo, "logo")
+                            //             .addClass("prefix-logo")
+                            //     )
                             .setMargin("0 0 2rem"),
 
                         TextInput("email", "Email")

@@ -1,4 +1,4 @@
-import { API, count, HeavyList, loadMore, Navigation, placeholder } from "shared/mod.ts";
+import { API, HeavyList, loadMore, Navigation, placeholder } from "shared/mod.ts";
 import { sumOf } from "std/collections/sum_of.ts";
 import { Box, Button, Color, Entry, Grid, Horizontal, isMobile, Label, ref, Spacer, State, Table, TextInput, Vertical } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
@@ -9,7 +9,6 @@ import { ReviewEntry } from "./entryReview.ts";
 import { GroupEntry, UserEntry } from "./entryUser.ts";
 import { entryFile, entryOAuth, entryWallet, transcriptMenu } from "./list.ts";
 
-//TODO: Stats
 export const adminMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     categories: [
@@ -52,7 +51,7 @@ export const adminMenu = Navigation({
             children: [
                 {
                     id: "reviews",
-                    title: ref`Reviews ${count(state.drops.$reviews)}`,
+                    title: ref`Reviews`,
                     children: [
                         HeavyList(state.drops.$reviews, it => ReviewEntry(it))
                             .setPlaceholder(placeholder("No Servers", "Welcome! Create a server to get going. 🤖🛠️"))
@@ -61,7 +60,7 @@ export const adminMenu = Navigation({
                 },
                 {
                     id: "publishing",
-                    title: ref`Publishing ${count(state.drops.$publishing)}`,
+                    title: ref`Publishing`,
                     children: [
                         HeavyList(state.drops.$publishing, it => ReviewEntry(it))
                             .enablePaging((offset, limit) => loadMore(state.drops.$publishing, () => API.admin.drops.list(DropType.Publishing, offset, limit)))
@@ -69,7 +68,7 @@ export const adminMenu = Navigation({
                 },
                 {
                     id: "published",
-                    title: ref`Published ${count(state.drops.$published)}`,
+                    title: ref`Published`,
                     children: [
                         HeavyList(state.drops.$published, it => ReviewEntry(it))
                             .enablePaging((offset, limit) => loadMore(state.drops.$published, () => API.admin.drops.list(DropType.Published, offset, limit)))
@@ -77,7 +76,7 @@ export const adminMenu = Navigation({
                 },
                 {
                     id: "private",
-                    title: ref`Private ${count(state.drops.$private)}`,
+                    title: ref`Private`,
                     children: [
                         HeavyList(state.drops.$private, it => ReviewEntry(it))
                             .enablePaging((offset, limit) => loadMore(state.drops.$private, () => API.admin.drops.list(DropType.Private, offset, limit)))
@@ -85,7 +84,7 @@ export const adminMenu = Navigation({
                 },
                 {
                     id: "rejected",
-                    title: ref`Rejected ${count(state.drops.$rejected)}`,
+                    title: ref`Rejected`,
                     children: [
                         HeavyList(state.drops.$rejected, it => ReviewEntry(it))
                             .enablePaging((offset, limit) => loadMore(state.drops.$rejected, () => API.admin.drops.list(DropType.ReviewDeclined, offset, limit)))
@@ -93,7 +92,7 @@ export const adminMenu = Navigation({
                 },
                 {
                     id: "drafts",
-                    title: ref`Drafts ${count(state.drops.$drafts)}`,
+                    title: ref`Drafts`,
                     children: [
                         HeavyList(state.drops.$drafts, it => ReviewEntry(it))
                             .enablePaging((offset, limit) => loadMore(state.drops.$drafts, () => API.admin.drops.list(DropType.Unsubmitted, offset, limit)))
@@ -103,7 +102,7 @@ export const adminMenu = Navigation({
         },
         {
             id: "users",
-            title: ref`User ${count(state.$users)}`,
+            title: ref`User`,
             children: [
                 HeavyList(state.$users, val => UserEntry(val))
                     .enablePaging((offset, limit) => loadMore(state.$users, () => API.admin.users.list(offset, limit)))
@@ -111,7 +110,7 @@ export const adminMenu = Navigation({
         },
         {
             id: "groups",
-            title: ref`Groups ${count(state.$groups)}`,
+            title: ref`Groups`,
             children: [
                 HeavyList(state.$groups, val => GroupEntry(val))
                     .enablePaging((offset, limit) => loadMore(state.$groups, () => API.admin.groups.list(offset, limit)))
@@ -119,7 +118,7 @@ export const adminMenu = Navigation({
         },
         {
             id: "payouts",
-            title: ref`Payout ${count(state.$payouts)}`,
+            title: ref`Payout`,
             children: [
                 {
                     title: "Upload Payout File (.xlsx)",
@@ -145,7 +144,7 @@ export const adminMenu = Navigation({
         },
         {
             id: "oauth",
-            title: ref`OAuth ${count(state.$oauth)}`,
+            title: ref`OAuth`,
             children: state.$oauth.map(it => it === "loading" || it.status === "rejected"
                 ? [ HeavyList(state.$oauth, entryOAuth) ]
                 : [
@@ -161,13 +160,13 @@ export const adminMenu = Navigation({
         },
         {
             id: "files",
-            title: ref`Files ${count(state.$files)}`,
+            title: ref`Files`,
             children: [ HeavyList(state.$files, entryFile)
             ]
         },
         {
             id: "servers",
-            title: ref`Minecraft Servers ${count(state.$servers)}`,
+            title: ref`Minecraft Servers`,
             children: [
                 // HeavyList(state.$servers, it => entryServer(State(it) as StateHandler<Server>, true))
                 // .enablePaging((offset, limit) => loadMore(state.$servers, () => API.admin.servers.list(offset, limit)))
@@ -175,14 +174,14 @@ export const adminMenu = Navigation({
         },
         {
             id: "wallets",
-            title: ref`Wallets ${count(state.$wallets)}`,
+            title: ref`Wallets`,
             children: [ HeavyList(state.$wallets, entryWallet)
                 .enablePaging((offset, limit) => loadMore(state.$wallets, () => API.admin.wallets.list(offset, limit)))
             ]
         },
         {
             id: "transcripts",
-            title: ref`Tickets ${count(state.$transcripts)}`,
+            title: ref`Tickets`,
             children:
                 state.$transcripts.map(it => transcriptMenu(it))
         },
