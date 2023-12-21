@@ -1,7 +1,7 @@
 import { Footer } from "shared/footer.ts";
 import { API, LoadingSpinner } from "shared/mod.ts";
 import { assert } from "std/assert/assert.ts";
-import { Body, Box, Button, ButtonStyle, Color, Form, Grid, Horizontal, Image, Label, LinkButton, Spacer, TextInput, Vertical, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Box, Button, ButtonStyle, Color, Component, Custom, Grid, Horizontal, Image, Label, LinkButton, Spacer, TextInput, Vertical, WebGen, createElement, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -13,6 +13,17 @@ import { state } from "./state.ts";
 await RegisterAuthRefresh();
 
 WebGen();
+
+export const Form = (ele: Component) => {
+    const form = createElement("form");
+    form.append(ele.draw());
+    form.addEventListener("submit", (e: Event) => {
+        e.preventDefault();
+        if (!form.reportValidity()) return;
+        form.querySelector<HTMLElement>("#submit-button")?.click();
+    });
+    return Custom(form);
+};
 
 const ErrorMessage = () => state.$error.map(() => state.error != undefined
     ? Label(state.error ?? "Please try again later.").addClass("error-message").setMargin("1rem 0 0")
@@ -54,7 +65,7 @@ Body(Vertical(
                             }),
                         Label(API.getToken() ? "" : "Error: Link is invalid").addClass("error-message"),
                         ErrorMessage()
-                    )).activeSubmitTo("#submit-button");
+                    ));
                 if (state.type == "request-reset-password")
                     return Form(Grid(
                         TextInput("email", "Email")
@@ -132,7 +143,13 @@ Body(Vertical(
 
                         Button("Login")
                             .setId("login-button")
-                            .onPromiseClick(loginUser)
+                            .onPromiseClick(async () => {
+                                try {
+                                    await loginUser();
+                                } catch (_) {
+                                    //
+                                }
+                            })
                             .setJustify("center"),
 
                         ErrorMessage(),
@@ -157,8 +174,7 @@ Body(Vertical(
                                 .addClass("link"),
                             Spacer()
                         )
-                    ))
-                        .activeSubmitTo("#login-button");
+                    ));
 
                 if (state.type == "register")
                     return Form(Grid(
@@ -200,8 +216,7 @@ Body(Vertical(
                             Spacer()
                         )
                             .setMargin("1rem 0 0"),
-                    ))
-                        .activeSubmitTo("#register-button");
+                    ));
 
                 return Box(
                     LoadingSpinner(),
