@@ -198,6 +198,12 @@ export const serverPowerState = zod.enum([ "starting", "installing", "stopping",
 export const serverPowerActions = zod.enum([ "start", "stop", "kill" ]);
 
 export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-mum", "bbn-sgp" ]);
+export const serverLabels = zod.enum([
+    "suspended",
+    "contact-support",
+    "maintenance",
+    "disabled",
+]);
 
 export const server = zod.object({
     _id: zod.string(),
@@ -210,7 +216,7 @@ export const server = zod.object({
     ports: zod.number().array(),
     user: zod.string(),
     stateSince: zod.number().describe("unix timestamp"),
-    labels: zod.enum([ "suspended", "contact-support", "maintenance" ]).array(),
+    labels: serverLabels.array(),
     version: zod.string(),
 });
 
