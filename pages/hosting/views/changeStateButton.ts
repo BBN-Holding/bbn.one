@@ -1,5 +1,5 @@
-import { LoadingSpinner } from "shared/mod.ts";
-import { Box, Color, Component, IconButton, isMobile, MIcon, StateHandler } from "webgen/mod.ts";
+import { API, LoadingSpinner } from "shared/mod.ts";
+import { Box, Color, Component, IconButton, MIcon, StateHandler, isMobile } from "webgen/mod.ts";
 import { Server, SidecarResponse } from "../../../spec/music.ts";
 import { messageQueueSidecar, startSidecarConnection } from "../loading.ts";
 import { StateActions } from "../types.ts";
@@ -11,6 +11,7 @@ export function ChangeStateButton(server: StateHandler<Server>): Component {
             .setColor(Color.Colored)
             .onClick((e) => {
                 e.stopPropagation();
+                API.hosting.serverId(server._id).start();
                 startSidecarConnection(server._id);
                 const promise = Promise.withResolvers<SidecarResponse>();
                 messageQueueSidecar.push({

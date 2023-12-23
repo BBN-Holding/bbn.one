@@ -438,6 +438,11 @@ export const API = {
             })
                 .then(none())
                 .catch(reject),
+            start: () => fetch(`${API.BASE_URL}hosting/servers/${id}/start`, {
+                headers: headers(API.getToken())
+            })
+                .then(none())
+                .catch(reject),
         }),
         store: ({
             create: (type: StoreItems) => fetch(`${API.BASE_URL}hosting/store`, {
