@@ -15,3 +15,16 @@
     max-width: 30rem;
     gap: var(--gap);
 }
+
+card {
+    box-shadow: var(--background-card);
+    border-radius: var(--border-radius);
+    background: var(--background-card);
+    backdrop-filter: var(--backdrop-filter);
+    color: var(--on-card-text);
+    font-family: var(--font);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: wrap;
+}

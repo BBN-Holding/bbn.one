@@ -43,12 +43,12 @@ Body(Vertical(
                 Label(`Username: ${drop.user.profile.username}`),
                 Label(`Email: ${drop.user.profile.email}`),
                 Label(`ID: ${drop.user._id}`),
-            ).setGap("var(--gap)") : LoadingSpinner()).asRefComponent(),
+            ).setGap() : LoadingSpinner()).asRefComponent(),
             Label("User's Drops", "h1").setAlign("center"),
             reviewState.$drops.map(drops => drops ? Vertical(
-                ...drops.map(drop => Entry({ title: drop.title, subtitle: drop.type }).addClass("small"))).setGap("var(--gap)") : LoadingSpinner()).asRefComponent(),
+                ...drops.map(drop => Entry({ title: drop.title, subtitle: drop.type }).addClass("small"))).setGap() : LoadingSpinner()).asRefComponent(),
         )
-            .setAttribute("style", "border-style: solid;").setGap("var(--gap)").setBorderRadius("tiny"),
+            .setAttribute("style", "border-style: solid;").setGap().setBorderRadius("tiny"),
         reviewState.$drop.map(drop => drop ? Navigation({
             title: drop.title,
             children: [
@@ -98,11 +98,11 @@ Body(Vertical(
                     ).asRefComponent(),
                     createBreadcrumb(menu),
                     createTagList(menu)
-                ).setGap("var(--gap)");
+                ).setGap();
                 if (!mobile) return Grid(
                     list,
                     createActionList(menu)
-                ).setRawColumns("auto max-content").setGap("var(--gap)").setAlign("center");
+                ).setRawColumns("auto max-content").setGap().setAlign("center");
                 return list;
             }).asRefComponent())
             : LoadingSpinner()
@@ -113,7 +113,7 @@ Body(Vertical(
                 ...drop.events.map(entry => Vertical(
                     Label(entry.meta.action),
                     Label(entry.userId),
-                ).setGap("var(--gap)"))).setGap("var(--gap)") : LoadingSpinner()).asRefComponent(),
+                ).setGap())).setGap() : LoadingSpinner()).asRefComponent(),
             Spacer(),
             Button("Change Drop Type")
                 .setStyle(ButtonStyle.Inline)
@@ -145,10 +145,10 @@ Body(Vertical(
                         dialogState.drop = reviewState.drop!;
                         ApproveDialog.onClose(() => refreshReviewState());
                     }),
-            ).setGap("var(--gap)"),
+            ).setGap(),
         ).setAttribute("style", "border-style: solid;").setBorderRadius("tiny")
     )
-        .setGap("var(--gap)")
+        .setGap()
         .setRawColumns("1fr 3fr 1fr"),
 ));
 

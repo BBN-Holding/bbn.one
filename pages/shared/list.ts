@@ -30,11 +30,11 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
                                 )
                                     .setMargin("0 0 var(--gap)")
                             )
-                                .setGap("var(--gap)")
+                                .setGap()
                             : Vertical(
                                 ...val.value.length == 0 ? [ this.placeholder ] : val.value.map(x => map(x)),
                             )
-                                .setGap("var(--gap)")
+                                .setGap()
 
                         )
                             .asRefComponent()
@@ -60,7 +60,7 @@ export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, 
                         ...val.length == 0 ? [ this.placeholder ] : val.map(x => map(x)),
                         this.paging.$enabled.map(() => this.paging.enabled ? Button("Load More").setMargin("0 0 var(--gap)").onPromiseClick(() => this.loadMore(val.length - 2, this.paging.limit + 1)) : Empty()).asRefComponent().removeFromLayout(),
                     )
-                        .setGap("var(--gap)")
+                        .setGap()
                         .draw()
                 );
         });

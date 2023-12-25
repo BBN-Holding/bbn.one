@@ -136,7 +136,7 @@ export const profileView = () =>
                     .addClass("shop")
             )
                 .setEvenColumns(small ? 1 : 2)
-                .setGap("var(--gap)")
+                .setGap()
                 .addClass("details-grid")
         ).asRefComponent()
     );

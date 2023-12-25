@@ -101,9 +101,9 @@ export function ServerDetails(server: StateHandler<Server>) {
                     }).addClass("small")
                 )
                     .addClass("split-list")
-                    .setGap("var(--gap)")
+                    .setGap()
             )
-                .setGap("var(--gap)");
+                .setGap();
 
             if (!mobile)
                 items.setRawColumns("69% auto");

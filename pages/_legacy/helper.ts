@@ -238,7 +238,7 @@ export function EditArtists(list: Artist[]) {
                         })
                 ).setPadding("0 0 3rem 0")
             )
-                .setGap("var(--gap)")
+                .setGap()
                 .setWidth("clamp(0rem, 100vw, 60vw)")
                 .setMargin("0 -.6rem 0 0")
         ).asRefComponent()

@@ -117,7 +117,7 @@ class MenuImpl extends Component {
                 return entry;
             }),
             this.#footer.map(it => it(this)).asRefComponent().removeFromLayout(),
-        ).setGap("var(--gap)").draw());
+        ).setGap().draw());
 
         // Listener
         this.path.listen((val) => {
@@ -173,11 +173,11 @@ function defaultHeader(menu: MenuImpl) {
         const list = Vertical(
             createBreadcrumb(menu),
             createTagList(menu)
-        ).setGap("var(--gap)");
+        ).setGap();
         if (!mobile) return Grid(
             list,
             createActionList(menu)
-        ).setRawColumns("auto max-content").setGap("var(--gap)").setAlign("center");
+        ).setRawColumns("auto max-content").setGap().setAlign("center");
         return list;
     }).asRefComponent();
 }

@@ -5,7 +5,7 @@ nav {
     left: 0;
     right: 0;
     top: 0;
-    z-index: 5;
+    z-index: 11;
     padding: 0 1rem;
     user-select: none;
 }

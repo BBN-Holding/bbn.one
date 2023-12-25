@@ -109,11 +109,11 @@ Body(Vertical(
                 ).asRefComponent(),
                 createBreadcrumb(menu),
                 createTagList(menu)
-            ).setGap("var(--gap)");
+            ).setGap();
             if (!mobile) return Grid(
                 list,
                 createActionList(menu)
-            ).setRawColumns("auto max-content").setGap("var(--gap)").setAlign("center");
+            ).setRawColumns("auto max-content").setGap().setAlign("center");
             return list;
         }).asRefComponent())
         : LoadingSpinner()

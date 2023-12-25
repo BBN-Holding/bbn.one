@@ -60,12 +60,12 @@ export const hostingMenu = Navigation({
                         .setRawColumns("max-content auto")
                         .setGap("1rem")
                         .setAlign("center"),
-                    suffix: !server.labels.includes("maintenance") ? ChangeStateButton(server) : undefined,
-                    clickHandler: !server.labels.includes("maintenance") ? () => {
+                    suffix: server.labels.includes("maintenance") ? undefined : ChangeStateButton(server),
+                    clickHandler: server.labels.includes("maintenance") ? undefined : () => {
                         startSidecarConnection(server._id);
                         // TODO wait until first data is showing to prevent blinking
-                    } : undefined,
-                    children: !server.labels.includes("maintenance") ? [
+                    },
+                    children: server.labels.includes("maintenance") ? undefined : [
                         ServerDetails(server),
                         {
                             id: "storage",
@@ -116,7 +116,7 @@ export const hostingMenu = Navigation({
                                 }
                             ]
                         }
-                    ] : undefined
+                    ]
                 }
             ))
         },
@@ -212,7 +212,7 @@ function addonBrowser(server: StateHandler<Server>): RenderItem {
                 ({ items, hasMore, loadMore }) => Grid(
                     List(
                         refMerge({
-                            items: items,
+                            items,
                             searchString: searchBox.$search
                         })
                             .map(({ items, searchString }) => items.filter(it => it.title.toLowerCase().includes(searchString.toLowerCase()))),

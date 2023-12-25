@@ -1,8 +1,6 @@
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { editor } from "https://esm.sh/monaco-editor@0.44.0/esm/vs/editor/editor.api.js";
-import { delay } from "std/async/delay.ts";
-import { Box, Cache, Custom, Label, MIcon, Vertical, asPointer, lazyInit, refMerge } from "webgen/mod.ts";
-import { uploadFile } from "../../loading.ts";
+import { Box, Custom, asPointer, lazyInit } from "webgen/mod.ts";
 import './editFileDialog.css';
 
 const lazyMonaco = lazyInit(() => loader.init());
@@ -53,51 +51,53 @@ async function createMonacoEditor() {
     return Custom(box).addClass("file-dialog-shell");
 }
 
-export const editFileDialog = Dialog(() =>
-    Vertical(
-        refMerge({
-            downloading: editFileDownloading,
-            uploading: editFileUploading
-        }).map(({ downloading, uploading }) => (() => {
-            if (downloading)
-                return Box(
-                    MIcon("cloud_download"),
-                    Label("Your file is currently downloading...")
-                )
-                    .addClass("file-is-downloading");
+export const editFileDialog = Box();
 
-            if (uploading)
-                return Box(
-                    MIcon("cloud_upload"),
-                    Label("Your file is currently uploading...")
-                )
-                    .addClass("file-is-downloading");
+//     Dialog(() =>
+//     Vertical(
+//         refMerge({
+//             downloading: editFileDownloading,
+//             uploading: editFileUploading
+//         }).map(({ downloading, uploading }) => (() => {
+//             if (downloading)
+//                 return Box(
+//                     MIcon("cloud_download"),
+//                     Label("Your file is currently downloading...")
+//                 )
+//                     .addClass("file-is-downloading");
 
-            return Box(
-                MIcon("cloud_done"),
-                Label("Your file is up to date")
-            ).addClass("file-is-downloading");
-        })()
-        ).asRefComponent(),
-        Cache("monaco-editor", () => createMonacoEditor(),
-            (type, data) => type === "cache" ? Label("Loading Editor") : data ?? Box()
-        )
-    )
-)
-    .allowUserClose()
-    .setTitle("Edit File")
-    .addButton("Cancel", "close")
-    .addButton("Save", async () => {
-        if (editFileDownloading.getValue())
-            return alert("File is still downloading");
-        editFileUploading.setValue(true);
-        const editor = editFileCurrentEditor.getValue()!;
-        await uploadFile(
-            editFilePath.getValue(),
-            new File([ editor.getValue() ], editFilePath.getValue()),
-            asPointer(0)
-        );
-        editFileUploading.setValue(false);
-        await delay(300);
-        return "close";
-    });
+//             if (uploading)
+//                 return Box(
+//                     MIcon("cloud_upload"),
+//                     Label("Your file is currently uploading...")
+//                 )
+//                     .addClass("file-is-downloading");
+
+//             return Box(
+//                 MIcon("cloud_done"),
+//                 Label("Your file is up to date")
+//             ).addClass("file-is-downloading");
+//         })()
+//         ).asRefComponent(),
+//         Cache("monaco-editor", () => createMonacoEditor(),
+//             (type, data) => type === "cache" ? Label("Loading Editor") : data ?? Box()
+//         )
+//     )
+// )
+//     .allowUserClose()
+//     .setTitle("Edit File")
+//     .addButton("Cancel", "close")
+//     .addButton("Save", async () => {
+//         if (editFileDownloading.getValue())
+//             return alert("File is still downloading");
+//         editFileUploading.setValue(true);
+//         const editor = editFileCurrentEditor.getValue()!;
+//         await uploadFile(
+//             editFilePath.getValue(),
+//             new File([ editor.getValue() ], editFilePath.getValue()),
+//             asPointer(0)
+//         );
+//         editFileUploading.setValue(false);
+//         await delay(300);
+//         return "close";
+//     });
