@@ -1,8 +1,7 @@
 import { Progress } from "shared/mod.ts";
 import { Box, ButtonStyle, Checkbox, Color, Content, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, State, StateHandler, Table } from "webgen/mod.ts";
+import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
-import primary from "../../../data/primary.json" with { type: "json" };
-import secondary from "../../../data/secondary.json" with { type: "json" };
 import { Drop } from "../../../spec/music.ts";
 import { EditArtists, ProfilePicture, getSecondary, getYearList } from "../helper.ts";
 
@@ -41,7 +40,7 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
             ],
             //TODO: Lock these components (greyed out), if only one song, since dependent on drop level values
             [ "Primary Genre", "max-content", ({ primaryGenre }, index) =>
-                DropDownInput("Primary Genre", primary)
+                DropDownInput("Primary Genre", Object.keys(genres))
                     .setValue(primaryGenre)
                     .onChange((data) => {
                         update(state, index, "primaryGenre", data);
@@ -51,7 +50,7 @@ export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
                     .addClass("low-level")
             ],
             [ "Secondary Genre", "max-content", ({ primaryGenre, secondaryGenre }, index) =>
-                DropDownInput("Secondary Genre", getSecondary(secondary, primaryGenre) ?? [])
+                DropDownInput("Secondary Genre", getSecondary(genres, primaryGenre) ?? [])
                     .setValue(secondaryGenre ? secondaryGenre : undefined)
                     .onChange((data) => update(state, index, "secondaryGenre", data))
                     .setStyle(ButtonStyle.Inline)

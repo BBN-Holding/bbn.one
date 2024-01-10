@@ -2,9 +2,8 @@ import { API, LoadingSpinner, stupidErrorAlert, uploadFilesDialog } from "shared
 import { AdvancedImage, Body, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Page, Spacer, State, SupportedThemes, TextInput, Vertical, WebGen, Wizard } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
+import genres from "../../data/genres.json" with { type: "json" };
 import language from "../../data/language.json" with { type: "json" };
-import primary from "../../data/primary.json" with { type: "json" };
-import secondary from "../../data/secondary.json" with { type: "json" };
 import { ArtistTypes, Drop, DropType, pageFive, pageFour, pageOne, pageThree, pageTwo } from "../../spec/music.ts";
 import { CenterAndRight, EditArtists, RegisterAuthRefresh, allowedAudioFormats, allowedImageFormats, getDropFromPages, getSecondary } from "./helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
@@ -138,15 +137,15 @@ const wizard = (restore?: Drop) => Wizard({
                     }),
                 Center(Label("Set your target Audience").addClass("title")),
                 Grid(
-                    DropDownInput("Primary Genre", primary)
+                    DropDownInput("Primary Genre", Object.keys(genres))
                         .sync(state, "primaryGenre")
                         .onChange(() => {
                             state.secondaryGenre = undefined;
                         }),
                     state.$primaryGenre.map(() =>
-                        DropDownInput("Secondary Genre", getSecondary(secondary, state.primaryGenre) ?? [])
+                        DropDownInput("Secondary Genre", getSecondary(genres, state.primaryGenre) ?? [])
                             .sync(state, "secondaryGenre")
-                            .setColor(getSecondary(secondary, state.primaryGenre) ? Color.Grayscaled : Color.Disabled)
+                            .setColor(getSecondary(genres, state.primaryGenre) ? Color.Grayscaled : Color.Disabled)
                             .addClass("border-box")
                             .setWidth("100%")
                     ).asRefComponent(),
@@ -189,7 +188,7 @@ const wizard = (restore?: Drop) => Wizard({
                         }, allowedImageFormats.join(",")))
                 ),
                 DropAreaInput(
-                    CenterV(data.artworkClientData ? Image(data.artworkClientData, "A Music Album Artwork.") : Label("Drop your Artwork here.").setFont(1.2, 600)),
+                    CenterV(data.artworkClientData ? Image(data.artworkClientData, "A Music Album Artwork.") : Label("Drop your Artwork here.").setTextSize("xl").setFontWeight("semibold")),
                     allowedImageFormats,
                     ([ { file } ]) => uploadArtwork(data, file)
                 ).addClass("drop-area")

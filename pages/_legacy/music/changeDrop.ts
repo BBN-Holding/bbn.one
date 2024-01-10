@@ -1,9 +1,8 @@
 import { API, stupidErrorAlert, uploadFilesDialog } from "shared/mod.ts";
 import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, MIcon, Page, Spacer, State, TextInput, Wizard } from "webgen/mod.ts";
 import artwork from "../../../assets/img/template-artwork.png";
+import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
-import primary from "../../../data/primary.json" with { type: "json" };
-import secondary from "../../../data/secondary.json" with { type: "json" };
 import { ArtistTypes, Drop, pureDrop } from "../../../spec/music.ts";
 import { EditArtists, allowedImageFormats, getSecondary } from "../helper.ts";
 import { uploadArtwork } from "./data.ts";
@@ -69,12 +68,12 @@ export function ChangeDrop(drop: Drop) {
                 [
                     { width: 2 },
                     Grid(
-                        DropDownInput("Primary Genre", primary)
+                        DropDownInput("Primary Genre", Object.keys(genres))
                             .sync(data, "primaryGenre")
                             .onChange(() => {
                                 data.secondaryGenre = undefined!;
                             }),
-                        data.$primaryGenre.map(() => DropDownInput("Secondary Genre", getSecondary(secondary, data.primaryGenre) ?? [])
+                        data.$primaryGenre.map(() => DropDownInput("Secondary Genre", getSecondary(genres, data.primaryGenre) ?? [])
                             .sync(data, "secondaryGenre")
                             .addClass("border-box")
                             .setWidth("100%")

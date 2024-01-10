@@ -54,7 +54,7 @@ Body(Vertical(
             children: [
                 Horizontal(
                     //TODO: Make this look better
-                    Label(DropTypeToText(drop.type)).setFont(1.5),
+                    Label(DropTypeToText(drop.type)).setTextSize("2xl"),
                     Spacer()
                 ),
                 {
