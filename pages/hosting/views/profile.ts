@@ -16,7 +16,6 @@ export const profileView = () =>
                             .setTextSize("4xl")
                             .setFontWeight("bold"),
                         Label("Coins")
-                            .setTextSize("base")
                             .setFontWeight("bold")
                             .addClass("gray-color")
                     )
@@ -29,7 +28,6 @@ export const profileView = () =>
                                 .setTextSize("4xl")
                                 .setFontWeight("bold"),
                             Label("Servers")
-                                .setTextSize("base")
                                 .setFontWeight("bold")
                                 .addClass("gray-color")
                         )
@@ -57,7 +55,6 @@ export const profileView = () =>
                                 .setTextSize("4xl")
                                 .setFontWeight("bold"),
                             Label("Memory")
-                                .setTextSize("base")
                                 .setFontWeight("bold")
                                 .addClass("gray-color")
                         )
@@ -85,7 +82,6 @@ export const profileView = () =>
                                 .setTextSize("4xl")
                                 .setFontWeight("bold"),
                             Label("Disk")
-                                .setTextSize("base")
                                 .setFontWeight("bold")
                                 .addClass("gray-color")
                         )
@@ -113,7 +109,6 @@ export const profileView = () =>
                                 .setTextSize("4xl")
                                 .setFontWeight("bold"),
                             Label("CPU")
-                                .setTextSize("base")
                                 .setFontWeight("bold")
                                 .addClass("gray-color")
                         )

@@ -10,7 +10,7 @@ Body(Box(
     DynaNavigation("Home"),
     Box(
         Label("Imprint", "h2"),
-        Label(`BBN Holding Inc.`).setTextSize("base").setFontWeight("semibold").addClass("block"),
+        Label(`BBN Holding Inc.`).setFontWeight("semibold").addClass("block"),
         Label(`270 Trace Colony Park Dr, Suite B`).addClass("block"),
         Box(Label(`Ridgeland - MS 39157`)),
         Box(Label(`Email: support@bbn.one`)),

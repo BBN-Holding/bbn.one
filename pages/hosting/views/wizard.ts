@@ -37,7 +37,6 @@ export const creationView = () => creationState.$loading.map(loading => {
                 .setMargin(".8rem 0 0"),
             Label("You are almost there!")
                 .addClass("gray-color")
-                .setTextSize("base")
                 .setFontWeight("bold")
                 .setMargin("0.4rem 0 0"),
 

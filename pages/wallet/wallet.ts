@@ -96,7 +96,6 @@ const sheets = Sheets(Vertical(
                                 .setTextSize("4xl")
                                 .setFontWeight("bold"),
                             Label("Balance")
-                                .setTextSize("base")
                                 .setFontWeight("bold")
                                 .addClass("gray-color")
                         )
@@ -108,7 +107,6 @@ const sheets = Sheets(Vertical(
                                 .setTextSize("4xl")
                                 .setFontWeight("bold"),
                             Label("Your Cut")
-                                .setTextSize("base")
                                 .setFontWeight("bold")
                                 .addClass("gray-color")
                         )
