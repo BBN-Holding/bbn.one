@@ -1,6 +1,6 @@
 import { API, StreamingUploadHandler, stupidErrorAlert, uploadFilesDialog } from "shared/mod.ts";
 import { delay } from "std/async/mod.ts";
-import { AdvancedImage, Box, Grid, IconButton, Image, MIcon, Page, TextInput, Vertical, Wizard } from "webgen/mod.ts";
+import { AdvancedImage, Box, Grid, IconButton, Image, MIcon, TextInput, Vertical } from "webgen/mod.ts";
 import { activeUser, allowedImageFormats, forceRefreshToken } from "../_legacy/helper.ts";
 
 export function ChangePersonal() {

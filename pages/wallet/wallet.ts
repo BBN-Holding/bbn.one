@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { Body, Button, Card, Center, Color, Grid, Label, LinkButton, MediaQuery, Sheet, Sheets, State, Table, TextInput, Vertical, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Button, Card, Center, Color, Grid, Label, LinkButton, MediaQuery, Sheet, State, Table, TextInput, Vertical, WebGen, isMobile } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
 import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";

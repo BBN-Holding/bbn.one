@@ -1,14 +1,14 @@
-import { Body, Sheets, State, Vertical, WebGen } from "webgen/mod.ts";
+import { Body, State, Vertical, WebGen } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
-import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
+import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded, sheetStack } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 import { listFiles, liveUpdates, refreshState, startSidecarConnection } from "./loading.ts";
 import { hostingMenu } from "./views/menu.ts";
 
+import { LoadingSpinner } from "shared/components.ts";
+import { API, stupidErrorAlert } from "shared/restSpec.ts";
 import '../../assets/css/hosting.css';
-import { LoadingSpinner } from "../shared/components.ts";
-import { API, stupidErrorAlert } from "../shared/restSpec.ts";
 import { path } from "./views/state.ts";
 await RegisterAuthRefresh();
 
@@ -22,13 +22,9 @@ WebGen({
     }
 });
 
-export const hostingSheets = Sheets(
-    hostingMenu
-)
-    .setSheetWidth("auto")
-    .setSheetHeight("auto");
+sheetStack.setDefault(hostingMenu);
 
-Body(Vertical(DynaNavigation("Hosting"), state.$loaded.map(loaded => loaded ? hostingSheets : LoadingSpinner()).asRefComponent()));
+Body(Vertical(DynaNavigation("Hosting"), state.$loaded.map(loaded => loaded ? sheetStack : LoadingSpinner()).asRefComponent()));
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())

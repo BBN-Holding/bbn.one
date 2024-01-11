@@ -66,54 +66,28 @@ export const song = zod.object({
 })
     .refine(({ instrumental, explicit }) => !(instrumental && explicit), "Can't have an explicit instrumental song");
 
-export const pageOne = zod.object({
-    upc: zod.string().nullish()
+export const drop = zod.object({
+    _id: zod.string(),
+    upc: zod.string()
         .transform(x => x?.trim())
-        .transform(x => x?.length == 0 ? null : x)
-        .refine(x => x == null || x.length > 0, { message: "Not a valid UPC" })
-});
-
-export const pageTwo = zod.object({
+        // .transform(x => x?.length == 0 ? undefined : x)
+        .refine(x => x == undefined || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" }),
     title: userString,
     artists: artist.array().min(1),
     release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
     language: zod.string(),
     primaryGenre: zod.string(),
-    secondaryGenre: zod.string()
-});
-
-export const pageThree = zod.object({
+    secondaryGenre: zod.string(),
     compositionCopyright: userString,
-    soundRecordingCopyright: userString
-});
-
-export const pageFour = zod.object({
+    soundRecordingCopyright: userString,
     loading: zod.literal(false, { description: "Upload still in progress" }).transform(_ => undefined),
-    artwork: zod.string()
-});
-
-export const pageFive = zod.object({
+    artwork: zod.string(),
     uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }).transform(_ => undefined),
-    songs: song.array().min(1)
+    songs: song.array().min(1),
+    comments: userString.optional(),
+    user: zod.string(),
+    type: zod.nativeEnum(DropType),
 });
-
-export const pageSix = zod.object({
-    comments: userString.optional()
-});
-
-export const pureDrop = pageOne
-    .merge(pageTwo)
-    .merge(pageThree)
-    .merge(pageFour)
-    .merge(pageFive)
-    .merge(pageSix);
-
-export const drop = pureDrop
-    .merge(zod.object({
-        _id: zod.string(),
-        user: zod.string(),
-        type: zod.nativeEnum(DropType),
-    }));
 
 export const payout = zod.object({
     _id: zod.string(),
@@ -576,7 +550,6 @@ export type Meta = zod.infer<typeof meta>;
 export type OAuthApp = zod.infer<typeof oauthapp>;
 export type Payout = zod.infer<typeof payout>;
 export type PowerState = zod.infer<typeof serverPowerState>;
-export type PureDrop = zod.infer<typeof pureDrop>;
 export type Server = zod.infer<typeof server>;
 export type ServerCreate = zod.infer<typeof serverCreate>;
 export type Song = zod.infer<typeof song>;

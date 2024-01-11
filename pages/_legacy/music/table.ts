@@ -2,10 +2,10 @@ import { Progress } from "shared/mod.ts";
 import { Box, ButtonStyle, Checkbox, Color, Content, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, State, StateHandler, Table } from "webgen/mod.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
-import { Drop } from "../../../spec/music.ts";
+import { Drop, Song } from "../../../spec/music.ts";
 import { EditArtists, ProfilePicture, getSecondary, getYearList } from "../helper.ts";
 
-export function ManageSongs(state: StateHandler<{ songs: Drop[ "songs" ]; }>) {
+export function ManageSongs(state: StateHandler<{ songs: Song[]; }>) {
     const tableView = Content(
         Table([
             [ "Title", "auto", ({ progress, title }, index) => progress !== undefined ? Progress(progress) : InlineTextInput("text", "blur").addClass("low-level").setValue(title).onChange(x => update(state, index, "title", x)) ],

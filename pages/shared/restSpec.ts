@@ -474,7 +474,7 @@ export const API = {
             })
                 .then(json<Drop>())
                 .catch(reject),
-            update: async (data: Drop) => await fetch(`${API.BASE_URL}music/drops/${id}`, {
+            update: async (data: Partial<Drop>) => await fetch(`${API.BASE_URL}music/drops/${id}`, {
                 method: "PATCH",
                 body: JSON.stringify(data),
                 headers: headers(API.getToken())

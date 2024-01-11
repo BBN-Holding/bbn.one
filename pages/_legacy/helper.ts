@@ -1,7 +1,7 @@
 // This code Will be ported to webgen
 
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { Box, Button, Cache, Component, Custom, DropDownInput, Horizontal, Image, Label, Page, Spacer, State, StateHandler, Style, SupportedThemes, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, Cache, Component, Custom, DropDownInput, Horizontal, Image, Label, SheetsStack, Spacer, State, StateHandler, Style, SupportedThemes, Table, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -175,6 +175,10 @@ export function CenterAndRight(center: Component, right: Component): Component {
     );
 }
 
+export const sheetStack = SheetsStack()
+    .setSheetWidth("auto")
+    .setSheetHeight("auto");
+
 // BBN Stuff
 export function getYearList(): string[] {
     return new Array(new Date().getFullYear() - 2000 + 1)
@@ -282,13 +286,6 @@ function update(state: StateHandler<{ list: [ name: string, img: string, type: A
         state.list = [];
     state.list[ index ][ key ] = value;
     state.list = [ ...state.list ];
-}
-
-export function getDropFromPages(data: StateHandler<Partial<Drop>>[], restore?: Drop): Drop {
-    return <Drop>{
-        ...restore,
-        ...Object.assign({}, ...data)
-    };
 }
 
 export function ProfilePicture(component: Component, name: string) {

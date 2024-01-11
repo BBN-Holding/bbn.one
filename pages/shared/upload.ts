@@ -9,7 +9,9 @@ export type StreamingUploadEvents = {
     failure: () => void,
 };
 
+
 export function uploadFilesDialog(onData: (files: File[]) => void, accept: string) {
+    //TODO: USE createFilePicker(accept)
     const upload = createElement("input");
     upload.type = "file";
     upload.accept = accept;
