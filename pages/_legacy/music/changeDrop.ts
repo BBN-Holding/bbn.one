@@ -1,5 +1,5 @@
-import { API, stupidErrorAlert, uploadFilesDialog } from "shared/mod.ts";
-import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, MIcon, Spacer, TextInput } from "webgen/mod.ts";
+import { API, stupidErrorAlert } from "shared/mod.ts";
+import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, MIcon, Spacer, TextInput, createFilePicker } from "webgen/mod.ts";
 import artwork from "../../../assets/img/template-artwork.png";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
@@ -42,9 +42,7 @@ export function ChangeDrop(drop: Drop) {
                             .addClass("upload-image"),
                         allowedImageFormats,
                         ([ { file } ]) => uploadArtwork(data, file)
-                    ).onClick(() => uploadFilesDialog(([ file ]) => {
-                        uploadArtwork(data, file);
-                    }, allowedImageFormats.join(",")))).asRefComponent(),
+                    ).onClick(() => createFilePicker(allowedImageFormats.join(",")).then(file => uploadArtwork(data, file)))).asRefComponent(),
                 ).setDynamicColumns(2, "12rem"),
                 [
                     { width: 2 },

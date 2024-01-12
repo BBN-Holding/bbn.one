@@ -1,4 +1,5 @@
 import * as zod from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
 import { AdvancedImage, Body, Box, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, Image, Label, MediaQuery, Spacer, State, SupportedThemes, TextInput, Validate, Vertical, WebGen, createFilePicker, getErrorMessage } from "webgen/mod.ts";
 import '../../assets/css/main.css';
@@ -11,7 +12,6 @@ import { CenterAndRight, EditArtistsDialog, RegisterAuthRefresh, allowedAudioFor
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
 import { ManageSongs } from "./music/table.ts";
 // Do no move this import
-import { ZodError } from "https://deno.land/x/zod@v3.22.4/ZodError.ts";
 import '../../assets/css/wizard.css';
 
 await RegisterAuthRefresh();

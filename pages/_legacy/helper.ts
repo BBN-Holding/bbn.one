@@ -1,5 +1,3 @@
-// This code Will be ported to webgen
-
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
 import { Box, Button, Cache, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, State, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
@@ -148,8 +146,8 @@ export async function RegisterAuthRefresh() {
         checkIfRefreshTokenIsValid();
         await renewAccessTokenIfNeeded();
         setInterval(() => renewAccessTokenIfNeeded(), 1000);
-    } catch (_) {
-        console.error(_);
+    } catch (error) {
+        console.error(error);
     }
 }
 
@@ -180,7 +178,6 @@ export const sheetStack = SheetsStack()
     .setSheetWidth("auto")
     .setSheetHeight("auto");
 
-// BBN Stuff
 export function getYearList(): string[] {
     return new Array(new Date().getFullYear() - 2000 + 1)
         .fill(1)

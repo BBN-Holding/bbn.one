@@ -1,5 +1,5 @@
 import { API } from "shared/mod.ts";
-import { Pointer, asPointer, createElement } from "webgen/mod.ts";
+import { Pointer, asPointer } from "webgen/mod.ts";
 
 export type StreamingUploadEvents = {
     credentials: () => string,
@@ -8,18 +8,6 @@ export type StreamingUploadEvents = {
     backendResponse: (id: string) => void;
     failure: () => void,
 };
-
-
-export function uploadFilesDialog(onData: (files: File[]) => void, accept: string) {
-    //TODO: USE createFilePicker(accept)
-    const upload = createElement("input");
-    upload.type = "file";
-    upload.accept = accept;
-    upload.click();
-    upload.onchange = () => {
-        onData(Array.from(upload.files ?? []));
-    };
-}
 
 export function ProgressTracker(percentage: Pointer<number>, expectedSize: number) {
     let bytesUploaded = 0;

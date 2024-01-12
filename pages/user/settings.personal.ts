@@ -1,6 +1,6 @@
-import { API, StreamingUploadHandler, stupidErrorAlert, uploadFilesDialog } from "shared/mod.ts";
+import { API, StreamingUploadHandler, stupidErrorAlert } from "shared/mod.ts";
 import { delay } from "std/async/mod.ts";
-import { AdvancedImage, Box, Grid, IconButton, Image, MIcon, TextInput, Vertical } from "webgen/mod.ts";
+import { AdvancedImage, Box, Grid, IconButton, Image, MIcon, TextInput, Vertical, createFilePicker } from "webgen/mod.ts";
 import { activeUser, allowedImageFormats, forceRefreshToken } from "../_legacy/helper.ts";
 
 export function ChangePersonal() {
@@ -21,33 +21,33 @@ export function ChangePersonal() {
         }, (data) => [
             Vertical(
                 Grid(
-                    data.$profilePicture.map(() => Box(Image(data.profilePicture ?? { type: "loading" }, "Your Avatarimage"), IconButton(MIcon("edit"), "edit-icon")).addClass("upload-image").onClick(() => {
-                        uploadFilesDialog(([ file ]) => {
-                            const blobUrl = URL.createObjectURL(file);
-                            data.profilePicture = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage: 0 };
-                            data.loading = true;
-                            setTimeout(() => {
-                                StreamingUploadHandler(`user/set-me/avatar/upload`, {
-                                    failure: () => {
-                                        data.loading = false;
-                                        data.profilePicture = activeUser.avatar;
-                                        alert("Your Upload has failed. Please try a different file or try again later");
-                                    },
-                                    uploadDone: () => {
-                                        data.profilePicture = <AdvancedImage>{ type: "waiting-upload", filename: file.name, blobUrl };
-                                    },
-                                    backendResponse: () => {
-                                        data.loading = false;
-                                        data.profilePicture = <AdvancedImage>{ type: "direct", source: async () => await file };
-                                    },
-                                    credentials: () => API.getToken(),
-                                    onUploadTick: async (percentage) => {
-                                        data.profilePicture = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage };
-                                        await delay(2);
-                                    }
-                                }, file);
-                            });
-                        }, allowedImageFormats.join(","));
+                    data.$profilePicture.map(() => Box(Image(data.profilePicture ?? { type: "loading" }, "Your Avatarimage"), IconButton(MIcon("edit"), "edit-icon")).addClass("upload-image").onClick(async () => {
+                        const file = await createFilePicker(allowedImageFormats.join(","));
+                        const blobUrl = URL.createObjectURL(file);
+                        data.profilePicture = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage: 0 };
+                        data.loading = true;
+                        setTimeout(() => {
+                            StreamingUploadHandler(`user/set-me/avatar/upload`, {
+                                failure: () => {
+                                    data.loading = false;
+                                    data.profilePicture = activeUser.avatar;
+                                    alert("Your Upload has failed. Please try a different file or try again later");
+                                },
+                                uploadDone: () => {
+                                    data.profilePicture = <AdvancedImage>{ type: "waiting-upload", filename: file.name, blobUrl };
+                                },
+                                backendResponse: () => {
+                                    data.loading = false;
+                                    data.profilePicture = <AdvancedImage>{ type: "direct", source: async () => await file };
+                                },
+                                credentials: () => API.getToken(),
+                                onUploadTick: async (percentage) => {
+                                    data.profilePicture = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage };
+                                    await delay(2);
+                                }
+                            }, file);
+                        });
+
                     })).asRefComponent(),
                     [
                         { width: 2 },

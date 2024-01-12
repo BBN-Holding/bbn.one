@@ -6,7 +6,7 @@ import { Song } from "../../../spec/music.ts";
 import { Table2 } from "../../hosting/views/table2.ts";
 import { EditArtistsDialog, ProfilePicture, getSecondary, getYearList } from "../helper.ts";
 
-export function ManageSongs(state: StateHandler<{ songs: Song[]; primaryGenre: string; }>) {
+export function ManageSongs(state: StateHandler<{ songs: Song[]; primaryGenre: string | undefined; }>) {
     return new Table2(state.$songs)
         .setColumnTemplate("auto max-content max-content max-content max-content max-content max-content min-content")
         .addColumn("Title", (song) => song.progress !== undefined ? Progress(song.progress) :
