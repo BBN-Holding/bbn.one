@@ -1,14 +1,17 @@
+import * as zod from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { AdvancedImage, Body, Box, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Grid, Horizontal, Image, Label, MediaQuery, Spacer, State, SupportedThemes, TextInput, Vertical, WebGen, createFilePicker } from "webgen/mod.ts";
+import { AdvancedImage, Body, Box, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, Image, Label, MediaQuery, Spacer, State, SupportedThemes, TextInput, Validate, Vertical, WebGen, createFilePicker, getErrorMessage } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
 import language from "../../data/language.json" with { type: "json" };
-import { Artist, ArtistTypes, DropType, Song } from "../../spec/music.ts";
-import { CenterAndRight, EditArtists, RegisterAuthRefresh, allowedAudioFormats, allowedImageFormats, getSecondary } from "./helper.ts";
+import { Artist, DATE_PATTERN, DropType, Song, artist, userString } from "../../spec/music.ts";
+import '../hosting/views/table2.css';
+import { CenterAndRight, EditArtistsDialog, RegisterAuthRefresh, allowedAudioFormats, allowedImageFormats, getSecondary, sheetStack } from "./helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
 import { ManageSongs } from "./music/table.ts";
 // Do no move this import
+import { ZodError } from "https://deno.land/x/zod@v3.22.4/ZodError.ts";
 import '../../assets/css/wizard.css';
 
 await RegisterAuthRefresh();
@@ -31,17 +34,19 @@ API.music.id(dropId).get().then(stupidErrorAlert)
         state.title = drop.title;
         state.release = drop.release;
         state.language = drop.language;
-        state.artists = State(drop.artists);
+        state.artists = State(drop.artists ?? []);
         state.primaryGenre = drop.primaryGenre;
         state.secondaryGenre = drop.secondaryGenre;
         state.compositionCopyright = drop.compositionCopyright;
         state.soundRecordingCopyright = drop.soundRecordingCopyright;
         state.artwork = drop.artwork;
         state.artworkClientData = <AdvancedImage | string | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id).artwork().then(stupidErrorAlert) } : undefined);
-        state.songs = State(drop.songs);
+        state.songs = State(drop.songs ?? []);
         state.comments = drop.comments;
     })
     .then(() => state.loaded = true);
+
+// uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }).transform(_ => undefined),
 
 const state = State({
     loaded: false,
@@ -61,16 +66,19 @@ const state = State({
     uploadingSongs: <string[]>[],
     songs: <Song[]>[],
     comments: <string | undefined>undefined,
-    page: 0
+    page: 0,
+    validationState: <ZodError | undefined>undefined
 });
 
-Body(Vertical(
+sheetStack.setDefault(Vertical(
     DynaNavigation("Music"),
     state.$loaded.map(loaded => loaded ?
         wizard.addClass("wizard-box")
         : LoadingSpinner()
     ).asRefComponent()
-))
+));
+
+Body(sheetStack)
     .addClass("fullscreen");
 
 const wizard = state.$page.map(page => {
@@ -100,7 +108,32 @@ const wizard = state.$page.map(page => {
         ),
         Spacer(),
         Spacer(),
-        Horizontal(Button("Cancel"), Spacer(), Button("Next").onClick(() => state.page++)).addClass("footer"),
+        Horizontal(
+            Button("Cancel").setStyle(ButtonStyle.Secondary).onClick(() => location.href = "/music"),
+            Spacer(),
+            Box(state.$validationState.map(error => error ? CenterV(
+                Label(getErrorMessage(error))
+                    .addClass("error-message")
+                    .setMargin("0 0.5rem 0 0")
+            )
+                : Empty()).asRefComponent()),
+            Button("Next").onClick(async () => {
+                const { error, validate } = Validate(
+                    state,
+                    zod.object({
+                        upc: zod.string().nullish()
+                            .transform(x => x?.trim())
+                            // .transform(x => x?.length == 0 ? undefined : x)
+                            .refine(x => x == undefined || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" })
+                    })
+                );
+
+                const data = validate();
+                if (error.getValue()) return state.validationState = error.getValue();
+                if (data) await API.music.id(dropId).update(data);
+                state.page++;
+                state.validationState = undefined;
+            })).addClass("footer"),
     ).addClass("wwizard");
     else if (page == 1) return Vertical(
         Spacer(),
@@ -116,22 +149,13 @@ const wizard = state.$page.map(page => {
                 )
                     .setEvenColumns(small ? 1 : 2)
                     .setGap(),
-                // TODO: Make this a nicer component
                 Button("Artists")
-                    .onClick(() => {
-                        EditArtists(state.artists ?? [ [ "", "", ArtistTypes.Primary ] ])
-                            .then((x) => {
-                                // deno-lint-ignore no-explicit-any
-                                state.artists = <any>x?.map(x => x.map(x => x.trim()));
-                            });
-                    }),
+                    .onClick(() => EditArtistsDialog(state).open()),
                 Center(Label("Set your target Audience").addClass("title")),
                 Grid(
                     DropDownInput("Primary Genre", Object.keys(genres))
                         .sync(state, "primaryGenre")
-                        .onChange(() => {
-                            state.secondaryGenre = undefined;
-                        }),
+                        .onChange(() => state.secondaryGenre = undefined),
                     state.$primaryGenre.map(() =>
                         DropDownInput("Secondary Genre", getSecondary(genres, state.primaryGenre) ?? [])
                             .sync(state, "secondaryGenre")
@@ -148,7 +172,34 @@ const wizard = state.$page.map(page => {
                 .setGap()
         ),
         Spacer(),
-        Horizontal(Button("Back").onClick(() => state.page--), Spacer(), Button("Next").onClick(() => state.page++)).addClass("footer"),
+        Horizontal(
+            Button("Back").setStyle(ButtonStyle.Secondary).onClick(() => state.page--),
+            Spacer(),
+            Box(state.$validationState.map(error => error ? CenterV(
+                Label(getErrorMessage(error))
+                    .addClass("error-message")
+                    .setMargin("0 0.5rem 0 0")
+            )
+                : Empty()).asRefComponent()),
+            Button("Next").onClick(async () => {
+                const { error, validate } = Validate(
+                    state,
+                    zod.object({
+                        title: userString,
+                        artists: artist.array().refine(x => x.some(([ , , type ]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+                        release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
+                        language: zod.string(),
+                        primaryGenre: zod.string(),
+                        secondaryGenre: zod.string(),
+                    })
+                );
+
+                const data = validate();
+                if (error.getValue()) return state.validationState = error.getValue();
+                if (data) await API.music.id(dropId).update(data);
+                state.page++;
+                state.validationState = undefined;
+            })).addClass("footer")
     ).addClass("wwizard");
     else if (page == 2) return Vertical(
         Spacer(),
@@ -161,7 +212,30 @@ const wizard = state.$page.map(page => {
             .addClass("grid-area")
             .setGap(),
         Spacer(),
-        Horizontal(Button("Back").onClick(() => state.page--), Spacer(), Button("Next").onClick(() => state.page++)).addClass("footer"),
+        Horizontal(
+            Button("Back").setStyle(ButtonStyle.Secondary).onClick(() => state.page--),
+            Spacer(),
+            Box(state.$validationState.map(error => error ? CenterV(
+                Label(getErrorMessage(error))
+                    .addClass("error-message")
+                    .setMargin("0 0.5rem 0 0")
+            )
+                : Empty()).asRefComponent()),
+            Button("Next").onClick(async () => {
+                const { error, validate } = Validate(
+                    state,
+                    zod.object({
+                        compositionCopyright: userString,
+                        soundRecordingCopyright: userString,
+                    })
+                );
+
+                const data = validate();
+                if (error.getValue()) return state.validationState = error.getValue();
+                if (data) await API.music.id(dropId).update(data);
+                state.page++;
+                state.validationState = undefined;
+            })).addClass("footer"),
     ).addClass("wwizard");
     else if (page == 3) return Vertical(
         Spacer(),
@@ -180,7 +254,30 @@ const wizard = state.$page.map(page => {
             ).setGap()).asRefComponent()
         ),
         Spacer(),
-        Horizontal(Button("Back").onClick(() => state.page--), Spacer(), Button("Next").onClick(() => state.page++)).addClass("footer"),
+        Horizontal(
+            Button("Back").setStyle(ButtonStyle.Secondary).onClick(() => state.page--),
+            Spacer(),
+            Box(state.$validationState.map(error => error ? CenterV(
+                Label(getErrorMessage(error))
+                    .addClass("error-message")
+                    .setMargin("0 0.5rem 0 0")
+            )
+                : Empty()).asRefComponent()),
+            Button("Next").onClick(async () => {
+                const { error, validate } = Validate(
+                    state,
+                    zod.object({
+                        artwork: zod.string(),
+                        loading: zod.literal(false, { errorMap: () => ({ message: "Artwork is still uploading" }) })
+                    })
+                );
+
+                const data = validate();
+                if (error.getValue()) return state.validationState = error.getValue();
+                if (data) await API.music.id(dropId).update(data);
+                state.page++;
+                state.validationState = undefined;
+            })).addClass("footer")
     ).addClass("wwizard");
     else if (page == 4) return Vertical(
         Spacer(),
@@ -197,7 +294,30 @@ const wizard = state.$page.map(page => {
             Spacer()
         ),
         Spacer(),
-        Horizontal(Button("Back").onClick(() => state.page--), Spacer(), Button("Next").onClick(() => state.page++)).addClass("footer"),
+        Horizontal(
+            Button("Back").setStyle(ButtonStyle.Secondary).onClick(() => state.page--),
+            Spacer(),
+            Box(state.$validationState.map(error => error ? CenterV(
+                Label(getErrorMessage(error))
+                    .addClass("error-message")
+                    .setMargin("0 0.5rem 0 0")
+            )
+                : Empty()).asRefComponent()),
+            Button("Next").onClick(async () => {
+                const { error, validate } = Validate(
+                    state,
+                    zod.object({
+                        artwork: zod.string(),
+                        loading: zod.literal(false, { errorMap: () => ({ message: "Artwork is still uploading" }) })
+                    })
+                );
+
+                const data = validate();
+                if (error.getValue()) return state.validationState = error.getValue();
+                if (data) await API.music.id(dropId).update(data);
+                state.page++;
+                state.validationState = undefined;
+            })).addClass("footer")
     ).addClass("wwizard");
     else if (page == 5) return Vertical(
         Spacer(),
@@ -212,8 +332,8 @@ const wizard = state.$page.map(page => {
             Spacer()
         ),
         Spacer(),
-        Horizontal(Button("Back").onClick(() => state.page--), Spacer(), Button("Submit").onClick(async () => {
-            state.loading = true;
+        Horizontal(Button("Back").setStyle(ButtonStyle.Secondary).onClick(() => state.page--), Spacer(), Button("Submit").onClick(async () => {
+            state.loaded = false;
             await API.music.id(dropId).update(state);
 
             await API.music.id(dropId).type.post(DropType.UnderReview);
@@ -221,5 +341,4 @@ const wizard = state.$page.map(page => {
         })).addClass("footer"),
     ).addClass("wwizard");
     return Box();
-}
-).asRefComponent();
+}).asRefComponent();

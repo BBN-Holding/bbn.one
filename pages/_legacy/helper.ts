@@ -1,10 +1,11 @@
 // This code Will be ported to webgen
 
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { Box, Button, Cache, Component, Custom, DropDownInput, Horizontal, Image, Label, SheetsStack, Spacer, State, StateHandler, Style, SupportedThemes, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, Cache, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, State, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
+import { Table2 } from "../hosting/views/table2.ts";
 export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
@@ -45,7 +46,7 @@ export function changeThemeColor(): ((data: SupportedThemes, options: Style) => 
     return (_data) => { };// document.head.querySelector("meta[name=theme-color]")?.setAttribute("content", data == SupportedThemes.autoLight ? "#e6e6e6" : "#0a0a0a");
 }
 
-export function getSecondary(secondary: Record<string, string[]>, primaryGenre?: string): string[] | null {
+export function getSecondary(secondary: Record<string, string[]>, primaryGenre?: string) {
     return primaryGenre ? secondary[ primaryGenre ] : null;
 }
 
@@ -213,57 +214,39 @@ export function saveBlob(blob: Blob, fileName: string) {
 }
 
 const ARTIST_ARRAY = <ArtistTypes[]>[ "PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER" ];
-export function EditArtists(list: Artist[]) {
-    const form = Page({
-        list
-    }, (state) => [
-        state.$list.map(() =>
-            Vertical(
-                Table([
-                    [ "Type", "10rem", (artist, index) =>
-                        DropDownInput("Type", ARTIST_ARRAY)
-                            .setValue(artist[ 2 ])
-                            .onChange(data => update(state, index, 2, data))
-                    ],
-                    [ "Name", "auto", (artist, index) =>
-                        TextInput("text", "Name", "blur")
-                            .setValue(artist[ 0 ])
-                            .onChange(data => update(state, index, 0, data!))
-                    ]
-                ], state.list)
-                    .setDelete((_, i) => {
-                        state.list = state.list?.filter((_, index) => index != i) as typeof state.list;
-                    }),
-                Horizontal(
-                    Spacer(),
-                    Button("Add Artist") // TODO: Remove this in the future => switch to ghost rows
-                        .onClick(() => {
-                            state.list = State([ ...state.list, [ "", "", ArtistTypes.Primary ] ] as [ string, string, ArtistTypes ][]);
-                        })
-                ).setPadding("0 0 3rem 0")
+export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[]; }>) => {
+    const dialog = SheetDialog(sheetStack, "Manage your Artists", Vertical(
+        new Table2(state.$artists)
+            .setColumnTemplate("10rem auto min-content")
+            .addColumn("Type", (artist: Artist) =>
+                DropDownInput("Type", ARTIST_ARRAY)
+                    .setValue(artist[ 2 ])
+                    .onChange(data => artist[ 2 ] = <ArtistTypes>data)
             )
-                .setGap()
-                .setWidth("clamp(0rem, 100vw, 60vw)")
-                .setMargin("0 -.6rem 0 0")
-        ).asRefComponent()
-    ]);
-    return new Promise<Drop[ "artists" ]>((done) => {
-        const dialog = Dialog(() => Box(...form.getComponents()))
-            .setTitle("Manage your Artists")
-            .allowUserClose()
-            .addClass("light-mode")
-            .onClose(() => {
-                dialog.remove();
-            })
-            .addButton("Save", () => {
-                const data = form.getFormData();
-                done(data.list);
+            .addColumn("Name", (artist: Artist) =>
+                TextInput("text", "Name", "blur")
+                    .setValue(artist[ 0 ])
+                    .onChange(data => artist[ 0 ] = data ?? "")
+            )
+            //how to handle without index?
+            .addColumn("", () => IconButton(MIcon("delete"), "Delete").onClick(() => "remove")),
+        Horizontal(
+            Spacer(),
+            Button("Add Artist")
+                .onClick(() => state.artists = State([ ...state.artists, [ "", "", ArtistTypes.Primary ] ] as Artist[]))
+        ).setPadding("0 0 3rem 0"),
+        Horizontal(
+            Spacer(),
+            Button("Save")
+                .onClick(() => dialog.close())
+        )
+    )
+        .setGap()
+        .setWidth("clamp(0rem, 100vw, 60vw)")
+        .setMargin("0 -.6rem 0 0"));
+    return dialog;
+};
 
-                return "remove";
-            })
-            .open();
-    });
-}
 export function showPreviewImage(x: Drop) {
     return x.artwork ? Cache(`image-preview-${x.artwork}`, () => Promise.resolve(),
         type => type == "loaded"
@@ -279,13 +262,6 @@ export async function loadImage(x: Drop) {
     const blob = await API.music.id(x._id).artwork().then(stupidErrorAlert);
     await cache.set(`image-preview-${x.artwork}`, blob);
     return blob;
-}
-
-function update(state: StateHandler<{ list: [ name: string, img: string, type: ArtistTypes ][] | undefined; }>, index: number, key: number, value: string) {
-    if (!state.list)
-        state.list = [];
-    state.list[ index ][ key ] = value;
-    state.list = [ ...state.list ];
 }
 
 export function ProfilePicture(component: Component, name: string) {

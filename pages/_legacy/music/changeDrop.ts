@@ -1,10 +1,10 @@
 import { API, stupidErrorAlert, uploadFilesDialog } from "shared/mod.ts";
-import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, MIcon, Spacer, State, TextInput } from "webgen/mod.ts";
+import { AdvancedImage, Box, Button, DropAreaInput, DropDownInput, Grid, IconButton, Image, MIcon, Spacer, TextInput } from "webgen/mod.ts";
 import artwork from "../../../assets/img/template-artwork.png";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
 import { ArtistTypes, Drop } from "../../../spec/music.ts";
-import { EditArtists, allowedImageFormats, getSecondary } from "../helper.ts";
+import { EditArtistsDialog, allowedImageFormats, getSecondary } from "../helper.ts";
 import { uploadArtwork } from "./data.ts";
 
 export function ChangeDrop(drop: Drop) {
@@ -59,9 +59,7 @@ export function ChangeDrop(drop: Drop) {
                     // TODO: Make this a nicer component
                     Button("Artists")
                         .onClick(() => {
-                            EditArtists(data.artists ?? [ [ "", "", ArtistTypes.Primary ] ]).then((x) => {
-                                data.artists = State(x);
-                            });
+                            EditArtistsDialog(data.artists ?? [ [ "", "", ArtistTypes.Primary ] ]).open();
                         }),
                 ],
                 [ { width: 2, height: 2 }, Spacer() ],

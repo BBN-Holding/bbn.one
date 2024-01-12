@@ -1,6 +1,6 @@
 import * as zod from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
-const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
+export const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
 export const userString = zod.string().min(1).refine(x => x.trim()).transform(x => x.trim());
 
 export enum DropType {
@@ -80,9 +80,7 @@ export const drop = zod.object({
     secondaryGenre: zod.string(),
     compositionCopyright: userString,
     soundRecordingCopyright: userString,
-    loading: zod.literal(false, { description: "Upload still in progress" }).transform(_ => undefined),
     artwork: zod.string(),
-    uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }).transform(_ => undefined),
     songs: song.array().min(1),
     comments: userString.optional(),
     user: zod.string(),
