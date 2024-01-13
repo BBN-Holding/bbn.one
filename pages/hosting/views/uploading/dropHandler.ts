@@ -2,7 +2,7 @@ import 'https://cdn.jsdelivr.net/npm/native-file-system-adapter/src/getOriginPri
 import { readableStreamFromIterable } from "https://deno.land/std@0.200.0/streams/readable_stream_from_iterable.ts";
 import { FileEntry, countFileTree, getFileStream } from "shared/fileHandler.ts";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Component, asPointer } from "webgen/mod.ts";
+import { Component, asRef } from "webgen/mod.ts";
 
 declare global {
     interface DataTransferItem {
@@ -12,7 +12,7 @@ declare global {
 
 export function DropHandler(onData: (data: ReadableStream<FileEntry>, length: number) => void, component: Component) {
     return new class extends Component {
-        hovering = asPointer(false);
+        hovering = asRef(false);
         constructor() {
             super();
             this.addClass(this.hovering.map(it => it ? "hovering" : "default"), "drop-area");

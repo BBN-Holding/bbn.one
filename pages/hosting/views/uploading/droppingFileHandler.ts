@@ -1,5 +1,5 @@
 import { FileEntry } from "shared/fileHandler.ts";
-import { asPointer } from "webgen/mod.ts";
+import { asRef } from "webgen/mod.ts";
 import { listFiles, uploadFile } from "../../loading.ts";
 import { RemotePath } from "../../types.ts";
 import { canWriteInFolder, loading, path, uploadingFiles } from "../state.ts";
@@ -12,7 +12,7 @@ export const droppingFileHandler = async (files: ReadableStream<FileEntry>, coun
     console.log("Uploading", count, "files");
     for await (const uploadingPath of files) {
         const currentPath = path.getValue();
-        const progressTracker = asPointer(0);
+        const progressTracker = asRef(0);
         uploadingFiles.setValue({
             ...uploadingFiles.getValue(),
             [ `${currentPath}${uploadingPath.path}` ]: <RemotePath>{

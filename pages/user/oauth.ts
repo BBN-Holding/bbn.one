@@ -1,6 +1,6 @@
 import { Footer } from "shared/footer.ts";
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { Body, Box, Button, ButtonStyle, Color, Grid, Horizontal, Image, Label, MIcon, Spacer, State, Vertical, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Box, Button, ButtonStyle, Color, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, WebGen, asState, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { dots, templateArtwork } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -33,7 +33,7 @@ if (!params.clientId || !params.scope || !params.redirectUri) {
 
 WebGen();
 
-const state = State({
+const state = asState({
     loaded: false,
     name: "",
     icon: ""

@@ -1,6 +1,5 @@
-import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API, LoadingSpinner, Navigation, createActionList, createBreadcrumb, createTagList, stupidErrorAlert } from "shared/mod.ts";
-import { AdvancedImage, Body, Empty, Grid, Horizontal, Label, Spacer, State, Vertical, WebGen, isMobile } from "webgen/mod.ts";
+import { AdvancedImage, Body, Empty, Grid, Horizontal, Label, Spacer, Vertical, WebGen, asState, isMobile } from "webgen/mod.ts";
 import '../../../assets/css/main.css';
 import '../../../assets/css/music.css';
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -26,10 +25,10 @@ if (!data.id) {
     location.href = "/music";
 }
 
-const state = State({
+const state = asState({
     loaded: false,
     _id: data.id,
-    title: <string>undefined!,
+    title: <string | undefined>undefined,
     type: <DropType | undefined>undefined,
     release: <string | undefined>undefined,
     language: <string | undefined>undefined,
@@ -39,11 +38,7 @@ const state = State({
     compositionCopyright: <string | undefined>undefined,
     soundRecordingCopyright: <string | undefined>undefined,
     artwork: <string | undefined>undefined,
-    artworkClientData: <AdvancedImage | string | undefined>undefined,
-    loading: false,
-    uploadingSongs: <string[]>[],
     songs: <Song[]>[],
-    validationState: <ZodError | undefined>undefined
 });
 
 sheetStack.setDefault(Vertical(
@@ -155,14 +150,14 @@ renewAccessTokenIfNeeded().then(async () => {
             state.title = drop.title;
             state.release = drop.release;
             state.language = drop.language;
-            state.artists = State(drop.artists ?? []);
+            state.artists = asState(drop.artists ?? []);
             state.primaryGenre = drop.primaryGenre;
             state.secondaryGenre = drop.secondaryGenre;
             state.compositionCopyright = drop.compositionCopyright;
             state.soundRecordingCopyright = drop.soundRecordingCopyright;
             state.artwork = drop.artwork;
             state.artworkClientData = <AdvancedImage | string | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id).artwork().then(stupidErrorAlert) } : undefined);
-            state.songs = State(drop.songs ?? []);
+            state.songs = asState(drop.songs ?? []);
         })
         .then(() => state.loaded = true);
 });

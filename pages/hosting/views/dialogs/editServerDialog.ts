@@ -1,15 +1,15 @@
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
 import { SliderInput } from "shared/slider.ts";
 import { format } from "std/fmt/bytes.ts";
-import { Button, Color, DropDownInput, Grid, Label, MediaQuery, Sheet, State, TextInput } from "webgen/mod.ts";
+import { Button, Color, DropDownInput, Grid, Label, MediaQuery, SheetDialog, TextInput, asState } from "webgen/mod.ts";
 import locations from "../../../../data/locations.json" with { type: "json" };
 import serverTypes from "../../../../data/servers.json" with { type: "json" };
 import { Server } from "../../../../spec/music.ts";
+import { sheetStack } from "../../../_legacy/helper.ts";
 import { MB, state } from "../../data.ts";
-import { hostingSheets } from "../../main.ts";
 
-export function editServerDialog(server: Server, versions: string[]) {
-    const data = State({
+export const editServerDialog = (server: Server, versions: string[]) => {
+    const data = asState({
         name: server.name,
         memory: server.limits.memory,
         disk: server.limits.disk,
@@ -18,9 +18,9 @@ export function editServerDialog(server: Server, versions: string[]) {
         version: server.version
     });
 
-    const sheet = Sheet(
+    const sheet = SheetDialog(sheetStack, `Edit '${server.name}'`,
         Grid(
-            Label(`Edit '${server.name}'`).setTextSize("2xl").setFontWeight("bold"),
+            Label(``).setTextSize("2xl").setFontWeight("bold"),
             Label(`A ${serverTypes[ server.type ].name} Server.`),
             MediaQuery("(max-width: 700px)", (small) => Grid(
                 [
@@ -57,7 +57,7 @@ export function editServerDialog(server: Server, versions: string[]) {
             Grid(
                 Label("Are you sure?"),
                 Grid(
-                    Button("Close").onClick(() => hostingSheets.remove(sheet)),
+                    Button("Close").onClick(() => sheet.close()),
                     Button("Save").setColor(Color.Critical).onClick(async () => {
                         await API.hosting.serverId(server._id)
                             .edit(data)
@@ -69,5 +69,5 @@ export function editServerDialog(server: Server, versions: string[]) {
             ).setGap("1rem")
         ).setGap().setMargin("1.5rem")
     );
-    hostingSheets.add(sheet);
-}
+    return sheet;
+};

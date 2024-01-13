@@ -1,7 +1,7 @@
-import { Pointer } from "webgen/mod.ts";
+import { Reference } from "webgen/mod.ts";
 import { External } from "./restSpec.ts";
 
-export const count = (list: Pointer<External<unknown[]> | 'loading' | unknown[] | undefined>) =>
+export const count = (list: Reference<External<unknown[]> | 'loading' | unknown[] | undefined>) =>
     list.map(val => {
         if (val === undefined || val === "loading") return '';
         if ('status' in val)

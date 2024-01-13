@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { Body, State, Vertical, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Vertical, WebGen, asState, isMobile } from "webgen/mod.ts";
 import '../../../assets/css/hosting.css';
 import '../../../assets/css/main.css';
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -12,7 +12,7 @@ import { creationView } from "./wizard.ts";
 await RegisterAuthRefresh();
 WebGen();
 
-const clickHandler = async (serverType: string) => { creationState.type = serverType.replace("-", "") as ServerTypes; creationState.versions = State(await API.hosting.versions(creationState.type).then(stupidErrorAlert)); };
+const clickHandler = async (serverType: string) => { creationState.type = serverType.replace("-", "") as ServerTypes; creationState.versions = asState(await API.hosting.versions(creationState.type).then(stupidErrorAlert)); };
 
 const navigation = state.$loaded.map(loaded => loaded ? Navigation({
     title: "New Server",

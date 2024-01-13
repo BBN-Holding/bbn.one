@@ -1,5 +1,5 @@
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { Box, Button, Cache, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, State, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
+import { asState, Box, Button, Cache, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -56,7 +56,7 @@ function rawAccessToken() {
     return JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ]));
 }
 
-export const activeUser = State({
+export const activeUser = asState({
     email: <string | undefined>undefined,
     username: <string>"--",
     avatar: <string | undefined>undefined,
@@ -76,7 +76,7 @@ export function updateActiveUserData() {
         activeUser.email = user.profile.email;
         activeUser.avatar = user.profile.avatar;
         activeUser.id = user._id;
-        activeUser.permission = State(user.permissions);
+        activeUser.permission = asState(user.permissions);
     } catch (_) {
         // Session should be invalid
         logOut();
@@ -119,7 +119,7 @@ export async function renewAccessTokenIfNeeded() {
     }
 }
 
-export const tokens = State({
+export const tokens = asState({
     accessToken: localStorage[ "access-token" ],
     refreshToken: localStorage[ "refresh-token" ]
 });
@@ -229,7 +229,7 @@ export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[]; }>) =
         Horizontal(
             Spacer(),
             Button("Add Artist")
-                .onClick(() => state.artists = State([ ...state.artists, [ "", "", ArtistTypes.Primary ] ] as Artist[]))
+                .onClick(() => state.artists = asState([ ...state.artists, [ "", "", ArtistTypes.Primary ] ] as Artist[]))
         ).setPadding("0 0 3rem 0"),
         Horizontal(
             Spacer(),

@@ -1,9 +1,9 @@
-import { Box, Component, Custom, Label, Pointable, Pointer, asPointer, refMerge } from "webgen/mod.ts";
+import { Box, Component, Custom, Label, Reference, Referenceable, asRef, refMerge } from "webgen/mod.ts";
 
 export type TableColumn<Data> = {
     converter: (data: Data) => Component;
-    title: Pointer<string>;
-    sorting: Pointer<TableSorting | undefined>;
+    title: Reference<string>;
+    sorting: Reference<TableSorting | undefined>;
 };
 
 export enum TableSorting {
@@ -16,11 +16,11 @@ export type RowClickHandler = (rowIndex: number, columnIndex: number) => void;
 export type RowClickEnabledHandler = (rowIndex: number) => boolean;
 
 export class Table2<Data> extends Component {
-    private columns: Pointer<TableColumn<Data>[]> = asPointer([]);
-    private hoveredRow: Pointer<number | undefined> = asPointer(undefined);
-    private rowClick: Pointer<RowClickHandler | undefined> = asPointer(undefined);
-    private rowClickable: Pointer<RowClickEnabledHandler | undefined> = asPointer(undefined);
-    constructor(dataSource: Pointer<Data[]>) {
+    private columns: Reference<TableColumn<Data>[]> = asRef([]);
+    private hoveredRow: Reference<number | undefined> = asRef(undefined);
+    private rowClick: Reference<RowClickHandler | undefined> = asRef(undefined);
+    private rowClickable: Reference<RowClickEnabledHandler | undefined> = asRef(undefined);
+    constructor(dataSource: Reference<Data[]>) {
         super();
         this.wrapper.append(this.columns.map(columns => Box(
             ...columns.map((column, columnIndex) => Box(
@@ -54,29 +54,29 @@ export class Table2<Data> extends Component {
         ).addClass("wgtable")).asRefComponent().draw());
     }
 
-    setColumnTemplate(layout: Pointable<string>) {
-        asPointer(layout).listen(value => {
+    setColumnTemplate(layout: Referenceable<string>) {
+        asRef(layout).listen(value => {
             this.wrapper.style.setProperty("--wgtable-column-template", value);
         });
         return this;
     }
 
-    addColumn(title: Pointer<string> | string, converter: TableColumn<Data>[ "converter" ], sorting?: Pointer<undefined | TableSorting> | undefined | TableSorting) {
+    addColumn(title: Reference<string> | string, converter: TableColumn<Data>[ "converter" ], sorting?: Reference<undefined | TableSorting> | undefined | TableSorting) {
         this.columns.setValue([ ...this.columns.getValue(), <TableColumn<Data>>{
             converter,
-            title: asPointer(title ?? ""),
-            sorting: asPointer(sorting)
+            title: asRef(title ?? ""),
+            sorting: asRef(sorting)
         } ]);
         return this;
     }
 
-    setRowClickEnabled(clickableHandler: Pointable<RowClickEnabledHandler>) {
-        asPointer(clickableHandler).listen(value => this.rowClickable.setValue(value));
+    setRowClickEnabled(clickableHandler: Referenceable<RowClickEnabledHandler>) {
+        asRef(clickableHandler).listen(value => this.rowClickable.setValue(value));
         return this;
     }
 
-    setRowClick(clickHandler: Pointable<RowClickHandler>) {
-        asPointer(clickHandler).listen(value => this.rowClick.setValue(value));
+    setRowClick(clickHandler: Referenceable<RowClickHandler>) {
+        asRef(clickHandler).listen(value => this.rowClick.setValue(value));
         return this;
     }
 

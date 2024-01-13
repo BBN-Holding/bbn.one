@@ -3,7 +3,7 @@ import { Body, Button, ButtonStyle, Color, Empty, Entry, Grid, Horizontal, Label
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
-import { RegisterAuthRefresh, changeThemeColor, permCheck, renewAccessTokenIfNeeded, saveBlob, showPreviewImage, showProfilePicture } from "../_legacy/helper.ts";
+import { RegisterAuthRefresh, changeThemeColor, permCheck, renewAccessTokenIfNeeded, saveBlob, sheetStack, showPreviewImage, showProfilePicture } from "../_legacy/helper.ts";
 import { ChangeDrop } from "../_legacy/music/changeDrop.ts";
 import { ChangeSongs } from "../_legacy/music/changeSongs.ts";
 import { DropTypeToText } from "../music/views/list.ts";
@@ -33,7 +33,7 @@ if (!data.id) {
     location.href = "/admin";
 }
 
-Body(Vertical(
+sheetStack.setDefault(Vertical(
     DynaNavigation("Admin"),
     Grid(
         Vertical(
@@ -62,7 +62,7 @@ Body(Vertical(
                     title: "Drop",
                     subtitle: "Change Title, Release Date, ...",
                     children: [
-                        ChangeDrop(drop)
+                        ChangeDrop({ ...drop, loading: false })
                     ]
                 },
                 {
@@ -124,7 +124,7 @@ Body(Vertical(
                     changeTypeDialog.open();
                     changeState.drop = reviewState.drop;
                     changeState.type = reviewState.drop!.type;
-                    changeTypeDialog.onClose(() => refreshReviewState());
+                    changeTypeDialog.setOnClose(() => refreshReviewState());
                 }),
             Horizontal(
                 Button("Decline")
@@ -134,7 +134,7 @@ Body(Vertical(
                     .onClick(() => {
                         DeclineDialog.open();
                         dialogState.drop = reviewState.drop!;
-                        DeclineDialog.onClose(() => refreshReviewState());
+                        DeclineDialog.setOnClose(() => refreshReviewState());
                     }),
                 Button("Approve")
                     .setStyle(ButtonStyle.Normal)
@@ -143,7 +143,7 @@ Body(Vertical(
                     .onClick(() => {
                         ApproveDialog.open();
                         dialogState.drop = reviewState.drop!;
-                        ApproveDialog.onClose(() => refreshReviewState());
+                        ApproveDialog.setOnClose(() => refreshReviewState());
                     }),
             ).setGap(),
         ).setAttribute("style", "border-style: solid;").setBorderRadius("tiny")
@@ -151,6 +151,8 @@ Body(Vertical(
         .setGap()
         .setRawColumns("1fr 3fr 1fr"),
 ));
+
+Body(sheetStack);
 
 renewAccessTokenIfNeeded()
     .then(() => refreshReviewState());

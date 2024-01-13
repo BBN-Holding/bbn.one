@@ -1,7 +1,7 @@
 import * as zod from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { AdvancedImage, Body, Box, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, Image, Label, MediaQuery, Spacer, State, SupportedThemes, TextInput, Validate, Vertical, WebGen, createFilePicker, getErrorMessage } from "webgen/mod.ts";
+import { AdvancedImage, Body, Box, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, Image, Label, MediaQuery, Spacer, SupportedThemes, TextInput, Validate, Vertical, WebGen, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
@@ -34,19 +34,19 @@ API.music.id(dropId).get().then(stupidErrorAlert)
         state.title = drop.title;
         state.release = drop.release;
         state.language = drop.language;
-        state.artists = State(drop.artists ?? []);
+        state.artists = asState(drop.artists ?? []);
         state.primaryGenre = drop.primaryGenre;
         state.secondaryGenre = drop.secondaryGenre;
         state.compositionCopyright = drop.compositionCopyright;
         state.soundRecordingCopyright = drop.soundRecordingCopyright;
         state.artwork = drop.artwork;
         state.artworkClientData = <AdvancedImage | string | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id).artwork().then(stupidErrorAlert) } : undefined);
-        state.songs = State(drop.songs ?? []);
+        state.songs = asState(drop.songs ?? []);
         state.comments = drop.comments;
     })
     .then(() => state.loaded = true);
 
-const state = State({
+const state = asState({
     loaded: false,
     _id: dropId,
     upc: <string | undefined>undefined,

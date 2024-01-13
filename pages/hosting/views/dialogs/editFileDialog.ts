@@ -1,16 +1,16 @@
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { editor } from "https://esm.sh/monaco-editor@0.44.0/esm/vs/editor/editor.api.js";
-import { Box, Custom, asPointer, lazyInit } from "webgen/mod.ts";
+import { Box, Custom, asRef, lazyInit } from "webgen/mod.ts";
 import './editFileDialog.css';
 
 const lazyMonaco = lazyInit(() => loader.init());
 
-export const editFileLanguage = asPointer("yaml");
-export const editFilestreamingText = asPointer(new Response("Loading file...").body?.pipeThrough(new TextDecoderStream())!);
-export const editFileDownloading = asPointer(true);
-export const editFileUploading = asPointer(false);
-export const editFilePath = asPointer("");
-export const editFileCurrentEditor = asPointer<editor.IStandaloneCodeEditor | undefined>(undefined);
+export const editFileLanguage = asRef("yaml");
+export const editFilestreamingText = asRef(new Response("Loading file...").body?.pipeThrough(new TextDecoderStream())!);
+export const editFileDownloading = asRef(true);
+export const editFileUploading = asRef(false);
+export const editFilePath = asRef("");
+export const editFileCurrentEditor = asRef<editor.IStandaloneCodeEditor | undefined>(undefined);
 
 async function createMonacoEditor() {
     const monaco = await lazyMonaco();

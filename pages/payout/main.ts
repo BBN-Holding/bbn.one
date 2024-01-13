@@ -1,7 +1,7 @@
 import { API, MenuNode, Navigation, stupidErrorAlert } from "shared/mod.ts";
 import { sortBy } from "std/collections/sort_by.ts";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Body, State, Vertical, WebGen, asPointer, isMobile } from "webgen/mod.ts";
+import { Body, Vertical, WebGen, asRef, asState, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
@@ -23,7 +23,7 @@ if (!data.id) {
     location.href = "/music";
 }
 
-const state = State({
+const state = asState({
     payout: <Payout | undefined>undefined,
     music: <Drop[] | undefined>undefined,
     loaded: false
@@ -54,7 +54,7 @@ Body(Vertical(
                             };
                         }) : generateStores(entries[ 0 ].data ?? [])
                     };
-                }) ?? []).filter(Boolean) as MenuNode[], e => Number(asPointer(e.subtitle!).getValue().split(" ")[ 1 ])).reverse())
+                }) ?? []).filter(Boolean) as MenuNode[], e => Number(asRef(e.subtitle!).getValue().split(" ")[ 1 ])).reverse())
             },
             {
                 id: "store",
@@ -118,5 +118,5 @@ function generateStores(datalist: Payout[ "entries" ][ 0 ][ "data" ]) {
         title: `${data.store} - ${data.territory}`,
         subtitle: `£ ${Number(data.revenue).toFixed(2)} - ${data.quantity} streams`,
         id: `${index}/`
-    })) as MenuNode[], e => Number(asPointer(e.subtitle!).getValue().split(" ")[ 1 ])).reverse();
+    })) as MenuNode[], e => Number(asRef(e.subtitle!).getValue().split(" ")[ 1 ])).reverse();
 }

@@ -1,8 +1,8 @@
 import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { Body, Button, Card, Center, Color, Grid, Label, LinkButton, MediaQuery, Sheet, State, Table, TextInput, Vertical, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Button, Card, Color, Grid, Label, LinkButton, MediaQuery, SheetDialog, Table, TextInput, Vertical, WebGen, asState, isMobile } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
-import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
+import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded, sheetStack } from "../_legacy/helper.ts";
 import './wallet.css';
 
 await RegisterAuthRefresh();
@@ -13,48 +13,45 @@ WebGen({
     }
 });
 
-const state = State({
+const state = asState({
     wallet: <Wallet | undefined>undefined
 });
 
 async function handlePayoutResponse(amount: number) {
     const response = await API.wallet.requestPayout(amount).then(stupidErrorAlert);
     if (response.type === "createAccount") {
-        sheets.add(Sheet(
+        SheetDialog(sheetStack, "Missing Account",
             Grid(
-                Center(Label("Missing Account").setTextSize("2xl").setFontWeight("bold")),
                 Label("To process your payout, you need to create a Stripe account."),
                 Label("Please click the button below to create your account."),
                 LinkButton("Create Account", response.url)
             )
                 .setGap()
                 .setMargin("10px")
-        ));
+        ).open();
     } else if (response.type === "needDetails") {
-        sheets.add(Sheet(
+        SheetDialog(sheetStack, "Missing Information",
             Grid(
-                Center(Label("Missing Information").setTextSize("2xl").setFontWeight("bold")),
                 Label("To process your payout, you need to fill out missing information."),
                 Label("Please click the button below to provide the missing information."),
                 LinkButton("Provide Information", response.url)
             )
                 .setGap()
                 .setMargin("10px")
-        ));
+        ).open();
     } else {
-        sheets.add(Sheet(
+        SheetDialog(sheetStack, "Success!",
             Grid(
-                Center(Label("Success!").setTextSize("2xl").setFontWeight("bold")),
                 Label("Your payout request has been sent for processing."),
                 Label("You will receive an email once the payout has been processed.")
             )
                 .setGap()
                 .setMargin("10px")
-        ));
+        );
     }
 }
 
-const sheets = Sheets(Vertical(
+sheetStack.setDefault(Vertical(
     DynaNavigation("Wallet"),
     state.$wallet.map(wallet => wallet ? Vertical(
         Navigation({
@@ -62,24 +59,21 @@ const sheets = Sheets(Vertical(
             actions: [
                 Button("Request Payout")
                     .onClick(() => {
-                        const amount = State({ value: "0" });
-                        const sheet = Sheet(
+                        const amount = asState({ value: "0" });
+                        const sheet = SheetDialog(sheetStack, "Request Payout",
                             Grid(
-                                Grid(
-                                    Label("Payout Request").setTextSize("2xl").setFontWeight("bold"),
-                                ),
                                 Label("How much would you like to withdraw?"),
                                 TextInput("text", "Amount").sync(amount, "value"),
                                 Button("Request")
                                     .onClick(() => {
                                         handlePayoutResponse(Number(amount.value));
-                                        sheets.remove(sheet);
+                                        sheet.close();
                                     })
                             )
                                 .setGap()
                                 .setMargin("10px")
                         );
-                        sheets.add(sheet);
+                        sheet.open();
                     })
                     .setColor(wallet.balance?.unrestrained! + wallet.balance?.restrained! > 10 ? Color.Grayscaled : Color.Disabled)
             ]
@@ -125,11 +119,9 @@ const sheets = Sheets(Vertical(
         )
     ).addClass("limited-width") : LoadingSpinner()
     ).asRefComponent()
-))
-    .setSheetWidth("auto")
-    .setSheetHeight("auto");
+));
 
-Body(sheets);
+Body(sheetStack);
 
 renewAccessTokenIfNeeded()
     .then(async () => state.wallet = await API.wallet.get().then(stupidErrorAlert));

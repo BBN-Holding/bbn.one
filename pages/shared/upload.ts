@@ -1,5 +1,5 @@
 import { API } from "shared/mod.ts";
-import { Pointer, asPointer } from "webgen/mod.ts";
+import { Reference, asRef } from "webgen/mod.ts";
 
 export type StreamingUploadEvents = {
     credentials: () => string,
@@ -9,7 +9,7 @@ export type StreamingUploadEvents = {
     failure: () => void,
 };
 
-export function ProgressTracker(percentage: Pointer<number>, expectedSize: number) {
+export function ProgressTracker(percentage: Reference<number>, expectedSize: number) {
     let bytesUploaded = 0;
 
     return new TransformStream({
@@ -24,7 +24,7 @@ export function ProgressTracker(percentage: Pointer<number>, expectedSize: numbe
 export function StreamingUploadHandler(path: string, events: StreamingUploadEvents, file: File) {
     try {
         const ws = new WebSocket(`${API.BASE_URL.replace("https", "wss").replace("http", "ws")}${path}`);
-        const progress = asPointer(0);
+        const progress = asRef(0);
         progress.listen((percentage) => { events.onUploadTick(percentage); });
 
         const stream = file

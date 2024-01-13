@@ -1,7 +1,7 @@
 import { LoginRequest, MessageType, SyncResponse, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API, ProgressTracker } from "shared/mod.ts";
 import { decodeBase64, encodeBase64 } from "std/encoding/base64.ts";
-import { Pointer, State, asPointer, lazyInit } from "webgen/mod.ts";
+import { Reference, asRef, asState, lazyInit } from "webgen/mod.ts";
 import { createStableWebSocket } from "webgen/network.ts";
 import { Deferred, InstalledAddon, Server, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
@@ -9,8 +9,8 @@ import { state } from "./data.ts";
 import { canWriteInFolder, currentFiles } from "./views/state.ts";
 
 export async function refreshState() {
-    state.servers = State((await API.hosting.servers()).map(x => State(x)));
-    state.meta = State(await API.hosting.meta());
+    state.servers = asState((await API.hosting.servers()).map(x => asState(x)));
+    state.meta = asState(await API.hosting.meta());
 }
 
 /**
@@ -69,8 +69,8 @@ export const liveUpdates = lazyInit(async () => {
 });
 
 export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
-export const isSidecarConnect = asPointer(false);
-export const sidecarDetailsSource = asPointer((_data: SidecarResponse | "clear") => { });
+export const isSidecarConnect = asRef(false);
+export const sidecarDetailsSource = asRef((_data: SidecarResponse | "clear") => { });
 export let closeSignal = Promise.withResolvers<void>();
 
 export function stopSidecarConnection() {
@@ -181,7 +181,7 @@ export function downloadFile(path: string) {
         }
     });
 }
-export async function uploadFile(path: string, file: File, progress: Pointer<number>) {
+export async function uploadFile(path: string, file: File, progress: Reference<number>) {
     const check = Promise.withResolvers<SidecarResponse>();
     messageQueueSidecar.push({
         request: {

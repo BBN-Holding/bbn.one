@@ -1,7 +1,7 @@
 import { randomInteger } from "std/collections/_utils.ts";
-import { asPointer, Box, css, Label, Pointer } from "webgen/mod.ts";
+import { asRef, Box, css, Label, Reference } from "webgen/mod.ts";
 
-export function Counter(value: Pointer<string | number>) {
+export function Counter(value: Reference<string | number>) {
     const id = randomInteger(1000, 100000);
 
     // these need to be unique
@@ -19,7 +19,7 @@ export function Counter(value: Pointer<string | number>) {
         }
     `);
 
-    const counter = asPointer(Box());
+    const counter = asRef(Box());
 
 
     function findDifferenceAndSplit(str1: string, str2: string) {

@@ -3,7 +3,7 @@ import { createDownloadStream } from "shared/libs/streamSaver.ts";
 import { Progress } from "shared/Progress.ts";
 import { ProgressTracker } from "shared/upload.ts";
 import { format } from "std/fmt/bytes.ts";
-import { asPointer, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Empty, Entry, Grid, IconButton, Label, MIcon, refMerge } from "webgen/mod.ts";
+import { asRef, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Empty, Entry, Grid, IconButton, Label, MIcon, refMerge } from "webgen/mod.ts";
 import { SidecarResponse } from "../../../spec/music.ts";
 import { mapFiletoIcon } from "../constants.ts";
 import { downloadFile, listFiles, messageQueueSidecar } from "../loading.ts";
@@ -16,19 +16,19 @@ import { Table2 } from "./table2.ts";
 import { DropHandler } from "./uploading/dropHandler.ts";
 import { droppingFileHandler } from "./uploading/droppingFileHandler.ts";
 
-const isExporting = asPointer(false);
+const isExporting = asRef(false);
 
 const exportAvaiblable = refMerge({
     uploadingFiles: uploadingFiles.map(it => Object.keys(it).length !== 0 || !('showDirectoryPicker' in window)),
     isExporting
 }).map(({ uploadingFiles, isExporting }) => !uploadingFiles && !isExporting);
 
-const globalProgress = asPointer(0);
-const currentFile = asPointer("");
-const currentFileProgress = asPointer(0);
-const exportingPhase = asPointer(<"Indexing download tree" | "Downloading Files">"Indexing download tree");
-const collectedFiles = asPointer(0);
-const currentFileIndex = asPointer(0);
+const globalProgress = asRef(0);
+const currentFile = asRef("");
+const currentFileProgress = asRef(0);
+const exportingPhase = asRef(<"Indexing download tree" | "Downloading Files">"Indexing download tree");
+const collectedFiles = asRef(0);
+const currentFileIndex = asRef(0);
 
 export const exportingDialog = Box();
 

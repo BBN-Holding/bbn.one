@@ -1,8 +1,8 @@
-import { asPointer, Component, Pointer } from "webgen/mod.ts";
+import { asRef, Component, Reference } from "webgen/mod.ts";
 import { CachedPages } from "webgen/network.ts";
 
-export function Loader<T extends object>(object: CachedPages<T>, handler: (options: { items: Pointer<T[]>; hasMore: Pointer<boolean>; loadMore: () => Promise<void>; isLoading: Pointer<boolean>; }) => Component) {
-    const isLoading = asPointer<boolean>(false);
+export function Loader<T extends object>(object: CachedPages<T>, handler: (options: { items: Reference<T[]>; hasMore: Reference<boolean>; loadMore: () => Promise<void>; isLoading: Reference<boolean>; }) => Component) {
+    const isLoading = asRef<boolean>(false);
 
     const loadMore = async () => {
         isLoading.setValue(true);

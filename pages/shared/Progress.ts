@@ -1,11 +1,11 @@
-import { Box, createElement, Custom, isPointer, Label, Pointable } from "webgen/mod.ts";
+import { Box, createElement, Custom, isRef, Label, Referenceable } from "webgen/mod.ts";
 
-export function Progress(progress: Pointable<number>) {
+export function Progress(progress: Referenceable<number>) {
     return Box(
         Custom((() => {
             if (progress == -1) return Label("⚠️ Failed to upload!").addClass("error-message").setTextSize("sm").draw();
             const element = createElement("progress");
-            if (isPointer(progress)) {
+            if (isRef(progress)) {
                 progress.listen((value) => {
                     element.value = value;
                 });

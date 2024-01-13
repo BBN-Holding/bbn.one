@@ -1,12 +1,12 @@
 import { format } from "std/fmt/bytes.ts";
-import { asPointer, BasicLabel, Component, Entry, Grid, ref, refMerge, StateHandler } from "webgen/mod.ts";
+import { asRef, BasicLabel, Component, Entry, Grid, ref, refMerge, StateHandler } from "webgen/mod.ts";
 import { Server } from "../../../spec/music.ts";
 import { calculateUptime } from "../../shared/uptime.ts";
 import { MB } from "../data.ts";
 import { GridItem } from "../types.ts";
 import { ChangeStateButton } from "./changeStateButton.ts";
 
-const time = asPointer(new Date().getTime());
+const time = asRef(new Date().getTime());
 setInterval(() => time.setValue(new Date().getTime()), 200);
 
 export function ServerStaticInfo(mobile: boolean, server: StateHandler<Server>, input: StateHandler<{

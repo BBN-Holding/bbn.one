@@ -1,4 +1,4 @@
-import { ButtonStyle, Color, createElement, Custom, Horizontal, InputForm, Label, Spacer, State, Vertical } from "webgen/mod.ts";
+import { ButtonStyle, Color, Custom, Horizontal, InputForm, Label, Spacer, Vertical, asState, createElement } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 
 export const SliderInput = (label: string) => new class extends InputForm<number> {
@@ -7,7 +7,7 @@ export const SliderInput = (label: string) => new class extends InputForm<number
 
     constructor() {
         super();
-        const val = State({ value: "" });
+        const val = asState({ value: "" });
         this.input.type = "range";
         this.input.classList.add("wslider");
         this.wrapper.append(Vertical(

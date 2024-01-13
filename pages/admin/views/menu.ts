@@ -1,6 +1,6 @@
 import { API, HeavyList, loadMore, Navigation, placeholder } from "shared/mod.ts";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Box, Button, Color, Entry, Grid, Horizontal, isMobile, Label, ref, SheetDialog, Spacer, State, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { asState, Box, Button, Color, Entry, Grid, Horizontal, isMobile, Label, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
 import { activeUser, sheetStack } from "../../_legacy/helper.ts";
 import { upload } from "../loading.ts";
@@ -192,7 +192,7 @@ export const adminMenu = Navigation({
         "limited-width"
     );
 
-const oAuthData = State({
+const oAuthData = asState({
     name: "",
     redirectURI: [ "" ],
     image: ""
@@ -214,7 +214,7 @@ const addOAuthDialog = SheetDialog(sheetStack, "Create new OAuth Application",
                     ]
                 ], x)
                     .setDelete((_, index) => {
-                        oAuthData.redirectURI = State(x.filter((_, i) => i != index));
+                        oAuthData.redirectURI = asState(x.filter((_, i) => i != index));
                     }),
                 Horizontal(
                     Spacer(),
@@ -238,7 +238,7 @@ const addOAuthDialog = SheetDialog(sheetStack, "Create new OAuth Application",
                     API.oauth.post(oAuthData.name, oAuthData.redirectURI, oAuthData.image)
                         .then(async () => {
                             oAuthData.name = "";
-                            oAuthData.redirectURI = State([ "" ]);
+                            oAuthData.redirectURI = asState([ "" ]);
                             oAuthData.image = "";
                             addOAuthDialog.close();
                             state.oauth = await API.oauth.list();

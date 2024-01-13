@@ -1,16 +1,15 @@
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
-import { Button, Color, Grid, Label, Sheet } from "webgen/mod.ts";
-import { hostingSheets } from "../../main.ts";
+import { Button, Color, Grid, Label, SheetDialog } from "webgen/mod.ts";
+import { sheetStack } from "../../../_legacy/helper.ts";
 
-export function forceRestartDialog(serverId: string) {
-    const sheet = Sheet(
+export const forceRestartDialog = (serverId: string) => {
+    const sheet = SheetDialog(sheetStack, "Force Restart",
         Grid(
-            Label("Force Restart").setTextSize("2xl").setFontWeight("bold"),
             Label("Force Restarting the Server could lead to data loss depending on the State of the Server. Use at your own risk."),
             Grid(
                 Label("Are you sure?"),
                 Grid(
-                    Button("Cancel").onClick(() => hostingSheets.remove(sheet)),
+                    Button("Cancel").onClick(() => sheet.close()),
                     Button("Force Restart").setColor(Color.Critical).onClick(async () => {
                         await API.hosting.serverId(serverId).forcerestart()
                             .then(stupidErrorAlert);
@@ -20,5 +19,5 @@ export function forceRestartDialog(serverId: string) {
             ).setGap("1rem")
         ).setGap().setMargin("1.5rem")
     );
-    hostingSheets.add(sheet);
-}
+    return sheet;
+};

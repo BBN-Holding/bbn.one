@@ -1,5 +1,5 @@
 import { API, stupidErrorAlert } from "shared/mod.ts";
-import { Box, Button, Custom, Entry, Form, Grid, State, StateHandler, TextInput, isMobile, refMerge } from "webgen/mod.ts";
+import { Box, Button, Custom, Entry, Form, Grid, StateHandler, TextInput, asState, isMobile, refMerge } from "webgen/mod.ts";
 import { Server, SidecarResponse } from "../../../spec/music.ts";
 import { isSidecarConnect, listFiles, messageQueueSidecar, sidecarDetailsSource } from "../loading.ts";
 import { ServerStaticInfo } from "./ServerStaticInfo.ts";
@@ -11,7 +11,7 @@ import { DisconnectedScreen } from "./waitingScreen.ts";
 export function ServerDetails(server: StateHandler<Server>) {
     const terminal = new TerminalComponent();
 
-    const input = State({
+    const input = asState({
         cpu: <number | undefined>undefined,
         memory: <number | undefined>undefined,
         disk: <number | undefined>undefined,

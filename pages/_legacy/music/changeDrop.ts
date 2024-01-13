@@ -1,7 +1,8 @@
 import * as zod from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API } from "shared/mod.ts";
-import { AdvancedImage, Box, Button, CenterV, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, StateHandler, TextInput, Validate, createFilePicker, getErrorMessage } from "webgen/mod.ts";
+import { stupidErrorAlert } from "shared/restSpec.ts";
+import { AdvancedImage, Box, Button, CenterV, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, StateHandler, TextInput, Validate, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
 import artwork from "../../../assets/img/template-artwork.png";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
@@ -9,9 +10,15 @@ import { Artist, DATE_PATTERN, artist, song, userString } from "../../../spec/mu
 import { EditArtistsDialog, allowedImageFormats, getSecondary } from "../helper.ts";
 import { uploadArtwork } from "./data.ts";
 
-export function ChangeDrop(state: StateHandler<{ _id: string | undefined, title: string | undefined, release: string | undefined, language: string | undefined, artists: Artist[], artwork: string | undefined, artworkClientData: AdvancedImage | string | undefined; compositionCopyright: string | undefined, soundRecordingCopyright: string | undefined, primaryGenre: string | undefined, secondaryGenre: string | undefined, loading: boolean; validationState: ZodError | undefined; }>) {
+export function ChangeDrop(drop: StateHandler<{ _id: string | undefined, title: string | undefined, release: string | undefined, language: string | undefined, artists: Artist[], artwork: string | undefined, compositionCopyright: string | undefined, soundRecordingCopyright: string | undefined, primaryGenre: string | undefined, secondaryGenre: string | undefined; }>) {
+    const state = asState({
+        artworkClientData: <AdvancedImage | string | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id!).artwork().then(stupidErrorAlert) } : undefined),
+        loading: false,
+        validationState: <ZodError | undefined>undefined
+    });
+
     const { data, error, validate } = Validate(
-        state,
+        drop,
         zod.object({
             title: userString,
             artists: artist.array().refine(x => x.some(([ , , type ]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
@@ -27,11 +34,18 @@ export function ChangeDrop(state: StateHandler<{ _id: string | undefined, title:
         })
     );
 
+    const validator2 = Validate(
+        state,
+        zod.object({
+            loading: zod.literal(false, { errorMap: () => ({ message: "Artwork is still uploading" }) }).transform(() => undefined),
+        })
+    );
+
     return Grid(
         [
             { width: 2 },
             Horizontal(
-                Box(data.$validationState.map(error => error ? CenterV(
+                Box(state.$validationState.map(error => error ? CenterV(
                     Label(getErrorMessage(error))
                         .addClass("error-message")
                         .setMargin("0 0.5rem 0 0")
@@ -41,19 +55,21 @@ export function ChangeDrop(state: StateHandler<{ _id: string | undefined, title:
                 Button("Save")
                     .onClick(async () => {
                         const validation = validate();
-                        if (error.getValue()) return data.validationState = error.getValue();
-                        if (validation) await API.music.id(state._id!).update(validation);
+                        validator2.validate();
+                        if (error.getValue()) return state.validationState = error.getValue();
+                        if (validator2.error.getValue()) return state.validationState = validator2.error.getValue();
+                        if (validation) await API.music.id(data._id!).update(validation);
                         location.reload(); // Handle this Smarter => Make it a Reload Event.
                     })
             ),
         ],
         Grid(
-            data.$artworkClientData.map(artworkData => DropAreaInput(
+            state.$artworkClientData.map(artworkData => DropAreaInput(
                 Box(artworkData ? Image(artworkData, "A Music Album Artwork.") : Image(artwork, "A Default Alubm Artwork."), IconButton(MIcon("edit"), "edit icon"))
                     .addClass("upload-image"),
                 allowedImageFormats,
-                ([ { file } ]) => uploadArtwork(data, file)
-            ).onClick(() => createFilePicker(allowedImageFormats.join(",")).then(file => uploadArtwork(data, file)))).asRefComponent(),
+                ([ { file } ]) => uploadArtwork(state.$artworkClientData, state.$loading, data.$artwork, file)
+            ).onClick(() => createFilePicker(allowedImageFormats.join(",")).then(file => uploadArtwork(state.$artworkClientData, state.$loading, data.$artwork, file)))).asRefComponent(),
         ).setDynamicColumns(2, "12rem"),
         [
             { width: 2 },

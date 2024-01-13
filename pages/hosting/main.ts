@@ -1,14 +1,13 @@
-import { Body, State, Vertical, WebGen } from "webgen/mod.ts";
+import { LoadingSpinner } from "shared/components.ts";
+import { API, stupidErrorAlert } from "shared/restSpec.ts";
+import { Body, Vertical, WebGen, asState } from "webgen/mod.ts";
+import '../../assets/css/hosting.css';
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded, sheetStack } from "../_legacy/helper.ts";
 import { state } from "./data.ts";
 import { listFiles, liveUpdates, refreshState, startSidecarConnection } from "./loading.ts";
 import { hostingMenu } from "./views/menu.ts";
-
-import { LoadingSpinner } from "shared/components.ts";
-import { API, stupidErrorAlert } from "shared/restSpec.ts";
-import '../../assets/css/hosting.css';
 import { path } from "./views/state.ts";
 await RegisterAuthRefresh();
 
@@ -34,7 +33,7 @@ renewAccessTokenIfNeeded()
             if (source === "servers" && serverId) {
                 const server = await API.hosting.serverId(serverId).get().then(stupidErrorAlert);
                 if (!state.servers.find(s => s._id == serverId))
-                    state.servers.push(State(server));
+                    state.servers.push(asState(server));
                 startSidecarConnection(serverId);
                 if (subView === "storage") {
                     await listFiles("/");

@@ -1,8 +1,8 @@
 import { API } from "shared/restSpec.ts";
-import { lazyInit, State } from "webgen/mod.ts";
+import { asState, lazyInit } from "webgen/mod.ts";
 import { createStableWebSocket } from "webgen/network.ts";
 
-export const data = State({
+export const data = asState({
     stats: {
         users: 0,
         drops: 0,
@@ -17,7 +17,7 @@ export const streamingPool = lazyInit(async () => {
         onMessage: (msg) => {
             if (typeof msg !== "string") return;
             const json = JSON.parse(msg);
-            data.stats = State(json as typeof data.stats);
+            data.stats = asState(json as typeof data.stats);
         }
     });
 });

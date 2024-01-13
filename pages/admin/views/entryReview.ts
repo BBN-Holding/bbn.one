@@ -1,5 +1,5 @@
 import { API } from "shared/mod.ts";
-import { Button, ButtonStyle, Color, DropDownInput, Entry, Horizontal, SheetDialog, Spacer, State, Vertical } from "webgen/mod.ts";
+import { Button, ButtonStyle, Color, DropDownInput, Entry, Horizontal, SheetDialog, Spacer, Vertical, asState } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { sheetStack, showPreviewImage } from "../../_legacy/helper.ts";
 
@@ -17,7 +17,7 @@ export function ReviewEntry(x: Drop) {
         .addPrefix(showPreviewImage(x).addClass("image-square"));
 }
 
-export const changeState = State({
+export const changeState = asState({
     drop: <Drop | undefined>undefined,
     type: <DropType | undefined>undefined
 });

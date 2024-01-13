@@ -1,9 +1,9 @@
 import { External } from "shared/mod.ts";
-import { State } from "webgen/mod.ts";
+import { asState } from "webgen/mod.ts";
 import { Drop, File, Group, OAuthApp, Payout, Server, Transcript, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
-export const state = State({
+export const state = asState({
     drops: {
         reviews: <External<Drop[]> | "loading">"loading",
         publishing: <External<Drop[]> | "loading">"loading",
@@ -22,7 +22,7 @@ export const state = State({
     transcripts: <External<Transcript[]> | "loading">"loading",
 });
 
-export const reviewState = State({
+export const reviewState = asState({
     drop: <Drop | undefined>undefined,
     drops: <Drop[] | undefined>undefined,
 });

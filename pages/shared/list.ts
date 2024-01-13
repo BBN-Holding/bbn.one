@@ -1,17 +1,17 @@
-import { Box, Button, CenterV, Component, Empty, Horizontal, Label, MIcon, Pointable, Pointer, State, Vertical, asPointer } from "webgen/mod.ts";
+import { Box, Button, CenterV, Component, Empty, Horizontal, Label, MIcon, Referenceable, Vertical, asRef, asState } from "webgen/mod.ts";
 import { LoadingSpinner } from "./components.ts";
 import { External, displayError } from "./restSpec.ts";
 
 // TODO: don't rerender the complete list on update. virtual list?
-export const HeavyList = <T>(items: Pointable<External<T[]> | 'loading' | T[]>, map: (val: T) => Component) => new class extends Component {
+export const HeavyList = <T>(items: Referenceable<External<T[]> | 'loading' | T[]>, map: (val: T) => Component) => new class extends Component {
     placeholder = Box();
     loadMore = async (_offset: number, _limit: number) => { };
-    paging = State({ enabled: false, limit: 30 });
+    paging = asState({ enabled: false, limit: 30 });
 
     constructor() {
         super();
         console.debug("HeavyList got constructed");
-        const list = asPointer(items);
+        const list = asRef(items);
         list.listen((val: External<T[]> | 'loading' | T[]) => {
             this.wrapper.textContent = '';
             if (val === "loading")
@@ -90,7 +90,7 @@ export const placeholder = (title: string, subtitle: string) => CenterV(
         .setTextSize("xl")
 ).setMargin("100px 0 0").setGap("1rem").setAttribute("align", "center");
 
-export async function loadMore<T>(source: Pointer<External<T[]> | 'loading'>, func: () => Promise<External<T[]>>) {
+export async function loadMore<T>(source: Reference<External<T[]> | 'loading'>, func: () => Promise<External<T[]>>) {
     const data = source.getValue();
     if (data !== "loading" && data.status !== "rejected") {
         const rsp = await func();

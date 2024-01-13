@@ -1,5 +1,5 @@
 import { assert } from "std/assert/assert.ts";
-import { Box, Component, Empty, Entry, Grid, Label, MIcon, Pointable, Pointer, Taglist, Vertical, asPointer, isMobile, isPointer } from "webgen/mod.ts";
+import { Box, Component, Empty, Entry, Grid, Label, MIcon, Reference, Referenceable, Taglist, Vertical, asRef, isMobile, isRef } from "webgen/mod.ts";
 import { HeavyList } from "./list.ts";
 import './navigation.css';
 
@@ -11,12 +11,12 @@ export type RenderItem = Component | MenuNode;
 
 export interface MenuNode {
     id: string;
-    hidden?: Pointable<boolean>;
-    title: Pointable<string>;
-    subtitle?: Pointable<string>;
-    children?: Pointable<RenderItem[]>;
-    replacement?: Pointable<Component>;
-    suffix?: Pointable<Component>;
+    hidden?: Referenceable<boolean>;
+    title: Referenceable<string>;
+    subtitle?: Referenceable<string>;
+    children?: Referenceable<RenderItem[]>;
+    replacement?: Referenceable<Component>;
+    suffix?: Referenceable<Component>;
     clickHandler?: ClickHandler;
     firstRenderHandler?: ClickHandler;
 }
@@ -27,7 +27,7 @@ export interface CategoryNode extends MenuNode {
 
 export type RootNode = Omit<MenuNode, "id"> & {
     categories?: CategoryNode[];
-    actions?: Pointable<Component[]>;
+    actions?: Referenceable<Component[]>;
 };
 
 function traverseToMenuNode(rootNode: RootNode, path: string): MenuNode | null {
@@ -36,7 +36,7 @@ function traverseToMenuNode(rootNode: RootNode, path: string): MenuNode | null {
 
     for (const segment of pathSegments) {
         if (currentNode?.children) {
-            const childNode = asPointer(currentNode.children).getValue().find(
+            const childNode = asRef(currentNode.children).getValue().find(
                 (child) => !(child instanceof Component) && child.id === segment
             ) as MenuNode | undefined;
 
@@ -60,7 +60,7 @@ function resolvePathToNodes(rootNode: RootNode, path: string): MenuNode[] | null
 
     for (const segment of pathSegments) {
         if (currentNode?.children) {
-            const childNode = asPointer(currentNode.children).getValue().find(
+            const childNode = asRef(currentNode.children).getValue().find(
                 (child) => !(child instanceof Component) && child.id === segment
             ) as MenuNode | undefined;
 
@@ -89,15 +89,15 @@ function getMenuNodeByPrefix(rootNode: RootNode, rootId: string): MenuNode {
 
 class MenuImpl extends Component {
     rootNode: RootNode;
-    path: Pointer<string>;
-    displayed = asPointer([]) as Pointer<RenderItem[]>;
-    #header: Pointer<(data: this) => Component> = asPointer(defaultHeader);
-    #footer: Pointer<(data: this) => Component> = asPointer(defaultFooter);
+    path: Reference<string>;
+    displayed = asRef([]) as Reference<RenderItem[]>;
+    #header: Reference<(data: this) => Component> = asRef(defaultHeader);
+    #footer: Reference<(data: this) => Component> = asRef(defaultFooter);
 
     constructor(rootNode: RootNode) {
         super();
         this.rootNode = rootNode;
-        this.path = asPointer(rootNode.categories?.at(0) ? `${rootNode.categories.at(0)!.id}/` : "-/");
+        this.path = asRef(rootNode.categories?.at(0) ? `${rootNode.categories.at(0)!.id}/` : "-/");
         // Renderer
         this.wrapper.append(Vertical(
             this.#header.map(it => it(this)).asRefComponent().removeFromLayout(),
@@ -105,13 +105,13 @@ class MenuImpl extends Component {
                 if (item instanceof Component)
                     return item;
 
-                if (asPointer(item.hidden).getValue())
+                if (asRef(item.hidden).getValue())
                     return Empty();
 
-                const entry = Entry(item.replacement ? asPointer(item.replacement).getValue() : item).addClass(isMobile.map(mobile => mobile ? "small" : "desktop"));
+                const entry = Entry(item.replacement ? asRef(item.replacement).getValue() : item).addClass(isMobile.map(mobile => mobile ? "small" : "desktop"));
                 const click = this.createClickHandler(item);
                 if (item.suffix)
-                    entry.addSuffix(asPointer(item.suffix).getValue());
+                    entry.addSuffix(asRef(item.suffix).getValue());
                 if (click)
                     entry.onPromiseClick(async () => await click());
                 return entry;
@@ -128,7 +128,7 @@ class MenuImpl extends Component {
             const item = traverseToMenuNode(root, unprefixed);
 
             assert(item, "No Node found");
-            if (isPointer(item.children)) {
+            if (isRef(item.children)) {
                 item.children.listen((items) => {
                     if (val == this.path.getValue())
                         this.displayed.setValue(items);
@@ -162,7 +162,7 @@ class MenuImpl extends Component {
 }
 
 /**
- * A Extendable Declarative Pointable Navigation Component.
+ * A Extendable Declarative Referenceable Navigation Component.
  * @param rootNode
  * @returns
  */
@@ -183,16 +183,16 @@ function defaultHeader(menu: MenuImpl) {
 }
 
 function defaultFooter(menu: MenuImpl) {
-    return isMobile.map(mobile => mobile && menu.rootNode.actions ? Box(createActionList(menu)).addClass(asPointer(menu.rootNode.actions).map(it => it.length == 0 ? "remove-from-layout" : "normal"), "sticky-footer") : Empty()).asRefComponent().removeFromLayout();
+    return isMobile.map(mobile => mobile && menu.rootNode.actions ? Box(createActionList(menu)).addClass(asRef(menu.rootNode.actions).map(it => it.length == 0 ? "remove-from-layout" : "normal"), "sticky-footer") : Empty()).asRefComponent().removeFromLayout();
 }
 
 export function createActionList(menu: MenuImpl) {
-    return asPointer(menu.rootNode.actions).map(it => Grid(...(it ?? [])).addClass("action-list-bar")).asRefComponent().removeFromLayout();
+    return asRef(menu.rootNode.actions).map(it => Grid(...(it ?? [])).addClass("action-list-bar")).asRefComponent().removeFromLayout();
 }
 
 export function createTagList(menu: MenuImpl) {
     if (!menu.rootNode.categories) return Empty();
-    const index = asPointer(0);
+    const index = asRef(0);
     index.listen((val, oldVal) => {
         if (oldVal != undefined) {
             const path = menu.rootNode.categories![ val ];

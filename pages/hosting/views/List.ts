@@ -1,7 +1,7 @@
-import { Box, Component, Custom, Pointer } from "webgen/mod.ts";
+import { Box, Component, Custom, Reference } from "webgen/mod.ts";
 
 // TODO turn this into a proper component, add it to webgen and opt-in to View Transitions API
-export function List<T, Key extends string>(list: Pointer<T[]>, keyFunc: (data: T) => Key, renderFunc: (data: T) => Component) {
+export function List<T, Key extends string>(list: Reference<T[]>, keyFunc: (data: T) => Key, renderFunc: (data: T) => Component) {
     const container: HTMLElement = Box().draw();
 
     list.listen((newValue: T[] = [], oldValue: T[] = []) => {

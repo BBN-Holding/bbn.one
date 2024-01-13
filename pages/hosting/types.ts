@@ -1,6 +1,5 @@
-import { Component, IconButtonComponent, Pointer } from "webgen/mod.ts";
+import { Component, IconButtonComponent, Reference } from "webgen/mod.ts";
 import { PowerState } from "../../spec/music.ts";
-
 
 export type StateActions = {
     [ type in PowerState ]: Component | IconButtonComponent;
@@ -17,5 +16,5 @@ export type RemotePath = {
     canWrite?: boolean;
     lastModified?: number;
     fileMimeType?: string;
-    uploadingRatio?: Pointer<number>;
+    uploadingRatio?: Reference<number>;
 };

@@ -3,7 +3,7 @@ import { calculateUptime } from "shared/uptime.ts";
 import { debounce } from "std/async/debounce.ts";
 import { delay } from "std/async/delay.ts";
 import { WEEK } from "std/datetime/constants.ts";
-import { asPointer, BasicLabel, Box, Button, Cache, Color, Empty, Entry, Grid, Image, isMobile, Label, MIcon, ref, refMerge, State, StateHandler, TextInput } from "webgen/mod.ts";
+import { asRef, asState, BasicLabel, Box, Button, Cache, Color, Empty, Entry, Grid, Image, isMobile, Label, MIcon, ref, refMerge, StateHandler, TextInput } from "webgen/mod.ts";
 import { createCachedLoader, createIndexPaginationLoader } from "webgen/network.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import locations from "../../../data/locations.json" with { type: "json" };
@@ -91,7 +91,7 @@ export const hostingMenu = Navigation({
                                     id: "general",
                                     title: "General Settings",
                                     subtitle: "General Server Settings",
-                                    clickHandler: async () => editServerDialog(server, await API.hosting.versions(server.type).then(stupidErrorAlert))
+                                    clickHandler: async () => editServerDialog(server, await API.hosting.versions(server.type).then(stupidErrorAlert)).open()
                                 },
                                 {
                                     id: "core",
@@ -106,13 +106,13 @@ export const hostingMenu = Navigation({
                                     id: "delete",
                                     title: "Delete Server",
                                     subtitle: "Delete everything. Click once, gone forever.",
-                                    clickHandler: () => deleteServerDialog(server._id)
+                                    clickHandler: () => deleteServerDialog(server._id).open()
                                 },
                                 {
                                     id: "forcerestart",
                                     title: "Force Restart",
                                     subtitle: "Fully restarts your Instance. This could lead to data loss.",
-                                    clickHandler: () => forceRestartDialog(server._id)
+                                    clickHandler: () => forceRestartDialog(server._id).open()
                                 }
                             ]
                         }
@@ -163,7 +163,7 @@ hostingMenu.path.listen(path => {
     history.pushState(undefined, "", `/hosting?path=${path}`);
 });
 
-export const searchBox = State({
+export const searchBox = asState({
     search: ""
 });
 
@@ -173,7 +173,7 @@ searchBox.$search.listen(debounce(() => {
     // TODO: Search for addons and add them to the list
 }, 500));
 
-export const installedAddons = asPointer<InstalledAddon[]>([]);
+export const installedAddons = asRef<InstalledAddon[]>([]);
 
 function addonBrowser(server: StateHandler<Server>): RenderItem {
     const supported = [ ServerTypes.Default, ServerTypes.Fabric, ServerTypes.Forge ].includes(server.type);
