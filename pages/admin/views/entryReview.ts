@@ -1,7 +1,7 @@
 import { API } from "shared/mod.ts";
-import { Button, ButtonStyle, Color, DropDownInput, Entry, State, Vertical } from "webgen/mod.ts";
+import { Button, ButtonStyle, Color, DropDownInput, Entry, Horizontal, SheetDialog, Spacer, State, Vertical } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
-import { showPreviewImage } from "../../_legacy/helper.ts";
+import { sheetStack, showPreviewImage } from "../../_legacy/helper.ts";
 
 export function ReviewEntry(x: Drop) {
     return Entry({
@@ -22,14 +22,15 @@ export const changeState = State({
     type: <DropType | undefined>undefined
 });
 
-export const changeTypeDialog = Dialog(() =>
+export const changeTypeDialog = SheetDialog(sheetStack, "Change Drop Type",
     Vertical(
-        DropDownInput("Change Type", Object.values(DropType)).sync(changeState, "type")
+        DropDownInput("Change Type", Object.values(DropType)).sync(changeState, "type"),
+        Horizontal(
+            Spacer(),
+            Button("Change").onClick(() => {
+                API.music.id(changeState.drop!._id).type.post(changeState.type!);
+                changeTypeDialog.close();
+            })
+        )
     )
-)
-    .addButton("Change", () => {
-        API.music.id(changeState.drop!._id).type.post(changeState.type!);
-        changeTypeDialog.close();
-    })
-    .allowUserClose()
-    .setTitle("Change Drop Type");
+);

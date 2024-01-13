@@ -1,7 +1,8 @@
 import { API } from "shared/mod.ts";
-import { Box, Checkbox, Custom, Horizontal, Image, Label, Spacer, State, createElement } from "webgen/mod.ts";
+import { Box, Checkbox, Custom, Horizontal, Image, Label, SheetDialog, Spacer, State, createElement } from "webgen/mod.ts";
 import reviewTexts from "../../data/reviewTexts.json" with { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
+import { sheetStack } from "../_legacy/helper.ts";
 import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
 
 function css(data: TemplateStringsArray, ...expr: string[]) {
@@ -55,62 +56,63 @@ const rejectReasons = [ ReviewResponse.DeclineCopyright ];
 export const dialogState = State({
     drop: <Drop | "loading">"loading"
 });
-export const ApproveDialog = Dialog(() =>
+export const ApproveDialog = SheetDialog(sheetStack, "Approve Drop",
     dialogState.$drop.map(drop =>
         Box(
             drop === "loading"
                 ? Box(Image({ type: "loading" }, "Loading...")).addClass("test")
-                : Wizard({
-                    buttonAlignment: "bottom",
-                    buttonArrangement: 'flex-end',
-                    cancelAction: () => {
-                        ApproveDialog.close();
-                    },
-                    submitAction: async ([ { data: { data: { responseText } } } ]) => {
-                        await API.music.id(drop._id).review.post({
-                            title: dropPatternMatching(reviewTexts.APPROVED.header, drop),
-                            reason: [ "APPROVED" ],
-                            body: rawTemplate(dropPatternMatching(responseText, drop)),
-                            denyEdits: false
-                        });
+                : Box(
+                    Box(
+                        Label("Email Response"),
+                        Custom((() => {
+                            const ele = createElement("textarea");
+                            ele.rows = 10;
+                            ele.value = data.responseText;
+                            ele.style.resize = "vertical";
+                            ele.oninput = () => {
+                                data.responseText = ele.value;
+                            };
+                            return ele;
+                        })()),
+                    )
+                        .addClass("winput", "grayscaled", "has-value", "textarea")
+                        .setMargin("0 0 .5rem"),
+                    Label("Preview")
+                        .setMargin("0 0 0.5rem"),
+                    data.$responseText
+                        .map(() => clientRender(dropPatternMatching(data.responseText, drop)))
+                        .asRefComponent(),
+                )
+            // : Wizard({
+            //     buttonAlignment: "bottom",
+            //     buttonArrangement: 'flex-end',
+            //     cancelAction: () => {
+            //         ApproveDialog.close();
+            //     },
+            //     submitAction: async ([ { data: { data: { responseText } } } ]) => {
+            //         await API.music.id(drop._id).review.post({
+            //             title: dropPatternMatching(reviewTexts.APPROVED.header, drop),
+            //             reason: [ "APPROVED" ],
+            //             body: rawTemplate(dropPatternMatching(responseText, drop)),
+            //             denyEdits: false
+            //         });
 
-                        ApproveDialog.close();
-                    },
-                }, () => [
-                    Page({
-                        responseText: reviewTexts.APPROVED.content.join("\n"),
-                    }, (data) => [
-                        // TODO: Put this Component into webgen directly and clean it up
-                        Box(
-                            Label("Email Response"),
-                            Custom((() => {
-                                const ele = createElement("textarea");
-                                ele.rows = 10;
-                                ele.value = data.responseText;
-                                ele.style.resize = "vertical";
-                                ele.oninput = () => {
-                                    data.responseText = ele.value;
-                                };
-                                return ele;
-                            })()),
-                        )
-                            .addClass("winput", "grayscaled", "has-value", "textarea")
-                            .setMargin("0 0 .5rem"),
-                        Label("Preview")
-                            .setMargin("0 0 0.5rem"),
-                        data.$responseText
-                            .map(() => clientRender(dropPatternMatching(data.responseText, drop)))
-                            .asRefComponent(),
-                    ]).setValidator((v) => v.object({
-                        responseText: v.string().refine(x => render(dropPatternMatching(x, drop)).errors.length == 0, { message: "Invalid MJML" })
-                    }))
-                ]),
+            //         ApproveDialog.close();
+            //     },
+            // }, () => [
+            //     Page({
+            //         responseText: reviewTexts.APPROVED.content.join("\n"),
+            //     }, (data) => [
+            //         // TODO: Put this Component into webgen directly and clean it up
+
+            //     ]).setValidator((v) => v.object({
+            //         responseText: v.string().refine(x => render(dropPatternMatching(x, drop)).errors.length == 0, { message: "Invalid MJML" })
+            //     }))
+            // ]),
         )
             .setMargin("0 0 var(--gap)")
     ).asRefComponent()
-)
-    .allowUserClose()
-    .setTitle("Approve Drop");
+);
 
 export const DeclineDialog = Dialog(() =>
     dialogState.$drop.map(drop =>

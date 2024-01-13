@@ -6,7 +6,7 @@ import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
 import language from "../../data/language.json" with { type: "json" };
-import { Artist, DATE_PATTERN, DropType, Song, artist, userString } from "../../spec/music.ts";
+import { Artist, DATE_PATTERN, DropType, Song, artist, song, userString } from "../../spec/music.ts";
 import '../hosting/views/table2.css';
 import { CenterAndRight, EditArtistsDialog, RegisterAuthRefresh, allowedAudioFormats, allowedImageFormats, getSecondary, sheetStack } from "./helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
@@ -45,8 +45,6 @@ API.music.id(dropId).get().then(stupidErrorAlert)
         state.comments = drop.comments;
     })
     .then(() => state.loaded = true);
-
-// uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }).transform(_ => undefined),
 
 const state = State({
     loaded: false,
@@ -268,7 +266,7 @@ const wizard = state.$page.map(page => {
                     state,
                     zod.object({
                         artwork: zod.string(),
-                        loading: zod.literal(false, { errorMap: () => ({ message: "Artwork is still uploading" }) })
+                        loading: zod.literal(false, { errorMap: () => ({ message: "Artwork is still uploading" }) }).transform(() => undefined),
                     })
                 );
 
@@ -307,8 +305,8 @@ const wizard = state.$page.map(page => {
                 const { error, validate } = Validate(
                     state,
                     zod.object({
-                        artwork: zod.string(),
-                        loading: zod.literal(false, { errorMap: () => ({ message: "Artwork is still uploading" }) })
+                        songs: song.array().min(1, { message: "At least one song is required" }),
+                        uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }),
                     })
                 );
 

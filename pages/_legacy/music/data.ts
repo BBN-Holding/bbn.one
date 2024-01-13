@@ -3,8 +3,6 @@ import { delay } from "std/async/delay.ts";
 import { AdvancedImage, State, StateHandler } from "webgen/mod.ts";
 import { Artist, Song } from "../../../spec/music.ts";
 
-// TODO: Remove all theses spread operator, update values directly,
-
 export function uploadSongToDrop(state: StateHandler<{ uploadingSongs: string[]; songs: Song[]; artists: Artist[], language: string | undefined, primaryGenre: string | undefined, secondaryGenre: string | undefined, _id: string; }>, file: File) {
     const uploadId = crypto.randomUUID();
     state.uploadingSongs.push(uploadId);

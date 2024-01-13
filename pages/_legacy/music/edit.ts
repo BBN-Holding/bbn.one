@@ -1,11 +1,13 @@
+import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API, LoadingSpinner, Navigation, createActionList, createBreadcrumb, createTagList, stupidErrorAlert } from "shared/mod.ts";
-import { Body, Empty, Grid, Horizontal, Label, Spacer, State, Vertical, WebGen, isMobile } from "webgen/mod.ts";
+import { AdvancedImage, Body, Empty, Grid, Horizontal, Label, Spacer, State, Vertical, WebGen, isMobile } from "webgen/mod.ts";
 import '../../../assets/css/main.css';
 import '../../../assets/css/music.css';
 import { DynaNavigation } from "../../../components/nav.ts";
-import { Drop, DropType } from "../../../spec/music.ts";
+import { Artist, Drop, DropType, Song } from "../../../spec/music.ts";
+import '../../hosting/views/table2.css';
 import { DropTypeToText } from "../../music/views/list.ts";
-import { RegisterAuthRefresh, changeThemeColor, permCheck, renewAccessTokenIfNeeded, saveBlob, showPreviewImage } from "../helper.ts";
+import { RegisterAuthRefresh, changeThemeColor, permCheck, renewAccessTokenIfNeeded, saveBlob, sheetStack, showPreviewImage } from "../helper.ts";
 import { ChangeDrop } from "./changeDrop.ts";
 import { ChangeSongs } from "./changeSongs.ts";
 
@@ -25,17 +27,33 @@ if (!data.id) {
 }
 
 const state = State({
-    drop: <Drop | undefined>undefined,
+    loaded: false,
+    _id: data.id,
+    title: <string>undefined!,
+    type: <DropType | undefined>undefined,
+    release: <string | undefined>undefined,
+    language: <string | undefined>undefined,
+    artists: <Artist[]>[],
+    primaryGenre: <string | undefined>undefined,
+    secondaryGenre: <string | undefined>undefined,
+    compositionCopyright: <string | undefined>undefined,
+    soundRecordingCopyright: <string | undefined>undefined,
+    artwork: <string | undefined>undefined,
+    artworkClientData: <AdvancedImage | string | undefined>undefined,
+    loading: false,
+    uploadingSongs: <string[]>[],
+    songs: <Song[]>[],
+    validationState: <ZodError | undefined>undefined
 });
 
-Body(Vertical(
+sheetStack.setDefault(Vertical(
     DynaNavigation("Music"),
-    state.$drop.map(drop => drop ? Navigation({
-        title: drop.title,
+    state.$loaded.map(loaded => loaded ? Navigation({
+        title: state.$title,
         children: [
             Horizontal(
                 //TODO: Make this look better
-                Label(DropTypeToText(drop.type)).setTextSize("2xl"),
+                Label(DropTypeToText(state.type!)).setTextSize("2xl"),
                 Spacer()
             ),
             {
@@ -43,7 +61,7 @@ Body(Vertical(
                 title: "Drop",
                 subtitle: "Change Title, Release Date, ...",
                 children: [
-                    ChangeDrop(drop)
+                    ChangeDrop(state)
                 ]
             },
             {
@@ -51,7 +69,7 @@ Body(Vertical(
                 title: "Songs",
                 subtitle: "Move Songs, Remove Songs, Add Songs, ...",
                 children: [
-                    ChangeSongs(drop),
+                    ChangeSongs(state),
                 ]
             },
             {
@@ -59,37 +77,37 @@ Body(Vertical(
                 title: "Export",
                 subtitle: "Download your complete Drop with every Song",
                 clickHandler: async () => {
-                    const blob = await API.music.id(drop._id).download().then(stupidErrorAlert);
-                    saveBlob(blob, `${drop.title}.tar`);
+                    const blob = await API.music.id(state._id).download().then(stupidErrorAlert);
+                    saveBlob(blob, `${state.title}.tar`);
                 }
             },
-            Permissions.canCancelReview(drop) ?
+            Permissions.canCancelReview(state.type!) ?
                 {
                     id: "cancel-review",
                     title: "Cancel Review",
                     subtitle: "Need to change Something? Cancel it now",
                     clickHandler: async () => {
-                        await API.music.id(drop._id).type.post(DropType.Private);
+                        await API.music.id(state._id).type.post(DropType.Private);
                         location.reload();
                     },
                 } : Empty(),
-            Permissions.canSubmit(drop) ?
+            Permissions.canSubmit(state.type!) ?
                 {
                     id: "publish",
                     title: "Publish",
                     subtitle: "Submit your Drop for Approval",
                     clickHandler: async () => {
-                        await API.music.id(drop._id).type.post(DropType.UnderReview);
+                        await API.music.id(state._id).type.post(DropType.UnderReview);
                         location.reload();
                     },
                 } : Empty(),
-            Permissions.canTakedown(drop) ?
+            Permissions.canTakedown(state.type!) ?
                 {
                     id: "takedown",
                     title: "Takedown",
                     subtitle: "Completely Takedown your Drop",
                     clickHandler: async () => {
-                        await API.music.id(drop._id).type.post(DropType.Private);
+                        await API.music.id(state._id).type.post(DropType.Private);
                         location.reload();
                     },
                 } : Empty()
@@ -103,7 +121,7 @@ Body(Vertical(
             const list = Vertical(
                 menu.path.map(x => x == "-/" ?
                     Grid(
-                        showPreviewImage(drop).addClass("image-preview")
+                        showPreviewImage(<Drop>{ _id: state._id, artwork: state.artwork }).addClass("image-preview")
                     ).setEvenColumns(1, "10rem")
                     : Empty()
                 ).asRefComponent(),
@@ -120,11 +138,31 @@ Body(Vertical(
     ).asRefComponent(),
 ));
 
+Body(sheetStack);
+
 const Permissions = {
-    canTakedown: (drop: Drop) => drop.type == "PUBLISHED",
-    canSubmit: (drop: Drop) => (<Drop[ "type" ][]>[ "UNSUBMITTED", "PRIVATE" ]).includes(drop.type),
-    canEdit: (drop: Drop) => (drop.type == "PRIVATE" || drop.type == "UNSUBMITTED") || permCheck("/bbn/manage/drops"),
-    canCancelReview: (drop: Drop) => drop.type == "UNDER_REVIEW"
+    canTakedown: (type: DropType) => type == "PUBLISHED",
+    canSubmit: (type: DropType) => (<Drop[ "type" ][]>[ "UNSUBMITTED", "PRIVATE" ]).includes(type),
+    canEdit: (type: DropType) => (type == "PRIVATE" || type == "UNSUBMITTED") || permCheck("/bbn/manage/drops"),
+    canCancelReview: (type: DropType) => type == "UNDER_REVIEW"
 };
 
-renewAccessTokenIfNeeded().then(async () => state.drop = await API.music.id(data.id).get().then(stupidErrorAlert));
+renewAccessTokenIfNeeded().then(async () => {
+    await API.music.id(data.id).get()
+        .then(stupidErrorAlert)
+        .then(drop => {
+            state.type = drop.type;
+            state.title = drop.title;
+            state.release = drop.release;
+            state.language = drop.language;
+            state.artists = State(drop.artists ?? []);
+            state.primaryGenre = drop.primaryGenre;
+            state.secondaryGenre = drop.secondaryGenre;
+            state.compositionCopyright = drop.compositionCopyright;
+            state.soundRecordingCopyright = drop.soundRecordingCopyright;
+            state.artwork = drop.artwork;
+            state.artworkClientData = <AdvancedImage | string | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id).artwork().then(stupidErrorAlert) } : undefined);
+            state.songs = State(drop.songs ?? []);
+        })
+        .then(() => state.loaded = true);
+});

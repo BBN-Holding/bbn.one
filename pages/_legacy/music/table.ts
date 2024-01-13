@@ -2,7 +2,7 @@ import { Progress } from "shared/mod.ts";
 import { Box, ButtonStyle, Checkbox, Color, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, StateHandler } from "webgen/mod.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
-import { Song } from "../../../spec/music.ts";
+import { Artist, Song } from "../../../spec/music.ts";
 import { Table2 } from "../../hosting/views/table2.ts";
 import { EditArtistsDialog, ProfilePicture, getSecondary, getYearList } from "../helper.ts";
 
@@ -11,14 +11,13 @@ export function ManageSongs(state: StateHandler<{ songs: Song[]; primaryGenre: s
         .setColumnTemplate("auto max-content max-content max-content max-content max-content max-content min-content")
         .addColumn("Title", (song) => song.progress !== undefined ? Progress(song.progress) :
             InlineTextInput("text", "blur").addClass("low-level").sync(song, "title"))
-        .addColumn("Artists", (song) => Box(
-            ...song.artists.map(([ name, url, _type ]: string[]) =>
+        .addColumn("Artists", (song) =>
+            song.$artists.map(artists => Box(...artists.map(([ name, url, _type ]: Artist) =>
                 ProfilePicture(url ? Image(url, "A profile picture") : Label(""), name)
-            ),
-            IconButton(MIcon("add"), "add")
-        )
-            .addClass("artists-list")
-            .onClick(() => EditArtistsDialog(song).open()))
+            ), IconButton(MIcon("add"), "add"))
+                .addClass("artists-list")
+                .onClick(() => EditArtistsDialog(song).open())
+            ).asRefComponent())
         .addColumn("Year", (song) => DropDownInput("Year", getYearList())
             .setValue(song.year.toString())
             .onChange(data => song.year = parseInt(data))
@@ -43,5 +42,5 @@ export function ManageSongs(state: StateHandler<{ songs: Song[]; primaryGenre: s
             .onClick((_, value) => song.explicit = !value)
             .addClass("low-level"))
         .addColumn("", (song) => IconButton(MIcon("delete"), "Delete").onClick(() => state.songs = state.songs.filter((x) => x.id != song.id) as typeof state.songs))
-        .addClass("inverted-class", "light-mode");
+        .addClass("inverted-class");
 }

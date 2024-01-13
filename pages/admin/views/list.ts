@@ -1,8 +1,8 @@
 import { API, External, fileCache, RenderItem, stupidErrorAlert } from "shared/mod.ts";
-import { Box, Button, Cache, Color, Entry, Grid, IconButton, Image, MIcon, ref, TextInput } from "webgen/mod.ts";
+import { Box, Button, Cache, Color, Entry, Grid, Horizontal, IconButton, Image, MIcon, ref, SheetDialog, Spacer, TextInput, Vertical } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
-import { saveBlob } from "../../_legacy/helper.ts";
+import { saveBlob, sheetStack } from "../../_legacy/helper.ts";
 import { state } from "../state.ts";
 
 export function entryWallet(wallet: Wallet) {
@@ -63,14 +63,22 @@ export function entryOAuth(app: OAuthApp) {
         .addClass("small");
 }
 
-const oAuthViewDialog = (oauth: OAuthApp) => Dialog(() =>
-    Grid(
-        TextInput("text", "Name").setValue(oauth.name).setColor(Color.Disabled),
-        TextInput("text", "Client ID").setValue(oauth._id).setColor(Color.Disabled),
-        TextInput("text", "Client Secret").setValue(oauth.secret).setColor(Color.Disabled),
-        TextInput("text", "Redirect URI").setValue(oauth.redirect.join(",")).setColor(Color.Disabled),
+const oAuthViewDialog = (oauth: OAuthApp) => SheetDialog(sheetStack, "OAuth App Details",
+    Vertical(
+        Grid(
+            TextInput("text", "Name").setValue(oauth.name).setColor(Color.Disabled),
+            TextInput("text", "Client ID").setValue(oauth._id).setColor(Color.Disabled),
+            TextInput("text", "Client Secret").setValue(oauth.secret).setColor(Color.Disabled),
+            TextInput("text", "Redirect URI").setValue(oauth.redirect.join(",")).setColor(Color.Disabled),
+        ),
+        Horizontal(
+            Spacer(),
+            Button("Close").onClick(() => {
+                oAuthViewDialog(oauth).close();
+            })
+        )
     )
-).allowUserClose().setTitle("OAuth App Details").addButton("Close", "remove");
+);
 
 export function entryFile(file: File) {
     return Entry({

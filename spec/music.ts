@@ -52,7 +52,7 @@ export const song = zod.object({
     id: zod.string(),
     isrc: zod.string().optional(),
     title: userString,
-    artists: artist.array().min(1),
+    artists: artist.array().refine(x => x.some(([ , , type ]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
     primaryGenre: zod.string(),
     secondaryGenre: zod.string(),
     year: zod.number(),
@@ -70,10 +70,9 @@ export const drop = zod.object({
     _id: zod.string(),
     upc: zod.string()
         .transform(x => x?.trim())
-        // .transform(x => x?.length == 0 ? undefined : x)
         .refine(x => x == undefined || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" }),
     title: userString,
-    artists: artist.array().min(1),
+    artists: artist.array().refine(x => x.some(([ , , type ]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
     release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
     language: zod.string(),
     primaryGenre: zod.string(),

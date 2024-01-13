@@ -225,8 +225,7 @@ export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[]; }>) =
                     .setValue(artist[ 0 ])
                     .onChange(data => artist[ 0 ] = data ?? "")
             )
-            //how to handle without index?
-            .addColumn("", () => IconButton(MIcon("delete"), "Delete").onClick(() => "remove")),
+            .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => state.artists = state.artists.filter((_, i) => i != state.artists.indexOf(data)) as typeof state.artists)),
         Horizontal(
             Spacer(),
             Button("Add Artist")

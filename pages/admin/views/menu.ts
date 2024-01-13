@@ -1,8 +1,8 @@
 import { API, HeavyList, loadMore, Navigation, placeholder } from "shared/mod.ts";
 import { sumOf } from "std/collections/sum_of.ts";
-import { Box, Button, Color, Entry, Grid, Horizontal, isMobile, Label, ref, Spacer, State, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Box, Button, Color, Entry, Grid, Horizontal, isMobile, Label, ref, SheetDialog, Spacer, State, Table, TextInput, Vertical } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
-import { activeUser } from "../../_legacy/helper.ts";
+import { activeUser, sheetStack } from "../../_legacy/helper.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
@@ -198,7 +198,7 @@ const oAuthData = State({
     image: ""
 });
 
-const addOAuthDialog = Dialog(() =>
+const addOAuthDialog = SheetDialog(sheetStack, "Create new OAuth Application",
     Grid(
         Label("Create new OAuth Application"),
         TextInput("text", "Name").sync(oAuthData, "name"),
@@ -246,6 +246,4 @@ const addOAuthDialog = Dialog(() =>
                 })
         ).asRefComponent()
     ).setGap("10px")
-)
-    .setTitle("Create new OAuth Application")
-    .allowUserClose();
+);
