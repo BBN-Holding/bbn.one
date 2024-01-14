@@ -1,4 +1,4 @@
-import { Box, Component, Custom, Label, Reference, Referenceable, asRef, refMerge } from "webgen/mod.ts";
+import { Box, Component, Custom, Label, Refable, Reference, asRef, refMerge } from "webgen/mod.ts";
 
 export type TableColumn<Data> = {
     converter: (data: Data) => Component;
@@ -54,7 +54,7 @@ export class Table2<Data> extends Component {
         ).addClass("wgtable")).asRefComponent().draw());
     }
 
-    setColumnTemplate(layout: Referenceable<string>) {
+    setColumnTemplate(layout: Refable<string>) {
         asRef(layout).listen(value => {
             this.wrapper.style.setProperty("--wgtable-column-template", value);
         });
@@ -70,12 +70,12 @@ export class Table2<Data> extends Component {
         return this;
     }
 
-    setRowClickEnabled(clickableHandler: Referenceable<RowClickEnabledHandler>) {
+    setRowClickEnabled(clickableHandler: Refable<RowClickEnabledHandler>) {
         asRef(clickableHandler).listen(value => this.rowClickable.setValue(value));
         return this;
     }
 
-    setRowClick(clickHandler: Referenceable<RowClickHandler>) {
+    setRowClick(clickHandler: Refable<RowClickHandler>) {
         asRef(clickHandler).listen(value => this.rowClick.setValue(value));
         return this;
     }

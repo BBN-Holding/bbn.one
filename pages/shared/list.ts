@@ -1,9 +1,9 @@
-import { Box, Button, CenterV, Component, Empty, Horizontal, Label, MIcon, Referenceable, Vertical, asRef, asState } from "webgen/mod.ts";
+import { Box, Button, CenterV, Component, Empty, Horizontal, Label, MIcon, Refable, Reference, Vertical, asRef, asState } from "webgen/mod.ts";
 import { LoadingSpinner } from "./components.ts";
 import { External, displayError } from "./restSpec.ts";
 
 // TODO: don't rerender the complete list on update. virtual list?
-export const HeavyList = <T>(items: Referenceable<External<T[]> | 'loading' | T[]>, map: (val: T) => Component) => new class extends Component {
+export const HeavyList = <T>(items: Refable<External<T[]> | 'loading' | T[]>, map: (val: T) => Component) => new class extends Component {
     placeholder = Box();
     loadMore = async (_offset: number, _limit: number) => { };
     paging = asState({ enabled: false, limit: 30 });

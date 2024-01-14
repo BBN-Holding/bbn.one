@@ -60,20 +60,20 @@ sheetStack.setDefault(Vertical(
                 Button("Request Payout")
                     .onClick(() => {
                         const amount = asState({ value: "0" });
-                        const sheet = SheetDialog(sheetStack, "Request Payout",
+                        const dialog = SheetDialog(sheetStack, "Request Payout",
                             Grid(
                                 Label("How much would you like to withdraw?"),
                                 TextInput("text", "Amount").sync(amount, "value"),
                                 Button("Request")
                                     .onClick(() => {
                                         handlePayoutResponse(Number(amount.value));
-                                        sheet.close();
+                                        dialog.close();
                                     })
                             )
                                 .setGap()
                                 .setMargin("10px")
                         );
-                        sheet.open();
+                        dialog.open();
                     })
                     .setColor(wallet.balance?.unrestrained! + wallet.balance?.restrained! > 10 ? Color.Grayscaled : Color.Disabled)
             ]

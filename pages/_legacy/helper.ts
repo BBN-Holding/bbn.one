@@ -32,7 +32,7 @@ export type ProfileData = {
 
 export function IsLoggedIn(): ProfileData | null {
     try {
-        return localStorage[ "access-token" ] ? JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ]?.split(".")[ 1 ])).user : null;
+        return localStorage[ "access-token" ] ? JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ])).user : null;
     } catch (_) {
         // Invalid state. We gonna need to say goodbye to that session
         resetTokens();

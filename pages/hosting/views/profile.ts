@@ -1,7 +1,7 @@
 import { confettiFromElement } from "shared/libs/canvasConfetti.ts";
 import { API, stupidErrorAlert } from "shared/mod.ts";
 import { format } from "std/fmt/bytes.ts";
-import { Box, Button, ButtonStyle, Color, Empty, Entry, Grid, Label, MediaQuery, Referenceable, Vertical } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Color, Empty, Entry, Grid, Label, MediaQuery, Refable, Vertical } from "webgen/mod.ts";
 import { MB, state } from "../data.ts";
 import { refreshState } from "../loading.ts";
 import './profile.css';
@@ -137,7 +137,7 @@ export const profileView = () =>
     );
 
 type ShopVariant =
-    { type: 'available' | 'recommended' | 'blocked', label: Referenceable<string>, sublabel: Referenceable<string>, action: (env: MouseEvent) => Promise<void>; };
+    { type: 'available' | 'recommended' | 'blocked', label: Refable<string>, sublabel: Refable<string>, action: (env: MouseEvent) => Promise<void>; };
 
 const ShopStack = (actionText: string, variant: ShopVariant) => Grid(
     Label(actionText),

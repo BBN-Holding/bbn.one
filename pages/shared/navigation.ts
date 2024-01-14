@@ -1,5 +1,5 @@
 import { assert } from "std/assert/assert.ts";
-import { Box, Component, Empty, Entry, Grid, Label, MIcon, Reference, Referenceable, Taglist, Vertical, asRef, isMobile, isRef } from "webgen/mod.ts";
+import { Box, Component, Empty, Entry, Grid, Label, MIcon, Refable, Reference, Taglist, Vertical, asRef, isMobile, isRef } from "webgen/mod.ts";
 import { HeavyList } from "./list.ts";
 import './navigation.css';
 
@@ -11,12 +11,12 @@ export type RenderItem = Component | MenuNode;
 
 export interface MenuNode {
     id: string;
-    hidden?: Referenceable<boolean>;
-    title: Referenceable<string>;
-    subtitle?: Referenceable<string>;
-    children?: Referenceable<RenderItem[]>;
-    replacement?: Referenceable<Component>;
-    suffix?: Referenceable<Component>;
+    hidden?: Refable<boolean>;
+    title: Refable<string>;
+    subtitle?: Refable<string>;
+    children?: Refable<RenderItem[]>;
+    replacement?: Refable<Component>;
+    suffix?: Refable<Component>;
     clickHandler?: ClickHandler;
     firstRenderHandler?: ClickHandler;
 }
@@ -27,7 +27,7 @@ export interface CategoryNode extends MenuNode {
 
 export type RootNode = Omit<MenuNode, "id"> & {
     categories?: CategoryNode[];
-    actions?: Referenceable<Component[]>;
+    actions?: Refable<Component[]>;
 };
 
 function traverseToMenuNode(rootNode: RootNode, path: string): MenuNode | null {
@@ -162,7 +162,7 @@ class MenuImpl extends Component {
 }
 
 /**
- * A Extendable Declarative Referenceable Navigation Component.
+ * A Extendable Declarative Refable Navigation Component.
  * @param rootNode
  * @returns
  */

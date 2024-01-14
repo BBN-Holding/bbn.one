@@ -1,21 +1,23 @@
+import { ZodError } from "https://deno.land/x/zod@v3.22.4/ZodError.ts";
 import zod from "https://deno.land/x/zod@v3.22.4/index.ts";
 import { API, Navigation } from "shared/mod.ts";
-import { Body, Grid, TextInput, Vertical, WebGen, isMobile } from "webgen/mod.ts";
+import { Body, Box, Button, CenterV, Empty, Grid, Horizontal, Label, Spacer, TextInput, Validate, Vertical, WebGen, asState, getErrorMessage, isMobile } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, logOut } from "../_legacy/helper.ts";
 import { ChangePersonal } from "./settings.personal.ts";
 
-WebGen({});
+WebGen();
+
 await RegisterAuthRefresh();
 
-const passwordWizard = zod.object({
-    newPassword: zod.string({ invalid_type_error: "New password is missing" }).min(4),
-    verifyNewPassword: zod.string({ invalid_type_error: "Verify New password is missing" }).min(4)
-})
-    .refine(val => val.newPassword == val.verifyNewPassword, "Your new password didn't match");
+const state = asState({
+    newPassword: <string | undefined>undefined,
+    verifyNewPassword: <string | undefined>undefined,
+    validationState: <ZodError | undefined>undefined,
+});
 
-export const settingsMenu = Navigation({
+const settingsMenu = Navigation({
     title: "Settings",
     children: [
         {
@@ -30,32 +32,41 @@ export const settingsMenu = Navigation({
             id: "change-password",
             title: "Change Password",
             children: [
-                Wizard({
-                    submitAction: async ([ { data: { data } } ]) => {
-                        await API.user.setMe.post({ password: data.newPassword });
-                        logOut();
-                    },
-                    buttonArrangement: "flex-end",
-                    buttonAlignment: "top",
-                }, () => [
-                    Page({
-                        newPassword: undefined,
-                        verifyNewPassword: undefined
-                    }, (data) => [
+                Vertical(
+                    Grid([
+                        { width: 2 },
                         Vertical(
-                            Grid([
-                                { width: 2 },
-                                Vertical(
-                                    TextInput("password", "New Password").sync(data, "newPassword"),
-                                    TextInput("password", "Verify New Password").sync(data, "verifyNewPassword")
-                                ).setGap("20px")
-                            ])
-                                .setDynamicColumns(1, "12rem")
-                                .addClass("settings-form")
-                                .setGap("15px")
-                        ).setGap("20px"),
-                    ]).setValidator(() => passwordWizard)
-                ])
+                            TextInput("password", "New Password").sync(state, "newPassword"),
+                            TextInput("password", "Verify New Password").sync(state, "verifyNewPassword")
+                        ).setGap("20px")
+                    ])
+                        .setDynamicColumns(1, "12rem")
+                        .addClass("settings-form")
+                        .setGap("15px"),
+                    Horizontal(
+                        Spacer(),
+                        Box(state.$validationState.map(error => error ? CenterV(
+                            Label(getErrorMessage(error))
+                                .addClass("error-message")
+                                .setMargin("0 0.5rem 0 0")
+                        )
+                            : Empty()).asRefComponent()),
+                        Button("Save").onClick(async () => {
+                            const { error, validate } = Validate(
+                                state,
+                                zod.object({
+                                    newPassword: zod.string({ invalid_type_error: "New password is missing" }).min(4),
+                                    verifyNewPassword: zod.string({ invalid_type_error: "Verify New password is missing" }).min(4).refine(val => val == state.newPassword, "Your new password didn't match")
+                                })
+                            );
+
+                            const data = validate();
+                            if (error.getValue()) return state.validationState = error.getValue();
+                            if (data) await API.user.setMe.post({ password: data.newPassword });
+                            logOut();
+                            state.validationState = undefined;
+                        })),
+                ).setGap("20px"),
             ]
         },
         {

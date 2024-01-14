@@ -7,7 +7,7 @@ export const Permissions = [
     "/hmsys/user/manage",
 
     "/bbn",
-    "/bbn/beta-hosting",
+    "/bbn/hosting",
     "/bbn/manage",
     "/bbn/manage/drops",
     "/bbn/manage/drops/review",
