@@ -1,16 +1,24 @@
+import { Box, Button, Color, Horizontal, Label, SheetDialog, Spacer, Vertical } from "webgen/mod.ts";
+import { sheetStack } from "../../../_legacy/helper.ts";
 
 export function deleteFileDialog() {
     const response = Promise.withResolvers<boolean>();
-    // Dialog(() => Box(Label("Deleting this File will result in data loss.\nAfter this point there is no going back.")).setMargin("0 0 1.5rem"))
-    //     .setTitle("Are you sure?")
-    //     .addButton("Cancel", "remove")
-    //     .addButton("Delete", () => {
-    //         response.resolve(true);
-    //         return "remove" as const;
-    //     }, Color.Critical)
-    //     .onClose(() => response.resolve(false))
-    //     .allowUserClose()
-    //     .open();
+    const dialog = SheetDialog(sheetStack, "Are you sure?",
+        Vertical(
+            Box(Label("Deleting this File will result in data loss.\nAfter this point there is no going back.")).setMargin("0 0 1.5rem")),
+        Horizontal(
+            Spacer(),
+            Button("Cancel").onClick(() => dialog.close()),
+            Button("Delete").onClick(() => {
+                response.resolve(true);
+                dialog.close();
+            }).setColor(Color.Critical)
+        )
+    );
+
+    dialog.setOnClose(() => response.resolve(false));
+
+    dialog.open();
 
     return response.promise;
 }

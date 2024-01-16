@@ -68,8 +68,8 @@ export function ChangeDrop(drop: StateHandler<{ _id: string | undefined, title: 
                 Box(artworkData ? Image(artworkData, "A Music Album Artwork.") : Image(artwork, "A Default Alubm Artwork."), IconButton(MIcon("edit"), "edit icon"))
                     .addClass("upload-image"),
                 allowedImageFormats,
-                ([ { file } ]) => uploadArtwork(state.$artworkClientData, state.$loading, data.$artwork, file)
-            ).onClick(() => createFilePicker(allowedImageFormats.join(",")).then(file => uploadArtwork(state.$artworkClientData, state.$loading, data.$artwork, file)))).asRefComponent(),
+                ([ { file } ]) => uploadArtwork(drop._id!, file, state.$artworkClientData, state.$loading, data.$artwork)
+            ).onClick(() => createFilePicker(allowedImageFormats.join(",")).then(file => uploadArtwork(drop._id!, file, state.$artworkClientData, state.$loading, data.$artwork)))).asRefComponent(),
         ).setDynamicColumns(2, "12rem"),
         [
             { width: 2 },

@@ -58,14 +58,13 @@ export function uploadSongToDrop(state: StateHandler<{ songs: Song[]; artists: A
     }, file);
 }
 
-export function uploadArtwork(artworkClientData: Reference<AdvancedImage | string | undefined>, loading: Reference<boolean>, artwork: Reference<string | undefined>, file: File) {
-    const params = new URLSearchParams(location.search);
+export function uploadArtwork(id: string, file: File, artworkClientData: Reference<AdvancedImage | string | undefined>, loading: Reference<boolean>, artwork: Reference<string | undefined>) {
     const blobUrl = URL.createObjectURL(file);
     artworkClientData.setValue({ type: "uploading", filename: file.name, blobUrl, percentage: 0 });
     loading.setValue(true);
 
     setTimeout(() => {
-        StreamingUploadHandler(`music/drops/${params.get("id")!}/upload`, {
+        StreamingUploadHandler(`music/drops/${id}/upload`, {
             failure: () => {
                 loading.setValue(false);
                 artworkClientData.setValue(undefined);

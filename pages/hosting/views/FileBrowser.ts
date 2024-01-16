@@ -3,8 +3,9 @@ import { createDownloadStream } from "shared/libs/streamSaver.ts";
 import { Progress } from "shared/Progress.ts";
 import { ProgressTracker } from "shared/upload.ts";
 import { format } from "std/fmt/bytes.ts";
-import { asRef, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Empty, Entry, Grid, IconButton, Label, MIcon, refMerge } from "webgen/mod.ts";
+import { asRef, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Empty, Entry, Grid, IconButton, Label, MIcon, ref, refMerge, SheetDialog } from "webgen/mod.ts";
 import { SidecarResponse } from "../../../spec/music.ts";
+import { sheetStack } from "../../_legacy/helper.ts";
 import { mapFiletoIcon } from "../constants.ts";
 import { downloadFile, listFiles, messageQueueSidecar } from "../loading.ts";
 import { deleteFileDialog } from "./dialogs/deleteFileDialog.ts";
@@ -30,32 +31,29 @@ const exportingPhase = asRef(<"Indexing download tree" | "Downloading Files">"In
 const collectedFiles = asRef(0);
 const currentFileIndex = asRef(0);
 
-export const exportingDialog = Box();
+export const exportingDialog = SheetDialog(sheetStack, "Download Folder", Grid(
+    Label(ref`Downloading Phase: ${exportingPhase}`),
 
-//     Dialog(() => Grid(
-//     Label(ref`Downloading Phase: ${exportingPhase}`),
+    exportingPhase.map(phase =>
+        phase === "Indexing download tree"
+            ? Grid(
+                Label("Searching for files to download..."),
+                Label(ref`We have found ${collectedFiles} files. Please wait.`),
+            )
+            : Grid(
+                // Download is in progress and we need to download this many files
+                Label("We are downloading your files, please wait."),
+                Progress(globalProgress),
+                Label(ref`Downloading file ${currentFileIndex} of ${collectedFiles}`),
+                Progress(currentFileProgress),
+                BasicLabel({
+                    title: ref`Downloading: ${currentFile}`
+                }),
+            )
+    )
+        .asRefComponent().addClass("details-block")
 
-//     exportingPhase.map(phase =>
-//         phase === "Indexing download tree"
-//             ? Grid(
-//                 Label("Searching for files to download..."),
-//                 Label(ref`We have found ${collectedFiles} files. Please wait.`),
-//             )
-//             : Grid(
-//                 // Download is in progress and we need to download this many files
-//                 Label("We are downloading your files, please wait."),
-//                 Progress(globalProgress),
-//                 Label(ref`Downloading file ${currentFileIndex} of ${collectedFiles}`),
-//                 Progress(currentFileProgress),
-//                 BasicLabel({
-//                     title: ref`Downloading: ${currentFile}`
-//                 }),
-//             )
-//     )
-//         .asRefComponent().addClass("details-block")
-
-// ).addClass("exporting-dialog"))
-//     .setTitle("Download Folder");
+).addClass("exporting-dialog"));
 
 async function getDirectoryHandle(pathIndex: number, directory: FileSystemDirectoryHandle, pathArray: string[]): Promise<FileSystemDirectoryHandle> {
     return pathIndex === pathArray.length - 1 ? directory : await getDirectoryHandle(pathIndex + 1, await directory.getDirectoryHandle(pathArray[ pathIndex ], { create: true }), pathArray);

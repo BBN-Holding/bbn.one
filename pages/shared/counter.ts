@@ -1,7 +1,7 @@
 import { randomInteger } from "std/collections/_utils.ts";
 import { asRef, Box, css, Label, Reference } from "webgen/mod.ts";
 
-export function Counter(value: Reference<string | number>) {
+export function Counter(value: Reference<number>) {
     const id = randomInteger(1000, 100000);
 
     // these need to be unique
@@ -48,7 +48,7 @@ export function Counter(value: Reference<string | number>) {
         }
     }
 
-    value.listen((newVal: number, oldVal: number) => {
+    value.listen((newVal: number, oldVal: number | undefined) => {
         const { unchangedPart, changedPart } = findDifferenceAndSplit(oldVal?.toLocaleString() ?? "", newVal.toLocaleString());
 
         function update() {

@@ -1,5 +1,5 @@
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Box, Button, Cache, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
+import { asState, Box, Button, Cache, CenterV, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -9,15 +9,6 @@ export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
 export type ProfileData = {
     _id: string;
-    authentication?: {
-        type: "password";
-        salt: string;
-        hash: string;
-    } | {
-        type: "oauth",
-        provider: "google" | "discord" | "microsoft" | string,
-        id: string;
-    };
     profile: {
         email: string;
         verified?: {
@@ -164,11 +155,7 @@ export function CenterAndRight(center: Component, right: Component): Component {
     return Horizontal(
         Spacer(),
         Spacer(),
-        Vertical(
-            Spacer(),
-            center,
-            Spacer()
-        ),
+        CenterV(center),
         Spacer(),
         right
     );

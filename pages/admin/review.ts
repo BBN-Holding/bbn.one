@@ -62,7 +62,7 @@ sheetStack.setDefault(Vertical(
                     title: "Drop",
                     subtitle: "Change Title, Release Date, ...",
                     children: [
-                        ChangeDrop({ ...drop, loading: false })
+                        ChangeDrop(drop)
                     ]
                 },
                 {

@@ -1,6 +1,9 @@
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { editor } from "https://esm.sh/monaco-editor@0.44.0/esm/vs/editor/editor.api.js";
-import { Box, Custom, asRef, lazyInit } from "webgen/mod.ts";
+import { delay } from "std/async/delay.ts";
+import { Box, Button, Cache, Custom, Horizontal, Label, MIcon, SheetDialog, Spacer, Vertical, asRef, lazyInit, refMerge } from "webgen/mod.ts";
+import { sheetStack } from "../../../_legacy/helper.ts";
+import { uploadFile } from "../../loading.ts";
 import './editFileDialog.css';
 
 const lazyMonaco = lazyInit(() => loader.init());
@@ -51,53 +54,52 @@ async function createMonacoEditor() {
     return Custom(box).addClass("file-dialog-shell");
 }
 
-export const editFileDialog = Box();
+export const editFileDialog = SheetDialog(sheetStack, "Edit File",
+    Vertical(
+        refMerge({
+            downloading: editFileDownloading,
+            uploading: editFileUploading
+        }).map(({ downloading, uploading }) => (() => {
+            if (downloading)
+                return Box(
+                    MIcon("cloud_download"),
+                    Label("Your file is currently downloading...")
+                )
+                    .addClass("file-is-downloading");
 
-//     Dialog(() =>
-//     Vertical(
-//         refMerge({
-//             downloading: editFileDownloading,
-//             uploading: editFileUploading
-//         }).map(({ downloading, uploading }) => (() => {
-//             if (downloading)
-//                 return Box(
-//                     MIcon("cloud_download"),
-//                     Label("Your file is currently downloading...")
-//                 )
-//                     .addClass("file-is-downloading");
+            if (uploading)
+                return Box(
+                    MIcon("cloud_upload"),
+                    Label("Your file is currently uploading...")
+                )
+                    .addClass("file-is-downloading");
 
-//             if (uploading)
-//                 return Box(
-//                     MIcon("cloud_upload"),
-//                     Label("Your file is currently uploading...")
-//                 )
-//                     .addClass("file-is-downloading");
-
-//             return Box(
-//                 MIcon("cloud_done"),
-//                 Label("Your file is up to date")
-//             ).addClass("file-is-downloading");
-//         })()
-//         ).asRefComponent(),
-//         Cache("monaco-editor", () => createMonacoEditor(),
-//             (type, data) => type === "cache" ? Label("Loading Editor") : data ?? Box()
-//         )
-//     )
-// )
-//     .allowUserClose()
-//     .setTitle("Edit File")
-//     .addButton("Cancel", "close")
-//     .addButton("Save", async () => {
-//         if (editFileDownloading.getValue())
-//             return alert("File is still downloading");
-//         editFileUploading.setValue(true);
-//         const editor = editFileCurrentEditor.getValue()!;
-//         await uploadFile(
-//             editFilePath.getValue(),
-//             new File([ editor.getValue() ], editFilePath.getValue()),
-//             asPointer(0)
-//         );
-//         editFileUploading.setValue(false);
-//         await delay(300);
-//         return "close";
-//     });
+            return Box(
+                MIcon("cloud_done"),
+                Label("Your file is up to date")
+            ).addClass("file-is-downloading");
+        })()
+        ).asRefComponent(),
+        Cache("monaco-editor", () => createMonacoEditor(),
+            (type, data) => type === "cache" ? Label("Loading Editor") : data ?? Box()
+        ),
+        Horizontal(
+            Spacer(),
+            Button("Cancel").onClick(() => editFileDialog.close()),
+            Button("Save").onClick(async () => {
+                if (editFileDownloading.getValue())
+                    return alert("File is still downloading");
+                editFileUploading.setValue(true);
+                const editor = editFileCurrentEditor.getValue()!;
+                await uploadFile(
+                    editFilePath.getValue(),
+                    new File([ editor.getValue() ], editFilePath.getValue()),
+                    asRef(0)
+                );
+                editFileUploading.setValue(false);
+                await delay(300);
+                editFileDialog.close();
+            }),
+        )
+    )
+);

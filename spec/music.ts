@@ -86,6 +86,39 @@ export const drop = zod.object({
     type: zod.nativeEnum(DropType),
 });
 
+const pageOne = zod.object({
+    upc: zod.string().nullish()
+        .transform(x => x?.trim())
+        .transform(x => x?.length == 0 ? undefined : x)
+        .refine(x => x == undefined || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" })
+});
+
+const pageTwo = zod.object({
+    title: userString,
+    artists: artist.array().refine(x => x.some(([ , , type ]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+    release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
+    language: zod.string(),
+    primaryGenre: zod.string(),
+    secondaryGenre: zod.string(),
+});
+
+const pageThree = zod.object({
+    compositionCopyright: userString,
+    soundRecordingCopyright: userString,
+});
+
+const pageFour = zod.object({
+    artwork: zod.string(),
+    loading: zod.literal(false, { errorMap: () => ({ message: "Artwork is still uploading" }) }).transform(() => undefined),
+});
+
+const pageFive = zod.object({
+    songs: song.array().min(1, { message: "At least one song is required" }),
+    uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }),
+});
+
+export const pages = <zod.ZodObject<any>[]>[ pageOne, pageTwo, pageThree, pageFour, pageFive ];
+
 export const payout = zod.object({
     _id: zod.string(),
     importer: zod.string(),

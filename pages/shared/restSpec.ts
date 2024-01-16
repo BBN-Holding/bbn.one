@@ -94,12 +94,10 @@ export const API = {
     getToken: () => localStorage[ "access-token" ],
     BASE_URL: <string>localStorage.OVERRIDE_BASE_URL || (location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/"),
     WS_URL: <string>localStorage.OVERRIDE_WS_URL || (location.hostname == "bbn.one" ? "wss://bbn.one/ws" : "ws://localhost:8443/ws"),
-    bugReport: async (bugReport: BugReport) => {
-        await fetch(`${API.BASE_URL}bug-track/`, {
-            method: "POST",
-            body: JSON.stringify(bugReport)
-        });
-    },
+    bugReport: (bugReport: BugReport) => fetch(`${API.BASE_URL}bug-track/`, {
+        method: "POST",
+        body: JSON.stringify(bugReport)
+    }),
     isPermited: (requiredPermissions: Permission[], userPermission: Permission[]) => requiredPermissions.every(required => userPermission.find(user => required.startsWith(user))),
     user: {
         mail: {
@@ -129,7 +127,7 @@ export const API = {
     auth: {
         oauthRedirect: (type: "discord" | "google" | "microsoft") => `${API.BASE_URL}auth/redirect/${type}?goal=${localStorage.getItem('goal') ?? '/music'}`,
         refreshAccessToken: {
-            post: async (refreshToken: string) => await fetch(`${API.BASE_URL}auth/refresh-access-token`, {
+            post: (refreshToken: string) => fetch(`${API.BASE_URL}auth/refresh-access-token`, {
                 method: "POST",
                 headers: headers(refreshToken)
             })
@@ -164,42 +162,35 @@ export const API = {
                 .then(none())
         },
         register: {
-            post: async ({ email, password, name }: { email: string, password: string, name: string; }) => await fetch(`${API.BASE_URL}auth/register`, {
+            post: (data: { email: string, password: string, name: string; }) => fetch(`${API.BASE_URL}auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    email,
-                    password,
-                    name
-                })
+                body: JSON.stringify(data)
             })
                 .then(json<{ token: string; }>())
                 .catch(reject)
         },
         email: {
-            post: ({ email, password }: { email: string, password: string; }) => fetch(`${API.BASE_URL}auth/email`, {
+            post: (data: { email: string, password: string; }) => fetch(`${API.BASE_URL}auth/email`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({
-                    email,
-                    password
-                })
+                body: JSON.stringify(data)
             })
                 .then(json<{ token: string; }>())
                 .catch(reject)
         }
     },
     wallet: ({
-        get: async () => await fetch(`${API.BASE_URL}wallet/`, {
+        get: () => fetch(`${API.BASE_URL}wallet/`, {
             headers: headers(API.getToken())
         })
             .then(json<Wallet>())
             .catch(reject),
-        requestPayout: async (amount: number) => await fetch(`${API.BASE_URL}wallet/`, {
+        requestPayout: (amount: number) => fetch(`${API.BASE_URL}wallet/`, {
             method: "PUT",
             headers: headers(API.getToken()),
             body: JSON.stringify({ amount })
@@ -246,23 +237,23 @@ export const API = {
     }),
     admin: ({
         files: {
-            list: async (offset: number | undefined = undefined) => {
+            list: (offset: number | undefined = undefined) => {
                 const paging = new URLSearchParams();
                 if (offset)
                     paging.append("_offset", offset.toString());
                 paging.append("_limit", "31");
-                return await fetch(`${API.BASE_URL}admin/files?${paging}`, {
+                return fetch(`${API.BASE_URL}admin/files?${paging}`, {
                     headers: headers(API.getToken())
                 })
                     .then(json<File[]>())
                     .catch(reject);
             },
-            download: async (id: string) => await fetch(`${API.BASE_URL}admin/files/${id}/download`, {
+            download: (id: string) => fetch(`${API.BASE_URL}admin/files/${id}/download`, {
                 headers: headers(API.getToken())
             })
                 .then(blob())
                 .catch(reject),
-            delete: async (id: string) => await fetch(`${API.BASE_URL}admin/files/${id}`, {
+            delete: (id: string) => fetch(`${API.BASE_URL}admin/files/${id}`, {
                 method: "DELETE",
                 headers: headers(API.getToken())
             })
@@ -270,27 +261,27 @@ export const API = {
                 .catch(reject)
         },
         drops: {
-            list: async (type?: DropType, offset = 0, limit = 31) => {
+            list: (type?: DropType, offset = 0, limit = 31) => {
                 const paging = new URLSearchParams();
                 if (type)
                     paging.append("type", type);
                 paging.append("_offset", offset.toString());
                 paging.append("_limit", limit.toString());
-                return await fetch(`${API.BASE_URL}admin/drops?${paging}`, {
+                return fetch(`${API.BASE_URL}admin/drops?${paging}`, {
                     headers: headers(API.getToken())
                 })
                     .then(json<Drop[]>())
                     .catch(reject);
             },
-            user: async (id: string) => {
-                return await fetch(`${API.BASE_URL}admin/drops?user=${id}`, {
+            user: (id: string) => {
+                return fetch(`${API.BASE_URL}admin/drops?user=${id}`, {
                     headers: headers(API.getToken())
                 })
                     .then(json<Drop[]>())
                     .catch(reject);
             },
-            id: async (id: string) => {
-                return await fetch(`${API.BASE_URL}admin/drops/${id}`, {
+            id: (id: string) => {
+                return fetch(`${API.BASE_URL}admin/drops/${id}`, {
                     headers: headers(API.getToken())
                 })
                     .then(json<Drop>())
@@ -298,18 +289,18 @@ export const API = {
             },
         },
         payouts: {
-            list: async () => await fetch(`${API.BASE_URL}admin/payouts`, {
+            list: () => fetch(`${API.BASE_URL}admin/payouts`, {
                 headers: headers(API.getToken())
             })
                 .then(json<Payout[]>())
                 .catch(reject)
         },
         servers: {
-            list: async (offset = 0, limit = 31) => {
+            list: (offset = 0, limit = 31) => {
                 const paging = new URLSearchParams();
                 paging.append("_offset", offset.toString());
                 paging.append("_limit", limit.toString());
-                return await fetch(`${API.BASE_URL}admin/servers?${paging}`, {
+                return fetch(`${API.BASE_URL}admin/servers?${paging}`, {
                     headers: headers(API.getToken())
                 })
                     .then(json<Server[]>())
@@ -317,18 +308,18 @@ export const API = {
             }
         },
         users: {
-            list: async (offset = 0, limit = 31) => {
+            list: (offset = 0, limit = 31) => {
                 const paging = new URLSearchParams();
                 paging.append("_offset", offset.toString());
                 paging.append("_limit", limit.toString());
-                return await fetch(`${API.BASE_URL}user/users?${paging}`, {
+                return fetch(`${API.BASE_URL}user/users?${paging}`, {
                     headers: headers(API.getToken())
                 })
                     .then(json<ProfileData[]>())
                     .catch(reject);
             },
-            get: async (id: string) => {
-                return await fetch(`${API.BASE_URL}user/users/${id}`, {
+            get: (id: string) => {
+                return fetch(`${API.BASE_URL}user/users/${id}`, {
                     headers: headers(API.getToken())
                 })
                     .then(json<ProfileData>())
@@ -336,11 +327,11 @@ export const API = {
             }
         },
         groups: {
-            list: async (offset = 0, limit = 31) => {
+            list: (offset = 0, limit = 31) => {
                 const paging = new URLSearchParams();
                 paging.append("_offset", offset.toString());
                 paging.append("_limit", limit.toString());
-                return await fetch(`${API.BASE_URL}admin/groups?${paging}`, {
+                return fetch(`${API.BASE_URL}admin/groups?${paging}`, {
                     headers: headers(API.getToken())
                 })
                     .then(json<Group[]>())
@@ -348,11 +339,11 @@ export const API = {
             }
         },
         wallets: {
-            list: async (offset = 0, limit = 31) => {
+            list: (offset = 0, limit = 31) => {
                 const paging = new URLSearchParams();
                 paging.append("_offset", offset.toString());
                 paging.append("_limit", limit.toString());
-                return await fetch(`${API.BASE_URL}admin/wallets?${paging}`, {
+                return fetch(`${API.BASE_URL}admin/wallets?${paging}`, {
                     headers: headers(API.getToken())
                 })
                     .then(json<Wallet[]>())
@@ -360,11 +351,11 @@ export const API = {
             }
         },
         transcripts: {
-            list: async (offset = 0, limit = 31) => {
+            list: (offset = 0, limit = 31) => {
                 const paging = new URLSearchParams();
                 paging.append("_offset", offset.toString());
                 paging.append("_limit", limit.toString());
-                return await fetch(`${API.BASE_URL}admin/transcripts?${paging}`, {
+                return fetch(`${API.BASE_URL}admin/transcripts?${paging}`, {
                     headers: headers(API.getToken())
                 })
                     .then(json<Transcript[]>())
@@ -374,13 +365,13 @@ export const API = {
     }),
     payment: ({
         payouts: {
-            get: async () => await fetch(`${API.BASE_URL}payment/payouts`, {
+            get: () => fetch(`${API.BASE_URL}payment/payouts`, {
                 headers: headers(API.getToken())
             })
                 .then(json<Payout[]>())
                 .catch(reject),
             id: (id: string) => ({
-                get: async () => await fetch(`${API.BASE_URL}payment/payouts/${id}`, {
+                get: () => fetch(`${API.BASE_URL}payment/payouts/${id}`, {
                     headers: headers(API.getToken())
                 })
                     .then(json<Payout>())
@@ -408,7 +399,7 @@ export const API = {
             headers: headers(API.getToken())
         }).then(x => x.json()),
         serverId: (id: string) => ({
-            get: async () => await fetch(`${API.BASE_URL}hosting/servers/${id}`, {
+            get: () => fetch(`${API.BASE_URL}hosting/servers/${id}`, {
                 headers: headers(API.getToken())
             })
                 .then(json<Server>())
@@ -426,7 +417,7 @@ export const API = {
             })
                 .then(none())
                 .catch(reject),
-            audit: async () => await fetch(`${API.BASE_URL}hosting/servers/${id}/audit`, {
+            audit: () => fetch(`${API.BASE_URL}hosting/servers/${id}/audit`, {
                 headers: headers(API.getToken())
             })
                 .then(json<ServerAudit[]>())
@@ -456,12 +447,12 @@ export const API = {
     }),
     music: ({
         drops: {
-            list: async () => await fetch(`${API.BASE_URL}music/drops`, {
+            list: () => fetch(`${API.BASE_URL}music/drops`, {
                 headers: headers(API.getToken())
             })
                 .then(json<Drop[]>())
                 .catch(reject),
-            create: async () => await fetch(`${API.BASE_URL}music/`, {
+            create: () => fetch(`${API.BASE_URL}music/`, {
                 method: "POST",
                 headers: headers(API.getToken())
             })
@@ -469,12 +460,12 @@ export const API = {
                 .catch(reject)
         },
         id: (id: string) => ({
-            get: async () => await fetch(`${API.BASE_URL}music/drops/${id}`, {
+            get: () => fetch(`${API.BASE_URL}music/drops/${id}`, {
                 headers: headers(API.getToken())
             })
-                .then(json<Drop>())
+                .then(json<Partial<Drop>>())
                 .catch(reject),
-            update: async (data: Partial<Drop>) => await fetch(`${API.BASE_URL}music/drops/${id}`, {
+            update: (data: Partial<Drop>) => fetch(`${API.BASE_URL}music/drops/${id}`, {
                 method: "PATCH",
                 body: JSON.stringify(data),
                 headers: headers(API.getToken())
@@ -482,7 +473,7 @@ export const API = {
                 .then(none())
                 .catch(reject),
             review: {
-                post: async (data: { title: string, reason: string[], body: string; denyEdits: boolean; }) => await fetch(`${API.BASE_URL}music/${id}/review`, {
+                post: (data: { title: string, reason: string[], body: string; denyEdits: boolean; }) => fetch(`${API.BASE_URL}music/${id}/review`, {
                     method: "POST",
                     headers: headers(API.getToken()),
                     body: JSON.stringify(data)
@@ -491,19 +482,19 @@ export const API = {
                     .catch(reject),
             },
             type: {
-                post: async (type: DropType) => await fetch(`${API.BASE_URL}music/${id}/type/${type}`, {
+                post: (type: DropType) => fetch(`${API.BASE_URL}music/${id}/type/${type}`, {
                     method: "POST",
                     headers: headers(API.getToken())
                 })
                     .then(none())
                     .catch(reject),
             },
-            download: async () => await fetch(`${API.BASE_URL}music/drops/${id}/download`, {
+            download: () => fetch(`${API.BASE_URL}music/drops/${id}/download`, {
                 headers: headers(API.getToken())
             })
                 .then(blob())
                 .catch(reject),
-            artwork: async () => await fetch(`${API.BASE_URL}music/${id}/artwork`, {
+            artwork: () => fetch(`${API.BASE_URL}music/${id}/artwork`, {
                 headers: headers(API.getToken())
             })
                 .then(blob())
