@@ -81,7 +81,7 @@ async function find(versions: string[], type: ServerTypes, offset = 0, limit = 2
         ServerTypeToModrinthTypeMap[ type ].map((v) => `categories:${v}`),
         [ "project_type:mod" ],
         versions.map(version => "versions:" + version),
-        [ "server_side:required" ],
+        [ "server_side:required", "server_side:optional" ],
     ]));
     path.searchParams.set("limit", limit.toString());
     path.searchParams.set("offset", offset.toString());
