@@ -1,13 +1,13 @@
-import { SafeParseReturnType } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API, LoadingSpinner, SliderInput, displayError } from "shared/mod.ts";
 import { format } from "std/fmt/bytes.ts";
-import { BasicLabel, Box, Button, CenterV, DropDownInput, Empty, Grid, Horizontal, Label, Spacer, TextInput, Vertical, asState, getErrorMessage, refMerge } from "webgen/mod.ts";
+import { BasicLabel, Box, Button, CenterV, DropDownInput, Empty, Grid, Horizontal, Label, Spacer, TextInput, Validate, Vertical, asState, getErrorMessage, refMerge } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" with { type: "json" };
 import { ServerCreate, serverCreate } from "../../../spec/music.ts";
 import { MB, creationState, state } from "../data.ts";
 
-const validationState = asState({
-    isValid: <SafeParseReturnType<any, any> | undefined>undefined
+const vState = asState({
+    validationState: <ZodError | undefined>undefined
 });
 
 export const creationView = () => creationState.$loading.map(loading => {
@@ -84,21 +84,22 @@ export const creationView = () => creationState.$loading.map(loading => {
                 Grid(
                     Horizontal(
                         //ngl this style="display: contents;" is kinda annoying
-                        Box(validationState.$isValid.map(isValid => isValid && !isValid.success ? CenterV(
-                            Label(getErrorMessage(validationState))
+                        Box(vState.$validationState.map(error => error ? CenterV(
+                            Label(getErrorMessage(error))
                                 .addClass("error-message")
                                 .setMargin("0 0.5rem 0 0")
                         )
                             : Empty()).asRefComponent()),
                         Spacer(),
-                        Button("Submit").onPromiseClick(async () => {
-                            const validation = await serverCreate.safeParseAsync(data);
-                            if (validation.success == false) {
-                                validationState.isValid = validation;
-                                return;
-                            }
+                        Button("Submit").onClick(async () => {
+                            const { error, validate } = Validate(
+                                state,
+                                serverCreate
+                            );
+                            const validation = validate();
+                            if (error.getValue()) return vState.validationState = error.getValue();
                             creationState.loading = true;
-                            const rsp = await API.hosting.create(data);
+                            const rsp = await API.hosting.create(validation!);
                             if (rsp.status === "fulfilled") {
                                 location.href = "/hosting";
                             } else {
