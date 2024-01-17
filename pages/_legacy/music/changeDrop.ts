@@ -29,7 +29,6 @@ export function ChangeDrop(drop: StateHandler<{ _id: string | undefined, title: 
             compositionCopyright: userString,
             soundRecordingCopyright: userString,
             artwork: zod.string(),
-            loading: zod.literal(false, { errorMap: () => ({ message: "Artwork is still uploading" }) }).transform(() => undefined),
             songs: song.array().min(1, { message: "At least one song is required" }),
         })
     );
