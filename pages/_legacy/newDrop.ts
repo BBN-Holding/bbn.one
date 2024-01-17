@@ -89,8 +89,8 @@ const validator = (page: number) => async () => {
 };
 
 const footer = (page: number) => Horizontal(
-    page == 0 ? Button("Cancel").setStyle(ButtonStyle.Secondary).onClick(() => location.href = "/music")
-        : Button("Back").setStyle(ButtonStyle.Secondary).onClick(() => state.page--),
+    page == 0 ? Button("Cancel").setJustify("center").setStyle(ButtonStyle.Secondary).onClick(() => location.href = "/music")
+        : Button("Back").setJustify("center").setStyle(ButtonStyle.Secondary).onClick(() => state.page--),
     Spacer(),
     Box(state.$validationState.map(error => error ? CenterV(
         Label(getErrorMessage(error))
@@ -98,7 +98,7 @@ const footer = (page: number) => Horizontal(
             .setMargin("0 0.5rem 0 0")
     )
         : Empty()).asRefComponent()),
-    Button("Next").onClick(validator(page))).addClass("footer");
+    Button("Next").setJustify("center").onClick(validator(page))).addClass("footer");
 
 const wizard = state.$page.map(page => {
     if (page == 0) return Vertical(
@@ -230,7 +230,7 @@ const wizard = state.$page.map(page => {
             Spacer()
         ),
         Spacer(),
-        Horizontal(Button("Back").setStyle(ButtonStyle.Secondary).onClick(() => state.page--), Spacer(), Button("Submit").onClick(async () => {
+        Horizontal(Button("Back").setJustify("center").setStyle(ButtonStyle.Secondary).onClick(() => state.page--), Spacer(), Button("Submit").onClick(async () => {
             state.loaded = false;
             await API.music.id(dropId).update(state);
 

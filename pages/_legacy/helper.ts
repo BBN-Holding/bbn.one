@@ -201,6 +201,7 @@ const ARTIST_ARRAY = <ArtistTypes[]>[ "PRIMARY", "FEATURING", "PRODUCER", "SONGW
 export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[]; }>) => {
     const dialog = SheetDialog(sheetStack, "Manage your Artists", Vertical(
         new Table2(state.$artists)
+            .addClass("artist-table")
             .setColumnTemplate("10rem auto min-content")
             .addColumn("Type", (artist: Artist) =>
                 DropDownInput("Type", ARTIST_ARRAY)
@@ -223,10 +224,7 @@ export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[]; }>) =
             Button("Save")
                 .onClick(() => dialog.close())
         )
-    )
-        .setGap()
-        .setWidth("clamp(0rem, 100vw, 60vw)")
-        .setMargin("0 -.6rem 0 0"));
+    ));
     return dialog;
 };
 
