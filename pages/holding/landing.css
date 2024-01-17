@@ -170,13 +170,13 @@ h3 {
     margin: 50px 0;
 }
 
-.live-stats .title {
+.live-stats .title * {
     font-size: 4rem;
     font-weight: 900;
 }
 
 @media (max-width: 900px) {
-    .live-stats .title {
+    .live-stats .title * {
         font-size: 36.6px;
     }
 }

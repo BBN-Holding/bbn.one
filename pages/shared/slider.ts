@@ -1,4 +1,4 @@
-import { ButtonStyle, Color, Custom, Horizontal, InputForm, Label, Spacer, Vertical, asState, createElement } from "webgen/mod.ts";
+import { ButtonStyle, Color, Custom, Grid, InputForm, Label, Spacer, Vertical, asState, createElement } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 
 export const SliderInput = (label: string) => new class extends InputForm<number> {
@@ -11,11 +11,13 @@ export const SliderInput = (label: string) => new class extends InputForm<number
         this.input.type = "range";
         this.input.classList.add("wslider");
         this.wrapper.append(Vertical(
-            Horizontal(
-                Label(label).setTextSize("sm").setFontWeight("bold"),
+            Grid(
+                Label(label).setTextSize("sm").setFontWeight("bold").removeWrap(),
                 Spacer(),
                 val.$value.map((val) => Label(val).setTextSize("sm").setFontWeight("bold")).asRefComponent().addClass("same-height")
-            ).setPadding("0 0.2rem"),
+            )
+                .setRawColumns("max-content auto max-content")
+                .setPadding("0 0.2rem"),
             Custom(this.input)
         ).setMargin("0 -0.1rem").draw());
 

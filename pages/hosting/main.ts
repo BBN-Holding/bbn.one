@@ -1,7 +1,6 @@
 import { LoadingSpinner } from "shared/components.ts";
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
 import { Body, Vertical, WebGen, asState } from "webgen/mod.ts";
-import '../../assets/css/hosting.css';
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded, sheetStack } from "../_legacy/helper.ts";
@@ -9,6 +8,8 @@ import { state } from "./data.ts";
 import { listFiles, liveUpdates, refreshState, startSidecarConnection } from "./loading.ts";
 import { hostingMenu } from "./views/menu.ts";
 import { path } from "./views/state.ts";
+
+import '../../assets/css/hosting.css';
 await RegisterAuthRefresh();
 
 const url = new URLSearchParams(location.search);

@@ -248,14 +248,17 @@ export function createBreadcrumb(menu: MenuImpl) {
         return history.map(it => Grid(
             ...it.map((entry, index) =>
                 Box(
-                    Label(entry.title).addClass("label"),
+                    Label(entry.title)
+                        .setFontWeight("bold")
+                        .addClass("label"),
                     MIcon("arrow_forward_ios")
                 )
                     .addClass("history-entry")
                     .onClick(() => moveToPath(index))
             ).filter((_, i) => i != it.length - 1),
             Label(parseTitle(menu.rootNode, it.at(-1)!, it.length - 1))
-                .addClass("label"),
+                .addClass("label")
+                .setFontWeight("bold"),
         ).addClass("history-list")).asRefComponent().removeFromLayout();
     }
     ).asRefComponent().removeFromLayout();
