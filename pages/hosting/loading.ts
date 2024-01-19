@@ -132,7 +132,7 @@ export async function startSidecarConnection(id: string) {
     isSidecarConnect.setValue(true);
 
     // User wants to Disconnect
-    await closeSignal;
+    await closeSignal.promise;
     connection.close();
     isSidecarConnect.setValue(false);
     clearInterval(watcher);

@@ -89,8 +89,8 @@ export const drop = zod.object({
 const pageOne = zod.object({
     upc: zod.string().nullish()
         .transform(x => x?.trim())
-        .transform(x => x?.length == 0 ? undefined : x)
-        .refine(x => x == undefined || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" })
+        .transform(x => x?.length == 0 ? null : x)
+        .refine(x => x == null || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" })
 });
 
 const pageTwo = zod.object({
