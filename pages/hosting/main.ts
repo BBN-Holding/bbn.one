@@ -22,27 +22,31 @@ WebGen({
     }
 });
 
-sheetStack.setDefault(hostingMenu);
+sheetStack.setDefault(Vertical(
+    DynaNavigation("Hosting"),
+    state.$loaded.map(loaded => loaded ? hostingMenu : LoadingSpinner()).asRefComponent()
+));
 
-Body(Vertical(DynaNavigation("Hosting"), state.$loaded.map(loaded => loaded ? sheetStack : LoadingSpinner()).asRefComponent()));
+Body(sheetStack);
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())
     .then(async () => {
-        if (urlPath) {
-            const [ source, serverId, subView ] = urlPath.split("/");
-            if (source === "servers" && serverId) {
-                const server = await API.hosting.serverId(serverId).get().then(stupidErrorAlert);
-                if (!state.servers.find(s => s._id == serverId))
-                    state.servers.push(asState(server));
-                startSidecarConnection(serverId);
-                if (subView === "storage") {
-                    await listFiles("/");
-                    path.setValue("/");
-                }
-            }
-            hostingMenu.path.setValue(urlPath);
+        if (!urlPath) {
+            return;
         }
+        const [ source, serverId, subView ] = urlPath.split("/");
+        if (source === "servers" && serverId) {
+            const server = await API.hosting.serverId(serverId).get().then(stupidErrorAlert);
+            if (!state.servers.find(s => s._id == serverId))
+                state.servers.push(asState(server));
+            startSidecarConnection(serverId);
+            if (subView === "storage") {
+                await listFiles("/");
+                path.setValue("/");
+            }
+        }
+        hostingMenu.path.setValue(urlPath);
     })
     .then(() => liveUpdates())
     .then(() => state.loaded = true);

@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, createActionList, createBreadcrumb, createTagList, stupidErrorAlert } from "shared/mod.ts";
-import { Body, Empty, Grid, Horizontal, Label, Spacer, Vertical, WebGen, asState, isMobile } from "webgen/mod.ts";
+import { Body, Empty, Grid, Horizontal, Label, Spacer, Vertical, WebGen, asState, isMobile, ref } from "webgen/mod.ts";
 import '../../../assets/css/main.css';
 import '../../../assets/css/music.css';
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -44,7 +44,7 @@ const state = asState({
 sheetStack.setDefault(Vertical(
     DynaNavigation("Music"),
     state.$loaded.map(loaded => loaded ? Navigation({
-        title: state.$title,
+        title: ref`${state.$title}`,
         children: [
             Horizontal(
                 //TODO: Make this look better
