@@ -1,7 +1,7 @@
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
 import { SliderInput } from "shared/slider.ts";
 import { format } from "std/fmt/bytes.ts";
-import { Button, Color, DropDownInput, Grid, Label, MediaQuery, SheetDialog, TextInput, asState } from "webgen/mod.ts";
+import { Button, ButtonStyle, Color, DropDownInput, Grid, Label, MediaQuery, SheetDialog, TextInput, asState } from "webgen/mod.ts";
 import locations from "../../../../data/locations.json" with { type: "json" };
 import serverTypes from "../../../../data/servers.json" with { type: "json" };
 import { Server } from "../../../../spec/music.ts";
@@ -20,7 +20,6 @@ export const editServerDialog = (server: Server, versions: string[]) => {
 
     const sheet = SheetDialog(sheetStack, `Edit '${server.name}'`,
         Grid(
-            Label(``).setTextSize("2xl").setFontWeight("bold"),
             Label(`A ${serverTypes[ server.type ].name} Server.`),
             MediaQuery("(max-width: 700px)", (small) => Grid(
                 [
@@ -55,19 +54,23 @@ export const editServerDialog = (server: Server, versions: string[]) => {
                 .setEvenColumns(small ? 1 : 3)
             ).removeFromLayout(),
             Grid(
-                Label("Are you sure?"),
-                Grid(
-                    Button("Close").onClick(() => sheet.close()),
-                    Button("Save").setColor(Color.Critical).onClick(async () => {
+                Button("Close")
+                    .setStyle(ButtonStyle.Inline)
+                    .onClick(() => sheet.close()),
+                Button("Save")
+                    .setColor(Color.Critical)
+                    .onPromiseClick(async () => {
                         await API.hosting.serverId(server._id)
                             .edit(data)
                             .then(stupidErrorAlert);
 
                         location.reload();
                     })
-                ).setGap("2rem").setEvenColumns(2)
-            ).setGap("1rem")
-        ).setGap().setMargin("1.5rem")
+            )
+                .setGap(".5rem")
+                .setJustify("end")
+                .setRawColumns("auto max-content")
+        ).setGap()
     );
     return sheet;
 };
