@@ -66,8 +66,7 @@ serve({
         "./polyfill.ts",
         "./bug-reporter.ts",
         "https://unpkg.com/native-file-system-adapter/",
-        "https://unpkg.com/construct-style-sheets-polyfill@3.1.0",
-        "https://unpkg.com/urlpattern-polyfill@8.0.2/",
+        "https://unpkg.com/urlpattern-polyfill/",
         "https://raw.githubusercontent.com/ungap/with-resolvers/main/index.js"
     ]
 });

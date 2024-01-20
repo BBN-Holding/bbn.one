@@ -67,9 +67,10 @@ export const song = zod.object({
     .refine(({ instrumental, explicit }) => !(instrumental && explicit), "Can't have an explicit instrumental song");
 
 export const pureDrop = zod.object({
-    upc: zod.string()
+    upc: zod.string().nullish()
         .transform(x => x?.trim())
-        .refine(x => x == undefined || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" }),
+        .transform(x => x?.length == 0 ? null : x)
+        .refine(x => x == null || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" }),
     title: userString,
     artists: artist.array().refine(x => x.some(([ , , type ]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
     release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
