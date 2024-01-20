@@ -28,6 +28,7 @@ Body(Box(
         Box(
             Box().addClass("background-image"),
             Label("Your Journey,  our Mission.")
+                .setFontWeight("bold")
         )
             .addClass("big-title"),
         Box(
