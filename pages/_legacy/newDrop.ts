@@ -221,7 +221,7 @@ const wizard = state.$page.map(page => {
         Spacer(),
         Horizontal(
             Spacer(),
-            Label("Thanks! That's everything we need.").addClass("ending-title"),
+            Label("Thanks! That's everything we need.").setBalanced().addClass("ending-title"),
             Spacer(),
         ),
         Horizontal(
@@ -230,7 +230,7 @@ const wizard = state.$page.map(page => {
             Spacer()
         ),
         Spacer(),
-        Horizontal(Button("Back").setJustify("center").setStyle(ButtonStyle.Secondary).onClick(() => state.page--), Spacer(), Button("Submit").onClick(async () => {
+        Horizontal(Button("Back").setJustify("center").setStyle(ButtonStyle.Secondary).onClick(() => state.page--), Spacer(), Button("Submit").setJustify("center").onClick(async () => {
             state.loaded = false;
             await API.music.id(dropId).update(state);
 
