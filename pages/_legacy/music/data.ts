@@ -58,7 +58,8 @@ export function uploadSongToDrop(state: StateHandler<{ songs: Song[]; artists: A
     }, file);
 }
 
-export function uploadArtwork(id: string, file: File, artworkClientData: Reference<AdvancedImage | string | undefined>, loading: Reference<boolean>, artwork: Reference<string | undefined>) {
+//is there a better way for those typings??
+export function uploadArtwork(id: string, file: File, artworkClientData: Reference<AdvancedImage | string | undefined>, loading: Reference<boolean>, artwork: Reference<string> | Reference<string | undefined>) {
     const blobUrl = URL.createObjectURL(file);
     artworkClientData.setValue({ type: "uploading", filename: file.name, blobUrl, percentage: 0 });
     loading.setValue(true);

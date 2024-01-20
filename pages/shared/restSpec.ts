@@ -463,7 +463,7 @@ export const API = {
             get: () => fetch(`${API.BASE_URL}music/drops/${id}`, {
                 headers: headers(API.getToken())
             })
-                .then(json<Partial<Drop>>())
+                .then(json<Drop>())
                 .catch(reject),
             update: (data: Partial<Drop>) => fetch(`${API.BASE_URL}music/drops/${id}`, {
                 method: "PATCH",

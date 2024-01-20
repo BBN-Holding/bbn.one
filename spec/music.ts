@@ -67,9 +67,9 @@ export const song = zod.object({
     .refine(({ instrumental, explicit }) => !(instrumental && explicit), "Can't have an explicit instrumental song");
 
 export const pureDrop = zod.object({
-    upc: zod.string().nullish()
-        .transform(x => x?.trim())
-        .transform(x => x?.length == 0 ? null : x)
+    upc: zod.string().nullable()
+        .transform(x => x ? x.trim() : x)
+        .transform(x => x ? x : null)
         .refine(x => x == null || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" }),
     title: userString,
     artists: artist.array().refine(x => x.some(([ , , type ]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
@@ -92,9 +92,9 @@ export const drop = pureDrop
     }));
 
 const pageOne = zod.object({
-    upc: zod.string().nullish()
-        .transform(x => x?.trim())
-        .transform(x => x?.length == 0 ? null : x)
+    upc: zod.string().nullable()
+        .transform(x => x ? x.trim() : x)
+        .transform(x => x ? x : null)
         .refine(x => x == null || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" })
 });
 
@@ -122,7 +122,7 @@ const pageFive = zod.object({
     uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }),
 });
 
-export const pages = <zod.ZodObject<any>[]>[ pageOne, pageTwo, pageThree, pageFour, pageFive ];
+export const pages = <zod.AnyZodObject[]>[ pageOne, pageTwo, pageThree, pageFour, pageFive ];
 
 export const payout = zod.object({
     _id: zod.string(),

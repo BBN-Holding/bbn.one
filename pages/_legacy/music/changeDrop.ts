@@ -2,15 +2,15 @@ import * as zod from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API } from "shared/mod.ts";
 import { stupidErrorAlert } from "shared/restSpec.ts";
-import { AdvancedImage, Box, Button, CenterV, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, StateHandler, TextInput, Validate, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
+import { AdvancedImage, Box, Button, CenterV, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, TextInput, Validate, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
 import artwork from "../../../assets/img/template-artwork.png";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
-import { Artist, DATE_PATTERN, artist, song, userString } from "../../../spec/music.ts";
+import { DATE_PATTERN, Drop, artist, song, userString } from "../../../spec/music.ts";
 import { EditArtistsDialog, allowedImageFormats, getSecondary } from "../helper.ts";
 import { uploadArtwork } from "./data.ts";
 
-export function ChangeDrop(drop: StateHandler<{ _id: string | undefined, title: string | undefined, release: string | undefined, language: string | undefined, artists: Artist[], artwork: string | undefined, compositionCopyright: string | undefined, soundRecordingCopyright: string | undefined, primaryGenre: string | undefined, secondaryGenre: string | undefined; }>) {
+export function ChangeDrop(drop: Drop) {
     const state = asState({
         artworkClientData: <AdvancedImage | string | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id!).artwork().then(stupidErrorAlert) } : undefined),
         loading: false,
@@ -18,7 +18,7 @@ export function ChangeDrop(drop: StateHandler<{ _id: string | undefined, title: 
     });
 
     const { data, error, validate } = Validate(
-        drop,
+        asState(drop),
         zod.object({
             title: userString,
             artists: artist.array().refine(x => x.some(([ , , type ]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
@@ -91,9 +91,7 @@ export function ChangeDrop(drop: StateHandler<{ _id: string | undefined, title: 
             Grid(
                 DropDownInput("Primary Genre", Object.keys(genres))
                     .sync(data, "primaryGenre")
-                    .onChange(() => {
-                        data.secondaryGenre = undefined!;
-                    }),
+                    .onChange(() => data.secondaryGenre = undefined!),
                 data.$primaryGenre.map(primaryGenre => DropDownInput("Secondary Genre", getSecondary(genres, primaryGenre) ?? [])
                     .sync(data, "secondaryGenre")
                     .addClass("border-box")

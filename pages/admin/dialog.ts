@@ -1,19 +1,11 @@
 import * as zod from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API } from "shared/mod.ts";
-import { Box, Button, ButtonStyle, CenterV, Checkbox, Custom, Empty, Horizontal, Image, Label, SheetDialog, Spacer, Validate, Vertical, asState, createElement, getErrorMessage } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, CenterV, Checkbox, Custom, Empty, Horizontal, Image, Label, SheetDialog, Spacer, Validate, Vertical, asState, createElement, css, getErrorMessage } from "webgen/mod.ts";
 import reviewTexts from "../../data/reviewTexts.json" with { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
 import { sheetStack } from "../_legacy/helper.ts";
 import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
-
-function css(data: TemplateStringsArray, ...expr: string[]) {
-    const merge = data.map((x, i) => x + (expr[ i ] || ''));
-
-    const style = new CSSStyleSheet();
-    style.replaceSync(merge.join(""));
-    return style;
-}
 
 document.adoptedStyleSheets.push(css`
     .footer {
@@ -162,7 +154,7 @@ export const DeclineDialog = SheetDialog(sheetStack, "Decline Drop",
                         : Empty()).asRefComponent()),
                     Spacer(),
                     Button("Cancel").setStyle(ButtonStyle.Secondary).onClick(() => DeclineDialog.close()),
-                    Button("Next").onClick(async () => {
+                    Button("Next").onClick(() => {
                         const { error, validate } = Validate(
                             rejectState,
                             zod.object({

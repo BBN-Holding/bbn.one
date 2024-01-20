@@ -5,6 +5,7 @@ import language from "../../../data/language.json" with { type: "json" };
 import { Artist, Song } from "../../../spec/music.ts";
 import { Table2 } from "../../hosting/views/table2.ts";
 import { EditArtistsDialog, ProfilePicture, getSecondary, getYearList } from "../helper.ts";
+import "./table.css";
 
 export function ManageSongs(state: StateHandler<{ songs: Song[]; primaryGenre: string | undefined; }>) {
     return new Table2(state.$songs)

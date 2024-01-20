@@ -48,7 +48,7 @@ API.music.id(dropId).get().then(stupidErrorAlert)
 const state = asState({
     loaded: false,
     _id: dropId,
-    upc: <string | undefined>undefined,
+    upc: <string | undefined | null>undefined,
     title: <string | undefined>undefined,
     release: <string | undefined>undefined,
     language: <string | undefined>undefined,
