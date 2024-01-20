@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, createActionList, createBreadcrumb, createTagList, stupidErrorAlert } from "shared/mod.ts";
-import { AdvancedImage, Body, Empty, Grid, Horizontal, Label, Spacer, Vertical, WebGen, asState, isMobile } from "webgen/mod.ts";
+import { Body, Empty, Grid, Horizontal, Label, Spacer, Vertical, WebGen, asState, isMobile } from "webgen/mod.ts";
 import '../../../assets/css/main.css';
 import '../../../assets/css/music.css';
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -156,7 +156,6 @@ renewAccessTokenIfNeeded().then(async () => {
             state.compositionCopyright = drop.compositionCopyright;
             state.soundRecordingCopyright = drop.soundRecordingCopyright;
             state.artwork = drop.artwork;
-            state.artworkClientData = <AdvancedImage | string | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id).artwork().then(stupidErrorAlert) } : undefined);
             state.songs = asState(drop.songs ?? []);
         })
         .then(() => state.loaded = true);

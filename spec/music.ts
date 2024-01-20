@@ -1,7 +1,7 @@
 import * as zod from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 export const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
-export const userString = zod.string().min(1).refine(x => x.trim()).transform(x => x.trim());
+export const userString = zod.string().min(1).transform(x => x.trim());
 
 export enum DropType {
     Published = 'PUBLISHED', // Uploaded, Approved
@@ -66,7 +66,7 @@ export const song = zod.object({
 })
     .refine(({ instrumental, explicit }) => !(instrumental && explicit), "Can't have an explicit instrumental song");
 
-export const drop = zod.object({
+export const pureDrop = zod.object({
     _id: zod.string(),
     upc: zod.string()
         .transform(x => x?.trim())
@@ -85,6 +85,13 @@ export const drop = zod.object({
     user: zod.string(),
     type: zod.nativeEnum(DropType),
 });
+
+export const drop = pureDrop
+    .merge(zod.object({
+        _id: zod.string(),
+        user: zod.string(),
+        type: zod.nativeEnum(DropType),
+    }));
 
 const pageOne = zod.object({
     upc: zod.string().nullish()
