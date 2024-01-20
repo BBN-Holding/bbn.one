@@ -67,7 +67,6 @@ export const song = zod.object({
     .refine(({ instrumental, explicit }) => !(instrumental && explicit), "Can't have an explicit instrumental song");
 
 export const pureDrop = zod.object({
-    _id: zod.string(),
     upc: zod.string()
         .transform(x => x?.trim())
         .refine(x => x == undefined || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" }),
@@ -82,8 +81,6 @@ export const pureDrop = zod.object({
     artwork: zod.string(),
     songs: song.array().min(1),
     comments: userString.optional(),
-    user: zod.string(),
-    type: zod.nativeEnum(DropType),
 });
 
 export const drop = pureDrop
