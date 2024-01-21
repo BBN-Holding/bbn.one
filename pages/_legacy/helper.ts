@@ -236,7 +236,7 @@ export function showPreviewImage(x: Drop) {
         : Image(artwork, "A Placeholder Artwork.");
 }
 
-export async function loadImage(x: Drop) {
+async function loadImage(x: Drop) {
     const cache = await fileCache();
     if (await cache.has(`image-preview-${x.artwork}`))
         return await cache.get(`image-preview-${x.artwork}`)!;

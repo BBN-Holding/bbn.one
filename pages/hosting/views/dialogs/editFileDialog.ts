@@ -1,7 +1,7 @@
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { editor } from "https://esm.sh/monaco-editor@0.44.0/esm/vs/editor/editor.api.js";
 import { delay } from "std/async/delay.ts";
-import { Box, Button, Cache, Custom, Horizontal, Label, MIcon, SheetDialog, Spacer, Vertical, asRef, lazyInit, refMerge } from "webgen/mod.ts";
+import { Box, Button, Cache, Custom, Grid, Label, MIcon, SheetDialog, Vertical, asRef, lazyInit, refMerge } from "webgen/mod.ts";
 import { sheetStack } from "../../../_legacy/helper.ts";
 import { uploadFile } from "../../loading.ts";
 import './editFileDialog.css';
@@ -83,8 +83,7 @@ export const editFileDialog = SheetDialog(sheetStack, "Edit File",
         Cache("monaco-editor", () => createMonacoEditor(),
             (type, data) => type === "cache" ? Label("Loading Editor") : data ?? Box()
         ),
-        Horizontal(
-            Spacer(),
+        Grid(
             Button("Cancel").onClick(() => editFileDialog.close()),
             Button("Save").onClick(async () => {
                 if (editFileDownloading.getValue())
@@ -101,5 +100,8 @@ export const editFileDialog = SheetDialog(sheetStack, "Edit File",
                 editFileDialog.close();
             }),
         )
+            .setGap(".5rem")
+            .setJustify("end")
+            .setRawColumns("auto max-content")
     )
 );

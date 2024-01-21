@@ -77,6 +77,7 @@ export function ChangePersonal() {
                 if (data) await API.user.setMe.post(state)
                     .then(stupidErrorAlert);
                 await forceRefreshToken();
+                location.reload();
                 state.validationState = undefined;
             })),
     ).setGap("20px").addClass("limited-width");

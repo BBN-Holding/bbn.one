@@ -273,20 +273,16 @@ export const API = {
                     .then(json<Drop[]>())
                     .catch(reject);
             },
-            user: (id: string) => {
-                return fetch(`${API.BASE_URL}admin/drops?user=${id}`, {
-                    headers: headers(API.getToken())
-                })
-                    .then(json<Drop[]>())
-                    .catch(reject);
-            },
-            id: (id: string) => {
-                return fetch(`${API.BASE_URL}admin/drops/${id}`, {
-                    headers: headers(API.getToken())
-                })
-                    .then(json<Drop>())
-                    .catch(reject);
-            },
+            user: (id: string) => fetch(`${API.BASE_URL}admin/drops?user=${id}`, {
+                headers: headers(API.getToken())
+            })
+                .then(json<Drop[]>())
+                .catch(reject),
+            id: (id: string) => fetch(`${API.BASE_URL}admin/drops/${id}`, {
+                headers: headers(API.getToken())
+            })
+                .then(json<Drop>())
+                .catch(reject),
         },
         payouts: {
             list: () => fetch(`${API.BASE_URL}admin/payouts`, {
