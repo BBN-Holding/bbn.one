@@ -86,7 +86,7 @@ export const ApproveDialog = SheetDialog(sheetStack, "Approve Drop",
                         : Empty()).asRefComponent()),
                     Spacer(),
                     Button("Cancel").setStyle(ButtonStyle.Secondary).onClick(() => ApproveDialog.close()),
-                    Button("Submit").onClick(async () => {
+                    Button("Submit").onPromiseClick(async () => {
                         const { data, error, validate } = Validate(
                             dialogState,
                             zod.object({
@@ -95,7 +95,10 @@ export const ApproveDialog = SheetDialog(sheetStack, "Approve Drop",
                         );
 
                         validate();
-                        if (error.getValue()) return data.validationState = error.getValue();
+                        if (error.getValue()) {
+                            data.validationState = error.getValue();
+                            return;
+                        };
 
                         await API.music.id(drop._id).review.post({
                             title: dropPatternMatching(reviewTexts.APPROVED.header, drop),
@@ -207,7 +210,7 @@ export const DeclineDialog = SheetDialog(sheetStack, "Decline Drop",
                         : Empty()).asRefComponent()),
                     Spacer(),
                     Button("Cancel").setStyle(ButtonStyle.Secondary).onClick(() => DeclineDialog.close()),
-                    Button("Submit").onClick(async () => {
+                    Button("Submit").onPromiseClick(async () => {
                         const { error, validate } = Validate(
                             rejectState,
                             zod.object({
@@ -216,7 +219,10 @@ export const DeclineDialog = SheetDialog(sheetStack, "Decline Drop",
                         );
 
                         validate();
-                        if (error.getValue()) return dialogState.validationState = error.getValue();
+                        if (error.getValue()) {
+                            dialogState.validationState = error.getValue();
+                            return;
+                        }
 
                         const reason = <ReviewResponse[]>rejectState.respones;
 

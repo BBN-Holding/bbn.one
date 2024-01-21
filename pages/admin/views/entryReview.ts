@@ -27,8 +27,8 @@ export const changeTypeDialog = SheetDialog(sheetStack, "Change Drop Type",
         DropDownInput("Change Type", Object.values(DropType)).sync(changeState, "type"),
         Horizontal(
             Spacer(),
-            Button("Change").onClick(() => {
-                API.music.id(changeState.drop!._id).type.post(changeState.type!);
+            Button("Change").onPromiseClick(async () => {
+                await API.music.id(changeState.drop!._id).type.post(changeState.type!);
                 changeTypeDialog.close();
             })
         )
