@@ -85,7 +85,7 @@ export const editFileDialog = SheetDialog(sheetStack, "Edit File",
         ),
         Grid(
             Button("Cancel").onClick(() => editFileDialog.close()),
-            Button("Save").onClick(async () => {
+            Button("Save").onPromiseClick(async () => {
                 if (editFileDownloading.getValue())
                     return alert("File is still downloading");
                 editFileUploading.setValue(true);

@@ -147,7 +147,7 @@ export function FileBrowser() {
                     ).addClass("file-item"))
                     .addColumn("Last Modified", (data) => data.lastModified !== undefined ? Label(new Date(data.lastModified).toLocaleString()) : Box())
                     .addColumn("Type", (data) => data.fileMimeType !== undefined ? Label(fileTypeName(data.fileMimeType)) : Label("Folder"))
-                    .addColumn("Size", (data) => data.size !== undefined ? Label(format(parseInt(data.size))).addClass('text-align-right') : Box())
+                    .addColumn("Size", (data) => data.size !== undefined ? Label(format(data.size)).addClass('text-align-right') : Box())
                     .addColumn("", (data) => Grid(
                         data.uploadingRatio !== undefined ? Progress(data.uploadingRatio).addClass("fileProgressBar") : Empty(),
                         data.fileMimeType && [ "text/yaml", "application/json", "text/plain" ].includes(data.fileMimeType.split(";")[ 0 ]) && data.uploadingRatio === undefined

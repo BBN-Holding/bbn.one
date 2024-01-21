@@ -19,7 +19,7 @@ export const droppingFileHandler = async (files: ReadableStream<FileEntry>, coun
                 uploadingRatio: progressTracker,
                 fileMimeType: `${uploadingPath.file.type};`,
                 lastModified: uploadingPath.file.lastModified,
-                size: uploadingPath.file.size.toString(),
+                size: uploadingPath.file.size,
                 name: uploadingPath.file.name,
             }
         });
