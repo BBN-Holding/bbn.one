@@ -87,7 +87,7 @@ async function find(versions: string[], type: ServerTypes, offset = 0, limit = 2
     path.searchParams.set("offset", offset.toString());
 
     const json = await retry<SearchResponse>(async () => {
-        const response = await pipeline.fetch(SchedulerPriority.High, path.toString());
+        const response = await pipeline.fetch(SchedulerPriority.High, path.toString()).promise;
         assert(response.ok);
         return response.json();
     });
@@ -105,7 +105,7 @@ async function getLatestDownload(versions: string[], type: ServerTypes, projecti
     path.searchParams.set("game_versions", JSON.stringify(versions));
 
     const json = await retry(async () => {
-        const response = await pipeline.fetch(SchedulerPriority.Low, path.toString());
+        const response = await pipeline.fetch(SchedulerPriority.Low, path.toString()).promise;
         assert(response.ok);
         return response.json();
     });
@@ -118,7 +118,7 @@ async function getLatestDownload(versions: string[], type: ServerTypes, projecti
 async function getSpecificDownload(versionId: string) {
     const path = new URL(`${apiUrl}/version/${versionId}`);
     const json = await retry(async () => {
-        const response = await pipeline.fetch(SchedulerPriority.High, path.toString());
+        const response = await pipeline.fetch(SchedulerPriority.High, path.toString()).promise;
         assert(response.ok);
         return response.json();
     });

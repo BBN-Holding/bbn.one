@@ -4,6 +4,7 @@ export const labels = {
     suspended: "Suspended",
     "contact-support": "Contact Support",
     maintenance: "Maintenance",
+    disabled: "Disabled",
 } satisfies Record<Server[ "labels" ][ number ], string>;
 
 export const auditLabels = {

@@ -9,7 +9,7 @@ import { state } from "./data.ts";
 import { canWriteInFolder, currentFiles } from "./views/state.ts";
 
 export async function refreshState() {
-    state.servers = asState((await API.hosting.servers()).map(x => asState(x)));
+    state.servers = asState(await API.hosting.servers());
     state.meta = asState(await API.hosting.meta());
 }
 

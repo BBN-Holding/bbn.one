@@ -12,7 +12,7 @@ export type GridItem = Component | [ settings: {
 
 export type RemotePath = {
     name: string;
-    size?: string;
+    size?: number;
     canWrite?: boolean;
     lastModified?: number;
     fileMimeType?: string;

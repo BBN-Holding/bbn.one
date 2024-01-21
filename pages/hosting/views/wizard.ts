@@ -93,7 +93,7 @@ export const creationView = () => creationState.$loading.map(loading => {
                         Spacer(),
                         Button("Submit").onClick(async () => {
                             const { error, validate } = Validate(
-                                state,
+                                data,
                                 serverCreate
                             );
                             const validation = validate();

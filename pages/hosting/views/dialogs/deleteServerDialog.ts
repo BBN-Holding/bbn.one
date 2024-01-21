@@ -10,7 +10,7 @@ export const deleteServerDialog = (serverId: string) => {
                 Button("Cancel")
                     .setStyle(ButtonStyle.Inline)
                     .onClick(() => sheet.close()),
-                Button("Delete").setColor(Color.Critical).onClick(async () => {
+                Button("Delete").setColor(Color.Critical).onPromiseClick(async () => {
                     await API.hosting.serverId(serverId).delete()
                         .then(stupidErrorAlert);
                     location.href = "/hosting";

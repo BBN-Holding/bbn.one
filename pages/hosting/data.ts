@@ -5,7 +5,7 @@ export const MB = 1000000;
 
 export const state = asState({
     loaded: false,
-    servers: <(Server)[]>[],
+    servers: <Server[]>[],
     meta: <Meta>undefined!
 });
 

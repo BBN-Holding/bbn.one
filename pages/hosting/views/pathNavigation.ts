@@ -1,8 +1,9 @@
-import { Box, Button, ButtonStyle, Component, Custom, Grid, loadingWheel } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Custom, Grid, loadingWheel } from "webgen/mod.ts";
 import { listFiles } from "../loading.ts";
+import { GridItem } from "../types.ts";
 import { loading, path } from "./state.ts";
 
-export function pathNavigation(): Component | [ settings: { width?: number | undefined; heigth?: number | undefined; }, element: Component ] {
+export function pathNavigation(): GridItem {
     return path.map(list => Grid(
         ...list.split("/").filter((_, index, list) => (list.length - 1) != index).map((item, currentIndex, list) => Button(item || 'home')
             .setStyle(ButtonStyle.Secondary)
