@@ -6,6 +6,7 @@ import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, changeThemeColor, permCheck, renewAccessTokenIfNeeded, saveBlob, sheetStack, showPreviewImage, showProfilePicture } from "../_legacy/helper.ts";
 import { ChangeDrop } from "../_legacy/music/changeDrop.ts";
 import { ChangeSongs } from "../_legacy/music/changeSongs.ts";
+import '../hosting/views/table2.css';
 import { DropTypeToText } from "../music/views/list.ts";
 import { ApproveDialog, DeclineDialog, dialogState } from "./dialog.ts";
 import { reviewState } from "./state.ts";
