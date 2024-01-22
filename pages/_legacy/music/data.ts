@@ -20,7 +20,6 @@ export function uploadSongToDrop(state: StateHandler<{ songs: Song[]; artists: A
         country: state.language!,
         instrumental: false,
         explicit: false,
-        primaryGenre: state.primaryGenre!,
         secondaryGenre: state.secondaryGenre!,
         year: new Date().getFullYear(),
         progress: 0,
