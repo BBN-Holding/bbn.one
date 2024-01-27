@@ -125,13 +125,10 @@ export const pages = <zod.AnyZodObject[]>[ pageOne, pageTwo, pageThree, pageFour
 
 export const payout = zod.object({
     _id: zod.string(),
-    importer: zod.string(),
     file: zod.string(),
     period: zod.string(),
-    moneythisperiod: zod.string(),
     entries: zod.object({
         isrc: zod.string(),
-        user: zod.string(),
         data: zod.array(
             zod.object({
                 store: zod.string(),
@@ -140,7 +137,8 @@ export const payout = zod.object({
                 revenue: zod.number()
             })
         )
-    }).array()
+    }).array(),
+    user: zod.string(),
 });
 
 export const oauthapp = zod.object({

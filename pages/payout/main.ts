@@ -86,7 +86,7 @@ Body(Vertical(
                         a[ key ][ 1 ] += sumOf(value!, e => Number(e.quantity));
                     });
                     return a;
-                }, {} as Record<string, [ number, number ]>)), e => e[ 1 ][ 0 ]).reverse().filter(([ _k, _v, streams ]) => streams !== 0).map(([ key, value ]) => ({
+                }, {} as Record<string, [ number, number ]>)), e => e[ 1 ][ 0 ]).reverse().filter(([ _k, [_v, streams] ]) => streams !== 0).map(([ key, value ]) => ({
                     title: key,
                     subtitle: `£ ${value[ 0 ].toFixed(2)} - ${value[ 1 ]} streams`,
                     id: `${key}`
@@ -106,9 +106,6 @@ renewAccessTokenIfNeeded()
 
 async function refreshState() {
     state.payout = await API.payment.payouts.id(data.id).get().then(stupidErrorAlert);
-    if (data.userid && state.payout) {
-        state.payout.entries = state.payout.entries.filter(entry => entry.user === data.userid);
-    }
     state.music = await API.music.drops.list().then(stupidErrorAlert);
     state.loaded = true;
 }
@@ -118,5 +115,5 @@ function generateStores(datalist: Payout[ "entries" ][ 0 ][ "data" ]) {
         title: `${data.store} - ${data.territory}`,
         subtitle: `£ ${Number(data.revenue).toFixed(2)} - ${data.quantity} streams`,
         id: `${index}/`
-    })) as MenuNode[], e => Number(asRef(e.subtitle!).getValue().split(" ")[ 1 ])).reverse();
+    })), e => Number(e.subtitle.split(" ")[ 1 ])).reverse();
 }
