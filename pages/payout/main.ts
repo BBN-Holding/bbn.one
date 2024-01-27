@@ -6,7 +6,7 @@ import '../../assets/css/main.css';
 import '../../assets/css/music.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { Drop, Payout } from "../../spec/music.ts";
-import { RegisterAuthRefresh, changeThemeColor, permCheck, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
+import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
 
 await RegisterAuthRefresh();
 
@@ -105,11 +105,11 @@ renewAccessTokenIfNeeded()
     .then(() => state.loaded = true);
 
 async function refreshState() {
-    state.payout = permCheck("/hmsys/user/manage", "/bbn/manage") ? await API.admin.payouts.id(data.id).get().then(stupidErrorAlert) : await API.payment.payouts.id(data.id).get().then(stupidErrorAlert);
+    state.payout = await API.payment.payouts.id(data.id).get().then(stupidErrorAlert);
     if (data.userid && state.payout) {
         state.payout.entries = state.payout.entries.filter(entry => entry.user === data.userid);
     }
-    state.music = permCheck("/hmsys/user/manage", "/bbn/manage") ? await API.admin.drops.list(undefined, undefined, 50000).then(stupidErrorAlert) : await API.music.drops.list().then(stupidErrorAlert);
+    state.music = await API.music.drops.list().then(stupidErrorAlert);
     state.loaded = true;
 }
 
