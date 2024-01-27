@@ -31,6 +31,7 @@ serve({
         "favicon.ico": "./static/favicon.ico",
         "email-header.png": "./static/email-header.png",
         "app.webmanifest": "./static/app.webmanifest",
+        ".well-known/passkey-endpoints": "./static/.well-known/passkey-endpoints",
         "images/icons/icon-72x72.png": "./static/images/icons/icon-72x72.png",
         "images/icons/icon-96x96.png": "./static/images/icons/icon-96x96.png",
         "images/icons/icon-128x128.png": "./static/images/icons/icon-128x128.png",
