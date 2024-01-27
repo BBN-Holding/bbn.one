@@ -3,8 +3,8 @@ import confetti from "https://unpkg.com/canvas-confetti@1.9.0/src/confetti.js";
 
 export function confettiFromElement(element: MouseEvent) {
     const { top, height, left, width, } = (<HTMLElement>element.target!).getBoundingClientRect();
-    const x = (left + width / 2) / window.innerWidth;
-    const y = (top + height / 2) / window.innerHeight;
+    const x = (left + width / 2) / globalThis.innerWidth;
+    const y = (top + height / 2) / globalThis.innerHeight;
     const origin = { x, y };
     confetti({ origin });
 }
