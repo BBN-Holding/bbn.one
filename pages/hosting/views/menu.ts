@@ -190,7 +190,8 @@ function addonBrowser(server: StateHandler<Server>): RenderItem {
 
     const loader = createCachedLoader(createIndexPaginationLoader({
         limit: 80,
-        loader: (offset, limit) => getRealFiltered([ server.version ], server.type, offset, limit),
+        // We need to split because forge has forge version in version field :(
+        loader: (offset, limit) => getRealFiltered([ server.version.split('-')[0] ], server.type, offset, limit),
     }));
 
     return {

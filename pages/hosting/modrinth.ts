@@ -86,7 +86,7 @@ async function find(versions: string[], type: ServerTypes, offset = 0, limit = 2
     path.searchParams.set("limit", limit.toString());
     path.searchParams.set("offset", offset.toString());
 
-    const json = await retry<SearchResponse>(async () => {
+    const json: SearchResponse = await retry<SearchResponse>(async () => {
         const response = await pipeline.fetch(SchedulerPriority.High, path.toString());
         assert(response.ok);
         return response.json();
