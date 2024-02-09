@@ -447,6 +447,12 @@ export enum AuditTypes {
     DropCreate = "drop-create",
     OAuthValidate = "oauth-validate",
     OAuthAuthorize = "oauth-authorize",
+    WebAuthNSignIn = "web-authn-sign-in",
+    WebAuthNSignUp = "web-authn-sign-up",
+    PasswordSignIn = "password-sign-in",
+    PasswordSignUp = "password-sign-up",
+    OAuthSignIn = "oauth-sign-in",
+    OAuthSignUp = "oauth-sign-up",
 }
 
 export const audit = zod.discriminatedUnion("action", [
@@ -531,6 +537,26 @@ export const audit = zod.discriminatedUnion("action", [
         action: zod.literal(AuditTypes.OAuthAuthorize),
         appId: zod.string(),
         scopes: zod.array(zod.string()),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.WebAuthNSignIn),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.WebAuthNSignUp),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.PasswordSignIn),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.PasswordSignUp),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.OAuthSignIn),
+        provider: zod.string(),
+    }),
+    zod.object({
+        action: zod.literal(AuditTypes.OAuthSignUp),
+        provider: zod.string(),
     }),
 ]);
 

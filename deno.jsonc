@@ -1,8 +1,8 @@
 {
     "imports": {
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/f940b00/",
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/fac487b/",
         // "webgen/": "../WebGen/",
-        "std/": "https://deno.land/std@0.213.0/",
+        "std/": "https://deno.land/std@0.215.0/",
         "shared/": "./pages/shared/"
     },
     "lock": false,
