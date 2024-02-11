@@ -172,19 +172,6 @@ export function getYearList(): string[] {
         .map((x) => x.toString());
 }
 
-export function stringToColor(str: string) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    let color = '#';
-    for (let i = 0; i < 3; i++) {
-        const value = (hash >> (i * 8)) & 0xFF;
-        color += (`00${value.toString(16)}`).slice(-2);
-    }
-    return color;
-}
-
 const a = document.createElement('a');
 document.body.appendChild(a);
 a.setAttribute('style', 'display: none');
@@ -245,14 +232,26 @@ async function loadImage(x: Drop) {
     return blob;
 }
 
+export function stringToColor(str: string) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    let color = '#';
+    for (let i = 0; i < 3; i++) {
+        const value = (hash >> (i * 8)) & 0xFF;
+        color += (`00${value.toString(16)}`).slice(-2);
+    }
+    return color;
+}
+
 export function ProfilePicture(component: Component, name: string) {
     const ele = component.draw();
     ele.style.backgroundColor = stringToColor(name);
     return Custom(ele).addClass("profile-picture");
 }
 
-export function getNameInital(raw: string) {
-    const name = raw.trim();
+export function getNameInital(name: string) {
     if (name.includes(", "))
         return name.split(", ").map(x => x.at(0)?.toUpperCase()).join("");
     if (name.includes(","))
@@ -263,8 +262,11 @@ export function getNameInital(raw: string) {
 }
 
 export function showProfilePicture(x: ProfileData) {
+    console.log(x.profile.avatar, x.profile.username);
     return ProfilePicture(
-        x.profile.avatar ? Image(x.profile.avatar!, "") : Label(getNameInital(x.profile.username)),
+        x.profile.avatar ? Image({
+            type: "direct", source: async () => await API.user.picture(x._id).then(stupidErrorAlert)
+        }, "Profile Picture") : Label(getNameInital(x.profile.username)),
         x.profile.username
     );
 }

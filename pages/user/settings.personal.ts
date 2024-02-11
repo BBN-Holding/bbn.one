@@ -10,7 +10,7 @@ export function ChangePersonal() {
         email: activeUser.email,
         name: activeUser.username,
         loading: false,
-        profilePicture: activeUser.avatar ?? { type: "loading" } as string | AdvancedImage | undefined,
+        profilePicture: activeUser.avatar ? { type: "direct", source: async () => await API.user.picture(activeUser.id!).then(stupidErrorAlert) } : { type: "loading" } as AdvancedImage | undefined,
         validationState: <ZodError | undefined>undefined,
     });
 
@@ -25,7 +25,7 @@ export function ChangePersonal() {
                     StreamingUploadHandler(`user/set-me/avatar/upload`, {
                         failure: () => {
                             state.loading = false;
-                            state.profilePicture = activeUser.avatar;
+                            state.profilePicture = activeUser.avatar ? { type: "direct", source: async () => await API.user.picture(activeUser.id!).then(stupidErrorAlert) } : { type: "loading" };
                             alert("Your Upload has failed. Please try a different file or try again later");
                         },
                         uploadDone: () => {

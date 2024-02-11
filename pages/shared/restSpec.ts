@@ -122,7 +122,12 @@ export const API = {
             })
                 .then(none())
                 .catch(reject)
-        }
+        },
+        picture: (id: string) => fetch(`${API.BASE_URL}user/${id}/picture`, {
+            headers: headers(API.getToken())
+        })
+            .then(blob())
+            .catch(reject)
     },
     auth: {
         oauthRedirect: (type: "discord" | "google" | "microsoft") => `${API.BASE_URL}auth/redirect/${type}?goal=${localStorage.getItem('goal') ?? '/music'}`,
