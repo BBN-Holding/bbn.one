@@ -42,13 +42,13 @@ async function createMonacoEditor() {
 
     editFileDownloading.listen(downloading => {
         editor.updateOptions({
-            readOnly: downloading
+            readOnly: downloading || editFileReadOnly.getValue()
         });
     });
 
     editFileUploading.listen(uploading => {
         editor.updateOptions({
-            readOnly: uploading
+            readOnly: uploading || editFileReadOnly.getValue()
         });
     });
 
@@ -88,6 +88,8 @@ export const editFileDialog = SheetDialog(sheetStack, editFileReadOnly.map<strin
         Grid(
             Button("Cancel").onClick(() => editFileDialog.close()),
             Button("Save").onPromiseClick(async () => {
+                if (editFileReadOnly.getValue())
+                    return;
                 if (editFileDownloading.getValue())
                     return alert("File is still downloading");
                 editFileUploading.setValue(true);
