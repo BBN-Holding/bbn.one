@@ -1,7 +1,8 @@
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { editor } from "https://esm.sh/monaco-editor@0.44.0/esm/vs/editor/editor.api.js";
+
 import { delay } from "std/async/delay.ts";
-import { Box, Button, Cache, Custom, Grid, Label, MIcon, SheetDialog, Vertical, asRef, lazyInit, refMerge } from "webgen/mod.ts";
+import { Box, Button, Cache, Color, Custom, Grid, Label, MIcon, SheetDialog, Vertical, asRef, lazyInit, refMerge } from "webgen/mod.ts";
 import { sheetStack } from "../../../_legacy/helper.ts";
 import { uploadFile } from "../../loading.ts";
 import './editFileDialog.css';
@@ -12,6 +13,7 @@ export const editFileLanguage = asRef("yaml");
 export const editFilestreamingText = asRef(new Response("Loading file...").body?.pipeThrough(new TextDecoderStream())!);
 export const editFileDownloading = asRef(true);
 export const editFileUploading = asRef(false);
+export const editFileReadOnly = asRef(false);
 export const editFilePath = asRef("");
 export const editFileCurrentEditor = asRef<editor.IStandaloneCodeEditor | undefined>(undefined);
 
@@ -54,7 +56,7 @@ async function createMonacoEditor() {
     return Custom(box).addClass("file-dialog-shell");
 }
 
-export const editFileDialog = SheetDialog(sheetStack, "Edit File",
+export const editFileDialog = SheetDialog(sheetStack, editFileReadOnly.map<string>(readOnly => readOnly ? "Read File" : "Edit File"),
     Vertical(
         refMerge({
             downloading: editFileDownloading,
@@ -98,7 +100,8 @@ export const editFileDialog = SheetDialog(sheetStack, "Edit File",
                 editFileUploading.setValue(false);
                 await delay(300);
                 editFileDialog.close();
-            }),
+            })
+                .setColor(editFileReadOnly.map<Color>(readOnly => readOnly ? Color.Disabled : Color.Grayscaled))
         )
             .setGap(".5rem")
             .setJustify("end")

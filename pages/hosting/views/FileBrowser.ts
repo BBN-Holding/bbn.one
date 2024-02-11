@@ -9,7 +9,7 @@ import { sheetStack } from "../../_legacy/helper.ts";
 import { mapFiletoIcon } from "../constants.ts";
 import { downloadFile, listFiles, messageQueueSidecar } from "../loading.ts";
 import { deleteFileDialog } from "./dialogs/deleteFileDialog.ts";
-import { editFileDialog, editFileLanguage, editFilePath, editFilestreamingText } from "./dialogs/editFileDialog.ts";
+import { editFileDialog, editFileLanguage, editFilePath, editFileReadOnly, editFilestreamingText } from "./dialogs/editFileDialog.ts";
 import './dialogs/exportFileDialog.css';
 import { pathNavigation } from "./pathNavigation.ts";
 import { allFiles, canWriteInFolder, loading, path, uploadingFiles } from "./state.ts";
@@ -156,6 +156,7 @@ export function FileBrowser() {
                                 .onClick(() => {
                                     if (!data.fileMimeType) return;
 
+                                    editFileReadOnly.setValue(!data.canWrite);
                                     editFileLanguage.setValue(data.fileMimeType
                                         .split(";")[ 0 ]
                                         .split("/")[ 1 ]
