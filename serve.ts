@@ -66,9 +66,10 @@ serve({
     poylfills: [
         "./polyfill.ts",
         "./bug-reporter.ts",
-        "https://unpkg.com/native-file-system-adapter/",
-        "https://unpkg.com/urlpattern-polyfill/",
-        "https://raw.githubusercontent.com/ungap/with-resolvers/main/index.js"
+        "https://cdn.jsdelivr.net/npm/native-file-system-adapter@3.0.0/mod.js",
+        "https://unpkg.com/urlpattern-polyfill",
+        "https://raw.githubusercontent.com/ungap/with-resolvers/main/index.js",
+        "https://unpkg.com/@oddbird/popover-polyfill"
     ]
 });
 
