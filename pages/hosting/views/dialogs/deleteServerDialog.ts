@@ -17,7 +17,7 @@ export const deleteServerDialog = (serverId: string) => {
                 })
             )
                 .setGap(".5rem")
-                .setJustify("end")
+                .setJustifyItems("end")
                 .setRawColumns("auto max-content")
         ).setGap()
     );

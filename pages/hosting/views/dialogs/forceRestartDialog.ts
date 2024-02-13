@@ -19,7 +19,7 @@ export const forceRestartDialog = (serverId: string) => {
                     })
             )
                 .setGap(".5rem")
-                .setJustify("end")
+                .setJustifyItems("end")
                 .setRawColumns("auto max-content")
         ).setGap()
     );

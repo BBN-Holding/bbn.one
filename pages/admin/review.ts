@@ -38,14 +38,14 @@ sheetStack.setDefault(Vertical(
     DynaNavigation("Admin"),
     Grid(
         Vertical(
-            Label("User Details", "h1").setAlign("center"),
+            Label("User Details", "h1").setTextAlign("center"),
             reviewState.$drop.map(drop => drop ? Vertical(
                 showProfilePicture(drop.user),
                 Label(`Username: ${drop.user.profile.username}`),
                 Label(`Email: ${drop.user.profile.email}`),
                 Label(`ID: ${drop.user._id}`),
             ).setGap() : LoadingSpinner()).asRefComponent(),
-            Label("User's Drops", "h1").setAlign("center"),
+            Label("User's Drops", "h1").setTextAlign("center"),
             reviewState.$drops.map(drops => drops ? Vertical(
                 ...drops.map(drop => Entry({ title: drop.title, subtitle: drop.type }).addClass("small"))).setGap() : LoadingSpinner()).asRefComponent(),
         )
@@ -103,13 +103,13 @@ sheetStack.setDefault(Vertical(
                 if (!mobile) return Grid(
                     list,
                     createActionList(menu)
-                ).setRawColumns("auto max-content").setGap().setAlign("center");
+                ).setRawColumns("auto max-content").setGap().setAlignItems("center");
                 return list;
             }).asRefComponent())
             : LoadingSpinner()
-        ).asRefComponent().setJustify("center").setAlign("center"),
+        ).asRefComponent().setJustifyItems("center").setAlignItems("center"),
         Vertical(
-            Label("Drop History", "h1").setAlign("center"),
+            Label("Drop History", "h1").setTextAlign("center"),
             reviewState.$drop.map(drop => drop ? Vertical(
                 ...drop.events.map(entry => Vertical(
                     Label(entry.meta.action),

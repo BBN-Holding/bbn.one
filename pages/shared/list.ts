@@ -47,7 +47,7 @@ export const HeavyList = <T>(items: Refable<External<T[]> | 'loading' | T[]>, ma
                                 MIcon("error"),
                                 Label(displayError(val.reason))
                             )
-                                .setAlign("center")
+                                .setAlignItems("center")
                                 .setGap("calc(var(--gap) * 0.25)")
                                 .addClass("error-message")
                         )

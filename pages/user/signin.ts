@@ -51,7 +51,7 @@ Body(Vertical(
                             .sync(state, "password"),
                         Button("Rest your Password")
                             .setId("submit-button")
-                            .setJustify("center")
+                            .setJustifyContent("center")
                             .onPromiseClick(async () => {
                                 try {
                                     assert(API.getToken(), "Missing Token!");
@@ -87,7 +87,7 @@ Body(Vertical(
                                     state.error = _.message;
                                 }
                             })
-                            .setJustify("center"),
+                            .setJustifyContent("center"),
 
                         ErrorMessage(),
 
@@ -106,21 +106,21 @@ Body(Vertical(
                 if (state.type == "login")
                     return Form(Grid(
                         LinkButton("Sign in with Google", API.auth.oauthRedirect("google"))
-                            .setJustify("center")
+                            .setJustifyContent("center")
                             .addPrefix(
                                 Image(googleLogo, "Google Logo")
                                     .addClass("prefix-logo")
                             )
                             .setMargin("0 0 .6rem"),
                         LinkButton("Sign in with Discord", API.auth.oauthRedirect("discord"))
-                            .setJustify("center")
+                            .setJustifyContent("center")
                             .addPrefix(
                                 Image(discordLogo, "Discord Logo")
                                     .addClass("prefix-logo")
                             )
                             //     .setMargin("0 0 .6rem"),
                             // LinkButton("Sign in with Microsoft", API.auth.oauthRedirect("microsoft"))
-                            //     .setJustify("center")
+                            //     .setJustifyContent("center")
                             //     .addPrefix(
                             //         Image(discordLogo, "logo")
                             //             .addClass("prefix-logo")
@@ -150,7 +150,7 @@ Body(Vertical(
                                     //
                                 }
                             })
-                            .setJustify("center"),
+                            .setJustifyContent("center"),
 
                         ErrorMessage(),
 
@@ -202,7 +202,7 @@ Body(Vertical(
                         Button("Register")
                             .setId("register-button")
                             .onPromiseClick(registerUser)
-                            .setJustify("center"),
+                            .setJustifyContent("center"),
 
                         ErrorMessage(),
 

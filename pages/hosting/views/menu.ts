@@ -58,7 +58,7 @@ export const hostingMenu = Navigation({
                     )
                         .setRawColumns("max-content auto")
                         .setGap("1rem")
-                        .setAlign("center"),
+                        .setAlignItems("center"),
                     suffix: server.labels.includes("maintenance") ? undefined : ChangeStateButton(server),
                     clickHandler: server.labels.includes("maintenance") ? undefined : () => {
                         startSidecarConnection(server._id);
@@ -191,7 +191,7 @@ function addonBrowser(server: StateHandler<Server>): RenderItem {
     const loader = createCachedLoader(createIndexPaginationLoader({
         limit: 80,
         // We need to split because forge has forge version in version field :(
-        loader: (offset, limit) => getRealFiltered([ server.version.split('-')[0] ], server.type, offset, limit),
+        loader: (offset, limit) => getRealFiltered([ server.version.split('-')[ 0 ] ], server.type, offset, limit),
     }));
 
     return {
@@ -206,7 +206,7 @@ function addonBrowser(server: StateHandler<Server>): RenderItem {
             Grid(
                 TextInput("text", "Search")
                     .sync(searchBox, "search"),
-            ).setJustify("end"),
+            ).setJustifyItems("end"),
             Loader(
                 loader,
                 ({ items, hasMore, loadMore }) => Grid(
@@ -282,7 +282,7 @@ function addonBrowser(server: StateHandler<Server>): RenderItem {
                                 .setMargin("var(--gap) 0 0")
                                 .onPromiseClick(() => loadMore())
                         )
-                            .setJustify("center")
+                            .setJustifyItems("center")
                         : Empty()
                     ).asRefComponent()
                 ).setGap()

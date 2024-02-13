@@ -109,7 +109,7 @@ export const creationView = () => creationState.$loading.map(loading => {
                         })
                     ).addClass("footer"),
                     BasicLabel({ title: "", subtitle: "When pressing Submit you also accept the Minecraft EULA" }).addClass("small")
-                ).setJustify("end"),
+                ).setJustifyItems("end"),
 
             )
                 .setGap("0.5rem")

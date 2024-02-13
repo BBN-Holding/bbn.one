@@ -100,7 +100,7 @@ Body(Box(
         Box(Box()).addClass("glowbs", "purple"),
     )
         .addClass("content")
-        .setAlign("center"),
+        .setAlignItems("center"),
 
     Footer()
 ));

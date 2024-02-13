@@ -136,7 +136,7 @@ export const DeclineDialog = SheetDialog(sheetStack, "Decline Drop",
                         )
                             .setMargin("0.5rem 0")
                             .setGap("0.5rem")
-                            .setAlign("center")
+                            .setAlignItems("center")
                     ),
 
                 Label("Choose Rejection Method"),
@@ -147,7 +147,7 @@ export const DeclineDialog = SheetDialog(sheetStack, "Decline Drop",
                 )
                     .setMargin("0.5rem 0")
                     .setGap("0.5rem")
-                    .setAlign("center"),
+                    .setAlignItems("center"),
                 Horizontal(
                     Box(dialogState.$validationState.map(error => error ? CenterV(
                         Label(getErrorMessage(error))

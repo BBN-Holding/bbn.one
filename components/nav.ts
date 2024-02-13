@@ -48,7 +48,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                 )
                     .setGap(".5rem")
                     .setDirection("row")
-                    .setAlign("center")
+                    .setAlignItems("center")
                     .addClass("justify-content-center", "clickable")
                     .onClick(() => {
                         dropOver.classList.add("open");
@@ -62,7 +62,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                             Label(activeUser.$username),
                         )
                             .setRawColumns("max-content max-content")
-                            .setAlign("center")
+                            .setAlignItems("center")
                             .setGap(".7rem"),
                         "/settings"
                     )

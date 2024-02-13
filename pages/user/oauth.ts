@@ -79,7 +79,7 @@ const list = state.$loaded.map(loaded => {
                 ),
                 Button("Connect")
                     .setWidth("100%")
-                    .setJustify("center")
+                    .setJustifyContent("center")
                     .setMargin("1rem 0 0")
                     .onPromiseClick(async () => await authorize()),
                 Horizontal(

@@ -13,5 +13,5 @@ export function pathNavigation(): GridItem {
                 listFiles(path.getValue()).finally(() => loading.setValue(false));
             })),
         Box(Custom(loadingWheel() as Element as HTMLElement)).addClass(loading.map(it => it ? "loading" : "non-loading"), "loading-box")
-    ).setJustify("start").addClass("path-bar")).asRefComponent().removeFromLayout();
+    ).setJustifyItems("start").addClass("path-bar")).asRefComponent().removeFromLayout();
 }

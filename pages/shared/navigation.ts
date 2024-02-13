@@ -177,7 +177,7 @@ function defaultHeader(menu: MenuImpl) {
         if (!mobile) return Grid(
             list,
             createActionList(menu)
-        ).setRawColumns("auto max-content").setGap().setAlign("center");
+        ).setRawColumns("auto max-content").setGap().setAlignItems("center");
         return list;
     }).asRefComponent();
 }

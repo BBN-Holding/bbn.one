@@ -106,7 +106,7 @@ export const editFileDialog = SheetDialog(sheetStack, editFileReadOnly.map<strin
                 .setColor(editFileReadOnly.map<Color>(readOnly => readOnly ? Color.Disabled : Color.Grayscaled))
         )
             .setGap(".5rem")
-            .setJustify("end")
+            .setJustifyItems("end")
             .setRawColumns("auto max-content")
     )
 );

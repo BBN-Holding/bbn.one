@@ -14,7 +14,7 @@ export function deleteFileDialog() {
             }).setColor(Color.Critical)
         )
             .setGap(".5rem")
-            .setJustify("end")
+            .setJustifyItems("end")
             .setRawColumns("auto max-content")
     );
 
