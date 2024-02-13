@@ -1,6 +1,6 @@
 import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { AdvancedImage, Body, Box, Button, ButtonStyle, Center, CenterV, Color, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, Image, Label, MediaQuery, Spacer, SupportedThemes, TextInput, Validate, Vertical, WebGen, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
+import { AdvancedImage, Body, Box, Button, ButtonStyle, Center, CenterV, Color, Custom, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, Image, Label, MediaQuery, Spacer, SupportedThemes, TextInput, Validate, Vertical, WebGen, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
@@ -77,6 +77,7 @@ sheetStack.setDefault(Vertical(
 
 Body(sheetStack)
     .addClass("fullscreen");
+Custom(document.body).setAttribute("data-theme", undefined);
 
 const validator = (page: number) => async () => {
     const { error, validate } = Validate(state, pages[ page ]);

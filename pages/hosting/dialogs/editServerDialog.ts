@@ -2,11 +2,11 @@ import { API, stupidErrorAlert } from "shared/restSpec.ts";
 import { SliderInput } from "shared/slider.ts";
 import { format } from "std/fmt/bytes.ts";
 import { Button, ButtonStyle, Color, DropDownInput, Grid, Label, MediaQuery, SheetDialog, TextInput, asState } from "webgen/mod.ts";
-import locations from "../../../../data/locations.json" with { type: "json" };
-import serverTypes from "../../../../data/servers.json" with { type: "json" };
-import { Server } from "../../../../spec/music.ts";
-import { sheetStack } from "../../../_legacy/helper.ts";
-import { MB, state } from "../../data.ts";
+import locations from "../../../data/locations.json" with { type: "json" };
+import serverTypes from "../../../data/servers.json" with { type: "json" };
+import { Server } from "../../../spec/music.ts";
+import { sheetStack } from "../../_legacy/helper.ts";
+import { MB, state } from "../data.ts";
 
 export const editServerDialog = (server: Server, versions: string[]) => {
     const data = asState({

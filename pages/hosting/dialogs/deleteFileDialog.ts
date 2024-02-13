@@ -1,5 +1,5 @@
 import { Box, Button, Color, Grid, Label, SheetDialog, Vertical } from "webgen/mod.ts";
-import { sheetStack } from "../../../_legacy/helper.ts";
+import { sheetStack } from "../../_legacy/helper.ts";
 
 export function deleteFileDialog() {
     const response = Promise.withResolvers<boolean>();

@@ -36,11 +36,6 @@ nav.home {
     filter: invert();
 }
 
-.wbutton.grayscaled.inline,
-.wbutton.grayscaled.secondary {
-    color: inherit;
-}
-
 nav.music {
     background: linear-gradient(166deg, #F19D2D 6.59%, #DB5721 101.73%);
 }
