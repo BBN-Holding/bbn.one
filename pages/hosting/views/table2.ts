@@ -16,10 +16,10 @@ export type RowClickHandler = (rowIndex: number, columnIndex: number) => void;
 export type RowClickEnabledHandler = (rowIndex: number) => boolean;
 
 export class Table2<Data> extends Component {
-    private columns: Reference<TableColumn<Data>[]> = asRef([]);
-    private hoveredRow: Reference<number | undefined> = asRef(undefined);
-    private rowClick: Reference<RowClickHandler | undefined> = asRef(undefined);
-    private rowClickable: Reference<RowClickEnabledHandler | undefined> = asRef(undefined);
+    private columns = asRef<TableColumn<Data>[]>([]);
+    private hoveredRow = asRef<number | undefined>(undefined);
+    private rowClick = asRef<RowClickHandler | undefined>(undefined);
+    private rowClickable = asRef<RowClickEnabledHandler | undefined>(undefined);
     constructor(dataSource: Reference<Data[]>) {
         super();
         this.wrapper.append(this.columns.map(columns => Box(

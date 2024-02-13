@@ -3,8 +3,8 @@ import { editor } from "https://esm.sh/monaco-editor@0.44.0/esm/vs/editor/editor
 
 import { delay } from "std/async/delay.ts";
 import { Box, Button, Cache, Color, Custom, Grid, Label, MIcon, SheetDialog, Vertical, asRef, lazyInit, refMerge } from "webgen/mod.ts";
-import { sheetStack } from "../../../_legacy/helper.ts";
-import { uploadFile } from "../../loading.ts";
+import { sheetStack } from "../../_legacy/helper.ts";
+import { uploadFile } from "../loading.ts";
 import './editFileDialog.css';
 
 const lazyMonaco = lazyInit(() => loader.init());

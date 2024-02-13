@@ -7,10 +7,10 @@ import { asRef, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Empty, Entry
 import { SidecarResponse } from "../../../spec/music.ts";
 import { sheetStack } from "../../_legacy/helper.ts";
 import { mapFiletoIcon } from "../constants.ts";
+import { deleteFileDialog } from "../dialogs/deleteFileDialog.ts";
+import { editFileDialog, editFileLanguage, editFilePath, editFileReadOnly, editFilestreamingText } from "../dialogs/editFileDialog.ts";
+import '../dialogs/exportFileDialog.css';
 import { downloadFile, listFiles, messageQueueSidecar } from "../loading.ts";
-import { deleteFileDialog } from "./dialogs/deleteFileDialog.ts";
-import { editFileDialog, editFileLanguage, editFilePath, editFileReadOnly, editFilestreamingText } from "./dialogs/editFileDialog.ts";
-import './dialogs/exportFileDialog.css';
 import { pathNavigation } from "./pathNavigation.ts";
 import { allFiles, canWriteInFolder, loading, path, uploadingFiles } from "./state.ts";
 import { Table2 } from "./table2.ts";
