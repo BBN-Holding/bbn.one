@@ -29,11 +29,6 @@ export const adminMenu = Navigation({
                     subtitle: it ? `£ ${sumOf(it.value, payout => sumOf(payout.entries, entry => sumOf(entry.data, data => data.revenue))).toFixed(2)}` : "Loading..."
                 },
                 {
-                    id: "gotten",
-                    title: "Gotten Revenue",
-                    subtitle: it ? `£ ${sumOf(it.value, payout => Number(payout.moneythisperiod.replace("£ ", "").replaceAll(',', ''))).toFixed(2)}` : "Loading..."
-                },
-                {
                     id: "bbnmoney",
                     title: "BBN Revenue",
                     subtitle: state.$wallets.map(it => it == "loading"
