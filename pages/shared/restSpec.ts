@@ -293,7 +293,7 @@ export const API = {
             list: () => fetch(`${API.BASE_URL}admin/payouts`, {
                 headers: headers(API.getToken())
             })
-                .then(json<Payout[]>())
+                .then(json<Payout[][]>())
                 .catch(reject)
         },
         servers: {

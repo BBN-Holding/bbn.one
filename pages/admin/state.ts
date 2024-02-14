@@ -14,7 +14,7 @@ export const state = asState({
     },
     users: <External<ProfileData[]> | "loading">"loading",
     groups: <External<Group[]> | "loading">"loading",
-    payouts: <External<Payout[]> | "loading">"loading",
+    payouts: <External<Payout[][]> | "loading">"loading",
     oauth: <External<OAuthApp[]> | "loading">"loading",
     files: <External<File[]> | "loading">"loading",
     servers: <External<Server[]> | "loading">"loading",

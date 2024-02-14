@@ -1,6 +1,6 @@
 import { API, HeavyList, loadMore, Navigation, placeholder } from "shared/mod.ts";
-import { sumOf } from "std/collections/sum_of.ts";
-import { asState, Box, Button, Color, Entry, Grid, Horizontal, isMobile, Label, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { sumOf } from "std/collections/mod.ts";
+import { asState, Box, Button, Color, Grid, Horizontal, isMobile, Label, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
 import { activeUser, sheetStack } from "../../_legacy/helper.ts";
 import { upload } from "../loading.ts";
@@ -21,12 +21,12 @@ export const adminMenu = Navigation({
                 {
                     id: "streams",
                     title: "Total Streams",
-                    subtitle: it ? `${sumOf(it.value, payout => sumOf(payout.entries, entry => sumOf(entry.data, data => data.quantity))).toLocaleString()} Streams` : "Loading..."
+                    subtitle: it ? `${sumOf(it.value, payouts => sumOf(payouts, payout => sumOf(payout.entries, entry => sumOf(entry.data, data => data.quantity)))).toLocaleString()} Streams` : "Loading..."
                 },
                 {
                     id: "revenue",
                     title: "Calculated Revenue",
-                    subtitle: it ? `£ ${sumOf(it.value, payout => sumOf(payout.entries, entry => sumOf(entry.data, data => data.revenue))).toFixed(2)}` : "Loading..."
+                    subtitle: it ? `£ ${sumOf(it.value, payouts => sumOf(payouts, payout => sumOf(payout.entries, entry => sumOf(entry.data, data => data.revenue)))).toFixed(2)}` : "Loading..."
                 },
                 {
                     id: "bbnmoney",
@@ -114,7 +114,7 @@ export const adminMenu = Navigation({
         {
             id: "payouts",
             title: ref`Payout`,
-            children: [
+            children: state.$payouts.map(payoutsdata => [
                 {
                     title: "Upload Payout File (.xlsx)",
                     id: "upload+manual",
@@ -126,16 +126,27 @@ export const adminMenu = Navigation({
                     title: "Sync ISRCs (release_export.xlsx)",
                     id: "sync+isrc",
                     clickHandler: () => {
-                        upload("isrc");
+                        upload("isrc"); 
                     }
                 },
-                HeavyList(state.$payouts, (x) => Entry({
-                    title: x.period,
-                    subtitle: x.moneythisperiod,
-                }).onClick(() => {
-                    location.href = `/music/payout?id=${x._id}`;
+                ...payoutsdata === "loading" || payoutsdata.status === "rejected" ? [Box()] : payoutsdata.value.map(payouts => ({
+                    title: payouts[0].period,
+                    id: "payouts"+payouts[0].period,
+                    subtitle: `£ ${sumOf(payouts, payout => sumOf(payout.entries, entry => sumOf(entry.data, data => data.revenue))).toFixed(2)}`,
+                    children: payouts.map(payout => ({
+                        title: payout._id,
+                        subtitle: `£ ${sumOf(payout.entries, entry => sumOf(entry.data, data => data.revenue)).toFixed(2)}`,
+                        children: payout.entries.map(entry => ({
+                            title: entry.isrc,
+                            subtitle: `£ ${sumOf(entry.data, data => data.revenue).toFixed(2)}`,
+                            children: entry.data.map(data => ({
+                                title: data.revenue,
+                                subtitle: `£ ${data.revenue.toFixed(2)}`
+                            }))
+                        }))
+                    }))
                 }))
-            ],
+            ]),
         },
         {
             id: "oauth",
