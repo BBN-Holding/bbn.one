@@ -114,4 +114,5 @@ span.title {
 .inverted-class .wgtable {
     width: calc(100vw - 32px);
     max-width: 50rem;
+    --color-grayscaled-inline-font: black;
 }

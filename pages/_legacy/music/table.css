@@ -10,6 +10,7 @@
     border-radius: 8px;
     --color-grayscaled-lightness: 0%;
     --color-grayscaled-font: white;
+    --color-grayscaled-inline-font: black;
 }
 
 .inverted-class :not(.artists-list)>.grayscaled.wiconbutton {
