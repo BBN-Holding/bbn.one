@@ -288,6 +288,12 @@ export const API = {
             })
                 .then(json<Drop>())
                 .catch(reject),
+            sync: () => fetch(`${API.BASE_URL}admin/sync_mapping`, {
+                method: "POST",
+                headers: headers(API.getToken())
+            })
+                .then(none())
+                .catch(reject),
         },
         payouts: {
             list: () => fetch(`${API.BASE_URL}admin/payouts`, {

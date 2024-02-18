@@ -24,7 +24,6 @@ export async function refreshState() {
 }
 
 const urls = {
-    "isrc": [ "admin/drops/upload", '.xlsx' ],
     "manual": [ "admin/payouts/upload", '.xlsx' ],
     "oauth": [ "oauth/applications/upload", 'image/*' ]
 };

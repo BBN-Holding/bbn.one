@@ -123,15 +123,15 @@ export const adminMenu = Navigation({
                     }
                 },
                 {
-                    title: "Sync ISRCs (release_export.xlsx)",
-                    id: "sync+isrc",
-                    clickHandler: () => {
-                        upload("isrc"); 
+                    title: "Sync Mapping with internal Backend",
+                    id: "sync",
+                    clickHandler: async () => {
+                        await API.admin.drops.sync();
                     }
                 },
-                ...payoutsdata === "loading" || payoutsdata.status === "rejected" ? [Box()] : payoutsdata.value.map(payouts => ({
-                    title: payouts[0].period,
-                    id: "payouts"+payouts[0].period,
+                ...payoutsdata === "loading" || payoutsdata.status === "rejected" ? [ Box() ] : payoutsdata.value.map(payouts => ({
+                    title: payouts[ 0 ].period,
+                    id: `payouts${payouts[ 0 ].period}`,
                     subtitle: `£ ${sumOf(payouts, payout => sumOf(payout.entries, entry => sumOf(entry.data, data => data.revenue))).toFixed(2)}`,
                     children: payouts.map(payout => ({
                         title: payout._id,
