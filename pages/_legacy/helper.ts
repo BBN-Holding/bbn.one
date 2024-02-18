@@ -262,7 +262,6 @@ export function getNameInital(name: string) {
 }
 
 export function showProfilePicture(x: ProfileData) {
-    console.log(x.profile.avatar, x.profile.username);
     return ProfilePicture(
         x.profile.avatar ? Image({
             type: "direct", source: async () => await API.user.picture(x._id).then(stupidErrorAlert)
