@@ -15,7 +15,7 @@ export function DropEntry(x: Drop, small: boolean) {
                     .addClass("entry-subtitle", "under-review"));
 
             if (x.type == DropType.ReviewDeclined)
-                CenterV(Label("Declined")
+                return CenterV(Label("Declined")
                     .addClass("entry-subtitle", "under-review"));
 
             return Box();

@@ -1,7 +1,6 @@
 import { fileTypeName } from "shared/fileTypeName.ts";
 import { createDownloadStream } from "shared/libs/streamSaver.ts";
-import { Progress } from "shared/Progress.ts";
-import { ProgressTracker } from "shared/upload.ts";
+import { Progress, ProgressTracker, Table2 } from "shared/mod.ts";
 import { format } from "std/fmt/bytes.ts";
 import { asRef, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Empty, Entry, Grid, IconButton, Label, MIcon, ref, refMerge, SheetDialog } from "webgen/mod.ts";
 import { SidecarResponse } from "../../../spec/music.ts";
@@ -13,7 +12,6 @@ import '../dialogs/exportFileDialog.css';
 import { downloadFile, listFiles, messageQueueSidecar } from "../loading.ts";
 import { pathNavigation } from "./pathNavigation.ts";
 import { allFiles, canWriteInFolder, loading, path, uploadingFiles } from "./state.ts";
-import { Table2 } from "./table2.ts";
 import { DropHandler } from "./uploading/dropHandler.ts";
 import { droppingFileHandler } from "./uploading/droppingFileHandler.ts";
 

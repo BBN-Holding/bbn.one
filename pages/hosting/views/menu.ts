@@ -26,7 +26,6 @@ import { Loader } from "./Loader.ts";
 import './menu.css';
 import { ServerDetails } from "./ServerDetails.ts";
 import { auditLogs, hostingButtons } from "./state.ts";
-import './table2.css';
 
 export const hostingMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,

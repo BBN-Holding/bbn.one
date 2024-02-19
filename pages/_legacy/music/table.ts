@@ -1,9 +1,8 @@
-import { Progress } from "shared/mod.ts";
+import { Progress, Table2 } from "shared/mod.ts";
 import { Box, ButtonStyle, Checkbox, Color, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, StateHandler } from "webgen/mod.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
 import { Artist, Song } from "../../../spec/music.ts";
-import { Table2 } from "../../hosting/views/table2.ts";
 import { EditArtistsDialog, ProfilePicture, getSecondary, getYearList } from "../helper.ts";
 import "./table.css";
 

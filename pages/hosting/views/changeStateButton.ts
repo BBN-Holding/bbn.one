@@ -13,13 +13,13 @@ export function ChangeStateButton(server: StateHandler<Server>): Component {
                 e.stopPropagation();
                 API.hosting.serverId(server._id).start();
                 startSidecarConnection(server._id);
-                const promise = Promise.withResolvers<SidecarResponse>();
+                const response = Promise.withResolvers<SidecarResponse>();
                 messageQueueSidecar.push({
                     request: {
                         type: "state",
                         state: "start"
                     },
-                    response: promise // Maybe we can use this to show a different loading spinner until the server is starting
+                    response // Maybe we can use this to show a different loading spinner until the server is starting
                 });
             }),
         // TODO: make this better (labels or something)
@@ -32,13 +32,13 @@ export function ChangeStateButton(server: StateHandler<Server>): Component {
                 e.stopPropagation();
                 server.state = "stopping";
                 startSidecarConnection(server._id);
-                const promise = Promise.withResolvers<SidecarResponse>();
+                const response = Promise.withResolvers<SidecarResponse>();
                 messageQueueSidecar.push({
                     request: {
                         type: "state",
                         state: "stop"
                     },
-                    response: promise
+                    response
                 });
             })
     })[ state ] ?? Box()))

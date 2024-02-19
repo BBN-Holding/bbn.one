@@ -1,9 +1,8 @@
-import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
+import { API, fileCache, Permission, stupidErrorAlert, Table2 } from "shared/mod.ts";
 import { asState, Box, Button, Cache, CenterV, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
 import artwork from "../../assets/img/template-artwork.png";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
-import { Table2 } from "../hosting/views/table2.ts";
 export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 

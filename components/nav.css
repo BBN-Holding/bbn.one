@@ -62,31 +62,9 @@ nav>div {
     position: relative;
 }
 
-.profile-picture {
-    width: 29px;
-    height: 29px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 3px;
-    border-radius: 9px;
-
-    font-weight: 800;
-    overflow: hidden;
-}
-
 .profile-button {
     padding: 0 10px 0 4px;
     border-radius: 12px;
-}
-
-.profile-picture img {
-    width: 29px;
-    height: 29px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 800;
 }
 
 nav img {

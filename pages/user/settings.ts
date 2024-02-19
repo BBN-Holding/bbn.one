@@ -41,7 +41,7 @@ const settingsMenu = Navigation({
                         ).setGap("20px")
                     ])
                         .setDynamicColumns(1, "12rem")
-                        .addClass("settings-form")
+                        .setJustifyContent("center")
                         .setGap("15px"),
                     Horizontal(
                         Spacer(),

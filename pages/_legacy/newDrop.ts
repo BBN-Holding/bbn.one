@@ -6,7 +6,6 @@ import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
 import language from "../../data/language.json" with { type: "json" };
 import { Artist, DropType, Song, pages } from "../../spec/music.ts";
-import '../hosting/views/table2.css';
 import { CenterAndRight, EditArtistsDialog, RegisterAuthRefresh, allowedAudioFormats, allowedImageFormats, getSecondary, sheetStack } from "./helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./music/data.ts";
 import { ManageSongs } from "./music/table.ts";
@@ -69,9 +68,7 @@ const state = asState({
 
 sheetStack.setDefault(Vertical(
     DynaNavigation("Music"),
-    state.$loaded.map(loaded => loaded ?
-        wizard.addClass("wizard-box")
-        : LoadingSpinner()
+    state.$loaded.map(loaded => loaded ? wizard : LoadingSpinner()
     ).asRefComponent()
 ));
 

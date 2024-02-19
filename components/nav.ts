@@ -49,7 +49,8 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     .setGap(".5rem")
                     .setDirection("row")
                     .setAlignItems("center")
-                    .addClass("justify-content-center", "clickable")
+                    .setJustifyContent("center")
+                    .addClass("clickable")
                     .onClick(() => {
                         dropOver.classList.add("open");
                         dropOver.focus();

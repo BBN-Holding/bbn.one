@@ -1,8 +1,8 @@
 import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { Body, Button, Card, Color, Grid, Label, LinkButton, MediaQuery, SheetDialog, Table, TextInput, Vertical, WebGen, asState, isMobile } from "webgen/mod.ts";
+import { asState, Body, Button, Color, Grid, isMobile, Label, LinkButton, MediaQuery, SheetDialog, Table, TextInput, Vertical, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
-import { RegisterAuthRefresh, changeThemeColor, renewAccessTokenIfNeeded, sheetStack } from "../_legacy/helper.ts";
+import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../_legacy/helper.ts";
 import './wallet.css';
 
 await RegisterAuthRefresh();
@@ -84,29 +84,26 @@ sheetStack.setDefault(Vertical(
         MediaQuery("(max-width: 700px)", (small) =>
             Vertical(
                 Grid(
-                    Card(
-                        Grid(
-                            Label(`${Number(wallet.balance?.unrestrained! + wallet.balance?.restrained!).toFixed(2)} £`)
-                                .setTextSize("4xl")
-                                .setFontWeight("bold"),
-                            Label("Balance")
-                                .setFontWeight("bold")
-                                .addClass("gray-color")
-                        )
-                            .addClass("details-item")
-                    ),
-                    Card(
-                        Grid(
-                            Label(`${wallet.cut}%`)
-                                .setTextSize("4xl")
-                                .setFontWeight("bold"),
-                            Label("Your Cut")
-                                .setFontWeight("bold")
-                                .addClass("gray-color")
-                        )
-                            .addClass("details-item")
-                    ),
+                    Grid(
+                        Label(`${Number(wallet.balance?.unrestrained! + wallet.balance?.restrained!).toFixed(2)} £`)
+                            .setTextSize("4xl")
+                            .setFontWeight("bold"),
+                        Label("Balance")
+                            .setFontWeight("bold")
+                            .addClass("gray-color")
+                    )
+                        .addClass("details-item"),
+                    Grid(
+                        Label(`${wallet.cut}%`)
+                            .setTextSize("4xl")
+                            .setFontWeight("bold"),
+                        Label("Your Cut")
+                            .setFontWeight("bold")
+                            .addClass("gray-color")
+                    )
+                        .addClass("details-item")
                 )
+                    .setWidth("100%")
                     .setEvenColumns(small ? 1 : 2)
                     .setGap(),
                 Table([

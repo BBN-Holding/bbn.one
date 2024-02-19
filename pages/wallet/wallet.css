@@ -1,19 +1,8 @@
 .details-item {
     padding: calc(var(--gap) * .5) calc(var(--gap) * 0.8);
-    width: 100%;
-}
-
-.details-grid {
-    justify-content: center;
-}
-
-.full-width {
-    grid-column: 1 / -1;
-}
-
-.dialog-max-width {
-    max-width: 30rem;
-    gap: var(--gap);
+    border-radius: var(--border-radius);
+    background: var(--background-card);
+    color: var(--on-card-text);
 }
 
 card {

@@ -53,7 +53,7 @@ export function ChangePersonal() {
             ]
         )
             .setDynamicColumns(1, "12rem")
-            .addClass("settings-form")
+            .setJustifyContent("center")
             .setGap("15px"),
         Horizontal(
             Spacer(),

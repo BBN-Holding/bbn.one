@@ -105,7 +105,7 @@ export function ChangeDrop(drop: Drop) {
         TextInput("text", "Sound Recording Copyright").sync(data, "soundRecordingCopyright")
     )
         .setEvenColumns(2, "minmax(2rem, 20rem)")
-        .addClass("settings-form")
+        .setJustifyContent("center")
         .addClass("limited-width")
         .setGap("15px");
 }

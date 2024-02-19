@@ -1,7 +1,3 @@
-.unset-height {
-    height: unset !important;
-}
-
 .entry-subtitle {
     color: rgb(255 255 255 / 80%);
 }
@@ -14,29 +10,6 @@
     font-size: 15px;
     padding: 0.2rem 0.8rem;
     margin: 0 2rem;
-}
-
-@media (max-width: 700px) {
-    .action-bar {
-        flex-wrap: wrap-reverse;
-        justify-content: space-between;
-    }
-
-    .action-bar>.vertical-stack:last-child {
-        flex-direction: row;
-        display: flex;
-        width: 100%;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-    }
-
-    .list-entry {
-        gap: 18px !important;
-    }
-
-    .list-entry .image-preview .wimage {
-        height: 75px;
-    }
 }
 
 .small-preview.image-preview .wimage {

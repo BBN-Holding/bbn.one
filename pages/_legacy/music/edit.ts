@@ -4,7 +4,6 @@ import '../../../assets/css/main.css';
 import '../../../assets/css/music.css';
 import { DynaNavigation } from "../../../components/nav.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
-import '../../hosting/views/table2.css';
 import { DropTypeToText } from "../../music/views/list.ts";
 import { RegisterAuthRefresh, changeThemeColor, permCheck, renewAccessTokenIfNeeded, saveBlob, sheetStack, showPreviewImage } from "../helper.ts";
 import { ChangeDrop } from "./changeDrop.ts";

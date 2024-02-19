@@ -83,14 +83,6 @@ span.title {
     margin-bottom: 5rem;
 }
 
-.wizard-box {
-    display: contents;
-}
-
-.wizard-box>article {
-    display: contents;
-}
-
 .max-width {
     max-width: calc(100vw - 2rem);
 }

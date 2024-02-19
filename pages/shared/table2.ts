@@ -1,4 +1,5 @@
 import { Box, Component, Custom, Label, Refable, Reference, asRef, refMerge } from "webgen/mod.ts";
+import "./table2.css";
 
 export type TableColumn<Data> = {
     converter: (data: Data) => Component;
