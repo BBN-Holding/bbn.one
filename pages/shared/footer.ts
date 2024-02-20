@@ -1,5 +1,5 @@
 import { BIcon, Box, ButtonStyle, Grid, IconButton, Image, Label, LinkButton } from "webgen/mod.ts";
-import splash from "../../assets/splash.png";
+import { splash } from "../../assets/imports.ts";
 import './footer.css';
 
 export function Footer() {

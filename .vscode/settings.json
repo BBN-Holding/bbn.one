@@ -37,4 +37,8 @@
         "https://deno.land": true,
         "https://esm.sh": true,
     },
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "*.ts": "${capture}.css",
+    },
 }

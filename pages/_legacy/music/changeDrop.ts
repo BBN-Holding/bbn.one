@@ -3,7 +3,7 @@ import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API } from "shared/mod.ts";
 import { stupidErrorAlert } from "shared/restSpec.ts";
 import { AdvancedImage, Box, Button, CenterV, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, TextInput, Validate, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
-import artwork from "../../../assets/img/template-artwork.png";
+import { templateArtwork } from "../../../assets/imports.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
 import { DATE_PATTERN, Drop, artist, song, userString } from "../../../spec/music.ts";
@@ -64,7 +64,7 @@ export function ChangeDrop(drop: Drop) {
         ],
         Grid(
             state.$artworkClientData.map(artworkData => DropAreaInput(
-                Box(artworkData ? Image(artworkData, "A Music Album Artwork.") : Image(artwork, "A Default Alubm Artwork."), IconButton(MIcon("edit"), "edit icon"))
+                Box(artworkData ? Image(artworkData, "A Music Album Artwork.") : Image(templateArtwork, "A Default Alubm Artwork."), IconButton(MIcon("edit"), "edit icon"))
                     .addClass("upload-image"),
                 allowedImageFormats,
                 ([ { file } ]) => uploadArtwork(drop._id!, file, state.$artworkClientData, state.$loading, data.$artwork)

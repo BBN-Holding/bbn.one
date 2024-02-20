@@ -1,4 +1,4 @@
-import { Box, CenterV, Entry, Label } from "webgen/mod.ts";
+import { CenterV, Empty, Entry, Label } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { showPreviewImage } from "../../_legacy/helper.ts";
 
@@ -18,7 +18,7 @@ export function DropEntry(x: Drop, small: boolean) {
                 return CenterV(Label("Declined")
                     .addClass("entry-subtitle", "under-review"));
 
-            return Box();
+            return Empty();
         })())
         .onClick(() => location.href = x.type === DropType.Unsubmitted ? `/music/new-drop?id=${x._id}` : `/music/edit?id=${x._id}`);
 }

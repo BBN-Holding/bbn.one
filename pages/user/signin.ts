@@ -49,7 +49,7 @@ Body(Vertical(
                     return Form(Grid(
                         TextInput("password", "New Password")
                             .sync(state, "password"),
-                        Button("Rest your Password")
+                        Button("Reset your Password")
                             .setId("submit-button")
                             .setJustifyContent("center")
                             .onPromiseClick(async () => {
@@ -82,7 +82,7 @@ Body(Vertical(
 
                                     await API.auth.forgotPassword.post(state.email);
 
-                                    alert("Email Send! Please check your Inbox/Spam folder.");
+                                    alert("Email sent! Please check your Inbox/Spam folder.");
                                 } catch (_) {
                                     state.error = _.message;
                                 }
@@ -92,7 +92,7 @@ Body(Vertical(
                         ErrorMessage(),
 
                         Horizontal(
-                            Label("Known here?"),
+                            Label("Already have an account?"),
                             Button("Sign in")
                                 .setStyle(ButtonStyle.Inline)
                                 .onClick(() => state.type = "login")
@@ -207,7 +207,7 @@ Body(Vertical(
                         ErrorMessage(),
 
                         Horizontal(
-                            Label("Known here?"),
+                            Label("Already have an account?"),
                             Button("Sign in")
                                 .setStyle(ButtonStyle.Inline)
                                 .onClick(() => state.type = "login")

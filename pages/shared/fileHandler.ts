@@ -6,6 +6,7 @@ export interface FileEntry {
     file: File;
 }
 
+//should be fixed in next TS version
 declare global {
     interface FileSystemDirectoryHandle {
         values: () => ReadableStream<FileSystemDirectoryHandle | FileSystemFileHandle>;

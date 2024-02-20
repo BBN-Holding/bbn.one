@@ -1,8 +1,9 @@
 import { API, fileCache, Permission, stupidErrorAlert, Table2 } from "shared/mod.ts";
 import { asState, Box, Button, Cache, CenterV, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
-import artwork from "../../assets/img/template-artwork.png";
+import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
+
 export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
 export const allowedImageFormats = [ "image/png", "image/jpeg" ];
 
@@ -219,7 +220,7 @@ export function showPreviewImage(x: Drop) {
         type => type == "loaded"
             ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork")
             : Box())
-        : Image(artwork, "A Placeholder Artwork.");
+        : Image(templateArtwork, "A Placeholder Artwork.");
 }
 
 async function loadImage(x: Drop) {
