@@ -1,6 +1,6 @@
-import * as zod from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API } from "shared/mod.ts";
 import { Box, Button, CenterV, Empty, Grid, Horizontal, Label, Spacer, Validate, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
+import zod from "zod/index.ts";
 import { Drop, song } from "../../../spec/music.ts";
 import { allowedAudioFormats } from "../helper.ts";
 import { uploadSongToDrop } from "./data.ts";

@@ -4,10 +4,6 @@
     margin: 8px 0;
 }
 
-.label-center {
-    justify-self: center;
-}
-
 .linkage {
     width: 100%;
     grid-template-columns: 115px 50px 115px;

@@ -56,7 +56,8 @@ const list = state.$loaded.map(loaded => {
                     Grid(
                         Image(state.icon || templateArtwork, "New Connection"),
                         Label(state.name || "---")
-                            .addClass("label-small", "label-center")
+                            .setJustifySelf("center")
+                            .addClass("label-small")
                     ),
                     Image(dots, "dots"),
                     Grid(
@@ -66,7 +67,8 @@ const list = state.$loaded.map(loaded => {
                             activeUser.username
                         ),
                         Label(activeUser.username)
-                            .addClass("label-small", "label-center")
+                            .setJustifySelf("center")
+                            .addClass("label-small")
                     )
                 ).addClass("linkage"),
                 Label("PERMISSIONS")

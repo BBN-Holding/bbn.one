@@ -3,6 +3,7 @@
         "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/0f7918a/",
         // "webgen/": "../WebGen/",
         "std/": "https://deno.land/std@0.217.0/",
+        "zod/": "https://deno.land/x/zod@v3.22.4/",
         "shared/": "./pages/shared/"
     },
     "lock": false,

@@ -1,5 +1,5 @@
-import { ZodError } from "https://deno.land/x/zod@v3.22.4/ZodError.ts";
 import { AdvancedImage, asState } from "webgen/mod.ts";
+import { ZodError } from "zod/mod.ts";
 import { Artist, Drop, Payout, Song } from "../../spec/music.ts";
 
 export const state = asState({

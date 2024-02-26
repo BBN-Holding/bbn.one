@@ -1,8 +1,8 @@
-import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API, StreamingUploadHandler, stupidErrorAlert } from "shared/mod.ts";
 import { delay } from "std/async/mod.ts";
 import { AdvancedImage, Box, Button, CenterV, Empty, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, TextInput, Validate, Vertical, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
+import { ZodError } from "zod/mod.ts";
 import { activeUser, allowedImageFormats, forceRefreshToken } from "../_legacy/helper.ts";
 
 export function ChangePersonal() {

@@ -66,7 +66,7 @@ serve({
     poylfills: [
         "./polyfill.ts",
         "./bug-reporter.ts",
-        "https://cdn.jsdelivr.net/npm/native-file-system-adapter@3.0.0/mod.js",
+        "https://cdn.jsdelivr.net/npm/native-file-system-adapter@3.0.1/mod.js",
         "https://unpkg.com/urlpattern-polyfill",
         "https://raw.githubusercontent.com/ungap/with-resolvers/main/index.js",
         "https://unpkg.com/@oddbird/popover-polyfill"
@@ -81,7 +81,7 @@ function createTemplate(name: string, path: string) {
     <title>${title.get(path) ?? "BBN Holding"}</title>
     <link rel="manifest" href="/app.webmanifest">
     <meta charset='UTF-8'>
-    <meta name="description" content="BBN Holding is a US-based holding company with a diverse portfolio of businesses including music and hosting services. BBN Music provides music streaming and hosting services, while BBN Hosting offers Minecraft hosting services.">
+    <meta name="description" content="BBN Holding encompasses a variety of businesses, including music and hosting services. BBN Music provides music distribution, publishing, and label services, while BBN Hosting offers Minecraft hosting services.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name='theme-color' content='black'>
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -89,7 +89,6 @@ function createTemplate(name: string, path: string) {
     <meta name="apple-mobile-web-app-title" content="${title.get(path) ?? "BBN Holding"}">
     <meta name="google" content="notranslate"/>
     <link rel="apple-touch-icon" href="/images/apple.png">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="${name}.css">
 </head>
 

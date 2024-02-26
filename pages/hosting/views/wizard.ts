@@ -1,7 +1,7 @@
-import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API, LoadingSpinner, SliderInput, displayError } from "shared/mod.ts";
 import { format } from "std/fmt/bytes.ts";
 import { BasicLabel, Box, Button, CenterV, DropDownInput, Empty, Grid, Horizontal, Label, Spacer, TextInput, Validate, Vertical, asState, getErrorMessage, refMerge } from "webgen/mod.ts";
+import { ZodError } from "zod/mod.ts";
 import locations from "../../../data/locations.json" with { type: "json" };
 import { ServerCreate, serverCreate } from "../../../spec/music.ts";
 import { MB, creationState, state } from "../data.ts";

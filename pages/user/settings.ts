@@ -1,7 +1,6 @@
-import { ZodError } from "https://deno.land/x/zod@v3.22.4/ZodError.ts";
-import zod from "https://deno.land/x/zod@v3.22.4/index.ts";
 import { API, Navigation } from "shared/mod.ts";
 import { Body, Box, Button, CenterV, Empty, Grid, Horizontal, Label, Spacer, TextInput, Validate, Vertical, WebGen, asState, getErrorMessage, isMobile } from "webgen/mod.ts";
+import zod, { ZodError } from "zod/index.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, logOut } from "../_legacy/helper.ts";

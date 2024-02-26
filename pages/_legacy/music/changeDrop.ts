@@ -1,8 +1,7 @@
-import * as zod from "https://deno.land/x/zod@v3.22.4/mod.ts";
-import { ZodError } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 import { API } from "shared/mod.ts";
 import { stupidErrorAlert } from "shared/restSpec.ts";
 import { AdvancedImage, Box, Button, CenterV, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, TextInput, Validate, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
+import zod, { ZodError } from "zod/index.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
