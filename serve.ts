@@ -91,18 +91,9 @@ function createTemplate(name: string, path: string) {
     <link rel="apple-touch-icon" href="/images/apple.png">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" href="${name}.css">
-    <script>(function (w, d, s, l, i) {
-            w[ l ] = w[ l ] || []; w[ l ].push({
-                'gtm.start':
-                    new Date().getTime(), event: 'gtm.js'
-            }); var f = d.getElementsByTagName(s)[ 0 ],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-KMCWNVD');</script>
 </head>
 
 <body>
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KMCWNVD" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script src="${name}.js" type="module"></script>
 </body>
 
