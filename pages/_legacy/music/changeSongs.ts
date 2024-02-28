@@ -1,6 +1,6 @@
 import { API } from "shared/mod.ts";
 import { Box, Button, CenterV, Empty, Grid, Horizontal, Label, Spacer, Validate, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
-import zod from "zod/index.ts";
+import { zod } from "webgen/zod.ts";
 import { Drop, song } from "../../../spec/music.ts";
 import { allowedAudioFormats } from "../helper.ts";
 import { uploadSongToDrop } from "./data.ts";

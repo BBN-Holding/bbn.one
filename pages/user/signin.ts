@@ -143,13 +143,7 @@ Body(Vertical(
 
                         Button("Login")
                             .setId("login-button")
-                            .onPromiseClick(async () => {
-                                try {
-                                    await loginUser();
-                                } catch (_) {
-                                    //
-                                }
-                            })
+                            .onPromiseClick(async () => await loginUser())
                             .setJustifyContent("center"),
 
                         ErrorMessage(),
@@ -225,8 +219,7 @@ Body(Vertical(
                 ).addClass("loading", "loader");
             }).asRefComponent(),
         )
-    )
-        .addClass("auth-area"),
+    ).addClass("auth-area"),
     Footer()
 ));
 

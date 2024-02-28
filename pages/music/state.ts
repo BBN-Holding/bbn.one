@@ -1,5 +1,5 @@
 import { AdvancedImage, asState } from "webgen/mod.ts";
-import { ZodError } from "zod/mod.ts";
+import { zod } from "webgen/zod.ts";
 import { Artist, Drop, Payout, Song } from "../../spec/music.ts";
 
 export const state = asState({
@@ -23,11 +23,11 @@ export const creationState = asState({
     compositionCopyright: <string | undefined>undefined,
     soundRecordingCopyright: <string | undefined>undefined,
     artwork: <string | undefined>undefined,
-    artworkClientData: <AdvancedImage | string | undefined>undefined,
+    artworkClientData: <AdvancedImage | undefined>undefined,
     loading: false,
     uploadingSongs: <string[]>[],
     songs: <Song[]>[],
     comments: <string | undefined>undefined,
     page: 0,
-    validationState: <ZodError | undefined>undefined
+    validationState: <zod.ZodError | undefined>undefined
 });

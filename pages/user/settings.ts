@@ -1,6 +1,6 @@
 import { API, Navigation } from "shared/mod.ts";
 import { Body, Box, Button, CenterV, Empty, Grid, Horizontal, Label, Spacer, TextInput, Validate, Vertical, WebGen, asState, getErrorMessage, isMobile } from "webgen/mod.ts";
-import zod, { ZodError } from "zod/index.ts";
+import { zod } from "webgen/zod.ts";
 import '../../assets/css/main.css';
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh, logOut } from "../_legacy/helper.ts";
@@ -13,7 +13,7 @@ await RegisterAuthRefresh();
 const state = asState({
     newPassword: <string | undefined>undefined,
     verifyNewPassword: <string | undefined>undefined,
-    validationState: <ZodError | undefined>undefined,
+    validationState: <zod.ZodError | undefined>undefined,
 });
 
 const settingsMenu = Navigation({

@@ -23,6 +23,6 @@ export const state = asState({
 });
 
 export const reviewState = asState({
-    drop: <Drop | undefined>undefined,
+    drop: <Drop & { user: ProfileData; events: any[]; } | undefined>undefined,
     drops: <Drop[] | undefined>undefined,
 });

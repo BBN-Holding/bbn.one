@@ -1,6 +1,6 @@
 import { API } from "shared/mod.ts";
 import { Box, Button, ButtonStyle, CenterV, Checkbox, Custom, Empty, Horizontal, Image, Label, SheetDialog, Spacer, Validate, Vertical, asState, createElement, css, getErrorMessage } from "webgen/mod.ts";
-import zod, { ZodError } from "zod/index.ts";
+import { zod } from "webgen/zod.ts";
 import reviewTexts from "../../data/reviewTexts.json" with { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
 import { sheetStack } from "../_legacy/helper.ts";
@@ -49,7 +49,7 @@ const rejectReasons = [ ReviewResponse.DeclineCopyright ];
 export const dialogState = asState({
     drop: <Drop | undefined>undefined,
     responseText: "",
-    validationState: <ZodError | undefined>undefined,
+    validationState: <zod.ZodError | undefined>undefined,
 });
 export const ApproveDialog = SheetDialog(sheetStack, "Approve Drop",
     dialogState.$drop.map(drop =>

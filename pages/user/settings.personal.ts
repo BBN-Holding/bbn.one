@@ -2,7 +2,6 @@ import { API, StreamingUploadHandler, stupidErrorAlert } from "shared/mod.ts";
 import { delay } from "std/async/mod.ts";
 import { AdvancedImage, Box, Button, CenterV, Empty, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, TextInput, Validate, Vertical, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
-import { ZodError } from "zod/mod.ts";
 import { activeUser, allowedImageFormats, forceRefreshToken } from "../_legacy/helper.ts";
 
 export function ChangePersonal() {
@@ -10,13 +9,13 @@ export function ChangePersonal() {
         email: activeUser.email,
         name: activeUser.username,
         loading: false,
-        profilePicture: activeUser.avatar ? { type: "direct", source: async () => await API.user.picture(activeUser.id!).then(stupidErrorAlert) } : { type: "loading" } as AdvancedImage | undefined,
-        validationState: <ZodError | undefined>undefined,
+        profilePicture: activeUser.avatar ? { type: "direct", source: async () => await API.user.picture(activeUser.id!).then(stupidErrorAlert) } : { type: "loading" } as AdvancedImage,
+        validationState: <zod.ZodError | undefined>undefined,
     });
 
     return Vertical(
         Grid(
-            state.$profilePicture.map(profilePicture => Box(Image(profilePicture ?? { type: "loading" }, "Your Avatarimage"), IconButton(MIcon("edit"), "edit-icon")).addClass("upload-image").onClick(async () => {
+            state.$profilePicture.map(profilePicture => Box(Image(profilePicture, "Your Avatarimage"), IconButton(MIcon("edit"), "edit-icon")).addClass("upload-image").onClick(async () => {
                 const file = await createFilePicker(allowedImageFormats.join(","));
                 const blobUrl = URL.createObjectURL(file);
                 profilePicture = <AdvancedImage>{ type: "uploading", filename: file.name, blobUrl, percentage: 0 };

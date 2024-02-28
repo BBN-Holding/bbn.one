@@ -58,7 +58,7 @@ export function uploadSongToDrop(state: StateHandler<{ songs: Song[]; artists: A
 }
 
 //is there a better way for those typings??
-export function uploadArtwork(id: string, file: File, artworkClientData: Reference<AdvancedImage | string | undefined>, loading: Reference<boolean>, artwork: Reference<string> | Reference<string | undefined>) {
+export function uploadArtwork(id: string, file: File, artworkClientData: Reference<AdvancedImage | undefined>, loading: Reference<boolean>, artwork: Reference<string> | Reference<string | undefined>) {
     const blobUrl = URL.createObjectURL(file);
     artworkClientData.setValue({ type: "uploading", filename: file.name, blobUrl, percentage: 0 });
     loading.setValue(true);
@@ -75,7 +75,7 @@ export function uploadArtwork(id: string, file: File, artworkClientData: Referen
             },
             credentials: () => API.getToken(),
             backendResponse: (id) => {
-                artworkClientData.setValue(blobUrl);
+                artworkClientData.setValue({ type: "direct", source: async () => await file });
                 artwork.setValue(id);
                 loading.setValue(false);
             },

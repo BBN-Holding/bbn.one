@@ -1,13 +1,13 @@
 import { API, LoadingSpinner, SliderInput, displayError } from "shared/mod.ts";
 import { format } from "std/fmt/bytes.ts";
 import { BasicLabel, Box, Button, CenterV, DropDownInput, Empty, Grid, Horizontal, Label, Spacer, TextInput, Validate, Vertical, asState, getErrorMessage, refMerge } from "webgen/mod.ts";
-import { ZodError } from "zod/mod.ts";
+import { zod } from "webgen/zod.ts";
 import locations from "../../../data/locations.json" with { type: "json" };
 import { ServerCreate, serverCreate } from "../../../spec/music.ts";
 import { MB, creationState, state } from "../data.ts";
 
 const vState = asState({
-    validationState: <ZodError | undefined>undefined
+    validationState: <zod.ZodError | undefined>undefined
 });
 
 export const creationView = () => creationState.$loading.map(loading => {

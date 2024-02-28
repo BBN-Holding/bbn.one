@@ -33,13 +33,13 @@ API.music.id(dropId).get().then(stupidErrorAlert)
         creationState.title = drop.title;
         creationState.release = drop.release;
         creationState.language = drop.language;
-        creationState.artists = asState(drop.artists ?? []);
+        creationState.artists = asState(drop.artists ?? [ [ "", "", "PRIMARY" ] ]);
         creationState.primaryGenre = drop.primaryGenre;
         creationState.secondaryGenre = drop.secondaryGenre;
         creationState.compositionCopyright = drop.compositionCopyright;
         creationState.soundRecordingCopyright = drop.soundRecordingCopyright;
         creationState.artwork = drop.artwork;
-        creationState.artworkClientData = <AdvancedImage | string | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(dropId).artwork().then(stupidErrorAlert) } : undefined);
+        creationState.artworkClientData = <AdvancedImage | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(dropId).artwork().then(stupidErrorAlert) } : undefined);
         creationState.songs = asState(drop.songs ?? []);
         creationState.comments = drop.comments;
     })
@@ -207,7 +207,7 @@ const wizard = creationState.$page.map(page => {
             Spacer()
         ),
         Spacer(),
-        Horizontal(Button("Back").setJustifyContent("center").setStyle(ButtonStyle.Secondary).onClick(() => creationState.page--), Spacer(), Button("Submit").setJustifyContent("center").onClick(async () => {
+        Horizontal(Button("Back").setJustifyContent("center").setStyle(ButtonStyle.Secondary).onClick(() => creationState.page--), Spacer(), Button("Submit").setJustifyContent("center").onPromiseClick(async () => {
             creationState.loaded = false;
             await API.music.id(dropId).update(creationState);
 

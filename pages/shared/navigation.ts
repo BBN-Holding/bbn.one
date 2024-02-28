@@ -90,9 +90,9 @@ function getMenuNodeByPrefix(rootNode: RootNode, rootId: string): MenuNode {
 class MenuImpl extends Component {
     rootNode: RootNode;
     path: Reference<string>;
-    displayed = asRef([]) as Reference<RenderItem[]>;
-    #header: Reference<(data: this) => Component> = asRef(defaultHeader);
-    #footer: Reference<(data: this) => Component> = asRef(defaultFooter);
+    displayed = asRef<RenderItem[]>([]);
+    #header: Reference<(data: this) => Component> = asRef<(data: this) => Component>(defaultHeader);
+    #footer: Reference<(data: this) => Component> = asRef<(data: this) => Component>(defaultFooter);
 
     constructor(rootNode: RootNode) {
         super();
@@ -101,11 +101,11 @@ class MenuImpl extends Component {
         // Renderer
         this.wrapper.append(Vertical(
             this.#header.map(it => it(this)).asRefComponent().removeFromLayout(),
-            HeavyList(this.displayed, item => {
+            HeavyList<RenderItem>(this.displayed, item => {
                 if (item instanceof Component)
                     return item;
 
-                if (asRef(item.hidden).getValue())
+                if (asRef(item.hidden ?? false).getValue())
                     return Empty();
 
                 const entry = Entry(item.replacement ? asRef(item.replacement).getValue() : item).addClass(isMobile.map(mobile => mobile ? "small" : "desktop"));
@@ -128,7 +128,7 @@ class MenuImpl extends Component {
             const item = traverseToMenuNode(root, unprefixed);
 
             assert(item, "No Node found");
-            if (isRef(item.children)) {
+            if (isRef<RenderItem[]>(item.children)) {
                 item.children.listen((items) => {
                     if (val == this.path.getValue())
                         this.displayed.setValue(items);
@@ -187,7 +187,7 @@ function defaultFooter(menu: MenuImpl) {
 }
 
 export function createActionList(menu: MenuImpl) {
-    return asRef(menu.rootNode.actions).map(it => Grid(...(it ?? [])).addClass("action-list-bar")).asRefComponent().removeFromLayout();
+    return asRef(menu.rootNode.actions ?? []).map(it => Grid(...it).addClass("action-list-bar")).asRefComponent().removeFromLayout();
 }
 
 export function createTagList(menu: MenuImpl) {

@@ -286,7 +286,7 @@ export const API = {
             id: (id: string) => fetch(`${API.BASE_URL}admin/drops/${id}`, {
                 headers: headers(API.getToken())
             })
-                .then(json<Drop>())
+                .then(json<Drop & { user: ProfileData; events: any[]; }>())
                 .catch(reject),
             sync: () => fetch(`${API.BASE_URL}admin/sync_mapping`, {
                 method: "POST",

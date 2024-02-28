@@ -1,7 +1,7 @@
 import { API } from "shared/mod.ts";
 import { stupidErrorAlert } from "shared/restSpec.ts";
 import { AdvancedImage, Box, Button, CenterV, DropAreaInput, DropDownInput, Empty, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, TextInput, Validate, asState, createFilePicker, getErrorMessage } from "webgen/mod.ts";
-import zod, { ZodError } from "zod/index.ts";
+import { zod } from "webgen/zod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
@@ -11,9 +11,9 @@ import { uploadArtwork } from "./data.ts";
 
 export function ChangeDrop(drop: Drop) {
     const state = asState({
-        artworkClientData: <AdvancedImage | string | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id!).artwork().then(stupidErrorAlert) } : undefined),
+        artworkClientData: <AdvancedImage | undefined>(drop.artwork ? <AdvancedImage>{ type: "direct", source: () => API.music.id(drop._id!).artwork().then(stupidErrorAlert) } : undefined),
         loading: false,
-        validationState: <ZodError | undefined>undefined
+        validationState: <zod.ZodError | undefined>undefined
     });
 
     const { data, error, validate } = Validate(

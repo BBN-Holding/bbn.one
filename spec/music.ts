@@ -1,4 +1,4 @@
-import zod from "zod/index.ts";
+import { zod } from "webgen/zod.ts";
 
 export const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
 export const userString = zod.string().min(1).transform(x => x.trim());
