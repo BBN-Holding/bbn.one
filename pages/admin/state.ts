@@ -23,6 +23,7 @@ export const state = asState({
 });
 
 export const reviewState = asState({
+    // deno-lint-ignore no-explicit-any
     drop: <Drop & { user: ProfileData; events: any[]; } | undefined>undefined,
     drops: <Drop[] | undefined>undefined,
 });
