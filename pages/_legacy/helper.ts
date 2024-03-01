@@ -264,7 +264,17 @@ export function getNameInital(name: string) {
 export function showProfilePicture(x: ProfileData) {
     return ProfilePicture(
         x.profile.avatar ? Image({
-            type: "direct", source: async () => await API.user.picture(x._id).then(stupidErrorAlert)
+            type: "direct", source: async () => {
+                const blob = new Blob();
+
+                const data = await API.user.picture(x._id);
+
+                if (data.status == "fulfilled") {
+                    return data.value;
+                }
+
+                return blob;
+            }
         }, "Profile Picture") : Label(getNameInital(x.profile.username)),
         x.profile.username
     );
