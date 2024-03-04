@@ -16,13 +16,15 @@ const navMenuPopover = Popover(
     Box(
         activeUser.$permission.map(() => Vertical(
             Label("SWITCH TO").addClass("title"),
-            pages.map(([ logo, permission, route ]) => permCheck(...permission) ? Horizontal(
-                Image(logo, "Logo"),
-                Spacer(),
-                MIcon("arrow_forward_ios")
-            )
-                .addClass("small-entry")
-                .onClick(() => location.href = route) : null
+            pages.map(([ logo, permission, route ]) => permCheck(...permission)
+                ? Horizontal(
+                    Image(logo, "Logo"),
+                    Spacer(),
+                    MIcon("arrow_forward_ios")
+                )
+                    .addClass("small-entry")
+                    .onClick(() => location.pathname = route)
+                : Empty()
             ),
             Horizontal(
                 Label("Go to Settings"),
@@ -55,7 +57,6 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                             .setFontWeight("bold")
                             .setTextSize("2xl")
                             .setMargin("2px 0 0")
-                        // Image(activeLogo(type), "Selected Service")
                     ),
                 )
                     .setGap(".5rem")

@@ -1,4 +1,5 @@
-import { serve } from "https://deno.land/x/esbuild_serve@1.3.4/mod.ts";
+// import { serve } from "https://deno.land/x/esbuild_serve@1.3.4/mod.ts";
+import { serve } from "../esbuild_serve/mod.ts";
 
 const title = new Map(Object.entries({
     "admin": "BBN Admin",
@@ -51,7 +52,7 @@ serve({
         "signin": "./pages/user/signin.ts",
         "callback": "./pages/_legacy/misc/callback.ts",
         "oauth": "./pages/user/oauth.ts",
-        "music": "./pages/music/main.ts",
+        "music": "./pages/music-landing/main.ts",
         "music/new-drop": "./pages/music/newDrop.ts",
         "music/edit": "./pages/_legacy/music/edit.ts",
         "music/payout": "./pages/payout/main.ts",
