@@ -39,3 +39,16 @@ export function activeLogo(type: string) {
         return bbnAdminLogo;
     return bbnHolding;
 }
+
+
+export function activeTitle(type: string) {
+    if (type == "Music")
+        return "BBN Music";
+    if (type == "Hosting")
+        return "BBN Hosting";
+    if (type == "Wallet")
+        return "BBN Wallet";
+    if (type == "Admin")
+        return "BBN Admin";
+    return "BBN Holding";
+}

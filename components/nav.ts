@@ -1,9 +1,10 @@
 import { API } from "shared/mod.ts";
 import { delay } from "std/async/delay.ts";
 import { BasicLabel, Box, Button, ButtonStyle, Component, Custom, Empty, Grid, Horizontal, Image, Label, LinkButton, MIcon, Spacer, Vertical, createElement } from "webgen/mod.ts";
+import { Popover } from "webgen/src/components/Popover.ts";
 import { IsLoggedIn, activeUser, permCheck, showProfilePicture } from "../pages/_legacy/helper.ts";
 import './nav.css';
-import { activeLogo, pages } from "./pages.ts";
+import { activeTitle, pages } from "./pages.ts";
 
 const Nav = (component: Component) => {
     const nav = createElement("nav");
@@ -11,39 +12,50 @@ const Nav = (component: Component) => {
     return Custom(nav);
 };
 
-const dropOver = Box(activeUser.$permission.map(() => Vertical(
-    Label("SWITCH TO").addClass("title"),
-    pages.map(([ logo, permission, route ]) => permCheck(...permission) ? Horizontal(
-        Image(logo, "Logo"),
-        Spacer(),
-        MIcon("arrow_forward_ios")
+const navMenuPopover = Popover(
+    Box(
+        activeUser.$permission.map(() => Vertical(
+            Label("SWITCH TO").addClass("title"),
+            pages.map(([ logo, permission, route ]) => permCheck(...permission) ? Horizontal(
+                Image(logo, "Logo"),
+                Spacer(),
+                MIcon("arrow_forward_ios")
+            )
+                .addClass("small-entry")
+                .onClick(() => location.href = route) : null
+            ),
+            Horizontal(
+                Label("Go to Settings"),
+                Spacer(),
+                MIcon("arrow_forward_ios")
+            ).addClass("small-entry", "settings")
+                .onClick(() => location.href = "/settings")
+        ))
+            .asRefComponent()
     )
-        .addClass("small-entry")
-        .onClick(() => location.href = route) : null
-    ),
-    Horizontal(
-        Label("Go to Settings"),
-        Spacer(),
-        MIcon("arrow_forward_ios")
-    ).addClass("small-entry", "settings")
-        .onClick(() => location.href = "/settings")
-))
-    .asRefComponent()
-)
-    .addClass("drop-over")
-    .draw();
+        .addClass("drop-over")
 
-dropOver.onblur = () => dropOver.classList.remove("open");
-dropOver.tabIndex = 0;
+)
+    .pullingAnchorPositioning("--nav-menu-popover", (rect, style) => {
+        style.top = `max(-5px, ${rect.bottom}px)`;
+        style.left = `${rect.left}px`;
+        style.minWidth = `${rect.width}px`;
+        style.bottom = "var(--gap)";
+        style.height = "min-content";
+    });
+
 export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" | "Admin" | "Wallet") {
     return Nav(
         Grid(
             Horizontal(
-                Custom(dropOver),
                 Vertical(
                     MIcon("apps"),
                     Vertical(
-                        Image(activeLogo(type), "Selected Service")
+                        Label(activeTitle(type))
+                            .setFontWeight("bold")
+                            .setTextSize("2xl")
+                            .setMargin("2px 0 0")
+                        // Image(activeLogo(type), "Selected Service")
                     ),
                 )
                     .setGap(".5rem")
@@ -51,16 +63,17 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     .setAlignItems("center")
                     .setJustifyContent("center")
                     .addClass("clickable")
+                    .setAnchorName("--nav-menu-popover")
                     .onClick(() => {
-                        dropOver.classList.add("open");
-                        dropOver.focus();
+                        navMenuPopover.showPopover();
                     }),
                 Spacer(),
                 (activeUser.$email.map(email => email ?
                     LinkButton(
                         Grid(
                             showProfilePicture(IsLoggedIn()!),
-                            Label(activeUser.$username),
+                            Label(activeUser.$username)
+                                .setFontWeight("bold"),
                         )
                             .setRawColumns("max-content max-content")
                             .setAlignItems("center")
