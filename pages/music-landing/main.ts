@@ -1,7 +1,8 @@
 import { Footer } from "shared/footer.ts";
-import { Body, Box, Button, Content, FullWidthSection, Image, Label, MIcon, WebGen } from "webgen/mod.ts";
+import { Body, Box, Button, Content, FullWidthSection, Grid, Image, Label, MIcon, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
+import "./main.css";
 WebGen();
 await RegisterAuthRefresh();
 
@@ -10,20 +11,46 @@ Body(
         FullWidthSection(
             DynaNavigation("Home")
         ),
-        Box(
-            Label("Drop in with your Audience."),
-            Label("BBN Music, your gateway to unlimited music distribution at a low cost. Maximize your reach without limits. Join us and let the world hear your music."),
-            Button("Drop your Music")
-        ),
-        Box(
-            Label("Our pricing plan to disrupt the Market:"),
+        Grid(
             Box(
-                Box(
+                Label("Drop in with\nyour Audience.")
+                    .setTextSize("7xl")
+                    .setTextAlign("start")
+                    .setBalanced()
+                    .setFontWeight("black"),
+            )
+                .setWidth("50%")
+                .setMargin("10rem 0 0 0"),
+            Box(
+                Label("BBN Music, your gateway to unlimited music distribution at a low cost. Maximize your reach without limits. Join us and let the world hear your music.")
+                    .setTextSize("xl")
+                    .setBalanced()
+                    .addClass("line-height-1-2")
+                    .setFontWeight("medium"),
+            )
+                .setWidth("max(15px, 29rem)"),
+            Button("Drop your Music")
+                .setTextSize("base")
+                .setFontWeight("bold")
+                .setPadding("25px 30px")
+                .setBorderRadius("large")
+        )
+            .setGap("25px")
+            .setJustifyItems("start"),
+        Box(
+            Grid(
+                Label("Our pricing plan to disrupt the Market:")
+                    .setFontWeight("bold")
+                    .setMargin("135px 0 40px 0")
+                    .setTextAlign("center")
+            ),
+            Grid(
+                Grid(
                     Label("Free Plan"),
                     Label("Your Revenue"),
                     Label("97%"),
                     Label("No Extra Cost"),
-                    Box(
+                    Grid(
                         MIcon("check_circle"),
                         Label("Unlimited Drops"),
                         MIcon("check_circle"),
@@ -36,13 +63,14 @@ Body(
                         Label("No Payment Needed"),
                     ),
                     Button("Drop Now!")
-                ),
-                Box(
+                )
+                    .setAlignContent("start"),
+                Grid(
                     Label("Paid Plan"),
                     Label("Your Revenue"),
                     Label("100%"),
                     Label("1€ per Year"),
-                    Box(
+                    Grid(
                         MIcon("check_circle"),
                         Label("Unlimited Drops"),
                         MIcon("check_circle"),
@@ -61,11 +89,20 @@ Body(
                         Label("Priority Support"),
                     ),
                     Button("Coming Soon")
-                ),
+                )
+                    .setAlignContent("start"),
             )
+                .setGap("35px")
+                .setDynamicColumns(2)
         ),
         Box(
-            Label("Let your fans enjoy your Drops where they feel home."),
+            Grid(
+                Label("Let your fans enjoy your Drops where they feel home.")
+                    .setTextSize("xl")
+                    .setFontWeight("bold")
+                    .setMargin("20px 10px")
+                    .setTextAlign("center")
+            ),
             // TODO: Make a icon carousel
             Box(
                 Label("Spotify"),
@@ -78,10 +115,17 @@ Body(
                 Label("And many more..."),
             )
         ),
-        Box(
-            Label("Make it. Drop it."),
+        Grid(
+            Label("Make it. Drop it.")
+                .setFontWeight("bold")
+                .setTextSize("6xl")
+                .setTextAlign("center"),
             Label("Distributing music should be accessible without any credit card.")
-        ),
+                .setTextAlign("center")
+                .setFontWeight("bold")
+                .setTextSize("xl")
+        )
+            .setMargin("100px 0"),
         FullWidthSection(
             Box(
                 Box(
@@ -105,23 +149,40 @@ Body(
                 )
             )
         ),
-        Box(
-            Label("Loved by Artists."),
+        Grid(
+            Label("Loved by Artists.")
+                .setFontWeight("bold")
+                .setTextSize("6xl")
+                .setTextAlign("center"),
             Label("See how our Artists value BBN Music.")
-        ),
+                .setTextAlign("center")
+                .setFontWeight("bold")
+                .setTextSize("xl")
+        )
+            .setMargin("100px 0"),
         Box(
             Label("The thing I love the most is the flexibility and the contactability of the entire BBN Music team. It is also just great to develop concepts and plans with motivated and very friendly people."),
-            Box(
-                Image("https://via.placeholder.com/150", "Avatar of Redz"),
+            Grid(
+                Image("https://via.placeholder.com/150", "Avatar of Redz")
+                    .setBorderRadius("complete")
+                    .resizeToBox(),
                 Label("Redz")
             )
+                .setRawColumns("40px auto")
+                .setAlignItems("center")
+                .setGap("16px")
         ),
         Box(
             Label("There is pretty much no other digital distributor that offers more and at the same time, works so closely with artists and who artists are so valued by and feel so understood by."),
-            Box(
-                Image("https://via.placeholder.com/150", "Avatar of Criticz"),
+            Grid(
+                Image("https://via.placeholder.com/150", "Avatar of Criticz")
+                    .setBorderRadius("complete")
+                    .resizeToBox(),
                 Label("Criticz")
             )
+                .setRawColumns("40px auto")
+                .setAlignItems("center")
+                .setGap("16px")
         ),
         FullWidthSection(
             Footer()
