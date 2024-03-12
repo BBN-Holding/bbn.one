@@ -136,11 +136,13 @@ export const adminMenu = Navigation({
                     children: payouts.map(payout => ({
                         title: payout._id,
                         subtitle: `£ ${sumOf(payout.entries, entry => sumOf(entry.data, data => data.revenue)).toFixed(2)}`,
+                        id: `payouts${payouts[ 0 ].period}${payout._id}`,
                         children: payout.entries.map(entry => ({
                             title: entry.isrc,
+                            id: `payouts${payouts[ 0 ].period}${payout._id}${entry.isrc}`,
                             subtitle: `£ ${sumOf(entry.data, data => data.revenue).toFixed(2)}`,
                             children: entry.data.map(data => ({
-                                title: data.revenue,
+                                title: data.store + " " + data.territory,
                                 subtitle: `£ ${data.revenue.toFixed(2)}`
                             }))
                         }))
