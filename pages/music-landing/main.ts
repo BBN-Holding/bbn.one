@@ -334,6 +334,7 @@ Body(
                     .setAlignItems("center")
                     .setGap("16px")
             )
+                .addClass("max-width-30rem")
                 .setPadding("95px 0 95px 0")
                 .setGap("21px"),
             Grid(
@@ -355,6 +356,8 @@ Body(
                     .setGap("16px")
             )
                 .setJustifyItems("end")
+                .addClass("max-width-30rem")
+                .setMargin("0 0 0 auto")
                 .setPadding("95px 0 95px 0")
                 .setGap("21px")
         ).setMaxWidth("680px"),
