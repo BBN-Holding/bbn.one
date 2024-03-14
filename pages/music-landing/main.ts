@@ -56,7 +56,8 @@ Body(
                     .setBalanced()
                     .setFontWeight("black"),
             )
-                .setWidth("max(15px, 30rem)")
+                .addClass("max-width-30rem")
+                .setWidth("100%")
                 .setMargin("10rem 0 0 0"),
             Box(
                 Label("BBN Music, your gateway to unlimited music distribution at a low cost. Maximize your reach without limits. Join us and let the world hear your music.")
@@ -65,7 +66,7 @@ Body(
                     .addClass("line-height-1-2")
                     .setFontWeight("medium"),
             )
-                .setWidth("max(15px, 29rem)"),
+                .addClass("max-width-30rem"),
             LinkButton("Drop your Music", "/c/music")
                 .setPadding("12px 30px")
                 .setFontWeight("bold")
