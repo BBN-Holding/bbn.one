@@ -45,7 +45,7 @@ const images = () => Array.from({ length: 4 }, () => [
 Body(
     Content(
         FullWidthSection(
-            DynaNavigation("Home")
+            DynaNavigation("Music")
         ),
         Grid(
             Box(
