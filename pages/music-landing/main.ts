@@ -205,8 +205,13 @@ Body(
                     .addClass("icon-carousel-reversed")
                     .setGap("38px")
                     .setDirection("column")
-            ).addClass("icon-carousel-container").setGap("35px")
-        ).setMaxWidth("850px"),
+            )
+                .addClass("icon-carousel-container")
+                .setGap("35px")
+        )
+            .setAlignContent("center")
+            .setHeight("380px")
+            .setMaxWidth("850px"),
         Grid(
             Label("Make it. Drop it.")
                 .setFontWeight("bold")
