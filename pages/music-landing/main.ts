@@ -23,6 +23,8 @@ import tiktok from "./assets/tiktok.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import youtube from "./assets/youtube.svg";
 
+// 
+import criticz from "./assets/criticz.jpg";
 
 WebGen();
 await RegisterAuthRefresh();
@@ -265,7 +267,7 @@ Body(
         Box(
             Label("There is pretty much no other digital distributor that offers more and at the same time, works so closely with artists and who artists are so valued by and feel so understood by."),
             Grid(
-                Image("https://via.placeholder.com/150", "Avatar of Criticz")
+                Image(criticz, "Avatar of Criticz")
                     .setBorderRadius("complete")
                     .resizeToBox(),
                 Label("Criticz")
