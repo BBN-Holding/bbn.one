@@ -19,6 +19,11 @@ const title = new Map(Object.entries({
     "p/distribution-agreement": "BBN - Distribution Agreement",
 }));
 
+const description = new Map(Object.entries({
+    "default": "BBN Holding encompasses a variety of businesses, including music and hosting services. BBN Music provides music distribution, publishing, and label services, while BBN Hosting offers Minecraft hosting services.",
+    "music": "BBN Music, your gateway to unlimited music distribution at a low cost. Maximize your reach without limits. Join us and let the world hear your music."
+}));
+
 serve({
     port: 6969,
     extraLoaders: {
@@ -84,7 +89,7 @@ function createTemplate(name: string, path: string) {
     <title>${title.get(path) ?? "BBN Holding"}</title>
     <link rel="manifest" href="/app.webmanifest">
     <meta charset='UTF-8'>
-    <meta name="description" content="BBN Holding encompasses a variety of businesses, including music and hosting services. BBN Music provides music distribution, publishing, and label services, while BBN Hosting offers Minecraft hosting services.">
+    <meta name="description" content="${description.get(path) ?? description.get("default")}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name='theme-color' content='black'>
     <meta name="apple-mobile-web-app-capable" content="yes">
