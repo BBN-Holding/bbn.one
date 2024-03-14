@@ -1,5 +1,5 @@
 import { Footer } from "shared/footer.ts";
-import { Body, Box, Button, Content, FullWidthSection, Grid, Image, Label, MIcon, WebGen } from "webgen/mod.ts";
+import { Body, Box, Button, Color, Content, FullWidthSection, Grid, Image, Label, MIcon, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import "./main.css";
@@ -31,6 +31,7 @@ Body(
                 .setWidth("max(15px, 29rem)"),
             Button("Drop your Music")
                 .setTextSize("base")
+                .addClass("orange-bg", "orange-box-shadow")
                 .setFontWeight("bold")
                 .setPadding("25px 30px")
                 .setBorderRadius("large")
@@ -63,7 +64,15 @@ Body(
                         Label("No Payment Needed"),
                     ),
                     Button("Drop Now!")
+                        .setPadding("25px 30px")
+                        .setBorderRadius("large")
+                        .addClass("orange-bg", "orange-box-shadow")
+                        .setJustifyContent("center")
                 )
+                    .setGap("30px")
+                    .setPadding("45px 40px")
+                    .setBorderRadius("large")
+                    .addClass("free-tier-bg")
                     .setAlignContent("start"),
                 Grid(
                     Label("Paid Plan"),
@@ -89,10 +98,19 @@ Body(
                         Label("Priority Support"),
                     ),
                     Button("Coming Soon")
+                        .setColor(Color.Disabled)
+                        .setPadding("25px 30px")
+                        .setBorderRadius("large")
+                        .setJustifyContent("center")
                 )
+                    .setGap("30px")
+                    .setPadding("45px 40px")
+                    .setBorderRadius("large")
+                    .addClass("paid-tier-bg")
                     .setAlignContent("start"),
             )
                 .setGap("35px")
+                .setAlignItems("start")
                 .setDynamicColumns(2)
         ),
         Box(
