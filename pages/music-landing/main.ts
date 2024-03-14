@@ -23,7 +23,7 @@ import tiktok from "./assets/tiktok.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import youtube from "./assets/youtube.svg";
 
-// 
+//
 import criticz from "./assets/criticz.jpg";
 import redz from "./assets/redz.jpg";
 
@@ -225,27 +225,57 @@ Body(
         )
             .setMargin("100px 0"),
         FullWidthSection(
-            Box(
-                Box(
-                    Label("Why BBN Music"),
-                    Button("Drop your Music")
-                ),
-                Box(
-                    MIcon("percent"),
-                    Label("Lowest Cut"),
-                    Label("With our free plan, we only take a 3% cut as Royalties."),
-                ),
-                Box(
-                    MIcon("public"),
-                    Label("Global"),
-                    Label("We support multiple distributors, without any extra cost for you.")
-                ),
-                Box(
-                    MIcon("all_inclusive"),
-                    Label("Unlimited"),
-                    Label("No hard limits. You can manage as many Drops or Artists as you want.")
+            Content(
+                Grid(
+                    Grid(
+                        Label("Why BBN\xa0Music?")
+                            .setTextSize("3xl")
+                            .setFontWeight("bold"),
+                        LinkButton("Drop your Music", "/c/music")
+                            .setBorderRadius("complete")
+                            .setPadding("2px 25px")
+                            .addClass("orange-bg")
+                    )
+                        .setAlignContent("space-between" as "stretch")
+                        .setJustifyItems("start"),
+                    Grid(
+                        MIcon("percent")
+                            .addClass("key-icon", "red"),
+                        Label("Lowest Cut")
+                            .setFontWeight("bold"),
+                        Label("With our free plan, we only take a 3% cut as Royalties."),
+                    )
+                        .setGap("13px")
+                        .setJustifyItems("start")
+                        .setAlignContent("start"),
+                    Grid(
+                        MIcon("public")
+                            .addClass("key-icon", "green"),
+                        Label("Global")
+                            .setFontWeight("bold"),
+                        Label("We support multiple distributors, without any extra cost for you.")
+                    )
+                        .setGap("13px")
+                        .setJustifyItems("start")
+                        .setAlignContent("start"),
+                    Grid(
+                        MIcon("all_inclusive")
+                            .addClass("key-icon", "blue"),
+                        Label("Unlimited")
+                            .setFontWeight("bold"),
+                        Label("No hard limits. You can manage as many Drops or Artists as you want.")
+                    )
+                        .setGap("13px")
+                        .setJustifyItems("start")
+                        .setAlignContent("start")
                 )
+                    .setGap()
+                    .setEvenColumns(4)
+                    .setPadding("50px 40px")
+                    .setBorderRadius("large")
+                    .addClass("free-tier-bg")
             )
+                .setMaxWidth("880px")
         ),
         Grid(
             Label("Loved by Artists.")
