@@ -85,6 +85,7 @@ Body(
                     .setFontWeight("bold")
                     .setMargin("135px 0 40px 0")
                     .setTextAlign("center")
+                    .addClass("opacity-60")
             ),
             Grid(
                 Grid(
@@ -104,7 +105,8 @@ Body(
                     ),
                     Label("No Extra Cost")
                         .setTextSize("3xl")
-                        .setFontWeight("bold"),
+                        .setFontWeight("bold")
+                        .addClass("opacity-60"),
                     Grid(
                         MIcon("check_circle", "outlined"),
                         Label("Unlimited Drops"),
@@ -153,7 +155,8 @@ Body(
                     ),
                     Label("1€ per Year")
                         .setTextSize("3xl")
-                        .setFontWeight("bold"),
+                        .setFontWeight("bold")
+                        .addClass("opacity-60"),
                     Grid(
                         MIcon("check_circle", "outlined"),
                         Label("Unlimited Drops"),
@@ -200,6 +203,7 @@ Body(
                     .setFontWeight("bold")
                     .setMargin("20px 10px")
                     .setTextAlign("center")
+                    .addClass("opacity-60")            
             )
                 .setMargin("10px 0 40px"),
             Grid(
@@ -228,6 +232,7 @@ Body(
                 .setTextAlign("center")
                 .setFontWeight("bold")
                 .setTextSize("xl")
+                .addClass("opacity-60")
         )
             .setMargin("100px 0"),
         FullWidthSection(
@@ -293,6 +298,7 @@ Body(
                 .setTextAlign("center")
                 .setFontWeight("bold")
                 .setTextSize("xl")
+                .addClass("opacity-60")
         )
             .setMargin("100px 0"),
         Content(
