@@ -21,7 +21,7 @@ export const pages: [ logo: string, perm: Array<Permission>, route: string ][] =
 
 // Moved this to the up array when we use the hmsys permission system
 export const loginRequired = [
-    "/music",
+    "/p/music",
     "/hosting",
     "/admin",
     "/oauth",
