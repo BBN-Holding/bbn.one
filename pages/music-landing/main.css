@@ -99,6 +99,10 @@
     background-color: #5552EF;
 }
 
+.italic-text {
+    font-style: italic;
+}
+
 @keyframes carousel {
     0% {
         /* calc (width + gap) * number of icons * -1 */

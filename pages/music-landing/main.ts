@@ -292,6 +292,7 @@ Body(
             Grid(
                 Label("The thing I love the most is the flexibility and the contactability of the entire BBN Music team. It is also just great to develop concepts and plans with motivated and very friendly people.")
                     .setTextAlign("start")
+                    .addClass("italic-text")
                     .setFontWeight("bold")
                 , Grid(
                     Image(redz, "Avatar of Redz")
@@ -311,6 +312,7 @@ Body(
             Grid(
                 Label("There is pretty much no other digital distributor that offers more and at the same time, works so closely with artists and who artists are so valued by and feel so understood by.")
                     .setTextAlign("end")
+                    .addClass("italic-text")
                     .setFontWeight("bold"),
                 Grid(
                     Image(criticz, "Avatar of Criticz")
