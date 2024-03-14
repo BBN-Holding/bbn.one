@@ -56,7 +56,7 @@ Body(
                     .setBalanced()
                     .setFontWeight("black"),
             )
-                .setWidth("50%")
+                .setWidth("max(15px, 30rem)")
                 .setMargin("10rem 0 0 0"),
             Box(
                 Label("BBN Music, your gateway to unlimited music distribution at a low cost. Maximize your reach without limits. Join us and let the world hear your music.")
@@ -186,7 +186,7 @@ Body(
             )
                 .setGap("35px")
                 .setAlignItems("start")
-                .setDynamicColumns(2)
+                .setDynamicColumns(15)
         )
             .setMaxWidth("850px"),
         Content(
@@ -272,7 +272,7 @@ Body(
                         .setAlignContent("start")
                 )
                     .setGap()
-                    .setEvenColumns(4)
+                    .setDynamicColumns(10)
                     .setPadding("50px 40px")
                     .setBorderRadius("large")
                     .addClass("free-tier-bg")
