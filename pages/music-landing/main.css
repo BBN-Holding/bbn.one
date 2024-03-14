@@ -138,3 +138,7 @@
         var(--image) no-repeat center center;
     background-size: cover;
 }
+
+.max-width-30rem {
+    max-width: 30rem;
+}
