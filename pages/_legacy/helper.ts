@@ -87,7 +87,7 @@ export function logOut(goal?: string) {
     if (location.pathname.startsWith("/signin")) return;
     resetTokens();
     location.href = "/signin";
-    localStorage.goal = goal ?? "/music";
+    localStorage.goal = goal ?? "/c/music";
 }
 
 export function resetTokens() {
@@ -97,7 +97,7 @@ export function resetTokens() {
 }
 
 export function gotoGoal() {
-    location.href = localStorage.goal || "/music";
+    location.href = localStorage.goal || "/c/music";
 }
 
 export async function renewAccessTokenIfNeeded() {

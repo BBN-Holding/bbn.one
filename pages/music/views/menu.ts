@@ -11,7 +11,7 @@ export const musicMenu = Navigation({
         Button("Submit new Drop")
             .onPromiseClick(async () => {
                 const { id } = await API.music.drops.create().then(stupidErrorAlert);
-                location.href = `/music/new-drop?id=${id}`;
+                location.href = `/c/music/new-drop?id=${id}`;
             })
     ],
     categories: [

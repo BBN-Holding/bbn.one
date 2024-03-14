@@ -1,5 +1,5 @@
 import { Footer } from "shared/footer.ts";
-import { Body, Box, Button, Color, Content, FullWidthSection, Grid, Image, Label, MIcon, WebGen } from "webgen/mod.ts";
+import { Body, Box, Button, Color, Content, FullWidthSection, Grid, Image, Label, LinkButton, MIcon, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import "./main.css";
@@ -62,11 +62,11 @@ Body(
                     .setFontWeight("medium"),
             )
                 .setWidth("max(15px, 29rem)"),
-            Button("Drop your Music")
-                .setTextSize("base")
-                .addClass("orange-bg", "orange-box-shadow")
+            LinkButton("Drop your Music", "/c/music")
+                .setPadding("12px 30px")
                 .setFontWeight("bold")
-                .setPadding("25px 30px")
+                .setTextSize("lg")
+                .addClass("orange-bg", "orange-box-shadow")
                 .setBorderRadius("large")
         )
             .setGap("25px")
@@ -112,8 +112,10 @@ Body(
                         .addClass("feature-list")
                         .setGap("20px")
                         .setRawColumns("max-content auto"),
-                    Button("Drop Now!")
-                        .setPadding("25px 30px")
+                    LinkButton("Drop Now!", "/c/music")
+                        .setPadding("12px 30px")
+                        .setFontWeight("bold")
+                        .setTextSize("lg")
                         .setBorderRadius("large")
                         .addClass("orange-bg", "orange-box-shadow")
                         .setJustifyContent("center")

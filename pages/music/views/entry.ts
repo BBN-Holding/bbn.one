@@ -20,5 +20,5 @@ export function DropEntry(x: Drop, small: boolean) {
 
             return Empty();
         })())
-        .onClick(() => location.href = x.type === DropType.Unsubmitted ? `/music/new-drop?id=${x._id}` : `/music/edit?id=${x._id}`);
+        .onClick(() => location.href = x.type === DropType.Unsubmitted ? `/c/music/new-drop?id=${x._id}` : `/c/music/edit?id=${x._id}`);
 }
