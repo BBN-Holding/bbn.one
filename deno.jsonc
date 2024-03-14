@@ -2,7 +2,7 @@
     "imports": {
         "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/e7cdd13/",
         // "webgen/": "../WebGen/",
-        "std/": "https://deno.land/std@0.217.0/",
+        "std/": "https://deno.land/std@0.220.0/",
         "shared/": "./pages/shared/"
     },
     "lock": false,
