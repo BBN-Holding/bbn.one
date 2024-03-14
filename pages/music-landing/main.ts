@@ -288,32 +288,47 @@ Body(
                 .setTextSize("xl")
         )
             .setMargin("100px 0"),
-        Box(
-            Label("The thing I love the most is the flexibility and the contactability of the entire BBN Music team. It is also just great to develop concepts and plans with motivated and very friendly people."),
+        Content(
             Grid(
-                Image(redz, "Avatar of Redz")
-                    .setBorderRadius("complete")
-                    .setAspectRatio("1/1")
-                    .resizeToBox(),
-                Label("Redz")
+                Label("The thing I love the most is the flexibility and the contactability of the entire BBN Music team. It is also just great to develop concepts and plans with motivated and very friendly people.")
+                    .setTextAlign("start")
+                    .setFontWeight("bold")
+                , Grid(
+                    Image(redz, "Avatar of Redz")
+                        .setBorderRadius("complete")
+                        .setAspectRatio("1/1")
+                        .resizeToBox(),
+                    Label("Redz")
+                        .setFontWeight("bold")
+                        .setTextSize("xl")
+                )
+                    .setRawColumns("40px auto")
+                    .setAlignItems("center")
+                    .setGap("16px")
             )
-                .setRawColumns("40px auto")
-                .setAlignItems("center")
-                .setGap("16px")
-        ),
-        Box(
-            Label("There is pretty much no other digital distributor that offers more and at the same time, works so closely with artists and who artists are so valued by and feel so understood by."),
+                .setPadding("95px 200px 95px 0")
+                .setGap("21px"),
             Grid(
-                Image(criticz, "Avatar of Criticz")
-                    .setBorderRadius("complete")
-                    .setAspectRatio("1/1")
-                    .resizeToBox(),
-                Label("Criticz")
+                Label("There is pretty much no other digital distributor that offers more and at the same time, works so closely with artists and who artists are so valued by and feel so understood by.")
+                    .setTextAlign("end")
+                    .setFontWeight("bold"),
+                Grid(
+                    Image(criticz, "Avatar of Criticz")
+                        .setBorderRadius("complete")
+                        .setAspectRatio("1/1")
+                        .resizeToBox(),
+                    Label("Criticz")
+                        .setFontWeight("bold")
+                        .setTextSize("xl")
+                )
+                    .setRawColumns("40px auto")
+                    .setAlignItems("center")
+                    .setGap("16px")
             )
-                .setRawColumns("40px auto")
-                .setAlignItems("center")
-                .setGap("16px")
-        ),
+                .setJustifyItems("end")
+                .setPadding("95px 0 95px 200px")
+                .setGap("21px")
+        ).setMaxWidth("680px"),
         FullWidthSection(
             Footer()
         )
