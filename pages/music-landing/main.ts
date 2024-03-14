@@ -205,7 +205,7 @@ Body(
                     .setFontWeight("bold")
                     .setMargin("20px 10px")
                     .setTextAlign("center")
-                    .addClass("opacity-60")            
+                    .addClass("opacity-60")
             )
                 .setMargin("10px 0 40px"),
             Grid(
@@ -334,7 +334,7 @@ Body(
                     .setAlignItems("center")
                     .setGap("16px")
             )
-                .setPadding("95px 200px 95px 0")
+                .setPadding("95px 0 95px 0")
                 .setGap("21px"),
             Grid(
                 Label("There is pretty much no other digital distributor that offers more and at the same time, works so closely with artists and who artists are so valued by and feel so understood by.")
@@ -355,7 +355,7 @@ Body(
                     .setGap("16px")
             )
                 .setJustifyItems("end")
-                .setPadding("95px 0 95px 200px")
+                .setPadding("95px 0 95px 0")
                 .setGap("21px")
         ).setMaxWidth("680px"),
         FullWidthSection(
