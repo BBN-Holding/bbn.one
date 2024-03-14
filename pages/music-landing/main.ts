@@ -3,6 +3,27 @@ import { Body, Box, Button, Color, Content, FullWidthSection, Grid, Image, Label
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import "./main.css";
+
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import apple from "./assets/apple.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import deezer from "./assets/deezer.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import facebook from "./assets/facebook.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import instagram from "./assets/instagram.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import pandora from "./assets/pandora.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import spotify from "./assets/spotify.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import tidal from "./assets/tidal.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import tiktok from "./assets/tiktok.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import youtube from "./assets/youtube.svg";
+
+
 WebGen();
 await RegisterAuthRefresh();
 
@@ -123,13 +144,15 @@ Body(
             ),
             // TODO: Make a icon carousel
             Box(
-                Label("Spotify"),
-                Label("Apple Music"),
-                Label("Deezer"),
-                Label("Tidal"),
-                Label("Amazon Music"),
-                Label("Youtube Music"),
-                Label("Soundcloud"),
+                Image(apple, "Apple Music"),
+                Image(deezer, "Deezer"),
+                Image(facebook, "Facebook"),
+                Image(instagram, "Instagram"),
+                Image(pandora, "Pandora"),
+                Image(spotify, "Spotify"),
+                Image(tidal, "Tidal"),
+                Image(tiktok, "TikTok"),
+                Image(youtube, "Youtube"),
                 Label("And many more..."),
             )
         ),
@@ -151,7 +174,7 @@ Body(
                     Button("Drop your Music")
                 ),
                 Box(
-                    MIcon("spa"),
+                    MIcon("percent"),
                     Label("Lowest Cut"),
                     Label("With our free plan, we only take a 3% cut as Royalties."),
                 ),
@@ -161,7 +184,7 @@ Body(
                     Label("We support multiple distributors, without any extra cost for you.")
                 ),
                 Box(
-                    MIcon("rocket_launch"),
+                    MIcon("all_inclusive"),
                     Label("Unlimited"),
                     Label("No hard limits. You can manage as many Drops or Artists as you want.")
                 )
