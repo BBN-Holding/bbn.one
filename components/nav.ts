@@ -84,7 +84,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                         .addClass("profile-button")
                         .setStyle(ButtonStyle.Inline)
                     :
-                    (type == "Home" && !location.pathname.startsWith("/signin") ?
+                    ((type === "Home" || type === "Music") && !location.pathname.startsWith("/signin") ?
                         LinkButton("Sign in", "/signin")
                             .addClass("login-button")
                         : Box())
