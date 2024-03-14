@@ -8,6 +8,7 @@
 
 .free-tier-bg {
     overflow: hidden;
+    color: white;
     background: linear-gradient(139deg, rgba(227, 145, 35, 0.20) 6.59%, rgba(219, 87, 33, 0.20) 101.73%), #0A0A0A;
 }
 
@@ -74,6 +75,27 @@
 .icon-carousel-container {
     mask-image: linear-gradient(90deg, rgba(255, 255, 255, 0.00) 0%, #FFF 50%, rgba(255, 255, 255, 0.00) 100%);
     overflow: hidden;
+}
+
+.key-icon {
+    display: grid;
+    padding: 10px;
+    border-radius: 16px;
+    color: #FFEEEE;
+    aspect-ratio: 1 / 1;
+}
+
+.key-icon.red {
+    background-color: #EF5C52;
+}
+
+.key-icon.green {
+    color: #1B1B1B;
+    background-color: #97EF52;
+}
+
+.key-icon.blue {
+    background-color: #5552EF;
 }
 
 @keyframes carousel {
