@@ -11,12 +11,12 @@ import bbnWalletLogo from '../assets/img/bbnWallet.svg';
 
 import { Permission } from "shared/mod.ts";
 
-export const pages: [ logo: string, perm: Array<Permission>, route: string ][] = [
-    [ bbnHolding, [], "/" ],
-    [ bbnMusicLogo, [], "/music" ],
-    [ bbnHostingLogo, [], "/hosting" ],
-    [ bbnWalletLogo, [], "/wallet" ],
-    [ bbnAdminLogo, [ "/bbn/manage", "/hmsys/user" ], "/admin" ],
+export const pages: [ logo: string, perm: Array<Permission>, route: string, login: boolean ][] = [
+    [ bbnHolding, [], "/", false ],
+    [ bbnMusicLogo, [], "/music", false ],
+    [ bbnHostingLogo, [], "/hosting", false ],
+    [ bbnWalletLogo, [], "/wallet", true ],
+    [ bbnAdminLogo, [ "/bbn/manage", "/hmsys/user" ], "/admin", true ],
 ];
 
 // Moved this to the up array when we use the hmsys permission system
