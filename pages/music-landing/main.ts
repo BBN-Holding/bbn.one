@@ -195,7 +195,8 @@ Body(
                     .setFontWeight("bold")
                     .setMargin("20px 10px")
                     .setTextAlign("center")
-            ),
+            )
+                .setMargin("10px 0 40px"),
             Grid(
                 Grid(...images())
                     .addClass("icon-carousel")
