@@ -59,7 +59,7 @@ Body(
         )
             .setGap("25px")
             .setJustifyItems("start"),
-        Box(
+        Content(
             Grid(
                 Label("Our pricing plan to disrupt the Market:")
                     .setFontWeight("bold")
@@ -68,56 +68,92 @@ Body(
             ),
             Grid(
                 Grid(
-                    Label("Free Plan"),
-                    Label("Your Revenue"),
-                    Label("97%"),
-                    Label("No Extra Cost"),
+                    Label("Free Plan")
+                        .setFontWeight("black")
+                        .setWidth("max-content")
+                        .setPadding("0 5px")
+                        .setBorderRadius("tiny")
+                        .addClass("badge-free-tier-bg"),
                     Grid(
-                        MIcon("check_circle"),
-                        Label("Unlimited Drops"),
-                        MIcon("check_circle"),
-                        Label("Unlimited Artists"),
-                        MIcon("check_circle"),
-                        Label("Reach 52 Stores"),
-                        MIcon("check_circle"),
-                        Label("Reach 195 Countries"),
-                        MIcon("check_circle"),
-                        Label("No Payment Needed"),
+                        Label("Your Revenue")
+                            .setTextSize("lg")
+                            .setFontWeight("bold"),
+                        Label("97%")
+                            .addClass("line-height-0-8", "xl7-5")
+                            .setFontWeight("black"),
                     ),
+                    Label("No Extra Cost")
+                        .setTextSize("3xl")
+                        .setFontWeight("bold"),
+                    Grid(
+                        MIcon("check_circle", "outlined"),
+                        Label("Unlimited Drops"),
+                        MIcon("check_circle", "outlined"),
+                        Label("Unlimited Artists"),
+                        MIcon("check_circle", "outlined"),
+                        Label("Reach 52 Stores"),
+                        MIcon("check_circle", "outlined"),
+                        Label("Reach 195 Countries"),
+                        MIcon("check_circle", "outlined"),
+                        Label("No Payment Needed"),
+                    )
+                        .addClass("feature-list")
+                        .setGap("20px")
+                        .setRawColumns("max-content auto"),
                     Button("Drop Now!")
                         .setPadding("25px 30px")
                         .setBorderRadius("large")
                         .addClass("orange-bg", "orange-box-shadow")
                         .setJustifyContent("center")
+                        .onClick(() => {
+                            console.log("Drop Now!");
+                        })
                 )
                     .setGap("30px")
                     .setPadding("45px 40px")
-                    .setBorderRadius("large")
+                    .addClass("extra-large-br")
                     .addClass("free-tier-bg")
                     .setAlignContent("start"),
                 Grid(
-                    Label("Paid Plan"),
-                    Label("Your Revenue"),
-                    Label("100%"),
-                    Label("1€ per Year"),
+                    Label("Paid Plan")
+                        .setFontWeight("black")
+                        .setWidth("max-content")
+                        .setPadding("0 5px")
+                        .setBorderRadius("tiny")
+                        .addClass("badge-paid-tier-bg"),
                     Grid(
-                        MIcon("check_circle"),
-                        Label("Unlimited Drops"),
-                        MIcon("check_circle"),
-                        Label("Unlimited Artists"),
-                        MIcon("check_circle"),
-                        Label("Reach 52 Stores"),
-                        MIcon("check_circle"),
-                        Label("Reach 195 Countries"),
-                        MIcon("check_circle"),
-                        Label("No Revenue Cut"),
-                        MIcon("check_circle"),
-                        Label("Fully Customizable"),
-                        MIcon("check_circle"),
-                        Label("Priority Queue"),
-                        MIcon("check_circle"),
-                        Label("Priority Support"),
+                        Label("Your Revenue")
+                            .setTextSize("lg")
+                            .setFontWeight("bold"),
+                        Label("100%")
+                            .addClass("line-height-0-8", "xl7-5")
+                            .setFontWeight("black"),
                     ),
+                    Label("1€ per Year")
+                        .setTextSize("3xl")
+                        .setFontWeight("bold"),
+                    Grid(
+                        MIcon("check_circle", "outlined"),
+                        Label("Unlimited Drops"),
+                        MIcon("check_circle", "outlined"),
+                        Label("Unlimited Artists"),
+                        MIcon("check_circle", "outlined"),
+                        Label("Reach 52 Stores"),
+                        MIcon("check_circle", "outlined"),
+                        Label("Reach 195 Countries"),
+                        MIcon("check_circle", "outlined"),
+                        Label("No Revenue Cut"),
+                        MIcon("check_circle", "outlined"),
+                        Label("Fully Customizable"),
+                        MIcon("check_circle", "outlined"),
+                        Label("Priority Queue"),
+                        MIcon("check_circle", "outlined"),
+                        Label("Priority Support"),
+                    )
+                        .addClass("feature-list")
+                        .setGap("20px")
+                        .setAlignItems("center")
+                        .setRawColumns("max-content auto"),
                     Button("Coming Soon")
                         .setColor(Color.Disabled)
                         .setPadding("25px 30px")
@@ -126,14 +162,15 @@ Body(
                 )
                     .setGap("30px")
                     .setPadding("45px 40px")
-                    .setBorderRadius("large")
+                    .addClass("extra-large-br")
                     .addClass("paid-tier-bg")
                     .setAlignContent("start"),
             )
                 .setGap("35px")
                 .setAlignItems("start")
                 .setDynamicColumns(2)
-        ),
+        )
+            .setMaxWidth("850px"),
         Box(
             Grid(
                 Label("Let your fans enjoy your Drops where they feel home.")
