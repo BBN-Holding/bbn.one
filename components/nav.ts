@@ -16,7 +16,7 @@ const navMenuPopover = Popover(
     Box(
         activeUser.$permission.map(() => Vertical(
             Label("SWITCH TO").addClass("title"),
-            pages.map(([ logo, permission, route, login ]) => permCheck(...permission) && ((login && activeUser.id) || !login)
+            pages.map(([ logo, permission, route, login ]) => permCheck(...permission) && (!login || (login == 1 && IsLoggedIn()) || (login == 2 && !IsLoggedIn()))
                 ? Horizontal(
                     Image(logo, "Logo"),
                     Spacer(),
