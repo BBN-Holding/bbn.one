@@ -47,6 +47,7 @@ Body(
         FullWidthSection(
             DynaNavigation("Music")
         ),
+        FullWidthSection(Box().addClass("background-image")),
         Grid(
             Box(
                 Label("Drop in with\nyour Audience.")
