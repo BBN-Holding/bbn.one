@@ -180,44 +180,34 @@ Body(
                     .setTextAlign("center")
             ),
             // TODO: Make a icon carousel
-            Grid(
-                Image(apple, "Apple Music"),
-                Image(deezer, "Deezer"),
-                Image(facebook, "Facebook"),
-                Image(instagram, "Instagram"),
-                Image(pandora, "Pandora"),
-                Image(spotify, "Spotify"),
-                Image(tidal, "Tidal"),
-                Image(tiktok, "TikTok"),
-                Image(youtube, "Youtube"),
-                Image(apple, "Apple Music"),
-                Image(deezer, "Deezer"),
-                Image(facebook, "Facebook"),
-                Image(instagram, "Instagram"),
-                Image(pandora, "Pandora"),
-                Image(spotify, "Spotify"),
-                Image(tidal, "Tidal"),
-                Image(tiktok, "TikTok"),
-                Image(youtube, "Youtube"),
-                Image(apple, "Apple Music"),
-                Image(deezer, "Deezer"),
-                Image(facebook, "Facebook"),
-                Image(instagram, "Instagram"),
-                Image(pandora, "Pandora"),
-                Image(spotify, "Spotify"),
-                Image(tidal, "Tidal"),
-                Image(tiktok, "TikTok"),
-                Image(youtube, "Youtube"),
-                Image(apple, "Apple Music"),
-                Image(deezer, "Deezer"),
-                Image(facebook, "Facebook"),
-                Image(instagram, "Instagram"),
-                Image(pandora, "Pandora"),
-                Image(spotify, "Spotify"),
-                Image(tidal, "Tidal"),
-                Image(tiktok, "TikTok"),
-                Image(youtube, "Youtube"),
-            ).addClass("icon-carousel").setGap("20px").setDirection("column")
+            Box(
+                Grid(
+                    ...Array.from({ length: 4 }, () => [
+                        Image(apple, "Apple Music"),
+                        Image(deezer, "Deezer"),
+                        Image(facebook, "Facebook"),
+                        Image(instagram, "Instagram"),
+                        Image(pandora, "Pandora"),
+                        Image(spotify, "Spotify"),
+                        Image(tidal, "Tidal"),
+                        Image(tiktok, "TikTok"),
+                        Image(youtube, "Youtube") ]).flat()
+                ).addClass("icon-carousel").setGap("20px").setDirection("column")
+            ).addClass("icon-carousel-container"),
+            Box(
+                Grid(
+                    ...Array.from({ length: 4 }, () => [
+                        Image(apple, "Apple Music"),
+                        Image(deezer, "Deezer"),
+                        Image(facebook, "Facebook"),
+                        Image(instagram, "Instagram"),
+                        Image(pandora, "Pandora"),
+                        Image(spotify, "Spotify"),
+                        Image(tidal, "Tidal"),
+                        Image(tiktok, "TikTok"),
+                        Image(youtube, "Youtube") ]).flat()
+                ).addClass("icon-carousel").addClass("icon-carousel-reversed").setGap("20px").setDirection("column")
+            ).addClass("icon-carousel-container")
         ),
         Grid(
             Label("Make it. Drop it.")

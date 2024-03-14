@@ -64,10 +64,22 @@
 }
 
 .icon-carousel {
-    display: flex;
-    /* Changed from grid to flex for inline arrangement */
-    width: fit-content;
-    animation: 5s infinite linear carousel;
+    animation: 30s infinite linear carousel;
+}
+
+.icon-carousel-reversed {
+    animation-direction: reverse;
+}
+
+.icon-carousel-container {
+    mask-image: linear-gradient(
+        90deg,
+        transparent,
+        #000 15%,
+        #000 85%,
+        transparent 100%
+      );
+      overflow: hidden;
 }
 
 @keyframes carousel {
@@ -76,6 +88,6 @@
     }
 
     100% {
-        transform: translateX(calc((92px * -9*2 + 92px)));
+        transform: translateX(calc((92px * -8.5*2)));
     }
 }
