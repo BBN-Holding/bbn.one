@@ -59,12 +59,13 @@
 }
 
 .icon-carousel .wimage {
-    width: 72px;
-    height: 72px;
+    width: var(--carousel-size);
+    height: var(--carousel-size);
     filter: brightness(0) invert(1);
 }
 
 .icon-carousel {
+    --carousel-size: 72px;
     animation: 30s infinite linear carousel;
 }
 
@@ -110,12 +111,12 @@
 @keyframes carousel {
     0% {
         /* calc (width + gap) * number of icons * -1 */
-        transform: translateX(calc((72px + 38px) * -8));
+        transform: translateX(calc((var(--carousel-size) + 38px) * -8));
     }
 
     100% {
         /* calc (width + gap) * (number of icons-0.5) * 2 * -1 */
-        transform: translateX(calc(((72px + 38px) * -8.5*2)));
+        transform: translateX(calc(((var(--carousel-size) + 38px) * -8.5*2)));
     }
 }
 
@@ -161,5 +162,9 @@
         grid-column: 1 / -1;
         display: grid;
         justify-items: center;
+    }
+
+    .icon-carousel {
+        --carousel-size: 50px;
     }
 }
