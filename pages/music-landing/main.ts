@@ -25,6 +25,7 @@ import youtube from "./assets/youtube.svg";
 
 // 
 import criticz from "./assets/criticz.jpg";
+import redz from "./assets/redz.jpg";
 
 WebGen();
 await RegisterAuthRefresh();
@@ -260,8 +261,9 @@ Body(
         Box(
             Label("The thing I love the most is the flexibility and the contactability of the entire BBN Music team. It is also just great to develop concepts and plans with motivated and very friendly people."),
             Grid(
-                Image("https://via.placeholder.com/150", "Avatar of Redz")
+                Image(redz, "Avatar of Redz")
                     .setBorderRadius("complete")
+                    .setAspectRatio("1/1")
                     .resizeToBox(),
                 Label("Redz")
             )
@@ -274,6 +276,7 @@ Body(
             Grid(
                 Image(criticz, "Avatar of Criticz")
                     .setBorderRadius("complete")
+                    .setAspectRatio("1/1")
                     .resizeToBox(),
                 Label("Criticz")
             )
