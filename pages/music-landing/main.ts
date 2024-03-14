@@ -143,7 +143,7 @@ Body(
                     .setTextAlign("center")
             ),
             // TODO: Make a icon carousel
-            Box(
+            Grid(
                 Image(apple, "Apple Music"),
                 Image(deezer, "Deezer"),
                 Image(facebook, "Facebook"),
@@ -153,8 +153,34 @@ Body(
                 Image(tidal, "Tidal"),
                 Image(tiktok, "TikTok"),
                 Image(youtube, "Youtube"),
-                Label("And many more..."),
-            )
+                Image(apple, "Apple Music"),
+                Image(deezer, "Deezer"),
+                Image(facebook, "Facebook"),
+                Image(instagram, "Instagram"),
+                Image(pandora, "Pandora"),
+                Image(spotify, "Spotify"),
+                Image(tidal, "Tidal"),
+                Image(tiktok, "TikTok"),
+                Image(youtube, "Youtube"),
+                Image(apple, "Apple Music"),
+                Image(deezer, "Deezer"),
+                Image(facebook, "Facebook"),
+                Image(instagram, "Instagram"),
+                Image(pandora, "Pandora"),
+                Image(spotify, "Spotify"),
+                Image(tidal, "Tidal"),
+                Image(tiktok, "TikTok"),
+                Image(youtube, "Youtube"),
+                Image(apple, "Apple Music"),
+                Image(deezer, "Deezer"),
+                Image(facebook, "Facebook"),
+                Image(instagram, "Instagram"),
+                Image(pandora, "Pandora"),
+                Image(spotify, "Spotify"),
+                Image(tidal, "Tidal"),
+                Image(tiktok, "TikTok"),
+                Image(youtube, "Youtube"),
+            ).addClass("icon-carousel").setGap("20px").setDirection("column")
         ),
         Grid(
             Label("Make it. Drop it.")
