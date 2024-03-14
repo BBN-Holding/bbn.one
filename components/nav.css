@@ -26,6 +26,12 @@ nav.home {
     -webkit-backdrop-filter: blur(3px);
 }
 
+nav.music {
+    position: fixed;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
 [data-theme="light"] nav.home {
     color: black;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 100%);
