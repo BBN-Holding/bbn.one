@@ -114,3 +114,27 @@
         transform: translateX(calc(((72px + 38px) * -8.5*2)));
     }
 }
+
+[data-theme=dark] {
+    --background-color: #000;
+}
+
+.background-image {
+    position: absolute;
+    inset: -0.5rem;
+    --image: url('./assets/background.png');
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.61) 0%, #000 77.08%, #000 100%),
+        var(--image) no-repeat center center;
+    background-size: cover;
+    filter: blur(4.5px);
+    z-index: -1;
+}
+
+
+[data-theme=light] .background-image {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.61) 0%, #FFF 77.08%, #FFF 100%),
+        var(--image) no-repeat center center;
+    background-size: cover;
+}
