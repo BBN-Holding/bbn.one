@@ -78,7 +78,7 @@ Body(
                 .setGap("25px")
                 .setJustifyItems("start"),
         )
-            .setMaxWidth("850px"),
+            .setMaxWidth("900px"),
         Content(
             Grid(
                 Label("Our pricing plan to disrupt the Market:")
@@ -192,7 +192,7 @@ Body(
                 .setAlignItems("start")
                 .setDynamicColumns(15)
         )
-            .setMaxWidth("850px"),
+            .setMaxWidth("900px"),
         Content(
             Grid(
                 Label("Let your fans enjoy your Drops where they feel home.")
@@ -281,7 +281,7 @@ Body(
                     .setBorderRadius("large")
                     .addClass("free-tier-bg")
             )
-                .setMaxWidth("880px")
+                .setMaxWidth("900px")
         ),
         Grid(
             Label("Loved by Artists.")
