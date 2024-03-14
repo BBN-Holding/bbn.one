@@ -242,6 +242,7 @@ Body(
                             .setPadding("2px 25px")
                             .addClass("orange-bg")
                     )
+                        .setGap()
                         .setAlignContent("space-between" as "stretch")
                         .setJustifyItems("start"),
                     Grid(
