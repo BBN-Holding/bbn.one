@@ -1,5 +1,5 @@
-import { serve } from "https://deno.land/x/esbuild_serve@1.3.4/mod.ts";
-// import { serve } from "../esbuild_serve/mod.ts";
+// import { serve } from "https://deno.land/x/esbuild_serve@1.3.4/mod.ts";
+import { serve } from "../esbuild_serve/mod.ts";
 
 const title = new Map(Object.entries({
     "admin": "BBN Admin",
@@ -9,9 +9,10 @@ const title = new Map(Object.entries({
     "settings": "BBN - Settings",
     "wallet": "BBN Wallet",
     "music": "BBN Music",
-    "music/new-drop": "BBN Music - New Drop",
-    "music/edit": "BBN Music - Edit Drop",
-    "music/payout": "BBN Music - Payouts",
+    "c/music": "BBN Music - Console",
+    "c/music/new-drop": "BBN Music - New Drop",
+    "c/music/edit": "BBN Music - Edit Drop",
+    "c/music/payout": "BBN Music - Payouts",
     "p/privacy-policy": "BBN - Privacy Policy",
     "p/terms-of-use": "BBN - Terms of Use",
     "p/imprint": "BBN - Imprint",
@@ -53,9 +54,10 @@ serve({
         "callback": "./pages/_legacy/misc/callback.ts",
         "oauth": "./pages/user/oauth.ts",
         "music": "./pages/music-landing/main.ts",
-        "music/new-drop": "./pages/music/newDrop.ts",
-        "music/edit": "./pages/_legacy/music/edit.ts",
-        "music/payout": "./pages/payout/main.ts",
+        "c/music": "./pages/music/main.ts",
+        "c/music/new-drop": "./pages/music/newDrop.ts",
+        "c/music/edit": "./pages/_legacy/music/edit.ts",
+        "c/music/payout": "./pages/payout/main.ts",
         "hosting": "./pages/hosting/main.ts",
         "hosting/create": "./pages/hosting/views/create.ts",
         "settings": "./pages/user/settings.ts",

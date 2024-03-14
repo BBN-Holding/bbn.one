@@ -8,7 +8,7 @@
             "<mj-text>We are now in the process of delivering your drop to our partners. If you need to contact us regarding this release, <a href=\"mailto:support@bbn.one\">please reach out to us.</a></mj-text>",
             "<mj-text font-size=\"18px\" padding-bottom=\"0\">Many Warm Regards,</mj-text>",
             "<mj-text color=\"#F19D2D\" font-size=\"18px\" font-weight=\"400\" padding-top=\"0\">The BBN Music Team</mj-text>",
-            "<mj-button href=\"https://bbn.one/music\">Check your Drops now</mj-button>",
+            "<mj-button href=\"https://bbn.one/c/music\">Check your Drops now</mj-button>",
             "</mj-column>"
         ]
     },
@@ -26,7 +26,7 @@
             "<mj-text>If you have any problems regarding this release, please do not hesitate to contact our team at <a href=\"mailto:support@bbn.one\">support@bbn.one</a>. Make sure to include the id/name of the drop you are querying.</mj-text>",
             "<mj-text font-size=\"18px\" padding-bottom=\"0\">Many Warm Regards,</mj-text>",
             "<mj-text color=\"#F19D2D\" font-size=\"18px\" font-weight=\"400\" padding-top=\"0\">The BBN Music Team</mj-text>",
-            "<mj-button href=\"https://bbn.one/music\">Check your Drops now</mj-button>",
+            "<mj-button href=\"https://bbn.one/c/music\">Check your Drops now</mj-button>",
             "</mj-column>"
         ],
         "reasonMap": {
