@@ -183,7 +183,7 @@ Body(
                 .setDynamicColumns(2)
         )
             .setMaxWidth("850px"),
-        Box(
+        Content(
             Grid(
                 Label("Let your fans enjoy your Drops where they feel home.")
                     .setTextSize("xl")
@@ -202,7 +202,7 @@ Body(
                     .setGap("38px")
                     .setDirection("column")
             ).addClass("icon-carousel-container").setGap("35px")
-        ),
+        ).setMaxWidth("850px"),
         Grid(
             Label("Make it. Drop it.")
                 .setFontWeight("bold")

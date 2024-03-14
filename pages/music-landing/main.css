@@ -72,14 +72,8 @@
 }
 
 .icon-carousel-container {
-    mask-image: linear-gradient(
-        90deg,
-        transparent,
-        #000 15%,
-        #000 85%,
-        transparent 100%
-      );
-      overflow: hidden;
+    mask-image: linear-gradient(90deg, rgba(255, 255, 255, 0.00) 0%, #FFF 50%, rgba(255, 255, 255, 0.00) 100%);
+    overflow: hidden;
 }
 
 @keyframes carousel {
