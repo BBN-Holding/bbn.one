@@ -48,34 +48,37 @@ Body(
             DynaNavigation("Music")
         ),
         FullWidthSection(Box().addClass("background-image")),
-        Grid(
-            Box(
-                Label("Drop in with\nyour Audience.")
-                    .setTextSize("7xl")
-                    .setTextAlign("start")
-                    .setBalanced()
-                    .setFontWeight("black"),
+        Content(
+            Grid(
+                Box(
+                    Label("Drop in with\nyour Audience.")
+                        .setTextSize("7xl")
+                        .setTextAlign("start")
+                        .setBalanced()
+                        .setFontWeight("black"),
+                )
+                    .addClass("max-width-30rem")
+                    .setWidth("100%")
+                    .setMargin("10rem 0 0 0"),
+                Box(
+                    Label("BBN Music, your gateway to unlimited music distribution at a low cost. Maximize your reach without limits. Join us and let the world hear your music.")
+                        .setTextSize("xl")
+                        .setBalanced()
+                        .addClass("line-height-1-2")
+                        .setFontWeight("medium"),
+                )
+                    .addClass("max-width-30rem"),
+                LinkButton("Drop your Music", "/c/music")
+                    .setPadding("12px 30px")
+                    .setFontWeight("bold")
+                    .setTextSize("lg")
+                    .addClass("orange-bg", "orange-box-shadow")
+                    .setBorderRadius("large")
             )
-                .addClass("max-width-30rem")
-                .setWidth("100%")
-                .setMargin("10rem 0 0 0"),
-            Box(
-                Label("BBN Music, your gateway to unlimited music distribution at a low cost. Maximize your reach without limits. Join us and let the world hear your music.")
-                    .setTextSize("xl")
-                    .setBalanced()
-                    .addClass("line-height-1-2")
-                    .setFontWeight("medium"),
-            )
-                .addClass("max-width-30rem"),
-            LinkButton("Drop your Music", "/c/music")
-                .setPadding("12px 30px")
-                .setFontWeight("bold")
-                .setTextSize("lg")
-                .addClass("orange-bg", "orange-box-shadow")
-                .setBorderRadius("large")
+                .setGap("25px")
+                .setJustifyItems("start"),
         )
-            .setGap("25px")
-            .setJustifyItems("start"),
+            .setMaxWidth("850px"),
         Content(
             Grid(
                 Label("Our pricing plan to disrupt the Market:")
