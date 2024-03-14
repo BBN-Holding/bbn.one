@@ -84,10 +84,12 @@
 
 @keyframes carousel {
     0% {
-        transform: translateX(calc(92px * -8));
+        /* calc (width + gap) * number of icons * -1 */
+        transform: translateX(calc((72px + 38px) * -8));
     }
 
     100% {
-        transform: translateX(calc((92px * -8.5*2)));
+        /* calc (width + gap) * (number of icons-0.5) * 2 * -1 */
+        transform: translateX(calc(((72px + 38px) * -8.5*2)));
     }
 }

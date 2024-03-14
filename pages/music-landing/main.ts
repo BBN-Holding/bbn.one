@@ -27,6 +27,18 @@ import youtube from "./assets/youtube.svg";
 WebGen();
 await RegisterAuthRefresh();
 
+const images = () => Array.from({ length: 4 }, () => [
+    Image(apple, "Apple Music"),
+    Image(deezer, "Deezer"),
+    Image(facebook, "Facebook"),
+    Image(instagram, "Instagram"),
+    Image(pandora, "Pandora"),
+    Image(spotify, "Spotify"),
+    Image(tidal, "Tidal"),
+    Image(tiktok, "TikTok"),
+    Image(youtube, "Youtube") ]
+).flat();
+
 Body(
     Content(
         FullWidthSection(
@@ -179,35 +191,17 @@ Body(
                     .setMargin("20px 10px")
                     .setTextAlign("center")
             ),
-            // TODO: Make a icon carousel
-            Box(
-                Grid(
-                    ...Array.from({ length: 4 }, () => [
-                        Image(apple, "Apple Music"),
-                        Image(deezer, "Deezer"),
-                        Image(facebook, "Facebook"),
-                        Image(instagram, "Instagram"),
-                        Image(pandora, "Pandora"),
-                        Image(spotify, "Spotify"),
-                        Image(tidal, "Tidal"),
-                        Image(tiktok, "TikTok"),
-                        Image(youtube, "Youtube") ]).flat()
-                ).addClass("icon-carousel").setGap("20px").setDirection("column")
-            ).addClass("icon-carousel-container"),
-            Box(
-                Grid(
-                    ...Array.from({ length: 4 }, () => [
-                        Image(apple, "Apple Music"),
-                        Image(deezer, "Deezer"),
-                        Image(facebook, "Facebook"),
-                        Image(instagram, "Instagram"),
-                        Image(pandora, "Pandora"),
-                        Image(spotify, "Spotify"),
-                        Image(tidal, "Tidal"),
-                        Image(tiktok, "TikTok"),
-                        Image(youtube, "Youtube") ]).flat()
-                ).addClass("icon-carousel").addClass("icon-carousel-reversed").setGap("20px").setDirection("column")
-            ).addClass("icon-carousel-container")
+            Grid(
+                Grid(...images())
+                    .addClass("icon-carousel")
+                    .setGap("38px")
+                    .setDirection("column"),
+                Grid(...images().reverse())
+                    .addClass("icon-carousel")
+                    .addClass("icon-carousel-reversed")
+                    .setGap("38px")
+                    .setDirection("column")
+            ).addClass("icon-carousel-container").setGap("35px")
         ),
         Grid(
             Label("Make it. Drop it.")
