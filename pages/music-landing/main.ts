@@ -1,5 +1,5 @@
 import { Footer } from "shared/footer.ts";
-import { Body, Box, Button, Color, Content, FullWidthSection, Grid, Image, Label, LinkButton, MIcon, WebGen } from "webgen/mod.ts";
+import { Body, Box, Button, Color, Content, Empty, FullWidthSection, Grid, Image, Label, LinkButton, MIcon, WebGen, mediaQueryRef } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import "./main.css";
@@ -41,6 +41,8 @@ const images = () => Array.from({ length: 4 }, () => [
     Image(tiktok, "TikTok"),
     Image(youtube, "Youtube") ]
 ).flat();
+
+export const isMobileKeyFeatures = mediaQueryRef("(max-width: 820px)");
 
 Body(
     Content(
@@ -242,11 +244,15 @@ Body(
                         Label("Why BBN\xa0Music?")
                             .setTextSize("3xl")
                             .setFontWeight("bold"),
-                        LinkButton("Drop your Music", "/c/music")
-                            .setBorderRadius("complete")
-                            .setPadding("2px 25px")
-                            .addClass("orange-bg")
+                        isMobileKeyFeatures.map(mobile => mobile ? Empty()
+                            : LinkButton("Drop your Music", "/c/music")
+                                .setBorderRadius("complete")
+                                .setPadding("2px 25px")
+                                .addClass("orange-bg")
+                        )
+                            .asRefComponent()
                     )
+                        .addClass("title")
                         .setGap()
                         .setAlignContent("space-between" as "stretch")
                         .setJustifyItems("start"),
@@ -279,13 +285,21 @@ Body(
                     )
                         .setGap("13px")
                         .setJustifyItems("start")
-                        .setAlignContent("start")
+                        .setAlignContent("start"),
+                    isMobileKeyFeatures.map(mobile => !mobile ? Empty()
+                        : Box(LinkButton("Drop your Music", "/c/music")
+                            .setBorderRadius("complete")
+                            .setPadding("2px 25px")
+                            .addClass("orange-bg")
+                        ).addClass("call-to-action")
+                    )
+                        .asRefComponent()
                 )
                     .setGap()
                     .setDynamicColumns(10)
                     .setPadding("50px 40px")
                     .setBorderRadius("large")
-                    .addClass("free-tier-bg")
+                    .addClass("free-tier-bg", "key-features")
             )
                 .setMaxWidth("900px")
         ),
