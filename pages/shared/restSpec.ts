@@ -244,7 +244,7 @@ export const API = {
         search: (query: string) => fetch(`${API.BASE_URL}admin/search?query=${query}`, {
             headers: headers(API.getToken())
         })
-            .then(json<any[]>())
+            .then(json<object[]>())
             .catch(reject),
         files: {
             list: (offset: number | undefined = undefined) => {

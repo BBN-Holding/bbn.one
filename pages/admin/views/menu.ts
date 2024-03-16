@@ -78,7 +78,7 @@ export const adminMenu = Navigation({
                                 .onPromiseClick(async () => {
                                     const monaco = await lazyMonaco();
                                     const box = document.createElement("div");
-                                    const editor = monaco.editor.create(box, {
+                                    monaco.editor.create(box, {
                                         value: JSON.stringify(it.val, null, 2),
                                         language: "json",
                                         theme: "vs-dark",
