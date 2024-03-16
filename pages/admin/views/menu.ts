@@ -1,13 +1,17 @@
-import { API, HeavyList, loadMore, Navigation, placeholder } from "shared/mod.ts";
+import { debounce } from "https://deno.land/std@0.220.1/async/debounce.ts";
+import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
+import { API, HeavyList, loadMore, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
 import { sumOf } from "std/collections/mod.ts";
-import { asState, Box, Button, Color, Grid, Horizontal, isMobile, Label, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
-import { DropType } from "../../../spec/music.ts";
-import { activeUser, sheetStack } from "../../_legacy/helper.ts";
+import { asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, Items, Label, lazyInit, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Drop, DropType, Server, Transcript } from "../../../spec/music.ts";
+import { activeUser, ProfileData, sheetStack, showProfilePicture } from "../../_legacy/helper.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
-import { GroupEntry, UserEntry } from "./entryUser.ts";
+import { GroupEntry } from "./entryUser.ts";
 import { entryFile, entryOAuth, entryWallet, transcriptMenu } from "./list.ts";
+
+const lazyMonaco = lazyInit(() => loader.init());
 
 export const adminMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
@@ -41,6 +45,55 @@ export const adminMenu = Navigation({
             ])
         },
         {
+            id: "search",
+            title: ref`Search`,
+            children: [
+                TextInput("text", "Search").onChange(debounce(async (data) => {
+                    state.search = asState(await API.admin.search(data ?? "").then(stupidErrorAlert));
+                }, 1000)),
+                Items(state.$search.map(it => it as ({ type: "transcript", val: Transcript; } | { type: "drop", val: Drop; } | { type: "server", val: Server; } | { type: "user", val: ProfileData; })[]), it => {
+                    switch (it.type) {
+                        case "transcript":
+                            return Entry(
+                                {
+                                    title: it.val.with,
+                                    subtitle: it.type
+                                }
+                            );
+                        case "drop":
+                            return ReviewEntry(it.val)
+                        case "server":
+                            return Entry(
+                                {
+                                    title: it.val._id,
+                                    subtitle: it.type
+                                }
+                            );
+                        case "user":
+                            return Entry({
+                                title: it.val.profile.username,
+                                subtitle: `${it.val._id} - ${it.val.profile.email}`
+                            })
+                                .addClass("small")
+                                .onPromiseClick(async () => {
+                                    const monaco = await lazyMonaco();
+                                    const box = document.createElement("div");
+                                    const editor = monaco.editor.create(box, {
+                                        value: JSON.stringify(it.val, null, 2),
+                                        language: "json",
+                                        theme: "vs-dark",
+                                        automaticLayout: true,
+                                    });
+                        
+                        
+                                    SheetDialog(sheetStack, "User", Custom(box).setHeight("800px").setWidth("1200px")).open();
+                                })
+                                .addPrefix(showProfilePicture(it.val));
+                    }
+                })
+            ]
+        },
+        {
             id: "drops",
             title: ref`Drops`,
             children: [
@@ -60,47 +113,7 @@ export const adminMenu = Navigation({
                         HeavyList(state.drops.$publishing, it => ReviewEntry(it))
                             .enablePaging((offset, limit) => loadMore(state.drops.$publishing, () => API.admin.drops.list(DropType.Publishing, offset, limit)))
                     ]
-                },
-                {
-                    id: "published",
-                    title: ref`Published`,
-                    children: [
-                        HeavyList(state.drops.$published, it => ReviewEntry(it))
-                            .enablePaging((offset, limit) => loadMore(state.drops.$published, () => API.admin.drops.list(DropType.Published, offset, limit)))
-                    ]
-                },
-                {
-                    id: "private",
-                    title: ref`Private`,
-                    children: [
-                        HeavyList(state.drops.$private, it => ReviewEntry(it))
-                            .enablePaging((offset, limit) => loadMore(state.drops.$private, () => API.admin.drops.list(DropType.Private, offset, limit)))
-                    ]
-                },
-                {
-                    id: "rejected",
-                    title: ref`Rejected`,
-                    children: [
-                        HeavyList(state.drops.$rejected, it => ReviewEntry(it))
-                            .enablePaging((offset, limit) => loadMore(state.drops.$rejected, () => API.admin.drops.list(DropType.ReviewDeclined, offset, limit)))
-                    ]
-                },
-                {
-                    id: "drafts",
-                    title: ref`Drafts`,
-                    children: [
-                        HeavyList(state.drops.$drafts, it => ReviewEntry(it))
-                            .enablePaging((offset, limit) => loadMore(state.drops.$drafts, () => API.admin.drops.list(DropType.Unsubmitted, offset, limit)))
-                    ]
-                },
-            ]
-        },
-        {
-            id: "users",
-            title: ref`User`,
-            children: [
-                HeavyList(state.$users, val => UserEntry(val))
-                    .enablePaging((offset, limit) => loadMore(state.$users, () => API.admin.users.list(offset, limit)))
+                }
             ]
         },
         {

@@ -241,6 +241,11 @@ export const API = {
             .then(none())
     }),
     admin: ({
+        search: (query: string) => fetch(`${API.BASE_URL}admin/search?query=${query}`, {
+            headers: headers(API.getToken())
+        })
+            .then(json<any[]>())
+            .catch(reject),
         files: {
             list: (offset: number | undefined = undefined) => {
                 const paging = new URLSearchParams();

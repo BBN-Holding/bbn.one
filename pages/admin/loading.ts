@@ -8,11 +8,6 @@ export async function refreshState() {
     await Promise.all([
         (async () => state.drops.reviews = await API.admin.drops.list(DropType.UnderReview))(),
         (async () => state.drops.publishing = await API.admin.drops.list(DropType.Publishing))(),
-        (async () => state.drops.published = await API.admin.drops.list(DropType.Published))(),
-        (async () => state.drops.private = await API.admin.drops.list(DropType.Private))(),
-        (async () => state.drops.rejected = await API.admin.drops.list(DropType.ReviewDeclined))(),
-        (async () => state.drops.drafts = await API.admin.drops.list(DropType.Unsubmitted))(),
-        (async () => state.users = await API.admin.users.list())(),
         (async () => state.groups = await API.admin.groups.list())(),
         (async () => state.payouts = await API.admin.payouts.list())(),
         (async () => state.files = await API.admin.files.list())(),

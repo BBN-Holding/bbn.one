@@ -6,7 +6,7 @@ import { sheetStack, showPreviewImage } from "../../_legacy/helper.ts";
 export function ReviewEntry(x: Drop) {
     return Entry({
         title: x.title ?? "(no drop name)",
-        subtitle: `${x.release ?? "(no release date)"} - ${x.user} - ${x.upc ?? "(no upc number)"} - ${x._id}`
+        subtitle: `release: ${x.release ?? "(no release date)"} - user: ${x.user} - upc: ${x.upc ?? "(no upc number)"} - id: ${x._id} - type: ${x.type}`
     })
         .addClass("small")
         .addSuffix(Button("Review")

@@ -12,7 +12,6 @@ export const state = asState({
         rejected: <External<Drop[]> | "loading">"loading",
         drafts: <External<Drop[]> | "loading">"loading",
     },
-    users: <External<ProfileData[]> | "loading">"loading",
     groups: <External<Group[]> | "loading">"loading",
     payouts: <External<Payout[][]> | "loading">"loading",
     oauth: <External<OAuthApp[]> | "loading">"loading",
@@ -20,6 +19,7 @@ export const state = asState({
     servers: <External<Server[]> | "loading">"loading",
     wallets: <External<Wallet[]> | "loading">"loading",
     transcripts: <External<Transcript[]> | "loading">"loading",
+    search: <({ type: "transcript", val: Transcript} | {type: "drop", val: Drop} | {type: "server", val: Server} | {type: "user", val: ProfileData})[]>[],
 });
 
 export const reviewState = asState({
