@@ -47,7 +47,7 @@ export const musicMenu = Navigation({
                     title: x.period,
                     subtitle: x.moneythisperiod,
                 }).onClick(() => {
-                    location.href = `/music/payout?id=${x._id}`;
+                    location.href = `/c/music/payout?id=${x._id}`;
                 })).setPlaceholder(placeholder("No Payouts", "Release new Drops to earn money"))
             ])
         }
