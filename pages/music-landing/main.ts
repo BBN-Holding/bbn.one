@@ -131,9 +131,6 @@ Body(
                         .setBorderRadius("large")
                         .addClass("orange-bg", "orange-box-shadow")
                         .setJustifyContent("center")
-                        .onClick(() => {
-                            console.log("Drop Now!");
-                        })
                 )
                     .setGap("30px")
                     .setPadding("45px 40px")
