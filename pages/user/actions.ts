@@ -71,6 +71,7 @@ export async function handleStateChange() {
         if (rsp.status === "rejected")
             return state.error = displayError(rsp.reason);
         await logIn(rsp.value);
+        gotoGoal();
         return;
     }
     if (params.type == "verify-email" && params.token) {
