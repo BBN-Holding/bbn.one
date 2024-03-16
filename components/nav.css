@@ -27,7 +27,6 @@ nav.home {
 }
 
 nav.music {
-    position: fixed;
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
 }
