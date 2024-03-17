@@ -9,7 +9,7 @@ import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
 import { GroupEntry } from "./entryUser.ts";
-import { entryFile, entryOAuth, entryWallet, transcriptMenu } from "./list.ts";
+import { entryFile, entryOAuth, entryWallet } from "./list.ts";
 
 const lazyMonaco = lazyInit(() => loader.init());
 
@@ -61,7 +61,7 @@ export const adminMenu = Navigation({
                                 }
                             );
                         case "drop":
-                            return ReviewEntry(it.val)
+                            return ReviewEntry(it.val);
                         case "server":
                             return Entry(
                                 {
@@ -84,8 +84,8 @@ export const adminMenu = Navigation({
                                         theme: "vs-dark",
                                         automaticLayout: true,
                                     });
-                        
-                        
+
+
                                     SheetDialog(sheetStack, "User", Custom(box).setHeight("800px").setWidth("1200px")).open();
                                 })
                                 .addPrefix(showProfilePicture(it.val));
@@ -186,26 +186,12 @@ export const adminMenu = Navigation({
             ]
         },
         {
-            id: "servers",
-            title: ref`Minecraft Servers`,
-            children: [
-                // HeavyList(state.$servers, it => entryServer(State(it) as StateHandler<Server>, true))
-                // .enablePaging((offset, limit) => loadMore(state.$servers, () => API.admin.servers.list(offset, limit)))
-            ]
-        },
-        {
             id: "wallets",
             title: ref`Wallets`,
             children: [ HeavyList(state.$wallets, entryWallet)
                 .enablePaging((offset, limit) => loadMore(state.$wallets, () => API.admin.wallets.list(offset, limit)))
             ]
-        },
-        {
-            id: "transcripts",
-            title: ref`Tickets`,
-            children:
-                state.$transcripts.map(it => transcriptMenu(it))
-        },
+        }
     ]
 })
     .addClass(

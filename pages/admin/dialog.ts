@@ -1,5 +1,5 @@
-import { API } from "shared/mod.ts";
-import { Box, Button, ButtonStyle, CenterV, Checkbox, Custom, Empty, Horizontal, Image, Label, SheetDialog, Spacer, Validate, Vertical, asState, createElement, css, getErrorMessage } from "webgen/mod.ts";
+import { API, LoadingSpinner } from "shared/mod.ts";
+import { Box, Button, ButtonStyle, CenterV, Checkbox, Custom, Empty, Horizontal, Label, SheetDialog, Spacer, Validate, Vertical, asState, createElement, css, getErrorMessage } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
 import reviewTexts from "../../data/reviewTexts.json" with { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
@@ -7,21 +7,6 @@ import { sheetStack } from "../_legacy/helper.ts";
 import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
 
 document.adoptedStyleSheets.push(css`
-    .footer {
-        gap: 0.5rem;
-    }
-    .test .wimage{
-        height: 40rem;
-        width: 100%;
-        background-color: transparent;
-    }
-    .test .wimage .loading-wheel {
-        z-index: 0;
-    }
-    .dialog-me {
-        min-height: 40rem;
-    }
-
     .winput.textarea {
         height: unset;
     }
@@ -109,7 +94,7 @@ export const ApproveDialog = SheetDialog(sheetStack, "Approve Drop",
                         ApproveDialog.close();
                     })
                 ).setGap()
-            ) : Box(Image({ type: "loading" }, "Loading...")).addClass("test")
+            ) : LoadingSpinner()
         )
             .setMargin("0 0 var(--gap)")
     ).asRefComponent()

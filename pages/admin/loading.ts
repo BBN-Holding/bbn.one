@@ -11,10 +11,8 @@ export async function refreshState() {
         (async () => state.groups = await API.admin.groups.list())(),
         (async () => state.payouts = await API.admin.payouts.list())(),
         (async () => state.files = await API.admin.files.list())(),
-        (async () => state.servers = await API.admin.servers.list())(),
         (async () => state.wallets = await API.admin.wallets.list())(),
         (async () => state.oauth = await API.oauth.list())(),
-        (async () => state.transcripts = await API.admin.transcripts.list())(),
     ]);
 }
 

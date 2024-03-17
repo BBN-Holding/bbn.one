@@ -9,7 +9,6 @@ export const Chart = <TType extends ChartType = ChartType, TData = DefaultDataPo
     (config: ChartConfiguration<TType, TData, TLabel> | ChartConfigurationCustomTypesPerDataset<TType, TData, TLabel>) => {
     const canvas = document.createElement("canvas");
 
-    console.log(config);
     lazyChart().then(chartjs => new chartjs.Chart(canvas, config));
 
     return Box(Custom(canvas).addClass("chart"));

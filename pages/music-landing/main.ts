@@ -258,7 +258,7 @@ Body(
                             .addClass("key-icon", "red"),
                         Label("Lowest Cut")
                             .setFontWeight("bold"),
-                        Label("With our free plan, we only take a 3% cut as Royalties."),
+                        Label("With our free plan, we only take a 3% cut of your revenue."),
                     )
                         .setGap("13px")
                         .setJustifyItems("start")
@@ -268,7 +268,7 @@ Body(
                             .addClass("key-icon", "green"),
                         Label("Global")
                             .setFontWeight("bold"),
-                        Label("We support multiple distributors, without any extra cost for you.")
+                        Label("We support all major and many smaller stores, without any extra cost for you.")
                     )
                         .setGap("13px")
                         .setJustifyItems("start")
@@ -278,19 +278,18 @@ Body(
                             .addClass("key-icon", "blue"),
                         Label("Unlimited")
                             .setFontWeight("bold"),
-                        Label("No hard limits. You can manage as many Drops or Artists as you want.")
+                        Label("No hard limits. You can manage as many Drops and Artists as you want.")
                     )
                         .setGap("13px")
                         .setJustifyItems("start")
                         .setAlignContent("start"),
-                    isMobileKeyFeatures.map(mobile => !mobile ? Empty()
-                        : Box(LinkButton("Drop your Music", "/c/music")
-                            .setBorderRadius("complete")
-                            .setPadding("2px 25px")
-                            .addClass("orange-bg")
-                        ).addClass("call-to-action")
-                    )
-                        .asRefComponent()
+                    isMobileKeyFeatures.map(mobile => mobile ? Box(LinkButton("Drop your Music", "/c/music")
+                        .setBorderRadius("complete")
+                        .setPadding("2px 25px")
+                        .addClass("orange-bg")
+                    ).addClass("call-to-action")
+                        : Empty()
+                    ).asRefComponent()
                 )
                     .setGap()
                     .setDynamicColumns(10)
@@ -358,9 +357,6 @@ Body(
                 .setPadding("95px 0 95px 0")
                 .setGap("21px")
         ).setMaxWidth("680px"),
-        FullWidthSection(
-            Footer()
-        )
-    )
-        .setMaxWidth("1230px")
+        FullWidthSection(Footer())
+    ).setMaxWidth("1230px")
 );

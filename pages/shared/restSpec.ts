@@ -1,4 +1,4 @@
-import { BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, StoreItems, Transcript, Wallet } from "../../spec/music.ts";
+import { BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, StoreItems, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
@@ -308,37 +308,6 @@ export const API = {
                 .then(json<Payout[][]>())
                 .catch(reject)
         },
-        servers: {
-            list: (offset = 0, limit = 31) => {
-                const paging = new URLSearchParams();
-                paging.append("_offset", offset.toString());
-                paging.append("_limit", limit.toString());
-                return fetch(`${API.BASE_URL}admin/servers?${paging}`, {
-                    headers: headers(API.getToken())
-                })
-                    .then(json<Server[]>())
-                    .catch(reject);
-            }
-        },
-        users: {
-            list: (offset = 0, limit = 31) => {
-                const paging = new URLSearchParams();
-                paging.append("_offset", offset.toString());
-                paging.append("_limit", limit.toString());
-                return fetch(`${API.BASE_URL}user/users?${paging}`, {
-                    headers: headers(API.getToken())
-                })
-                    .then(json<ProfileData[]>())
-                    .catch(reject);
-            },
-            get: (id: string) => {
-                return fetch(`${API.BASE_URL}user/users/${id}`, {
-                    headers: headers(API.getToken())
-                })
-                    .then(json<ProfileData>())
-                    .catch(reject);
-            }
-        },
         groups: {
             list: (offset = 0, limit = 31) => {
                 const paging = new URLSearchParams();
@@ -360,18 +329,6 @@ export const API = {
                     headers: headers(API.getToken())
                 })
                     .then(json<Wallet[]>())
-                    .catch(reject);
-            }
-        },
-        transcripts: {
-            list: (offset = 0, limit = 31) => {
-                const paging = new URLSearchParams();
-                paging.append("_offset", offset.toString());
-                paging.append("_limit", limit.toString());
-                return fetch(`${API.BASE_URL}admin/transcripts?${paging}`, {
-                    headers: headers(API.getToken())
-                })
-                    .then(json<Transcript[]>())
                     .catch(reject);
             }
         }

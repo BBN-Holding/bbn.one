@@ -1,5 +1,5 @@
 import { API, Chart, count, HeavyList, LoadingSpinner, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
-import { Button, Entry, Grid, isMobile, ref } from "webgen/mod.ts";
+import { Button, Entry, Grid, isMobile, MediaQuery, ref } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
 import { state } from "../state.ts";
@@ -43,74 +43,76 @@ export const musicMenu = Navigation({
             id: "payouts",
             title: ref`Payouts ${count(state.$payouts)}`,
             children: state.$payouts.map(payouts => payouts == "loading" ? [ LoadingSpinner() ] : [
-                Grid(
-                    Chart({
-                        type: 'bar',
-                        data: {
-                            labels: payouts.map(row => row.period.split(" to ")[ 0 ].split("Period ")[ 1 ].split("-").slice(0, 2).join("-")).reverse(),
-                            datasets: [
-                                {
-                                    label: 'Revenue by Month',
-                                    data: payouts.map(row => row.moneythisperiod.replace("£ ", "")).reverse(),
-                                }
-                            ]
-                        },
-                        options: {
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Revenue by Month',
-                                    color: 'white'
-                                },
-                                legend: {
-                                    display: false
-                                }
+                MediaQuery("(max-width: 700px)", (small) =>
+                    Grid(
+                        Chart({
+                            type: 'bar',
+                            data: {
+                                labels: payouts.map(row => row.period.split(" to ")[ 0 ].split("Period ")[ 1 ].split("-").slice(0, 2).join("-")).reverse(),
+                                datasets: [
+                                    {
+                                        label: 'Revenue by Month',
+                                        data: payouts.map(row => row.moneythisperiod.replace("£ ", "")).reverse(),
+                                    }
+                                ]
                             },
-                            responsive: true,
-                            scales: {
-                                x: {
-                                    stacked: true,
+                            options: {
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'Revenue by Month',
+                                        color: 'white'
+                                    },
+                                    legend: {
+                                        display: false
+                                    }
                                 },
-                                y: {
-                                    stacked: true
+                                responsive: true,
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                    },
+                                    y: {
+                                        stacked: true
+                                    }
                                 }
                             }
-                        }
-                    }),
-                    Chart({
-                        type: 'bar',
-                        data: {
-                            labels: payouts.map(row => row.period.split(" to ")[ 0 ].split("Period ")[ 1 ].split("-").slice(0, 2).join("-")).reverse(),
-                            datasets: [
-                                {
-                                    label: 'Streams by Month',
-                                    data: payouts.map(row => row.streams).reverse()
-                                }
-                            ]
-                        },
-                        options: {
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Streams by Month',
-                                    color: 'white'
-                                },
-                                legend: {
-                                    display: false
-                                }
+                        }),
+                        Chart({
+                            type: 'bar',
+                            data: {
+                                labels: payouts.map(row => row.period.split(" to ")[ 0 ].split("Period ")[ 1 ].split("-").slice(0, 2).join("-")).reverse(),
+                                datasets: [
+                                    {
+                                        label: 'Streams by Month',
+                                        data: payouts.map(row => row.streams).reverse()
+                                    }
+                                ]
                             },
-                            responsive: true,
-                            scales: {
-                                x: {
-                                    stacked: true,
+                            options: {
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'Streams by Month',
+                                        color: 'white'
+                                    },
+                                    legend: {
+                                        display: false
+                                    }
                                 },
-                                y: {
-                                    stacked: true
+                                responsive: true,
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                    },
+                                    y: {
+                                        stacked: true
+                                    }
                                 }
                             }
-                        }
-                    })
-                ).setEvenColumns(2),
+                        })
+                    ).setEvenColumns(small ? 1 : 2)
+                ),
                 HeavyList(state.$payouts, (x) => Entry({
                     title: x.period,
                     subtitle: x.moneythisperiod,
