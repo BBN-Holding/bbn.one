@@ -49,9 +49,14 @@ export const adminMenu = Navigation({
             title: ref`Search`,
             children: [
                 TextInput("text", "Search").onChange(debounce(async (data) => {
-                    state.search = asState(await API.admin.search(data ?? "").then(stupidErrorAlert));
+                    state.search = asState([ { type: "searching" } ]);
+                    const results = await API.admin.search(data ?? "").then(stupidErrorAlert);
+                    if (results.length === 0) {
+                        results.push({ type: "none" });
+                    }
+                    state.search = asState(results);
                 }, 1000)),
-                Items(state.$search.map(it => it as ({ type: "transcript", val: Transcript; } | { type: "drop", val: Drop; } | { type: "server", val: Server; } | { type: "user", val: ProfileData; })[]), it => {
+                Items(state.$search.map(it => it as ({ type: "transcript", val: Transcript; } | { type: "drop", val: Drop; } | { type: "server", val: Server; } | { type: "user", val: ProfileData; } | { type: "none"; } | {type: "searching"})[]), it => {
                     switch (it.type) {
                         case "transcript":
                             return Entry(
@@ -89,6 +94,10 @@ export const adminMenu = Navigation({
                                     SheetDialog(sheetStack, "User", Custom(box).setHeight("800px").setWidth("1200px")).open();
                                 })
                                 .addPrefix(showProfilePicture(it.val));
+                        case "none":
+                            return placeholder("No Results", "Try searching for something else.");
+                        case "searching":
+                            return placeholder("Searching", "Please wait...");
                     }
                 })
             ]
