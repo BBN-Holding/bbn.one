@@ -22,5 +22,15 @@
         "exclude": [
             "dist"
         ]
+    },
+    "fmt": {
+        "exclude": [
+            "dist",
+            "assets",
+            "static"
+        ],
+        "indentWidth": 4,
+        "proseWrap": "never",
+        "lineWidth": 150
     }
 }

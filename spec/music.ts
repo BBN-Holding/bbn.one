@@ -1,15 +1,15 @@
 import { zod } from "webgen/zod.ts";
 
 export const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
-export const userString = zod.string().min(1).transform(x => x.trim());
+export const userString = zod.string().min(1).transform((x) => x.trim());
 
 export enum DropType {
-    Published = 'PUBLISHED', // Uploaded, Approved
-    Publishing = 'PUBLISHING', // Uploading
-    Private = 'PRIVATE', // Declined, can be resubmitted
-    UnderReview = 'UNDER_REVIEW',
-    Unsubmitted = 'UNSUBMITTED', // Draft
-    ReviewDeclined = "REVIEW_DECLINED" // Rejected, cant be resubmitted
+    Published = "PUBLISHED", // Uploaded, Approved
+    Publishing = "PUBLISHING", // Uploading
+    Private = "PRIVATE", // Declined, can be resubmitted
+    UnderReview = "UNDER_REVIEW",
+    Unsubmitted = "UNSUBMITTED", // Draft
+    ReviewDeclined = "REVIEW_DECLINED", // Rejected, cant be resubmitted
     /*
         1: Drafts - Not on Store
             - Draft: Submit (No Fields locked, submitted => Under Review)
@@ -33,26 +33,26 @@ export enum ArtistTypes {
     Primary = "PRIMARY",
     Featuring = "FEATURING",
     Songwriter = "SONGWRITER",
-    Producer = "PRODUCER"
+    Producer = "PRODUCER",
 }
 
 export enum ReviewResponse {
     Approved = "APPROVED",
     DeclineCopyright = "DECLINE_COPYRIGHT",
-    DeclineMaliciousActivity = "DECLINE_MALICIOUS_ACTIVITY"
+    DeclineMaliciousActivity = "DECLINE_MALICIOUS_ACTIVITY",
 }
 
 export const artist = zod.tuple([
     userString,
     zod.string(),
-    zod.nativeEnum(ArtistTypes)
+    zod.nativeEnum(ArtistTypes),
 ]);
 
 export const song = zod.object({
     id: zod.string(),
     isrc: zod.string().optional(),
     title: userString,
-    artists: artist.array().refine(x => x.some(([ , , type ]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+    artists: artist.array().refine((x) => x.some(([, , type]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
     secondaryGenre: zod.string(),
     year: zod.number(),
     country: zod.string(),
@@ -61,17 +61,17 @@ export const song = zod.object({
     explicit: zod.boolean(),
     instrumental: zod.boolean(),
     file: zod.string({ required_error: "a Song is missing its file." }),
-    progress: zod.number().optional().transform(x => <typeof x>undefined)
+    progress: zod.number().optional().transform((x) => <typeof x> undefined),
 })
     .refine(({ instrumental, explicit }) => !(instrumental && explicit), "Can't have an explicit instrumental song");
 
 export const pureDrop = zod.object({
     upc: zod.string().nullable()
-        .transform(x => x ? x.trim() : x)
-        .transform(x => x ? x : null)
-        .refine(x => x == null || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" }),
+        .transform((x) => x ? x.trim() : x)
+        .transform((x) => x ? x : null)
+        .refine((x) => x == null || [12, 13].includes(x.length), { message: "Not a valid UPC" }),
     title: userString,
-    artists: artist.array().refine(x => x.some(([ , , type ]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+    artists: artist.array().refine((x) => x.some(([, , type]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
     release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
     language: zod.string(),
     primaryGenre: zod.string(),
@@ -92,14 +92,14 @@ export const drop = pureDrop
 
 const pageOne = zod.object({
     upc: zod.string().nullable()
-        .transform(x => x ? x.trim() : x)
-        .transform(x => x ? x : null)
-        .refine(x => x == null || [ 12, 13 ].includes(x.length), { message: "Not a valid UPC" })
+        .transform((x) => x ? x.trim() : x)
+        .transform((x) => x ? x : null)
+        .refine((x) => x == null || [12, 13].includes(x.length), { message: "Not a valid UPC" }),
 });
 
 const pageTwo = zod.object({
     title: userString,
-    artists: artist.array().refine(x => x.some(([ , , type ]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+    artists: artist.array().refine((x) => x.some(([, , type]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
     release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
     language: zod.string(),
     primaryGenre: zod.string(),
@@ -121,7 +121,7 @@ const pageFive = zod.object({
     uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }),
 });
 
-export const pages = <zod.AnyZodObject[]>[ pageOne, pageTwo, pageThree, pageFour, pageFive ];
+export const pages = <zod.AnyZodObject[]> [pageOne, pageTwo, pageThree, pageFour, pageFive];
 
 export const payout = zod.object({
     _id: zod.string(),
@@ -134,9 +134,9 @@ export const payout = zod.object({
                 store: zod.string(),
                 territory: zod.string(),
                 quantity: zod.number(),
-                revenue: zod.number()
-            })
-        )
+                revenue: zod.number(),
+            }),
+        ),
     }).array(),
     user: zod.string(),
 });
@@ -146,7 +146,7 @@ export const oauthapp = zod.object({
     name: userString,
     redirect: zod.string().url().array(),
     secret: zod.string(),
-    icon: zod.string()
+    icon: zod.string(),
 });
 
 export const file = zod.object({
@@ -157,12 +157,12 @@ export const file = zod.object({
     filename: zod.string(),
     metadata: zod.object({
         type: zod.string(),
-    })
+    }),
 });
 
 export enum PaymentType {
     Restrained = "RESTRAINED", // cannot be withdrawn (when adding funds to account)
-    Unrestrained = "UNRESTRAINED" // can be withdrawn
+    Unrestrained = "UNRESTRAINED", // can be withdrawn
 }
 
 export const wallet = zod.object({
@@ -172,7 +172,7 @@ export const wallet = zod.object({
         timestamp: zod.string(),
         type: zod.nativeEnum(PaymentType),
         description: zod.string(),
-        counterParty: zod.string()
+        counterParty: zod.string(),
     }).array(),
     cut: zod.number(),
     user: zod.string(),
@@ -180,7 +180,7 @@ export const wallet = zod.object({
     email: zod.string().optional(),
     balance: zod.object({
         restrained: zod.number(),
-        unrestrained: zod.number()
+        unrestrained: zod.number(),
     }).optional(),
     stripeAccountId: zod.string().optional(),
 });
@@ -188,7 +188,7 @@ export const wallet = zod.object({
 export const limits = zod.object({
     memory: zod.number(),
     disk: zod.number(),
-    cpu: zod.number()
+    cpu: zod.number(),
 });
 
 export enum ServerTypes {
@@ -200,10 +200,10 @@ export enum ServerTypes {
     PocketMine = "/minecraft/pocketmine/",
 }
 
-export const serverPowerState = zod.enum([ "starting", "installing", "stopping", "running", "offline" ]);
-export const serverPowerActions = zod.enum([ "start", "stop", "kill" ]);
+export const serverPowerState = zod.enum(["starting", "installing", "stopping", "running", "offline"]);
+export const serverPowerActions = zod.enum(["start", "stop", "kill"]);
 
-export const location = zod.enum([ "bbn-fsn", "bbn-hel", "bbn-mum", "bbn-sgp" ]);
+export const location = zod.enum(["bbn-fsn", "bbn-hel", "bbn-mum", "bbn-sgp"]);
 export const serverLabels = zod.enum([
     "suspended",
     "contact-support",
@@ -233,16 +233,16 @@ export const serverCreate = zod.object({
     limits: zod.object({
         memory: limits.shape.memory.min(300, "Minimum memory is 300MB"),
         disk: limits.shape.disk.min(200, "Minimum disk is 200MB"),
-        cpu: limits.shape.cpu.min(3, "Minimum cpu is 3% of a core")
+        cpu: limits.shape.cpu.min(3, "Minimum cpu is 3% of a core"),
     }),
-    version: zod.string()
+    version: zod.string(),
 });
 
 export const metaLimit = limits.extend({
-    slots: zod.number()
+    slots: zod.number(),
 });
 
-export const storeItems = zod.enum([ "memory", "disk", "cpu", "slots" ]);
+export const storeItems = zod.enum(["memory", "disk", "cpu", "slots"]);
 
 export const meta = zod.object({
     _id: zod.string(),
@@ -250,10 +250,13 @@ export const meta = zod.object({
     coins: zod.number(),
     limits: metaLimit,
     used: metaLimit,
-    pricing: zod.record(storeItems, zod.object({
-        price: zod.number(),
-        amount: zod.number()
-    }))
+    pricing: zod.record(
+        storeItems,
+        zod.object({
+            price: zod.number(),
+            amount: zod.number(),
+        }),
+    ),
 });
 
 export const bugReport = zod.object({
@@ -265,7 +268,7 @@ export const bugReport = zod.object({
     browserVersion: zod.string().optional(),
     browser: zod.string().optional(),
     userId: zod.string().optional(),
-    location: zod.string()
+    location: zod.string(),
 });
 
 export const transcript = zod.object({
@@ -319,20 +322,20 @@ export const sidecarRequest = zod.discriminatedUnion("type", [
     }),
     zod.object({
         type: zod.literal("command"),
-        command: zod.string()
+        command: zod.string(),
     }),
     zod.object({
         type: zod.literal("delete"),
-        path: zod.string()
+        path: zod.string(),
     }),
     zod.object({
         type: zod.literal("state"),
-        state: serverPowerActions
+        state: serverPowerActions,
     }),
     zod.object({
         type: zod.literal("tree"),
-        path: zod.string()
-    })
+        path: zod.string(),
+    }),
 ]);
 
 const addon = zod.object({
@@ -359,23 +362,23 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
         type: zod.literal("list"),
         path: zod.string(),
         canWrite: zod.boolean(),
-        list: sidecarFile.array()
+        list: sidecarFile.array(),
     }),
     zod.object({
         type: zod.literal("read"),
         path: zod.string(),
         chunk: zod.string().optional(),
-        finish: zod.boolean().optional()
+        finish: zod.boolean().optional(),
     }),
     zod.object({
         type: zod.literal("log"),
         chunk: zod.string(),
-        backlog: zod.boolean().optional()
+        backlog: zod.boolean().optional(),
     }),
     zod.object({
         type: zod.literal("error"),
         error: zod.string(),
-        path: zod.string().optional()
+        path: zod.string().optional(),
     }),
     zod.object({
         type: zod.literal("next-chunk"),
@@ -383,7 +386,7 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
     }),
     zod.object({
         type: zod.literal("state"),
-        state: serverPowerState
+        state: serverPowerState,
     }),
     zod.object({
         type: zod.literal("stats"),
@@ -391,7 +394,7 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
             cpu: zod.number(),
             memory: zod.number(),
             disk: zod.number(),
-        })
+        }),
     }),
     zod.object({
         type: zod.literal("install-addons"),
@@ -401,8 +404,8 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
         type: zod.literal("installed-addons"),
         addons: zod.object({
             addon: installedAddon,
-            dependencies: installedAddon.array()
-        }).array()
+            dependencies: installedAddon.array(),
+        }).array(),
     }),
     zod.object({
         type: zod.literal("uninstall-addon"),
@@ -412,22 +415,22 @@ export const sidecarResponse = zod.discriminatedUnion("type", [
         type: zod.literal("tree"),
         path: zod.string(),
         canWrite: zod.boolean(),
-        files: sidecarFile.array()
-    })
+        files: sidecarFile.array(),
+    }),
 ]);
 
 export const requestPayoutResponse = zod.discriminatedUnion("type", [
     zod.object({
         type: zod.literal("createAccount"),
-        url: zod.string()
+        url: zod.string(),
     }),
     zod.object({
         type: zod.literal("needDetails"),
         missingDetails: zod.array(zod.string()),
-        url: zod.string()
+        url: zod.string(),
     }),
     zod.object({
-        type: zod.literal("success")
+        type: zod.literal("success"),
     }),
 ]);
 
@@ -459,19 +462,19 @@ export const audit = zod.discriminatedUnion("action", [
     zod.object({
         action: zod.literal(AuditTypes.StorePurchase),
         user: zod.string(),
-        type: zod.enum([ "memory", "disk", "cpu", "slots" ]),
+        type: zod.enum(["memory", "disk", "cpu", "slots"]),
     }),
     zod.object({
         action: zod.literal(AuditTypes.ServerCreate),
         user: zod.string(),
         serverId: zod.string(),
-        data: zod.any()
+        data: zod.any(),
     }),
     zod.object({
         action: zod.literal(AuditTypes.ServerPowerChange),
         user: zod.string(),
         server: zod.string(),
-        power: serverPowerActions
+        power: serverPowerActions,
     }),
     zod.object({
         action: zod.literal(AuditTypes.ServerModify),
@@ -483,8 +486,8 @@ export const audit = zod.discriminatedUnion("action", [
             limits,
             state: serverPowerState,
             ports: zod.number().array(),
-            labels: zod.enum([ "suspended", "contact-support" ]).array()
-        }).partial()
+            labels: zod.enum(["suspended", "contact-support"]).array(),
+        }).partial(),
     }),
     zod.object({
         action: zod.literal(AuditTypes.ServerDelete),
@@ -568,8 +571,8 @@ export const serverAudit = zod.object({
         profile: zod.object({
             username: zod.string(),
             avatar: zod.string(),
-        })
-    })
+        }),
+    }),
 });
 
 export enum OAuthScopes {
@@ -581,7 +584,7 @@ export enum OAuthScopes {
 export const group = zod.object({
     displayName: zod.string(),
     _id: zod.string(), // Replace with id
-    permission: zod.string()
+    permission: zod.string(),
 });
 
 export interface Deferred<T> {

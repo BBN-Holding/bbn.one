@@ -2,30 +2,15 @@
     "deno.enable": true,
     "deno.lint": true,
     "deno.unstable": true,
-    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
-    "typescript.preferences.quoteStyle": "double",
-    "typescript.format.enable": true,
-    "typescript.format.insertSpaceAfterCommaDelimiter": true,
-    "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": true,
-    "typescript.format.insertSpaceAfterConstructor": false,
-    "typescript.format.insertSpaceAfterKeywordsInControlFlowStatements": true,
-    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": false,
-    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": true,
-    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
-    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": false,
-    "typescript.format.insertSpaceAfterSemicolonInForStatements": true,
-    "typescript.format.insertSpaceAfterTypeAssertion": false,
-    "typescript.format.insertSpaceBeforeAndAfterBinaryOperators": true,
-    "typescript.format.insertSpaceBeforeFunctionParenthesis": false,
-    "typescript.format.semicolons": "insert",
     "typescript.validate.enable": true,
     "editor.formatOnPaste": false,
     "editor.formatOnType": true,
+    "editor.formatOnSave": true,
     "editor.defaultFormatter": null,
     "editor.detectIndentation": false,
     "editor.insertSpaces": true,
     "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
+        "editor.defaultFormatter": "denoland.vscode-deno"
     },
     "editor.codeActionsOnSave": {
         "source.organizeImports": "explicit"
@@ -35,10 +20,10 @@
     "typescript.suggest.autoImports": true,
     "deno.suggest.imports.hosts": {
         "https://deno.land": true,
-        "https://esm.sh": true,
+        "https://esm.sh": true
     },
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.patterns": {
-        "*.ts": "${capture}.css",
-    },
+        "*.ts": "${capture}.css"
+    }
 }
