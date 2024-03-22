@@ -1,11 +1,11 @@
 import { FitAddon } from "https://esm.sh/xterm-addon-fit@0.8.0";
 import { WebglAddon } from "https://esm.sh/xterm-addon-webgl@0.16.0";
 import { Terminal } from "https://esm.sh/xterm@5.3.0";
-import 'https://esm.sh/xterm@5.3.0/css/xterm.css';
+import "https://esm.sh/xterm@5.3.0/css/xterm.css";
 import { asRef } from "webgen/mod.ts";
 
 export class TerminalComponent extends HTMLElement {
-    heap = <string[]>[];
+    heap = <string[]> [];
     connected = asRef(false);
     constructor() {
         super();
@@ -18,7 +18,7 @@ export class TerminalComponent extends HTMLElement {
             fontSize: 11,
             disableStdin: true,
             cursorBlink: true,
-            convertEol: true
+            convertEol: true,
         });
 
         const fitAddon = new FitAddon();
@@ -48,13 +48,12 @@ export class TerminalComponent extends HTMLElement {
 
         this.resize.observe(this);
         this.connected.setValue(true);
-
     }
 
     reset() {
         this.terminal!.reset();
         // hide the cursor
-        this.terminal!.write('\x1b[?25l');
+        this.terminal!.write("\x1b[?25l");
     }
 
     write(data: string) {

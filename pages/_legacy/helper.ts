@@ -4,16 +4,16 @@ import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
 
-export const allowedAudioFormats = [ "audio/flac", "audio/wav", "audio/mp3" ];
-export const allowedImageFormats = [ "image/png", "image/jpeg" ];
+export const allowedAudioFormats = ["audio/flac", "audio/wav", "audio/mp3"];
+export const allowedImageFormats = ["image/png", "image/jpeg"];
 
 export type ProfileData = {
     _id: string;
     profile: {
         email: string;
         verified?: {
-            email?: boolean,
-        },
+            email?: boolean;
+        };
         username: string;
         avatar?: string;
     };
@@ -23,7 +23,7 @@ export type ProfileData = {
 
 export function IsLoggedIn(): ProfileData | null {
     try {
-        return localStorage[ "access-token" ] ? JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ])).user : null;
+        return localStorage["access-token"] ? JSON.parse(b64DecodeUnicode(localStorage["access-token"].split(".")[1])).user : null;
     } catch (_) {
         // Invalid state. We gonna need to say goodbye to that session
         resetTokens();
@@ -32,27 +32,27 @@ export function IsLoggedIn(): ProfileData | null {
 }
 
 export function changeThemeColor(): ((data: SupportedThemes, options: Style) => void) | undefined {
-    return (_data) => { };// document.head.querySelector("meta[name=theme-color]")?.setAttribute("content", data == SupportedThemes.autoLight ? "#e6e6e6" : "#0a0a0a");
+    return (_data) => {}; // document.head.querySelector("meta[name=theme-color]")?.setAttribute("content", data == SupportedThemes.autoLight ? "#e6e6e6" : "#0a0a0a");
 }
 
 export function getSecondary(secondary: Record<string, string[]>, primaryGenre?: string) {
-    return primaryGenre ? secondary[ primaryGenre ] : null;
+    return primaryGenre ? secondary[primaryGenre] : null;
 }
 
 function b64DecodeUnicode(value: string) {
     // Going backwards: from bytestream, to percent-encoding, to original string.
-    return decodeURIComponent(atob(value).split('').map((c) => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`).join(''));
+    return decodeURIComponent(atob(value).split("").map((c) => `%${(`00${c.charCodeAt(0).toString(16)}`).slice(-2)}`).join(""));
 }
 function rawAccessToken() {
-    return JSON.parse(b64DecodeUnicode(localStorage[ "access-token" ].split(".")[ 1 ]));
+    return JSON.parse(b64DecodeUnicode(localStorage["access-token"].split(".")[1]));
 }
 
 export const activeUser = asState({
-    email: <string | undefined>undefined,
-    username: <string>"--",
-    avatar: <string | undefined>undefined,
-    permission: <Permission[]>[],
-    id: <string | undefined>undefined
+    email: <string | undefined> undefined,
+    username: <string> "--",
+    avatar: <string | undefined> undefined,
+    permission: <Permission[]> [],
+    id: <string | undefined> undefined,
 });
 
 export function permCheck(...per: Permission[]) {
@@ -75,9 +75,9 @@ export function updateActiveUserData() {
 }
 
 function checkIfRefreshTokenIsValid() {
-    const token = localStorage[ "refresh-token" ];
+    const token = localStorage["refresh-token"];
     if (!token) return;
-    const tokenData = JSON.parse(b64DecodeUnicode(token.split(".")[ 1 ]));
+    const tokenData = JSON.parse(b64DecodeUnicode(token.split(".")[1]));
     if (isExpired(tokenData.exp)) {
         logOut();
         return;
@@ -111,14 +111,14 @@ export async function renewAccessTokenIfNeeded() {
 }
 
 export const tokens = asState({
-    accessToken: localStorage[ "access-token" ],
-    refreshToken: localStorage[ "refresh-token" ]
+    accessToken: localStorage["access-token"],
+    refreshToken: localStorage["refresh-token"],
 });
 
 export async function forceRefreshToken() {
     try {
-        const access = await API.auth.refreshAccessToken.post(localStorage[ "refresh-token" ]).then(stupidErrorAlert);
-        localStorage[ "access-token" ] = access.token;
+        const access = await API.auth.refreshAccessToken.post(localStorage["refresh-token"]).then(stupidErrorAlert);
+        localStorage["access-token"] = access.token;
         tokens.accessToken = access.token;
     } catch (_) {
         // TODO: Make a better offline support
@@ -143,7 +143,7 @@ export async function RegisterAuthRefresh() {
 }
 
 export function shouldLoginPage() {
-    if (!loginRequired.find(x => location.pathname.startsWith(x))) {
+    if (!loginRequired.find((x) => location.pathname.startsWith(x))) {
         return;
     }
     localStorage.goal = location.pathname + location.search;
@@ -157,7 +157,7 @@ export function CenterAndRight(center: Component, right: Component): Component {
         Spacer(),
         CenterV(center),
         Spacer(),
-        right
+        right,
     );
 }
 
@@ -172,9 +172,9 @@ export function getYearList(): string[] {
         .map((x) => x.toString());
 }
 
-const a = document.createElement('a');
+const a = document.createElement("a");
 document.body.appendChild(a);
-a.setAttribute('style', 'display: none');
+a.setAttribute("style", "display: none");
 
 export function saveBlob(blob: Blob, fileName: string) {
     const url = window.URL.createObjectURL(blob);
@@ -184,49 +184,48 @@ export function saveBlob(blob: Blob, fileName: string) {
     window.URL.revokeObjectURL(url);
 }
 
-const ARTIST_ARRAY = <ArtistTypes[]>[ "PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER" ];
-export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[]; }>) => {
-    const dialog = SheetDialog(sheetStack, "Manage your Artists", Vertical(
-        new Table2(state.$artists)
-            .addClass("artist-table")
-            .setColumnTemplate("10rem auto min-content")
-            .addColumn("Type", (artist: Artist) =>
-                DropDownInput("Type", ARTIST_ARRAY)
-                    .setValue(artist[ 2 ])
-                    .onChange(data => artist[ 2 ] = <ArtistTypes>data)
-            )
-            .addColumn("Name", (artist: Artist) =>
-                TextInput("text", "Name", "blur")
-                    .setValue(artist[ 0 ])
-                    .onChange(data => artist[ 0 ] = data ?? "")
-            )
-            .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => state.artists = state.artists.filter((_, i) => i != state.artists.indexOf(data)) as typeof state.artists)),
-        Horizontal(
-            Spacer(),
-            Button("Add Artist")
-                .onClick(() => state.artists = asState([ ...state.artists, [ "", "", ArtistTypes.Primary ] ] as Artist[]))
-        ).setPadding("0 0 3rem 0"),
-        Horizontal(
-            Spacer(),
-            Button("Save")
-                .onClick(() => dialog.close())
-        )
-    ));
+const ARTIST_ARRAY = <ArtistTypes[]> ["PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER"];
+export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[] }>) => {
+    const dialog = SheetDialog(
+        sheetStack,
+        "Manage your Artists",
+        Vertical(
+            new Table2(state.$artists)
+                .addClass("artist-table")
+                .setColumnTemplate("10rem auto min-content")
+                .addColumn("Type", (artist: Artist) =>
+                    DropDownInput("Type", ARTIST_ARRAY)
+                        .setValue(artist[2])
+                        .onChange((data) => artist[2] = <ArtistTypes> data))
+                .addColumn("Name", (artist: Artist) =>
+                    TextInput("text", "Name", "blur")
+                        .setValue(artist[0])
+                        .onChange((data) => artist[0] = data ?? ""))
+                .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => state.artists = state.artists.filter((_, i) => i != state.artists.indexOf(data)) as typeof state.artists)),
+            Horizontal(
+                Spacer(),
+                Button("Add Artist")
+                    .onClick(() => state.artists = asState([...state.artists, ["", "", ArtistTypes.Primary]] as Artist[])),
+            ).setPadding("0 0 3rem 0"),
+            Horizontal(
+                Spacer(),
+                Button("Save")
+                    .onClick(() => dialog.close()),
+            ),
+        ),
+    );
     return dialog;
 };
 
 export function showPreviewImage(x: Drop) {
-    return x.artwork ? Cache(`image-preview-${x.artwork}`, () => Promise.resolve(),
-        type => type == "loaded"
-            ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork")
-            : Box())
-        : Image(templateArtwork, "A Placeholder Artwork.");
+    return x.artwork ? Cache(`image-preview-${x.artwork}`, () => Promise.resolve(), (type) => type == "loaded" ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork") : Box()) : Image(templateArtwork, "A Placeholder Artwork.");
 }
 
 async function loadImage(x: Drop) {
     const cache = await fileCache();
-    if (await cache.has(`image-preview-${x.artwork}`))
+    if (await cache.has(`image-preview-${x.artwork}`)) {
         return await cache.get(`image-preview-${x.artwork}`)!;
+    }
     const blob = await API.music.id(x._id).artwork().then(stupidErrorAlert);
     await cache.set(`image-preview-${x.artwork}`, blob);
     return blob;
@@ -237,7 +236,7 @@ export function stringToColor(str: string) {
     for (let i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
-    let color = '#';
+    let color = "#";
     for (let i = 0; i < 3; i++) {
         const value = (hash >> (i * 8)) & 0xFF;
         color += (`00${value.toString(16)}`).slice(-2);
@@ -252,30 +251,36 @@ export function ProfilePicture(component: Component, name: string) {
 }
 
 export function getNameInital(name: string) {
-    if (name.includes(", "))
-        return name.split(", ").map(x => x.at(0)?.toUpperCase()).join("");
-    if (name.includes(","))
-        return name.split(",").map(x => x.at(0)?.toUpperCase()).join("");
-    if (name.includes(" "))
-        return name.split(" ").map(x => x.at(0)?.toUpperCase()).join("");
+    if (name.includes(", ")) {
+        return name.split(", ").map((x) => x.at(0)?.toUpperCase()).join("");
+    }
+    if (name.includes(",")) {
+        return name.split(",").map((x) => x.at(0)?.toUpperCase()).join("");
+    }
+    if (name.includes(" ")) {
+        return name.split(" ").map((x) => x.at(0)?.toUpperCase()).join("");
+    }
     return name.at(0)!.toUpperCase();
 }
 
 export function showProfilePicture(x: ProfileData) {
     return ProfilePicture(
-        x.profile.avatar ? Image({
-            type: "direct", source: async () => {
-                const blob = new Blob();
+        x.profile.avatar
+            ? Image({
+                type: "direct",
+                source: async () => {
+                    const blob = new Blob();
 
-                const data = await API.user.picture(x._id);
+                    const data = await API.user.picture(x._id);
 
-                if (data.status == "fulfilled") {
-                    return data.value;
-                }
+                    if (data.status == "fulfilled") {
+                        return data.value;
+                    }
 
-                return blob;
-            }
-        }, "Profile Picture") : Label(getNameInital(x.profile.username)),
-        x.profile.username
+                    return blob;
+                },
+            }, "Profile Picture")
+            : Label(getNameInital(x.profile.username)),
+        x.profile.username,
     );
 }

@@ -1,5 +1,5 @@
 import { API, LoadingSpinner } from "shared/mod.ts";
-import { Box, Button, ButtonStyle, CenterV, Checkbox, Custom, Empty, Horizontal, Label, SheetDialog, Spacer, Validate, Vertical, asState, createElement, css, getErrorMessage } from "webgen/mod.ts";
+import { asState, Box, Button, ButtonStyle, CenterV, Checkbox, createElement, css, Custom, Empty, getErrorMessage, Horizontal, Label, SheetDialog, Spacer, Validate, Vertical } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
 import reviewTexts from "../../data/reviewTexts.json" with { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
@@ -27,77 +27,86 @@ document.adoptedStyleSheets.push(css`
 
 const reviewResponse = [
     "Copyright bad",
-    "Malicious Activity"
+    "Malicious Activity",
 ];
 
-const rejectReasons = [ ReviewResponse.DeclineCopyright ];
+const rejectReasons = [ReviewResponse.DeclineCopyright];
 export const dialogState = asState({
-    drop: <Drop | undefined>undefined,
+    drop: <Drop | undefined> undefined,
     responseText: "",
-    validationState: <zod.ZodError | undefined>undefined,
+    validationState: <zod.ZodError | undefined> undefined,
 });
-export const ApproveDialog = SheetDialog(sheetStack, "Approve Drop",
-    dialogState.$drop.map(drop =>
+export const ApproveDialog = SheetDialog(
+    sheetStack,
+    "Approve Drop",
+    dialogState.$drop.map((drop) =>
         Box(
-            drop ? Vertical(
-                Box(
-                    Label("Email Response"),
-                    Custom((() => {
-                        const ele = createElement("textarea");
-                        ele.rows = 10;
-                        dialogState.responseText = reviewTexts.APPROVED.content.join("\n");
-                        ele.value = dialogState.responseText;
-                        ele.style.resize = "vertical";
-                        ele.oninput = () => {
-                            dialogState.responseText = ele.value;
-                        };
-                        return ele;
-                    })()),
-                )
-                    .addClass("winput", "grayscaled", "has-value", "textarea")
-                    .setMargin("0 0 .5rem"),
-                Label("Preview")
-                    .setMargin("0 0 0.5rem"),
-                dialogState.$responseText
-                    .map(() => clientRender(dropPatternMatching(dialogState.responseText, drop)))
-                    .asRefComponent(),
-                Horizontal(
-                    Box(dialogState.$validationState.map(error => error ? CenterV(
-                        Label(getErrorMessage(error))
-                            .addClass("error-message")
-                            .setMargin("0 0.5rem 0 0")
+            drop
+                ? Vertical(
+                    Box(
+                        Label("Email Response"),
+                        Custom((() => {
+                            const ele = createElement("textarea");
+                            ele.rows = 10;
+                            dialogState.responseText = reviewTexts.APPROVED.content.join("\n");
+                            ele.value = dialogState.responseText;
+                            ele.style.resize = "vertical";
+                            ele.oninput = () => {
+                                dialogState.responseText = ele.value;
+                            };
+                            return ele;
+                        })()),
                     )
-                        : Empty()).asRefComponent()),
-                    Spacer(),
-                    Button("Cancel").setStyle(ButtonStyle.Secondary).onClick(() => ApproveDialog.close()),
-                    Button("Submit").onPromiseClick(async () => {
-                        const { data, error, validate } = Validate(
-                            dialogState,
-                            zod.object({
-                                responseText: zod.string().refine(x => render(dropPatternMatching(x, drop)).errors.length == 0, { message: "Invalid MJML" })
-                            })
-                        );
+                        .addClass("winput", "grayscaled", "has-value", "textarea")
+                        .setMargin("0 0 .5rem"),
+                    Label("Preview")
+                        .setMargin("0 0 0.5rem"),
+                    dialogState.$responseText
+                        .map(() => clientRender(dropPatternMatching(dialogState.responseText, drop)))
+                        .asRefComponent(),
+                    Horizontal(
+                        Box(
+                            dialogState.$validationState.map((error) =>
+                                error
+                                    ? CenterV(
+                                        Label(getErrorMessage(error))
+                                            .addClass("error-message")
+                                            .setMargin("0 0.5rem 0 0"),
+                                    )
+                                    : Empty()
+                            ).asRefComponent(),
+                        ),
+                        Spacer(),
+                        Button("Cancel").setStyle(ButtonStyle.Secondary).onClick(() => ApproveDialog.close()),
+                        Button("Submit").onPromiseClick(async () => {
+                            const { data, error, validate } = Validate(
+                                dialogState,
+                                zod.object({
+                                    responseText: zod.string().refine((x) => render(dropPatternMatching(x, drop)).errors.length == 0, { message: "Invalid MJML" }),
+                                }),
+                            );
 
-                        validate();
-                        if (error.getValue()) {
-                            data.validationState = error.getValue();
-                            return;
-                        };
+                            validate();
+                            if (error.getValue()) {
+                                data.validationState = error.getValue();
+                                return;
+                            }
 
-                        await API.music.id(drop._id).review.post({
-                            title: dropPatternMatching(reviewTexts.APPROVED.header, drop),
-                            reason: [ "APPROVED" ],
-                            body: rawTemplate(dropPatternMatching(dialogState.responseText, drop)),
-                            denyEdits: false
-                        });
+                            await API.music.id(drop._id).review.post({
+                                title: dropPatternMatching(reviewTexts.APPROVED.header, drop),
+                                reason: ["APPROVED"],
+                                body: rawTemplate(dropPatternMatching(dialogState.responseText, drop)),
+                                denyEdits: false,
+                            });
 
-                        ApproveDialog.close();
-                    })
-                ).setGap()
-            ) : LoadingSpinner()
+                            ApproveDialog.close();
+                        }),
+                    ).setGap(),
+                )
+                : LoadingSpinner(),
         )
             .setMargin("0 0 var(--gap)")
-    ).asRefComponent()
+    ).asRefComponent(),
 );
 
 const rejectState = asState({
@@ -106,39 +115,45 @@ const rejectState = asState({
     denyEdits: false,
     responseText: "",
 });
-export const DeclineDialog = SheetDialog(sheetStack, "Decline Drop",
-    rejectState.$page.map(page => {
-        if (page == 0)
+export const DeclineDialog = SheetDialog(
+    sheetStack,
+    "Decline Drop",
+    rejectState.$page.map((page) => {
+        if (page == 0) {
             return Vertical(
                 Label("Choose Rejection Reasons"),
                 ...rejectReasons
                     .map((rsp) =>
                         Horizontal(
                             Checkbox(rejectState.respones.includes(rsp)).onClick(() => rejectState.respones.includes(rsp) ? rejectState.respones.splice(rejectState.respones.indexOf(rsp), 1) : rejectState.respones.push(rsp)),
-                            Label(reviewResponse[ rejectReasons.indexOf(rsp) ]),
-                            Spacer()
+                            Label(reviewResponse[rejectReasons.indexOf(rsp)]),
+                            Spacer(),
                         )
                             .setMargin("0.5rem 0")
                             .setGap("0.5rem")
                             .setAlignItems("center")
                     ),
-
                 Label("Choose Rejection Method"),
                 Horizontal(
                     Checkbox(rejectState.denyEdits).onClick(() => rejectState.denyEdits = !rejectState.denyEdits),
                     Label("Reject (Deny Edits)"),
-                    Spacer()
+                    Spacer(),
                 )
                     .setMargin("0.5rem 0")
                     .setGap("0.5rem")
                     .setAlignItems("center"),
                 Horizontal(
-                    Box(dialogState.$validationState.map(error => error ? CenterV(
-                        Label(getErrorMessage(error))
-                            .addClass("error-message")
-                            .setMargin("0 0.5rem 0 0")
-                    )
-                        : Empty()).asRefComponent()),
+                    Box(
+                        dialogState.$validationState.map((error) =>
+                            error
+                                ? CenterV(
+                                    Label(getErrorMessage(error))
+                                        .addClass("error-message")
+                                        .setMargin("0 0.5rem 0 0"),
+                                )
+                                : Empty()
+                        ).asRefComponent(),
+                    ),
                     Spacer(),
                     Button("Cancel").setStyle(ButtonStyle.Secondary).onClick(() => DeclineDialog.close()),
                     Button("Next").onClick(() => {
@@ -146,24 +161,27 @@ export const DeclineDialog = SheetDialog(sheetStack, "Decline Drop",
                             rejectState,
                             zod.object({
                                 respones: zod.string().array().min(1),
-                                denyEdits: zod.boolean()
-                            })
+                                denyEdits: zod.boolean(),
+                            }),
                         );
 
                         validate();
                         if (error.getValue()) return dialogState.validationState = error.getValue();
 
                         rejectState.responseText = reviewTexts.REJECTED.content.join("\n")
-                            .replace("{{REASON}}", (rejectState.respones as Array<keyof typeof reviewTexts.REJECTED.reasonMap>)
-                                .map(x => reviewTexts.REJECTED.reasonMap[ x ])
-                                .filter(x => x)
-                                .join(""));
+                            .replace(
+                                "{{REASON}}",
+                                (rejectState.respones as Array<keyof typeof reviewTexts.REJECTED.reasonMap>)
+                                    .map((x) => reviewTexts.REJECTED.reasonMap[x])
+                                    .filter((x) => x)
+                                    .join(""),
+                            );
 
                         rejectState.page++;
-                    })
-                ).setGap()
+                    }),
+                ).setGap(),
             );
-        else if (page == 1)
+        } else if (page == 1) {
             return Vertical(
                 Box(
                     Label("Email Response"),
@@ -186,20 +204,25 @@ export const DeclineDialog = SheetDialog(sheetStack, "Decline Drop",
                     .map(() => clientRender(dropPatternMatching(rejectState.responseText, dialogState.drop!)))
                     .asRefComponent(),
                 Horizontal(
-                    Box(dialogState.$validationState.map(error => error ? CenterV(
-                        Label(getErrorMessage(error))
-                            .addClass("error-message")
-                            .setMargin("0 0.5rem 0 0")
-                    )
-                        : Empty()).asRefComponent()),
+                    Box(
+                        dialogState.$validationState.map((error) =>
+                            error
+                                ? CenterV(
+                                    Label(getErrorMessage(error))
+                                        .addClass("error-message")
+                                        .setMargin("0 0.5rem 0 0"),
+                                )
+                                : Empty()
+                        ).asRefComponent(),
+                    ),
                     Spacer(),
                     Button("Cancel").setStyle(ButtonStyle.Secondary).onClick(() => DeclineDialog.close()),
                     Button("Submit").onPromiseClick(async () => {
                         const { error, validate } = Validate(
                             rejectState,
                             zod.object({
-                                responseText: zod.string().refine(x => render(dropPatternMatching(x, dialogState.drop!)).errors.length == 0, { message: "Invalid MJML" })
-                            })
+                                responseText: zod.string().refine((x) => render(dropPatternMatching(x, dialogState.drop!)).errors.length == 0, { message: "Invalid MJML" }),
+                            }),
                         );
 
                         validate();
@@ -208,19 +231,20 @@ export const DeclineDialog = SheetDialog(sheetStack, "Decline Drop",
                             return;
                         }
 
-                        const reason = <ReviewResponse[]>rejectState.respones;
+                        const reason = <ReviewResponse[]> rejectState.respones;
 
                         await API.music.id(dialogState.drop!._id).review.post({
                             title: dropPatternMatching(reviewTexts.REJECTED.header, dialogState.drop!),
                             reason,
                             body: rawTemplate(dropPatternMatching(rejectState.responseText, dialogState.drop!)),
-                            denyEdits: rejectState.denyEdits
+                            denyEdits: rejectState.denyEdits,
                         });
 
                         DeclineDialog.close();
-                    })
-                ).setGap()
+                    }),
+                ).setGap(),
             );
+        }
         return Box();
-    }).asRefComponent()
+    }).asRefComponent(),
 );

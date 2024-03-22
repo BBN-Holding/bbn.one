@@ -4,7 +4,7 @@ export function DisconnectedScreen(): Component {
     return Grid(
         Grid(
             Label("Connecting to server...", "h1"),
-            Label("Waiting for server availability")
-        ).setJustifyItems("center")
+            Label("Waiting for server availability"),
+        ).setJustifyItems("center"),
     ).addClass("disconnected-screen");
 }

@@ -5,7 +5,7 @@ export const labels = {
     "contact-support": "Contact Support",
     maintenance: "Maintenance",
     disabled: "Disabled",
-} satisfies Record<Server[ "labels" ][ number ], string>;
+} satisfies Record<Server["labels"][number], string>;
 
 export const auditLabels = {
     "server-create": "Server Created",

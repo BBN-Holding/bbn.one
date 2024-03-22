@@ -1,7 +1,7 @@
 import { asRef, Component, Reference } from "webgen/mod.ts";
 import { CachedPages } from "webgen/network.ts";
 
-export function Loader<T extends object>(object: CachedPages<T>, handler: (options: { items: Reference<T[]>; hasMore: Reference<boolean>; loadMore: () => Promise<void>; isLoading: Reference<boolean>; }) => Component) {
+export function Loader<T extends object>(object: CachedPages<T>, handler: (options: { items: Reference<T[]>; hasMore: Reference<boolean>; loadMore: () => Promise<void>; isLoading: Reference<boolean> }) => Component) {
     const isLoading = asRef<boolean>(false);
 
     const loadMore = async () => {
@@ -13,6 +13,6 @@ export function Loader<T extends object>(object: CachedPages<T>, handler: (optio
         items: object.items,
         hasMore: object.hasMore,
         loadMore,
-        isLoading
+        isLoading,
     });
 }

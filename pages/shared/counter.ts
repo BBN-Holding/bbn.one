@@ -21,24 +21,23 @@ export function Counter(value: Reference<number>) {
 
     const counter = asRef(Box());
 
-
     function findDifferenceAndSplit(str1: string, str2: string) {
         const minLength = Math.min(str1.length, str2.length);
         let diffIndex = -1;
 
         for (let i = 0; i < minLength; i++) {
-            if (str1[ i ] !== str2[ i ]) {
+            if (str1[i] !== str2[i]) {
                 diffIndex = i;
                 break;
             }
         }
 
         if (diffIndex === -1 && str1.length === str2.length) {
-            return { unchangedPart: str1, changedPart: '' };
+            return { unchangedPart: str1, changedPart: "" };
         } else if (diffIndex === -1) {
             return {
                 unchangedPart: str1.length < str2.length ? str1 : str2,
-                changedPart: str1.length < str2.length ? '' : str2.slice(str1.length),
+                changedPart: str1.length < str2.length ? "" : str2.slice(str1.length),
             };
         } else {
             return {

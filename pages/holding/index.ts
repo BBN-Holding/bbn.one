@@ -1,8 +1,8 @@
 import { Body, Box, Grid, Image, Label, LinkButton, Vertical, WebGen } from "webgen/mod.ts";
-import '../../assets/css/main.css';
+import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
-import './landing.css';
+import "./landing.css";
 import { data, streamingPool } from "./loading.ts";
 // Main
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
@@ -28,17 +28,17 @@ Body(Box(
         Box(
             Box().addClass("background-image"),
             Label("Your Journey,  our Mission.")
-                .setFontWeight("bold")
+                .setFontWeight("bold"),
         )
             .addClass("big-title"),
         Box(
             Label("BBN One", "h2"),
-            Label("Your all in one solution. Everything in “One” place.", "h3")
+            Label("Your all in one solution. Everything in “One” place.", "h3"),
         ).addClass("section"),
         Box(Box()).addClass("glowbs", "orange"),
         Grid(
             Box(
-                Image(bbnMusic, "An orange logo of BBN Music")
+                Image(bbnMusic, "An orange logo of BBN Music"),
             )
                 .setAttribute("data-tilt")
                 .setAttribute("data-tilt-glare")
@@ -48,20 +48,20 @@ Body(Box(
                 .onClick(() => location.href = "/music"),
             Box(
                 Image(bbnHosting, "An blue logo of BBN Hosting")
-                    .addClass("remove-text-clearance")
+                    .addClass("remove-text-clearance"),
             )
                 .setAttribute("data-tilt")
                 .setAttribute("data-tilt-glare")
                 .setAttribute("data-tilt-max-glare", "0.1")
                 .setAttribute("data-tilt-scale", "1.08")
                 .addClass("hosting", "service-card")
-                .onClick(() => location.href = "/hosting")
+                .onClick(() => location.href = "/hosting"),
         )
             .addClass("bbn-one-services")
             .setRawColumns("max-content max-content"),
         Box(
             Label("Grow now.", "h2"),
-            Label("Our BBN One platform is focused on building your projects.", "h3")
+            Label("Our BBN One platform is focused on building your projects.", "h3"),
         ).addClass("section"),
         Box(Box()).addClass("glowbs", "blue"),
         Grid(
@@ -69,19 +69,19 @@ Body(Box(
                 Counter(data.stats.$drops)
                     .addClass("title"),
                 Label("drops")
-                    .addClass("subtitle")
+                    .addClass("subtitle"),
             ),
             Grid(
                 Counter(data.stats.$servers)
                     .addClass("title"),
                 Label("servers")
-                    .addClass("subtitle")
+                    .addClass("subtitle"),
             ),
             Grid(
                 Counter(data.stats.$users)
                     .addClass("title"),
                 Label("users")
-                    .addClass("subtitle")
+                    .addClass("subtitle"),
             ),
         )
             .addClass("live-stats")
@@ -89,7 +89,7 @@ Body(Box(
         LinkButton("Join and grow these numbers!", "/hosting"),
         Box(
             Label("Other things we do", "h2"),
-            Label("Special goals? We are here for you.", "h3")
+            Label("Special goals? We are here for you.", "h3"),
         ).addClass("section"),
         Box(
             Image(bbnCard, "A logo from BBN Card"),
@@ -101,10 +101,8 @@ Body(Box(
     )
         .addClass("content")
         .setAlignItems("center"),
-
-    Footer()
+    Footer(),
 ));
-
 
 import("https://raw.githubusercontent.com/micku7zu/vanilla-tilt.js/master/dist/vanilla-tilt.min.js");
 await streamingPool();

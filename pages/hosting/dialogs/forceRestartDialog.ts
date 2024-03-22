@@ -3,7 +3,9 @@ import { Button, ButtonStyle, Color, Grid, Label, SheetDialog } from "webgen/mod
 import { sheetStack } from "../../_legacy/helper.ts";
 
 export const forceRestartDialog = (serverId: string) => {
-    const sheet = SheetDialog(sheetStack, "Hard Restart",
+    const sheet = SheetDialog(
+        sheetStack,
+        "Hard Restart",
         Grid(
             Label("Hard Restarting the Server could lead to data loss depending on the State of the Server. Use at your own risk."),
             Grid(
@@ -16,12 +18,12 @@ export const forceRestartDialog = (serverId: string) => {
                         await API.hosting.serverId(serverId).forcerestart()
                             .then(stupidErrorAlert);
                         location.reload();
-                    })
+                    }),
             )
                 .setGap(".5rem")
                 .setJustifyItems("end")
-                .setRawColumns("auto max-content")
-        ).setGap()
+                .setRawColumns("auto max-content"),
+        ).setGap(),
     );
     return sheet;
 };

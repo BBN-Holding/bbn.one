@@ -1,11 +1,11 @@
 import { API, LoadingSpinner } from "shared/mod.ts";
-import { Box, Color, Component, IconButton, MIcon, StateHandler, isMobile } from "webgen/mod.ts";
+import { Box, Color, Component, IconButton, isMobile, MIcon, StateHandler } from "webgen/mod.ts";
 import { Server, SidecarResponse } from "../../../spec/music.ts";
 import { messageQueueSidecar, startSidecarConnection } from "../loading.ts";
 import { StateActions } from "../types.ts";
 
 export function ChangeStateButton(server: StateHandler<Server>): Component {
-    return server.$state.map((state) => ((<StateActions>{
+    return server.$state.map((state) => ((<StateActions> {
         "offline": IconButton(MIcon("play_arrow"), "delete")
             .addClass("color-green")
             .setColor(Color.Colored)
@@ -17,9 +17,9 @@ export function ChangeStateButton(server: StateHandler<Server>): Component {
                 messageQueueSidecar.push({
                     request: {
                         type: "state",
-                        state: "start"
+                        state: "start",
                     },
-                    response // Maybe we can use this to show a different loading spinner until the server is starting
+                    response, // Maybe we can use this to show a different loading spinner until the server is starting
                 });
             }),
         // TODO: make this better (labels or something)
@@ -36,12 +36,12 @@ export function ChangeStateButton(server: StateHandler<Server>): Component {
                 messageQueueSidecar.push({
                     request: {
                         type: "state",
-                        state: "stop"
+                        state: "stop",
                     },
-                    response
+                    response,
                 });
-            })
-    })[ state ] ?? Box()))
+            }),
+    })[state] ?? Box()))
         .asRefComponent()
-        .addClass(isMobile.map(it => it ? "small" : "normal"), "icon-buttons-list", "action-list");
+        .addClass(isMobile.map((it) => it ? "small" : "normal"), "icon-buttons-list", "action-list");
 }

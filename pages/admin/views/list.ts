@@ -20,12 +20,14 @@ export function entryWallet(wallet: Wallet) {
 } */
 
 export function transcriptMenu(transcripts: External<Transcript[]> | "loading"): RenderItem[] {
-    if (transcripts === "loading" || transcripts.status !== 'fulfilled') return [ {
-        title: "Loading...",
-        id: "loading",
-    } ];
+    if (transcripts === "loading" || transcripts.status !== "fulfilled") {
+        return [{
+            title: "Loading...",
+            id: "loading",
+        }];
+    }
     const data = transcripts.value;
-    return data.map(transcript => ({
+    return data.map((transcript) => ({
         title: `${transcript.with}`,
         id: transcript._id,
         children: [
@@ -33,12 +35,12 @@ export function transcriptMenu(transcripts: External<Transcript[]> | "loading"):
                 title: `Close${transcript.with}`,
                 id: "close",
             },
-            ...transcript.messages.map((x, i) => (<RenderItem>{
+            ...transcript.messages.map((x, i) => (<RenderItem> {
                 id: i.toString(),
                 title: `${x.author}`,
-                subtitle: x.content
-            }))
-        ]
+                subtitle: x.content,
+            })),
+        ],
     }));
 }
 
@@ -48,56 +50,64 @@ export function entryOAuth(app: OAuthApp) {
         subtitle: app._id,
     })
         .addPrefix(Cache(`appicon-${app._id}`, () => API.admin.files.download(app.icon), (type, val) => {
-            const imageSource = type == "loaded" && app.icon !== "" && val && val.status == "fulfilled"
-                ? Image({ type: "direct", source: () => Promise.resolve(val.value) }, "O-Auth Icon")
-                : Image(templateArtwork, "A Placeholder Artwork.");
+            const imageSource = type == "loaded" && app.icon !== "" && val && val.status == "fulfilled" ? Image({ type: "direct", source: () => Promise.resolve(val.value) }, "O-Auth Icon") : Image(templateArtwork, "A Placeholder Artwork.");
             return Box(imageSource)
                 .addClass("image-square");
         }))
-        .addSuffix(IconButton(MIcon("delete"), "delete").setColor(Color.Critical).onClick(() => {
-            API.oauth.delete(app._id).then(async () => state.oauth = await API.oauth.list());
-        }))
-        .addSuffix(Button("View").onClick(() => {
-            oAuthViewDialog(app).open();
-        }))
+        .addSuffix(
+            IconButton(MIcon("delete"), "delete").setColor(Color.Critical).onClick(() => {
+                API.oauth.delete(app._id).then(async () => state.oauth = await API.oauth.list());
+            }),
+        )
+        .addSuffix(
+            Button("View").onClick(() => {
+                oAuthViewDialog(app).open();
+            }),
+        )
         .addClass("small");
 }
 
-const oAuthViewDialog = (oauth: OAuthApp) => SheetDialog(sheetStack, "OAuth App Details",
-    Vertical(
-        Grid(
-            TextInput("text", "Name").setValue(oauth.name).setColor(Color.Disabled),
-            TextInput("text", "Client ID").setValue(oauth._id).setColor(Color.Disabled),
-            TextInput("text", "Client Secret").setValue(oauth.secret).setColor(Color.Disabled),
-            TextInput("text", "Redirect URI").setValue(oauth.redirect.join(",")).setColor(Color.Disabled),
+const oAuthViewDialog = (oauth: OAuthApp) =>
+    SheetDialog(
+        sheetStack,
+        "OAuth App Details",
+        Vertical(
+            Grid(
+                TextInput("text", "Name").setValue(oauth.name).setColor(Color.Disabled),
+                TextInput("text", "Client ID").setValue(oauth._id).setColor(Color.Disabled),
+                TextInput("text", "Client Secret").setValue(oauth.secret).setColor(Color.Disabled),
+                TextInput("text", "Redirect URI").setValue(oauth.redirect.join(",")).setColor(Color.Disabled),
+            ),
+            Horizontal(
+                Spacer(),
+                Button("Close").onClick(() => {
+                    oAuthViewDialog(oauth).close();
+                }),
+            ),
         ),
-        Horizontal(
-            Spacer(),
-            Button("Close").onClick(() => {
-                oAuthViewDialog(oauth).close();
-            })
-        )
-    )
-);
+    );
 
 export function entryFile(file: File) {
     return Entry({
         title: file.filename,
         subtitle: file._id,
     }).addPrefix(Cache(`file-icon-${file._id}`, () => loadFilePreview(file._id), (type, val) => {
-        if (type == "cache")
+        if (type == "cache") {
             return Image({ type: "loading" }, "Loading");
-        const imageSource = type == "loaded" && file.metadata.type.startsWith("image/") && val
-            ? Image({ type: "direct", source: () => Promise.resolve(val) }, "A Song Artwork")
-            : Image(templateArtwork, "A Placeholder Artwork.");
+        }
+        const imageSource = type == "loaded" && file.metadata.type.startsWith("image/") && val ? Image({ type: "direct", source: () => Promise.resolve(val) }, "A Song Artwork") : Image(templateArtwork, "A Placeholder Artwork.");
         return Box(imageSource)
             .addClass("image-square");
-    })).addSuffix(IconButton(MIcon("download"), "download").onClick(async () => {
-        const blob = await API.admin.files.download(file._id).then(stupidErrorAlert);
-        saveBlob(blob, file.filename);
-    })).addSuffix(IconButton(MIcon("delete"), "delete").setColor(Color.Critical).onClick(() => {
-        API.admin.files.delete(file._id);
-    }));
+    })).addSuffix(
+        IconButton(MIcon("download"), "download").onClick(async () => {
+            const blob = await API.admin.files.download(file._id).then(stupidErrorAlert);
+            saveBlob(blob, file.filename);
+        }),
+    ).addSuffix(
+        IconButton(MIcon("delete"), "delete").setColor(Color.Critical).onClick(() => {
+            API.admin.files.delete(file._id);
+        }),
+    );
 }
 
 export async function loadFilePreview(id: string) {

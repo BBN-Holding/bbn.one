@@ -1,7 +1,7 @@
 import { LoginRequest, MessageType, SyncResponse, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API, ProgressTracker } from "shared/mod.ts";
 import { decodeBase64, encodeBase64 } from "std/encoding/base64.ts";
-import { Reference, asRef, asState, lazyInit } from "webgen/mod.ts";
+import { asRef, asState, lazyInit, Reference } from "webgen/mod.ts";
 import { createStableWebSocket } from "webgen/network.ts";
 import { Deferred, InstalledAddon, Server, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../_legacy/helper.ts";
@@ -21,7 +21,7 @@ export async function refreshState() {
 export const liveUpdates = lazyInit(async () => {
     let firstTime = true;
     const connection = await createStableWebSocket({
-        url: API.WS_URL
+        url: API.WS_URL,
     }, {
         onReconnect: () => {
             firstTime = true;
@@ -30,47 +30,53 @@ export const liveUpdates = lazyInit(async () => {
             if (typeof msg !== "string") return;
             const json = JSON.parse(msg);
             if (json.login === "require authentication") {
-                tokens.$accessToken.listen((val) => val && connection.send(JSON.stringify(<LoginRequest>{
-                    action: MessageType.Login,
-                    type: "client",
-                    token: API.getToken(),
-                    id: activeUser.id
-                })));
+                tokens.$accessToken.listen((val) =>
+                    val && connection.send(JSON.stringify(
+                        <LoginRequest> {
+                            action: MessageType.Login,
+                            type: "client",
+                            token: API.getToken(),
+                            id: activeUser.id,
+                        },
+                    ))
+                );
             }
             if (json.login === true && firstTime === true) {
                 firstTime = false;
-                connection.send(JSON.stringify(<TriggerRequest>{
-                    action: "trigger",
-                    type: "@bbn/hosting/list",
-                    auth: {
-                        token: API.getToken(),
-                        id: activeUser.id
+                connection.send(JSON.stringify(
+                    <TriggerRequest> {
+                        action: "trigger",
+                        type: "@bbn/hosting/list",
+                        auth: {
+                            token: API.getToken(),
+                            id: activeUser.id,
+                        },
+                        data: {
+                            id: activeUser.id,
+                        },
                     },
-                    data: {
-                        id: activeUser.id
-                    }
-                }));
+                ));
             }
             if (json.type !== "sync") {
                 return;
             }
-            const { data: { servers: _servers } } = <SyncResponse>json.data;
+            const { data: { servers: _servers } } = <SyncResponse> json.data;
             const servers = JSON.parse(_servers) as Server[];
             for (const server of servers) {
-                const index = state.servers.findIndex(x => x._id == server._id);
+                const index = state.servers.findIndex((x) => x._id == server._id);
                 if (index === -1) return; // handle this state
-                for (const [ key, value ] of Object.entries(server)) {
+                for (const [key, value] of Object.entries(server)) {
                     // @ts-ignore unsafe af
-                    state.servers[ index ][ key ] = value;
+                    state.servers[index][key] = value;
                 }
             }
-        }
+        },
     });
 });
 
-export let messageQueueSidecar = <{ request: SidecarRequest, response: Deferred<SidecarResponse>; }[]>[];
+export let messageQueueSidecar = <{ request: SidecarRequest; response: Deferred<SidecarResponse> }[]> [];
 export const isSidecarConnect = asRef(false);
-export const sidecarDetailsSource = asRef((_data: SidecarResponse | "clear") => { });
+export const sidecarDetailsSource = asRef((_data: SidecarResponse | "clear") => {});
 export let closeSignal = Promise.withResolvers<void>();
 
 export function stopSidecarConnection() {
@@ -85,15 +91,15 @@ export async function startSidecarConnection(id: string) {
     // Prepare Connection
     const url = new URL(`wss://bbn.one/api/@bbn/sidecar/${id}/ws`);
     url.searchParams.set("TOKEN", API.getToken());
-    const syncedResponses = new Set<{ request: SidecarRequest, response: Deferred<SidecarResponse>; }>();
+    const syncedResponses = new Set<{ request: SidecarRequest; response: Deferred<SidecarResponse> }>();
 
     // Start Conneciton
     const connection = await createStableWebSocket({
-        url: url.toString()
+        url: url.toString(),
     }, {
         onMessage: (event) => {
             if (typeof event !== "string") return;
-            const msg = <SidecarResponse>JSON.parse(event);
+            const msg = <SidecarResponse> JSON.parse(event);
             for (const iterator of syncedResponses) {
                 if (
                     (iterator.request.type === "uninstall-addon" && (msg.type === "uninstall-addon" || msg.type === "error")) ||
@@ -105,8 +111,8 @@ export async function startSidecarConnection(id: string) {
                             (iterator.request.type === "read" && (msg.type === "read" || msg.type === "error")) ||
                             (iterator.request.type === "next-chunk" && (msg.type === "read" || msg.type === "error")) ||
                             (iterator.request.type === "list" && msg.type === "list")
-                        )
-                        && iterator.request.path == msg.path
+                        ) &&
+                        iterator.request.path == msg.path
                     )
                 ) {
                     syncedResponses.delete(iterator);
@@ -115,12 +121,12 @@ export async function startSidecarConnection(id: string) {
                 }
             }
             if (msg.type === "state") {
-                const index = state.servers.findIndex(x => x._id == id);
+                const index = state.servers.findIndex((x) => x._id == id);
                 if (index === -1) return; // handle this state
-                state.servers[ index ].state = msg.state;
+                state.servers[index].state = msg.state;
             }
             sidecarDetailsSource.getValue()?.(msg);
-        }
+        },
     });
     // Stable WebSocket Connection
     const watcher = setInterval(() => {
@@ -143,9 +149,9 @@ export async function listFiles(path: string) {
     messageQueueSidecar.push({
         request: {
             type: "list",
-            path
+            path,
         },
-        response
+        response,
     });
 
     const data = await response.promise;
@@ -162,9 +168,9 @@ export function downloadFile(path: string) {
             messageQueueSidecar.push({
                 request: {
                     type: firstTime ? "read" : "next-chunk",
-                    path
+                    path,
                 },
-                response: nextChunk
+                response: nextChunk,
             });
             const response = await nextChunk.promise;
             if (response.type === "error") {
@@ -178,7 +184,7 @@ export function downloadFile(path: string) {
                 controller.close();
             }
             firstTime = false;
-        }
+        },
     });
 }
 export async function uploadFile(path: string, file: File, progress: Reference<number>) {
@@ -186,9 +192,9 @@ export async function uploadFile(path: string, file: File, progress: Reference<n
     messageQueueSidecar.push({
         request: {
             type: "write",
-            path
+            path,
         },
-        response: check
+        response: check,
     });
     await check.promise;
 
@@ -200,9 +206,9 @@ export async function uploadFile(path: string, file: File, progress: Reference<n
             request: {
                 type: "write",
                 path,
-                chunk: encodeBase64(iterator)
+                chunk: encodeBase64(iterator),
             },
-            response: nextChunk
+            response: nextChunk,
         });
         await nextChunk.promise;
     }
@@ -214,9 +220,9 @@ export async function installAddon(addons: InstalledAddon[]) {
     messageQueueSidecar.push({
         request: {
             type: "install-addons",
-            addons
+            addons,
         },
-        response
+        response,
     });
 
     const data = await response.promise;
@@ -231,9 +237,9 @@ export async function uninstallAddon(projectId: string) {
     messageQueueSidecar.push({
         request: {
             type: "uninstall-addon",
-            projectId
+            projectId,
         },
-        response
+        response,
     });
 
     const data = await response.promise;
@@ -243,13 +249,13 @@ export async function uninstallAddon(projectId: string) {
     return false;
 }
 
-export async function getInstalledAddons(): Promise<{ addon: InstalledAddon, dependencies: InstalledAddon[]; }[]> {
+export async function getInstalledAddons(): Promise<{ addon: InstalledAddon; dependencies: InstalledAddon[] }[]> {
     const response = Promise.withResolvers<SidecarResponse>();
     messageQueueSidecar.push({
         request: {
-            type: "installed-addons"
+            type: "installed-addons",
         },
-        response
+        response,
     });
 
     const data = await response.promise;

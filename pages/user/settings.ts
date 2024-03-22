@@ -1,9 +1,9 @@
 import { API, Navigation } from "shared/mod.ts";
-import { Body, Box, Button, CenterV, Empty, Grid, Horizontal, Label, Spacer, TextInput, Validate, Vertical, WebGen, asState, getErrorMessage, isMobile } from "webgen/mod.ts";
+import { asState, Body, Box, Button, CenterV, Empty, getErrorMessage, Grid, Horizontal, isMobile, Label, Spacer, TextInput, Validate, Vertical, WebGen } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
-import '../../assets/css/main.css';
+import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
-import { RegisterAuthRefresh, logOut } from "../_legacy/helper.ts";
+import { logOut, RegisterAuthRefresh } from "../_legacy/helper.ts";
 import { ChangePersonal } from "./settings.personal.ts";
 
 WebGen();
@@ -11,9 +11,9 @@ WebGen();
 await RegisterAuthRefresh();
 
 const state = asState({
-    newPassword: <string | undefined>undefined,
-    verifyNewPassword: <string | undefined>undefined,
-    validationState: <zod.ZodError | undefined>undefined,
+    newPassword: <string | undefined> undefined,
+    verifyNewPassword: <string | undefined> undefined,
+    validationState: <zod.ZodError | undefined> undefined,
 });
 
 const settingsMenu = Navigation({
@@ -24,8 +24,8 @@ const settingsMenu = Navigation({
             title: "Personal",
             subtitle: "Username, Email, Profile Picture...",
             children: [
-                ChangePersonal()
-            ]
+                ChangePersonal(),
+            ],
         },
         {
             id: "change-password",
@@ -36,27 +36,32 @@ const settingsMenu = Navigation({
                         { width: 2 },
                         Vertical(
                             TextInput("password", "New Password").sync(state, "newPassword"),
-                            TextInput("password", "Verify New Password").sync(state, "verifyNewPassword")
-                        ).setGap("20px")
+                            TextInput("password", "Verify New Password").sync(state, "verifyNewPassword"),
+                        ).setGap("20px"),
                     ])
                         .setDynamicColumns(1, "12rem")
                         .setJustifyContent("center")
                         .setGap("15px"),
                     Horizontal(
                         Spacer(),
-                        Box(state.$validationState.map(error => error ? CenterV(
-                            Label(getErrorMessage(error))
-                                .addClass("error-message")
-                                .setMargin("0 0.5rem 0 0")
-                        )
-                            : Empty()).asRefComponent()),
+                        Box(
+                            state.$validationState.map((error) =>
+                                error
+                                    ? CenterV(
+                                        Label(getErrorMessage(error))
+                                            .addClass("error-message")
+                                            .setMargin("0 0.5rem 0 0"),
+                                    )
+                                    : Empty()
+                            ).asRefComponent(),
+                        ),
                         Button("Save").onClick(async () => {
                             const { error, validate } = Validate(
                                 state,
                                 zod.object({
                                     newPassword: zod.string({ invalid_type_error: "New password is missing" }).min(4),
-                                    verifyNewPassword: zod.string({ invalid_type_error: "Verify New password is missing" }).min(4).refine(val => val == state.newPassword, "Your new password didn't match")
-                                })
+                                    verifyNewPassword: zod.string({ invalid_type_error: "Verify New password is missing" }).min(4).refine((val) => val == state.newPassword, "Your new password didn't match"),
+                                }),
                             );
 
                             const data = validate();
@@ -64,9 +69,10 @@ const settingsMenu = Navigation({
                             if (data) await API.user.setMe.post({ password: data.newPassword });
                             logOut();
                             state.validationState = undefined;
-                        })),
+                        }),
+                    ),
                 ).setGap("20px"),
-            ]
+            ],
         },
         // {
         //     id: "passkeys",
@@ -131,14 +137,14 @@ const settingsMenu = Navigation({
         {
             id: "logout",
             title: "Logout",
-            clickHandler: () => logOut()
-        }
-    ]
+            clickHandler: () => logOut(),
+        },
+    ],
 }).addClass(
-    isMobile.map(mobile => mobile ? "mobile-navigation" : "navigation"),
-    "limited-width"
+    isMobile.map((mobile) => mobile ? "mobile-navigation" : "navigation"),
+    "limited-width",
 );
 Body(Vertical(
     DynaNavigation("Settings"),
-    settingsMenu
+    settingsMenu,
 ));

@@ -15,16 +15,16 @@ export const droppingFileHandler = async (files: ReadableStream<FileEntry>, coun
         const progressTracker = asRef(0);
         uploadingFiles.setValue({
             ...uploadingFiles.getValue(),
-            [ `${currentPath}${uploadingPath.path}` ]: <RemotePath>{
+            [`${currentPath}${uploadingPath.path}`]: <RemotePath> {
                 uploadingRatio: progressTracker,
                 fileMimeType: `${uploadingPath.file.type};`,
                 lastModified: uploadingPath.file.lastModified,
                 size: uploadingPath.file.size,
                 name: uploadingPath.file.name,
-            }
+            },
         });
         await uploadFile(currentPath + uploadingPath.path, uploadingPath.file, progressTracker);
-        uploadingFiles.setValue(Object.fromEntries(Object.entries(uploadingFiles.getValue()).filter(([ path ]) => path != `${currentPath}${uploadingPath.path}`)));
+        uploadingFiles.setValue(Object.fromEntries(Object.entries(uploadingFiles.getValue()).filter(([path]) => path != `${currentPath}${uploadingPath.path}`)));
     }
     loading.setValue(true);
     listFiles(path.getValue()).finally(() => loading.setValue(false));

@@ -5,7 +5,7 @@ const DAY = 24 * HOUR;
 
 function formatTime(duration: number): string {
     if (duration < 5 * SECOND) {
-        return 'now';
+        return "now";
     } else if (duration < MINUTE) {
         return `${Math.floor(duration / SECOND)}s`;
     } else if (duration < 20 * MINUTE) {

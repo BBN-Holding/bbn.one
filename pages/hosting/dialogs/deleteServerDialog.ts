@@ -3,7 +3,9 @@ import { Button, ButtonStyle, Color, Grid, Label, SheetDialog } from "webgen/mod
 import { sheetStack } from "../../_legacy/helper.ts";
 
 export const deleteServerDialog = (serverId: string) => {
-    const sheet = SheetDialog(sheetStack, "Delete Server",
+    const sheet = SheetDialog(
+        sheetStack,
+        "Delete Server",
         Grid(
             Label("Deleting this Server will result in data loss.\nAfter this point there is no going back."),
             Grid(
@@ -14,12 +16,12 @@ export const deleteServerDialog = (serverId: string) => {
                     await API.hosting.serverId(serverId).delete()
                         .then(stupidErrorAlert);
                     location.href = "/hosting";
-                })
+                }),
             )
                 .setGap(".5rem")
                 .setJustifyItems("end")
-                .setRawColumns("auto max-content")
-        ).setGap()
+                .setRawColumns("auto max-content"),
+        ).setGap(),
     );
     return sheet;
 };

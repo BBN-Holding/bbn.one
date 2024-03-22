@@ -9,10 +9,11 @@ export async function loginUser() {
         assert(state.email && state.password, "Missing Email or Password");
         const rsp = await API.auth.email.post({
             email: state.email,
-            password: state.password
+            password: state.password,
         });
-        if (rsp.status == "rejected")
+        if (rsp.status == "rejected") {
             throw rsp.reason;
+        }
 
         await logIn(rsp.value);
         gotoGoal();
@@ -26,16 +27,17 @@ export async function registerUser() {
         const { name, email, password } = {
             email: state.email ?? "",
             password: state.password ?? "",
-            name: state.name ?? ""
+            name: state.name ?? "",
         };
         assert(name && email && password, "Missing fields");
         const rsp = await API.auth.register.post({
             name,
             email,
-            password
+            password,
         });
-        if (rsp.status == "rejected")
+        if (rsp.status == "rejected") {
             throw rsp.reason;
+        }
 
         await logIn(rsp.value);
         gotoGoal();
@@ -44,10 +46,10 @@ export async function registerUser() {
     }
 }
 
-export async function logIn(data: { token: string; }) {
+export async function logIn(data: { token: string }) {
     const access = await API.auth.refreshAccessToken.post(data.token).then(stupidErrorAlert);
-    localStorage[ "access-token" ] = access.token;
-    localStorage[ "refresh-token" ] = data.token;
+    localStorage["access-token"] = access.token;
+    localStorage["refresh-token"] = data.token;
 }
 
 export async function handleStateChange() {
@@ -55,29 +57,32 @@ export async function handleStateChange() {
     const params = {
         token: para.get("token"),
         type: para.get("type"),
-        code: para.get("code")
+        code: para.get("code"),
     };
 
-    if (params.type && [ "google", "discord", "microsoft" ].includes(params.type) && params.code) {
+    if (params.type && ["google", "discord", "microsoft"].includes(params.type) && params.code) {
         const rsp = await API.auth.oauth.post(params.type, params.code);
-        if (rsp.status === "rejected")
+        if (rsp.status === "rejected") {
             return state.error = displayError(rsp.reason);
+        }
         await logIn(rsp.value);
         gotoGoal();
         return;
     }
     if (params.type == "reset-password" && params.token) {
         const rsp = await API.auth.fromUserInteraction.get(params.token);
-        if (rsp.status === "rejected")
+        if (rsp.status === "rejected") {
             return state.error = displayError(rsp.reason);
+        }
         await logIn(rsp.value);
         gotoGoal();
         return;
     }
     if (params.type == "verify-email" && params.token) {
         const rsp = await API.user.mail.validate.post(params.token);
-        if (rsp.status === "rejected")
+        if (rsp.status === "rejected") {
             return state.error = displayError(rsp.reason);
+        }
         await forceRefreshToken();
         await delay(1000);
         gotoGoal();

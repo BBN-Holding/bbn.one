@@ -8,11 +8,11 @@ globalThis.onunhandledrejection = (e) => {
 };
 
 globalThis.onerror = (e) => {
-    report(typeof e == "string" ? e : (<ErrorEvent>e).error);
+    report(typeof e == "string" ? e : (<ErrorEvent> e).error);
 };
 
 function report(msg: any) {
-    if ([ "ResizeObserver loop completed with undelivered notifications.", "ResizeObserver loop limit exceeded", "Uncaught aborting javascript here" ].includes(msg)) return;
+    if (["ResizeObserver loop completed with undelivered notifications.", "ResizeObserver loop limit exceeded", "Uncaught aborting javascript here"].includes(msg)) return;
 
     API.bugReport({
         type: "web-frontend",
@@ -22,9 +22,9 @@ function report(msg: any) {
         errorStack: (msg instanceof Error ? msg.stack : msg),
         browser: browser.name,
         // null safe version of getting the error
-        userId: localStorage[ "access-token" ]?.split(".").filter((_: string, i: number) => i <= 1).map((x: string) => JSON.parse(atob(x))).filter((_: string, i: number) => i == 1).map((it: any) => it.userId).join(),
+        userId: localStorage["access-token"]?.split(".").filter((_: string, i: number) => i <= 1).map((x: string) => JSON.parse(atob(x))).filter((_: string, i: number) => i == 1).map((it: any) => it.userId).join(),
         browserVersion: browser.version,
-        location: location.toString()
+        location: location.toString(),
     }).catch(() => {
         //
     });

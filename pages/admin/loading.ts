@@ -17,20 +17,20 @@ export async function refreshState() {
 }
 
 const urls = {
-    "manual": [ "admin/payouts/upload", '.xlsx' ],
-    "oauth": [ "oauth/applications/upload", 'image/*' ]
+    "manual": ["admin/payouts/upload", ".xlsx"],
+    "oauth": ["oauth/applications/upload", "image/*"],
 };
 export function upload(type: keyof typeof urls): Promise<string> {
-    const [ url, extension ] = urls[ type ];
-    return new Promise(resolve => {
+    const [url, extension] = urls[type];
+    return new Promise((resolve) => {
         UploadFilesDialog((list) => {
             StreamingUploadHandler(url, {
                 failure: () => alert("Your Upload has failed. Please try a different file or try again later"),
                 uploadDone: () => console.log("Upload done"),
                 credentials: () => API.getToken(),
                 backendResponse: (id) => resolve(id),
-                onUploadTick: async () => await delay(2)
-            }, list[ 0 ].file);
+                onUploadTick: async () => await delay(2),
+            }, list[0].file);
         }, extension);
     });
 }

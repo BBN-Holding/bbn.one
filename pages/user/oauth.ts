@@ -1,13 +1,13 @@
 import { Footer } from "shared/footer.ts";
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { Body, Box, Button, ButtonStyle, Color, Grid, Horizontal, Image, Label, MIcon, Spacer, Vertical, WebGen, asState, isMobile } from "webgen/mod.ts";
-import '../../assets/css/main.css';
+import { asState, Body, Box, Button, ButtonStyle, Color, Grid, Horizontal, Image, isMobile, Label, MIcon, Spacer, Vertical, WebGen } from "webgen/mod.ts";
+import "../../assets/css/main.css";
 import { dots, templateArtwork } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { OAuthScopes } from "../../spec/music.ts";
-import { ProfilePicture, RegisterAuthRefresh, activeUser, getNameInital, logOut } from "../_legacy/helper.ts";
-import './oauth.css';
-import './signin.css';
+import { activeUser, getNameInital, logOut, ProfilePicture, RegisterAuthRefresh } from "../_legacy/helper.ts";
+import "./oauth.css";
+import "./signin.css";
 
 await RegisterAuthRefresh();
 
@@ -36,11 +36,11 @@ WebGen();
 const state = asState({
     loaded: false,
     name: "",
-    icon: ""
+    icon: "",
 });
 
-const list = state.$loaded.map(loaded => {
-    if (loaded)
+const list = state.$loaded.map((loaded) => {
+    if (loaded) {
         return Box(
             Grid(
                 isMobile.map((small) =>
@@ -57,27 +57,28 @@ const list = state.$loaded.map(loaded => {
                         Image(state.icon || templateArtwork, "New Connection"),
                         Label(state.name || "---")
                             .setJustifySelf("center")
-                            .addClass("label-small")
+                            .addClass("label-small"),
                     ),
                     Image(dots, "dots"),
                     Grid(
                         ProfilePicture(
-                            activeUser.avatar ?
-                                Image(activeUser.avatar, "Profile Picture") : Label(getNameInital(activeUser.username)),
-                            activeUser.username
+                            activeUser.avatar ? Image(activeUser.avatar, "Profile Picture") : Label(getNameInital(activeUser.username)),
+                            activeUser.username,
                         ),
                         Label(activeUser.username)
                             .setJustifySelf("center")
-                            .addClass("label-small")
-                    )
+                            .addClass("label-small"),
+                    ),
                 ).addClass("linkage"),
                 Label("PERMISSIONS")
                     .addClass("label-small"),
                 Vertical(
-                    params.scope!.split(",").map((e) => Grid(
-                        MIcon("check"),
-                        Label(oauthScopes[ e as OAuthScopes ])
-                    ).addClass("permission"))
+                    params.scope!.split(",").map((e) =>
+                        Grid(
+                            MIcon("check"),
+                            Label(oauthScopes[e as OAuthScopes]),
+                        ).addClass("permission")
+                    ),
                 ),
                 Button("Connect")
                     .setWidth("100%")
@@ -91,11 +92,12 @@ const list = state.$loaded.map(loaded => {
                         .setColor(Color.Colored)
                         .onClick(() => logOut(location.pathname + location.search))
                         .addClass("link"),
-                    Spacer()
+                    Spacer(),
                 )
                     .setMargin("1rem 0 0"),
-            )
+            ),
         );
+    }
     return LoadingSpinner();
 }).asRefComponent();
 
@@ -103,7 +105,7 @@ Body(Vertical(
     DynaNavigation("Home"),
     Box().addClass("background-image"),
     list.addClass("auth-area"),
-    Footer()
+    Footer(),
 ));
 
 async function authorize() {

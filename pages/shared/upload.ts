@@ -1,12 +1,12 @@
 import { API } from "shared/mod.ts";
-import { Reference, asRef } from "webgen/mod.ts";
+import { asRef, Reference } from "webgen/mod.ts";
 
 export type StreamingUploadEvents = {
-    credentials: () => string,
-    onUploadTick: (percentage: number) => Promise<void>,
-    uploadDone: () => void,
+    credentials: () => string;
+    onUploadTick: (percentage: number) => Promise<void>;
+    uploadDone: () => void;
     backendResponse: (id: string) => void;
-    failure: () => void,
+    failure: () => void;
 };
 
 export function ProgressTracker(percentage: Reference<number>, expectedSize: number) {
@@ -17,7 +17,7 @@ export function ProgressTracker(percentage: Reference<number>, expectedSize: num
             bytesUploaded += chunk.length;
             percentage.setValue((bytesUploaded / expectedSize) * 100);
             controller.enqueue(chunk);
-        }
+        },
     });
 }
 
@@ -25,7 +25,9 @@ export function StreamingUploadHandler(path: string, events: StreamingUploadEven
     try {
         const ws = new WebSocket(`${API.BASE_URL.replace("https", "wss").replace("http", "ws")}${path}`);
         const progress = asRef(0);
-        progress.listen((percentage) => { events.onUploadTick(percentage); });
+        progress.listen((percentage) => {
+            events.onUploadTick(percentage);
+        });
 
         const stream = file
             .stream()
@@ -39,13 +41,13 @@ export function StreamingUploadHandler(path: string, events: StreamingUploadEven
             if (data == "failed") {
                 console.log("Looks like we failed.");
                 events.failure();
-            }
-            else if (data == "file") {
+            } else if (data == "file") {
                 ws.send(`file ${JSON.stringify({ filename: file.name, type: file.type })}`);
             } else if (data == "next") {
                 const read = await reader.read();
-                if (read.value)
+                if (read.value) {
                     ws.send(read.value);
+                }
                 if (read.done) {
                     ws.send("end");
                     events.uploadDone();

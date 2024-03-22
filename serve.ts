@@ -21,14 +21,14 @@ const title = new Map(Object.entries({
 
 const description = new Map(Object.entries({
     "default": "BBN Holding encompasses a variety of businesses, including music and hosting services. BBN Music provides music distribution, publishing, and label services, while BBN Hosting offers Minecraft hosting services.",
-    "music": "BBN Music, your gateway to unlimited music distribution at a low cost. Maximize your reach without limits. Join us and let the world hear your music."
+    "music": "BBN Music, your gateway to unlimited music distribution at a low cost. Maximize your reach without limits. Join us and let the world hear your music.",
 }));
 
 serve({
     port: 6969,
     extraLoaders: {
         ".webp": "file",
-        ".jpg": "file"
+        ".jpg": "file",
     },
     assets: {
         "sitemap.xml": "./static/sitemap.xml",
@@ -77,8 +77,8 @@ serve({
         "https://cdn.jsdelivr.net/npm/native-file-system-adapter@3.0.1/mod.js",
         "https://unpkg.com/urlpattern-polyfill",
         "https://raw.githubusercontent.com/ungap/with-resolvers/main/index.js",
-        "https://unpkg.com/@oddbird/popover-polyfill"
-    ]
+        "https://unpkg.com/@oddbird/popover-polyfill",
+    ],
 });
 
 function createTemplate(name: string, path: string) {

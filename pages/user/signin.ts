@@ -1,13 +1,13 @@
 import { Footer } from "shared/footer.ts";
 import { API, LoadingSpinner } from "shared/mod.ts";
 import { assert } from "std/assert/assert.ts";
-import { Body, Box, Button, ButtonStyle, Color, Component, Custom, Grid, Horizontal, Image, Label, LinkButton, Spacer, TextInput, Vertical, WebGen, createElement, isMobile } from "webgen/mod.ts";
-import '../../assets/css/main.css';
+import { Body, Box, Button, ButtonStyle, Color, Component, createElement, Custom, Grid, Horizontal, Image, isMobile, Label, LinkButton, Spacer, TextInput, Vertical, WebGen } from "webgen/mod.ts";
+import "../../assets/css/main.css";
 import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import { handleStateChange, loginUser, registerUser } from "./actions.ts";
-import './signin.css';
+import "./signin.css";
 import { state } from "./state.ts";
 
 await RegisterAuthRefresh();
@@ -25,12 +25,10 @@ export const Form = (ele: Component) => {
     return Custom(form);
 };
 
-const ErrorMessage = () => state.$error.map(() => state.error != undefined
-    ? Label(state.error ?? "Please try again later.").addClass("error-message").setMargin("1rem 0 0")
-    : Box()
-)
-    .asRefComponent()
-    .removeFromLayout();
+const ErrorMessage = () =>
+    state.$error.map(() => state.error != undefined ? Label(state.error ?? "Please try again later.").addClass("error-message").setMargin("1rem 0 0") : Box())
+        .asRefComponent()
+        .removeFromLayout();
 
 Body(Vertical(
     DynaNavigation("Home"),
@@ -45,7 +43,7 @@ Body(Vertical(
                     .setTextSize(small ? "6xl" : "7xl")
             ).asRefComponent().removeFromLayout(),
             state.$type.map(() => {
-                if (state.type == "reset-password-from-email")
+                if (state.type == "reset-password-from-email") {
                     return Form(Grid(
                         TextInput("password", "New Password")
                             .sync(state, "password"),
@@ -56,17 +54,18 @@ Body(Vertical(
                                 try {
                                     assert(API.getToken(), "Missing Token!");
                                     await API.user.setMe.post({
-                                        password: state.password
+                                        password: state.password,
                                     });
-                                    state.type = 'login';
+                                    state.type = "login";
                                 } catch (_) {
                                     state.error = "Failed: Please try again later";
                                 }
                             }),
                         Label(API.getToken() ? "" : "Error: Link is invalid").addClass("error-message"),
-                        ErrorMessage()
+                        ErrorMessage(),
                     ));
-                if (state.type == "request-reset-password")
+                }
+                if (state.type == "request-reset-password") {
                     return Form(Grid(
                         TextInput("email", "Email")
                             .sync(state, "email")
@@ -74,7 +73,6 @@ Body(Vertical(
                             .setAutofill("email")
                             .required()
                             .setMargin("0 0 .6rem"),
-
                         Button("Reset")
                             .onPromiseClick(async () => {
                                 try {
@@ -88,9 +86,7 @@ Body(Vertical(
                                 }
                             })
                             .setJustifyContent("center"),
-
                         ErrorMessage(),
-
                         Horizontal(
                             Label("Already have an account?"),
                             Button("Sign in")
@@ -98,25 +94,26 @@ Body(Vertical(
                                 .onClick(() => state.type = "login")
                                 .setColor(Color.Colored)
                                 .addClass("link"),
-                            Spacer()
+                            Spacer(),
                         )
                             .setMargin("1rem 0 0"),
                     ));
+                }
 
-                if (state.type == "login")
+                if (state.type == "login") {
                     return Form(Grid(
                         LinkButton("Sign in with Google", API.auth.oauthRedirect("google"))
                             .setJustifyContent("center")
                             .addPrefix(
                                 Image(googleLogo, "Google Logo")
-                                    .addClass("prefix-logo")
+                                    .addClass("prefix-logo"),
                             )
                             .setMargin("0 0 .6rem"),
                         LinkButton("Sign in with Discord", API.auth.oauthRedirect("discord"))
                             .setJustifyContent("center")
                             .addPrefix(
                                 Image(discordLogo, "Discord Logo")
-                                    .addClass("prefix-logo")
+                                    .addClass("prefix-logo"),
                             )
                             //     .setMargin("0 0 .6rem"),
                             // LinkButton("Sign in with Microsoft", API.auth.oauthRedirect("microsoft"))
@@ -126,28 +123,23 @@ Body(Vertical(
                             //             .addClass("prefix-logo")
                             //     )
                             .setMargin("0 0 2rem"),
-
                         TextInput("email", "Email")
                             .sync(state, "email")
                             .onChange(() => state.error = undefined)
                             .setAutofill("email")
                             .required()
                             .setMargin("0 0 .6rem"),
-
                         TextInput("password", "Password")
                             .sync(state, "password")
                             .onChange(() => state.error = undefined)
                             .setAutofill("current-password")
                             .required()
                             .setMargin("0 0 .6rem"),
-
                         Button("Login")
                             .setId("login-button")
                             .onPromiseClick(async () => await loginUser())
                             .setJustifyContent("center"),
-
                         ErrorMessage(),
-
                         Horizontal(
                             Label("New here?"),
                             Button("Create an Account")
@@ -155,10 +147,9 @@ Body(Vertical(
                                 .onClick(() => state.type = "register")
                                 .setColor(Color.Colored)
                                 .addClass("link"),
-                            Spacer()
+                            Spacer(),
                         )
                             .setMargin("1.3rem 0 0"),
-
                         Horizontal(
                             Label("Forgot your Password?"),
                             Button("Reset it here")
@@ -166,11 +157,12 @@ Body(Vertical(
                                 .setColor(Color.Colored)
                                 .onClick(() => state.type = "request-reset-password")
                                 .addClass("link"),
-                            Spacer()
-                        )
+                            Spacer(),
+                        ),
                     ));
+                }
 
-                if (state.type == "register")
+                if (state.type == "register") {
                     return Form(Grid(
                         TextInput("text", "Name")
                             .required()
@@ -178,28 +170,23 @@ Body(Vertical(
                             .onChange(() => state.error = undefined)
                             .sync(state, "name")
                             .setMargin("0 0 .6rem"),
-
                         TextInput("email", "Email")
                             .setAutofill("email")
                             .required()
                             .onChange(() => state.error = undefined)
                             .sync(state, "email")
                             .setMargin("0 0 .6rem"),
-
                         TextInput("password", "Password")
                             .required()
                             .setAutofill("new-password")
                             .onChange(() => state.error = undefined)
                             .sync(state, "password")
                             .setMargin("0 0 .6rem"),
-
                         Button("Register")
                             .setId("register-button")
                             .onPromiseClick(registerUser)
                             .setJustifyContent("center"),
-
                         ErrorMessage(),
-
                         Horizontal(
                             Label("Already have an account?"),
                             Button("Sign in")
@@ -207,10 +194,11 @@ Body(Vertical(
                                 .onClick(() => state.type = "login")
                                 .setColor(Color.Colored)
                                 .addClass("link"),
-                            Spacer()
+                            Spacer(),
                         )
                             .setMargin("1rem 0 0"),
                     ));
+                }
 
                 return Box(
                     LoadingSpinner(),
@@ -218,9 +206,9 @@ Body(Vertical(
                     ErrorMessage(),
                 ).addClass("loading", "loader");
             }).asRefComponent(),
-        )
+        ),
     ).addClass("auth-area"),
-    Footer()
+    Footer(),
 ));
 
 await handleStateChange();

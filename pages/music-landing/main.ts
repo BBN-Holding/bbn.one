@@ -1,5 +1,5 @@
 import { Footer } from "shared/footer.ts";
-import { Body, Box, Button, Color, Content, Empty, FullWidthSection, Grid, Image, Label, LinkButton, MIcon, WebGen, mediaQueryRef } from "webgen/mod.ts";
+import { Body, Box, Button, Color, Content, Empty, FullWidthSection, Grid, Image, Label, LinkButton, mediaQueryRef, MIcon, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../_legacy/helper.ts";
 import "./main.css";
@@ -30,24 +30,25 @@ import redz from "./assets/redz.jpg";
 WebGen();
 await RegisterAuthRefresh();
 
-const images = () => Array.from({ length: 4 }, () => [
-    Image(apple, "Apple Music"),
-    Image(deezer, "Deezer"),
-    Image(facebook, "Facebook"),
-    Image(instagram, "Instagram"),
-    Image(pandora, "Pandora"),
-    Image(spotify, "Spotify"),
-    Image(tidal, "Tidal"),
-    Image(tiktok, "TikTok"),
-    Image(youtube, "Youtube") ]
-).flat();
+const images = () =>
+    Array.from({ length: 4 }, () => [
+        Image(apple, "Apple Music"),
+        Image(deezer, "Deezer"),
+        Image(facebook, "Facebook"),
+        Image(instagram, "Instagram"),
+        Image(pandora, "Pandora"),
+        Image(spotify, "Spotify"),
+        Image(tidal, "Tidal"),
+        Image(tiktok, "TikTok"),
+        Image(youtube, "Youtube"),
+    ]).flat();
 
 export const isMobileKeyFeatures = mediaQueryRef("(max-width: 820px)");
 
 Body(
     Content(
         FullWidthSection(
-            DynaNavigation("Music")
+            DynaNavigation("Music"),
         ),
         FullWidthSection(Box().addClass("background-image")),
         Content(
@@ -75,7 +76,7 @@ Body(
                     .setFontWeight("bold")
                     .setTextSize("lg")
                     .addClass("orange-bg", "orange-box-shadow")
-                    .setBorderRadius("large")
+                    .setBorderRadius("large"),
             )
                 .setGap("25px")
                 .setJustifyItems("start"),
@@ -87,7 +88,7 @@ Body(
                     .setFontWeight("bold")
                     .setMargin("135px 0 40px 0")
                     .setTextAlign("center")
-                    .addClass("opacity-60")
+                    .addClass("opacity-60"),
             ),
             Grid(
                 Grid(
@@ -130,7 +131,7 @@ Body(
                         .setTextSize("lg")
                         .setBorderRadius("large")
                         .addClass("orange-bg", "orange-box-shadow")
-                        .setJustifyContent("center")
+                        .setJustifyContent("center"),
                 )
                     .setGap("30px")
                     .setPadding("45px 40px")
@@ -182,7 +183,7 @@ Body(
                         .setColor(Color.Disabled)
                         .setPadding("25px 30px")
                         .setBorderRadius("large")
-                        .setJustifyContent("center")
+                        .setJustifyContent("center"),
                 )
                     .setGap("30px")
                     .setPadding("45px 40px")
@@ -192,7 +193,7 @@ Body(
             )
                 .setGap("35px")
                 .setAlignItems("start")
-                .setDynamicColumns(15)
+                .setDynamicColumns(15),
         )
             .setMaxWidth("900px"),
         Content(
@@ -202,7 +203,7 @@ Body(
                     .setFontWeight("bold")
                     .setMargin("20px 10px")
                     .setTextAlign("center")
-                    .addClass("opacity-60")
+                    .addClass("opacity-60"),
             )
                 .setMargin("10px 0 40px"),
             Grid(
@@ -214,10 +215,10 @@ Body(
                     .addClass("icon-carousel")
                     .addClass("icon-carousel-reversed")
                     .setGap("38px")
-                    .setDirection("column")
+                    .setDirection("column"),
             )
                 .addClass("icon-carousel-container")
-                .setGap("35px")
+                .setGap("35px"),
         )
             .setAlignContent("center")
             .setHeight("380px")
@@ -231,7 +232,7 @@ Body(
                 .setTextAlign("center")
                 .setFontWeight("bold")
                 .setTextSize("xl")
-                .addClass("opacity-60")
+                .addClass("opacity-60"),
         )
             .setMargin("100px 0"),
         FullWidthSection(
@@ -241,13 +242,13 @@ Body(
                         Label("Why BBN\xa0Music?")
                             .setTextSize("3xl")
                             .setFontWeight("bold"),
-                        isMobileKeyFeatures.map(mobile => mobile ? Empty()
-                            : LinkButton("Drop your Music", "/c/music")
+                        isMobileKeyFeatures.map((mobile) =>
+                            mobile ? Empty() : LinkButton("Drop your Music", "/c/music")
                                 .setBorderRadius("complete")
                                 .setPadding("2px 25px")
                                 .addClass("orange-bg")
                         )
-                            .asRefComponent()
+                            .asRefComponent(),
                     )
                         .addClass("title")
                         .setGap()
@@ -268,7 +269,7 @@ Body(
                             .addClass("key-icon", "green"),
                         Label("Global")
                             .setFontWeight("bold"),
-                        Label("We support all major and many smaller stores, without any extra cost for you.")
+                        Label("We support all major and many smaller stores, without any extra cost for you."),
                     )
                         .setGap("13px")
                         .setJustifyItems("start")
@@ -278,26 +279,29 @@ Body(
                             .addClass("key-icon", "blue"),
                         Label("Unlimited")
                             .setFontWeight("bold"),
-                        Label("No hard limits. You can manage as many Drops and Artists as you want.")
+                        Label("No hard limits. You can manage as many Drops and Artists as you want."),
                     )
                         .setGap("13px")
                         .setJustifyItems("start")
                         .setAlignContent("start"),
-                    isMobileKeyFeatures.map(mobile => mobile ? Box(LinkButton("Drop your Music", "/c/music")
-                        .setBorderRadius("complete")
-                        .setPadding("2px 25px")
-                        .addClass("orange-bg")
-                    ).addClass("call-to-action")
-                        : Empty()
-                    ).asRefComponent()
+                    isMobileKeyFeatures.map((mobile) =>
+                        mobile
+                            ? Box(
+                                LinkButton("Drop your Music", "/c/music")
+                                    .setBorderRadius("complete")
+                                    .setPadding("2px 25px")
+                                    .addClass("orange-bg"),
+                            ).addClass("call-to-action")
+                            : Empty()
+                    ).asRefComponent(),
                 )
                     .setGap()
                     .setDynamicColumns(10)
                     .setPadding("50px 40px")
                     .setBorderRadius("large")
-                    .addClass("free-tier-bg", "key-features")
+                    .addClass("free-tier-bg", "key-features"),
             )
-                .setMaxWidth("900px")
+                .setMaxWidth("900px"),
         ),
         Grid(
             Label("Loved by Artists.")
@@ -308,7 +312,7 @@ Body(
                 .setTextAlign("center")
                 .setFontWeight("bold")
                 .setTextSize("xl")
-                .addClass("opacity-60")
+                .addClass("opacity-60"),
         )
             .setMargin("100px 0"),
         Content(
@@ -316,19 +320,19 @@ Body(
                 Label("The thing I love the most is the flexibility and the contactability of the entire BBN Music team. It is also just great to develop concepts and plans with motivated and very friendly people.")
                     .setTextAlign("start")
                     .addClass("italic-text")
-                    .setFontWeight("bold")
-                , Grid(
+                    .setFontWeight("bold"),
+                Grid(
                     Image(redz, "Avatar of Redz")
                         .setBorderRadius("complete")
                         .setAspectRatio("1/1")
                         .resizeToBox(),
                     Label("Redz")
                         .setFontWeight("bold")
-                        .setTextSize("xl")
+                        .setTextSize("xl"),
                 )
                     .setRawColumns("40px auto")
                     .setAlignItems("center")
-                    .setGap("16px")
+                    .setGap("16px"),
             )
                 .addClass("max-width-30rem")
                 .setPadding("95px 0 95px 0")
@@ -345,18 +349,18 @@ Body(
                         .resizeToBox(),
                     Label("Criticz")
                         .setFontWeight("bold")
-                        .setTextSize("xl")
+                        .setTextSize("xl"),
                 )
                     .setRawColumns("40px auto")
                     .setAlignItems("center")
-                    .setGap("16px")
+                    .setGap("16px"),
             )
                 .setJustifyItems("end")
                 .addClass("max-width-30rem")
                 .setMargin("0 0 0 auto")
                 .setPadding("95px 0 95px 0")
-                .setGap("21px")
+                .setGap("21px"),
         ).setMaxWidth("680px"),
-        FullWidthSection(Footer())
-    ).setMaxWidth("1230px")
+        FullWidthSection(Footer()),
+    ).setMaxWidth("1230px"),
 );

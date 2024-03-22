@@ -1,4 +1,4 @@
-ReadableStream.prototype[ Symbol.asyncIterator ] = async function* () {
+ReadableStream.prototype[Symbol.asyncIterator] = async function* () {
     const reader = this.getReader();
     try {
         while (true) {
@@ -6,8 +6,7 @@ ReadableStream.prototype[ Symbol.asyncIterator ] = async function* () {
             if (done) return;
             yield value;
         }
-    }
-    finally {
+    } finally {
         reader.releaseLock();
     }
 };

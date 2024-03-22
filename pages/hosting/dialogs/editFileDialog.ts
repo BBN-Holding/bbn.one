@@ -2,10 +2,10 @@ import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { editor } from "https://esm.sh/monaco-editor@0.44.0/esm/vs/editor/editor.api.js";
 
 import { delay } from "std/async/delay.ts";
-import { Box, Button, Cache, Color, Custom, Grid, Label, MIcon, SheetDialog, Vertical, asRef, lazyInit, refMerge } from "webgen/mod.ts";
+import { asRef, Box, Button, Cache, Color, Custom, Grid, Label, lazyInit, MIcon, refMerge, SheetDialog, Vertical } from "webgen/mod.ts";
 import { sheetStack } from "../../_legacy/helper.ts";
 import { uploadFile } from "../loading.ts";
-import './editFileDialog.css';
+import "./editFileDialog.css";
 
 const lazyMonaco = lazyInit(() => loader.init());
 
@@ -27,11 +27,11 @@ async function createMonacoEditor() {
         automaticLayout: true,
     });
 
-    editFileLanguage.listen(lang => {
+    editFileLanguage.listen((lang) => {
         monaco.editor.setModelLanguage(editor.getModel()!, lang);
     });
 
-    editFilestreamingText.listen(async streamingText => {
+    editFilestreamingText.listen(async (streamingText) => {
         editFileDownloading.setValue(true);
         editor.setValue("");
         for await (const iterator of streamingText) {
@@ -40,15 +40,15 @@ async function createMonacoEditor() {
         editFileDownloading.setValue(false);
     });
 
-    editFileDownloading.listen(downloading => {
+    editFileDownloading.listen((downloading) => {
         editor.updateOptions({
-            readOnly: downloading || editFileReadOnly.getValue()
+            readOnly: downloading || editFileReadOnly.getValue(),
         });
     });
 
-    editFileUploading.listen(uploading => {
+    editFileUploading.listen((uploading) => {
         editor.updateOptions({
-            readOnly: uploading || editFileReadOnly.getValue()
+            readOnly: uploading || editFileReadOnly.getValue(),
         });
     });
 
@@ -56,57 +56,62 @@ async function createMonacoEditor() {
     return Custom(box).addClass("file-dialog-shell");
 }
 
-export const editFileDialog = SheetDialog(sheetStack, editFileReadOnly.map<string>(readOnly => readOnly ? "Read File" : "Edit File"),
+export const editFileDialog = SheetDialog(
+    sheetStack,
+    editFileReadOnly.map<string>((readOnly) => readOnly ? "Read File" : "Edit File"),
     Vertical(
         refMerge({
             downloading: editFileDownloading,
-            uploading: editFileUploading
-        }).map(({ downloading, uploading }) => (() => {
-            if (downloading)
-                return Box(
-                    MIcon("cloud_download"),
-                    Label("Your file is currently downloading...")
-                )
-                    .addClass("file-is-downloading");
+            uploading: editFileUploading,
+        }).map(({ downloading, uploading }) =>
+            (() => {
+                if (downloading) {
+                    return Box(
+                        MIcon("cloud_download"),
+                        Label("Your file is currently downloading..."),
+                    )
+                        .addClass("file-is-downloading");
+                }
 
-            if (uploading)
-                return Box(
-                    MIcon("cloud_upload"),
-                    Label("Your file is currently uploading...")
-                )
-                    .addClass("file-is-downloading");
+                if (uploading) {
+                    return Box(
+                        MIcon("cloud_upload"),
+                        Label("Your file is currently uploading..."),
+                    )
+                        .addClass("file-is-downloading");
+                }
 
-            return Box(
-                MIcon("cloud_done"),
-                Label("Your file is up to date")
-            ).addClass("file-is-downloading");
-        })()
+                return Box(
+                    MIcon("cloud_done"),
+                    Label("Your file is up to date"),
+                ).addClass("file-is-downloading");
+            })()
         ).asRefComponent(),
-        Cache("monaco-editor", () => createMonacoEditor(),
-            (type, data) => type === "cache" ? Label("Loading Editor") : data ?? Box()
-        ),
+        Cache("monaco-editor", () => createMonacoEditor(), (type, data) => type === "cache" ? Label("Loading Editor") : data ?? Box()),
         Grid(
             Button("Cancel").onClick(() => editFileDialog.close()),
             Button("Save").onPromiseClick(async () => {
-                if (editFileReadOnly.getValue())
+                if (editFileReadOnly.getValue()) {
                     return;
-                if (editFileDownloading.getValue())
+                }
+                if (editFileDownloading.getValue()) {
                     return alert("File is still downloading");
+                }
                 editFileUploading.setValue(true);
                 const editor = editFileCurrentEditor.getValue()!;
                 await uploadFile(
                     editFilePath.getValue(),
-                    new File([ editor.getValue() ], editFilePath.getValue()),
-                    asRef(0)
+                    new File([editor.getValue()], editFilePath.getValue()),
+                    asRef(0),
                 );
                 editFileUploading.setValue(false);
                 await delay(300);
                 editFileDialog.close();
             })
-                .setColor(editFileReadOnly.map<Color>(readOnly => readOnly ? Color.Disabled : Color.Grayscaled))
+                .setColor(editFileReadOnly.map<Color>((readOnly) => readOnly ? Color.Disabled : Color.Grayscaled)),
         )
             .setGap(".5rem")
             .setJustifyItems("end")
-            .setRawColumns("auto max-content")
-    )
+            .setRawColumns("auto max-content"),
+    ),
 );
