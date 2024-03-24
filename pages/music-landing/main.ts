@@ -84,7 +84,7 @@ Body(
             .setMaxWidth("900px"),
         Content(
             Grid(
-                Label("Our pricing plan to disrupt the Market:")
+                Label("Our pricing plans to disrupt the Market:")
                     .setFontWeight("bold")
                     .setMargin("135px 0 40px 0")
                     .setTextAlign("center")
