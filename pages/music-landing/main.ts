@@ -88,7 +88,8 @@ Body(
                     .setFontWeight("bold")
                     .setMargin("135px 0 40px 0")
                     .setTextAlign("center")
-                    .addClass("opacity-60"),
+                    .addClass("opacity-60")
+                    .setId("typing-text"), // Add ID for typing animation
             ),
             Grid(
                 Grid(
@@ -364,3 +365,26 @@ Body(
         FullWidthSection(Footer()),
     ).setMaxWidth("1230px"),
 );
+
+// Typing Animation
+const typingTextElement = document.getElementById('typing-text');
+if (typingTextElement) {
+    const text = typingTextElement.innerText;
+    typingTextElement.innerText = '';
+    let i = 0;
+
+    // Delay the start of animation
+    setTimeout(() => {
+        // Function to simulate typing effect
+        function typeText() {
+            if (i <= text.length) {
+                typingTextElement.innerText = text.substring(0, i);
+                i++;
+                setTimeout(typeText, 55); // Adjust typing speed here in ms
+            }
+        }
+
+        // Start typing animation
+        typeText();
+    }, 1500); // delay
+}
