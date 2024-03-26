@@ -22,7 +22,7 @@ Body(Box(
         ).addClass("block").setAlignItems("center"),
         Label(`Contents`, "h3"),
         Label(
-            `BBN Holding regularly examines and updates the contents of this website. However we give no guarantee for the accuracy, completeness, timeliness or reliability of the information provided and are not liable for claims resulting directly or indirectly from flawed or erroneous information`,
+            `BBN Holding regularly examines and updates the contents of this website. However we give no guarantee for the accuracy, completeness, timeliness or reliability of the information provided and are not liable for claims resulting directly or indirectly from flawed or erroneous information.`,
         ).addClass("block"),
         Label(
             `In order to offer our customers additional information we occasionally provide links to other websites. We herewith state explicitly that we have no influence on the set-up, the timeliness or the contents of linked pages. For this reason we distance ourselves expressly from all contents on the pages linked with this Homepage and disclaim all forms of liability for these as well. We are not aware of any content which is illegal, objectionable or contrary to the rules of fair competition. Please inform BBN Holding if you believe that a linked page infringes upon these principles`,
