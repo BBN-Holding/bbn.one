@@ -35,7 +35,7 @@ Body(Box(
         Label(`In case of any questions, please send us an email: support@bbn.one`).addClass("block"),
         Label(`Copyrights/Trademark rights`, "h3"),
         Label(
-            `All rights to the texts, photos, graphics, video files and other objects on these Internet pages are protected by copyright.Their download, reproduction or use in other media or publications requires our written consent.All rights to all of the trademarks on this page belong exclusively to the owners of these trademarks`,
+            `All rights to the texts, photos, graphics, video files and other objects on these Internet pages are protected by copyright.Their download, reproduction or use in other media or publications requires our written consent.All rights to all of the trademarks on this page belong exclusively to the owners of these trademarks.`,
         ).addClass("block"),
     ).addClass("flow-text"),
     Footer(),
