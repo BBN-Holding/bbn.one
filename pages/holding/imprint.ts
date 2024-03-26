@@ -29,7 +29,7 @@ Body(Box(
         ).addClass("block"),
         Label(`Netiquette and Site Guidelines`, "h3"),
         Label(
-            `For many years, BBN Holding strives to provide helpful and relevant information on the BBN Holding company website. BBN Holding also shares news and information about latest events on maritime\xA0websites or social platforms like LinkedIn. We are happy to connect with you and read your feedback`,
+            `For many years, BBN Holding strives to provide helpful and relevant information on the BBN Holding company website. BBN Holding also shares news and information about latest events on maritime\xA0websites or social platforms like LinkedIn. We are happy to connect with you and read your feedback!`,
         ).addClass("block"),
         Label(`Please keep in mind: comments should be relevant and on-topic. Inappropriate or offensive comments, and in particular those that contain false\xA0/ misleading information or that engage in personal attacks (and similar), may be deleted.`).addClass("block"),
         Label(`In case of any questions, please send us an email: support@bbn.one`).addClass("block"),
