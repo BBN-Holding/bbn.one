@@ -54,7 +54,7 @@ Body(
         Content(
             Grid(
                 Box(
-                    Label("Drop in with\nyour Audience.")
+                    Label("Drop in with\nyour Audience")
                         .setTextSize("7xl")
                         .setTextAlign("start")
                         .setBalanced()
@@ -304,11 +304,11 @@ Body(
                 .setMaxWidth("900px"),
         ),
         Grid(
-            Label("Loved by Artists.")
+            Label("Loved by Artists")
                 .setFontWeight("bold")
                 .setTextSize("6xl")
                 .setTextAlign("center"),
-            Label("See how our Artists value BBN Music.")
+            Label("See how our Artists value BBN Music")
                 .setTextAlign("center")
                 .setFontWeight("bold")
                 .setTextSize("xl")
