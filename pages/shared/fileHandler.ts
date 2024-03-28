@@ -5,13 +5,6 @@ export interface FileEntry {
     file: File;
 }
 
-//should be fixed in next TS version
-declare global {
-    interface FileSystemDirectoryHandle {
-        values: () => ReadableStream<FileSystemDirectoryHandle | FileSystemFileHandle>;
-    }
-}
-
 async function* walkFileTree(handle: FileSystemHandle, path?: string): AsyncGenerator<FileEntry> {
     const realpath = path ?? `${handle.name}`;
     if (handle.kind === "file") {
@@ -23,7 +16,7 @@ async function* walkFileTree(handle: FileSystemHandle, path?: string): AsyncGene
             const entryPath = `${realpath}/${entry.name}`;
 
             if (entry.kind == "file") {
-                const file = await entry.getFile();
+                const file = await (<FileSystemFileHandle> entry).getFile();
                 yield { path: entryPath, file };
             } else if (entry.kind == "directory") {
                 yield* walkFileTree(entry, entryPath);
