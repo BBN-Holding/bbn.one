@@ -1,6 +1,6 @@
 import { AdvancedImage, asState } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
-import { Artist, Drop, Payout, Song } from "../../spec/music.ts";
+import { ArtistRef, Drop, Payout, Song } from "../../spec/music.ts";
 
 export const state = asState({
     published: <Drop[] | "loading"> "loading",
@@ -16,7 +16,7 @@ export const creationState = asState({
     title: <string | undefined> undefined,
     release: <string | undefined> undefined,
     language: <string | undefined> undefined,
-    artists: <Artist[]> [],
+    artists: <ArtistRef[]> [],
     primaryGenre: <string | undefined> undefined,
     secondaryGenre: <string | undefined> undefined,
     compositionCopyright: <string | undefined> undefined,

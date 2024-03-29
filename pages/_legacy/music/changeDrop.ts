@@ -5,7 +5,7 @@ import { zod } from "webgen/zod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
-import { artist, DATE_PATTERN, Drop, song, userString } from "../../../spec/music.ts";
+import { artistref, DATE_PATTERN, Drop, song, userString } from "../../../spec/music.ts";
 import { allowedImageFormats, EditArtistsDialog, getSecondary } from "../helper.ts";
 import { uploadArtwork } from "./data.ts";
 
@@ -20,7 +20,7 @@ export function ChangeDrop(drop: Drop) {
         asState(drop),
         zod.object({
             title: userString,
-            artists: artist.array().refine((x) => x.some(([, , type]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+            artists: artistref.array().refine((x) => x.some(({type}) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
             release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
             language: zod.string(),
             primaryGenre: zod.string(),
