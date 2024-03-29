@@ -2,7 +2,7 @@ import { API, fileCache, Permission, stupidErrorAlert, Table2 } from "shared/mod
 import { asState, Box, Button, Cache, CenterV, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
 import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
-import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
+import { ArtistRef, ArtistTypes, Drop } from "../../spec/music.ts";
 
 export const allowedAudioFormats = ["audio/flac", "audio/wav", "audio/mp3"];
 export const allowedImageFormats = ["image/png", "image/jpeg"];
@@ -185,7 +185,7 @@ export function saveBlob(blob: Blob, fileName: string) {
 }
 
 const ARTIST_ARRAY = <ArtistTypes[]> ["PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER"];
-export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[] }>) => {
+export const EditArtistsDialog = (state: StateHandler<{ artists: ArtistRef[] }>) => {
     const dialog = SheetDialog(
         sheetStack,
         "Manage your Artists",
@@ -193,11 +193,11 @@ export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[] }>) =>
             new Table2(state.$artists)
                 .addClass("artist-table")
                 .setColumnTemplate("10rem auto min-content")
-                .addColumn("Type", (artist: Artist) =>
+                .addColumn("Type", (artist: ArtistRef) =>
                     DropDownInput("Type", ARTIST_ARRAY)
                         .setValue(artist[2])
                         .onChange((data) => artist[2] = <ArtistTypes> data))
-                .addColumn("Name", (artist: Artist) =>
+                .addColumn("Name", (artist: ArtistRef) =>
                     TextInput("text", "Name", "blur")
                         .setValue(artist[0])
                         .onChange((data) => artist[0] = data ?? ""))
@@ -205,7 +205,7 @@ export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[] }>) =>
             Horizontal(
                 Spacer(),
                 Button("Add Artist")
-                    .onClick(() => state.artists = asState([...state.artists, ["", "", ArtistTypes.Primary]] as Artist[])),
+                    .onClick(() => state.artists = asState([...state.artists, ["", "", ArtistTypes.Primary]] as ArtistRef[])),
             ).setPadding("0 0 3rem 0"),
             Horizontal(
                 Spacer(),
