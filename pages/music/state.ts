@@ -12,7 +12,7 @@ export const state = asState({
 export const creationState = asState({
     loaded: false,
     _id: <string | undefined> undefined,
-    upc: <string | undefined | null> undefined,
+    gtin: <string | undefined | null> undefined,
     title: <string | undefined> undefined,
     release: <string | undefined> undefined,
     language: <string | undefined> undefined,

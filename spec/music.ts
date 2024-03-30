@@ -73,7 +73,7 @@ export const song = zod.object({
 });
 
 export const pureDrop = zod.object({
-    upc: zod.string().trim().max(0).nullable().or(
+    gtin: zod.string().trim().max(0).nullable().or(
         zod.string()
             .trim()
             .min(12, { message: "UPC/EAN: Invalid length" })
@@ -104,7 +104,7 @@ export const drop = pureDrop
     }));
 
 const pageOne = zod.object({
-    upc: zod.string()
+    gtin: zod.string()
         .trim()
         .min(12, { message: "UPC/EAN: Invalid length" })
         .max(13, { message: "UPC/EAN: Invalid length" })

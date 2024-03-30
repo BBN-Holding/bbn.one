@@ -29,7 +29,7 @@ const dropId = params.get("id")!;
 API.music.id(dropId).get().then(stupidErrorAlert)
     .then((drop) => {
         creationState._id = dropId;
-        creationState.upc = drop.upc;
+        creationState.gtin = drop.gtin;
         creationState.title = drop.title;
         creationState.release = drop.release;
         creationState.language = drop.language;
@@ -98,7 +98,7 @@ const wizard = creationState.$page.map((page) => {
             Center(
                 Vertical(
                     Center(Label("Do you already have a UPC or EAN?").addClass("title")),
-                    TextInput("text", "UPC/EAN").sync(creationState, "upc")
+                    TextInput("text", "UPC/EAN").sync(creationState, "gtin")
                         .setWidth("436px")
                         .addClass("max-width"),
                     Button("No, I don't have one.")
