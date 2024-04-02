@@ -216,7 +216,8 @@ const DropDownSearch = (artist: StateHandler<ArtistRef>, artists: Artist[]) => {
         content.setValue(
             Vertical(
                 //pls fix this padding nightmare
-                TextInput("text", "Search").onChange((x) => search.setValue(x)).setPadding("0px"),
+                TextInput("text", "Search")
+                    .onChange((x) => search.setValue(x!)),
                 search.map((s) =>
                     Grid(
                         Items(asRef(artists.map((x) => x.name).filter((x) => x.includes(s))), (item) =>

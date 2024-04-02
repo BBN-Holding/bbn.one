@@ -109,6 +109,6 @@ span.title {
     --color-grayscaled-inline-font: black;
 }
 
-.winput input {
-    padding: 10px
+.wlayer-inner {
+    z-index: -1;
 }
