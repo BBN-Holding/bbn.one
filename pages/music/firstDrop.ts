@@ -10,7 +10,7 @@ import { uploadArtwork, uploadSongToDrop } from "../_legacy/music/data.ts";
 import { ManageSongs } from "../_legacy/music/table.ts";
 import { creationState } from "./state.ts";
 // Do no move this import
-import "./newDrop.css";
+import "./firstDrop.css";
 
 await RegisterAuthRefresh();
 
@@ -49,16 +49,17 @@ const additionalDropInformation = SheetDialog(
     sheetStack,
     "Additional Information",
     Vertical(
+        TextInput("text", "UPC/EAN").sync(creationState, "gtin")
+            .setWidth("436px")
+            .addClass("max-width"),
         Grid(
-            TextInput("text", "UPC/EAN").sync(creationState, "gtin"),
+            Center(Label("Display the Copyright").addClass("title")),
             TextInput("text", "Composition Copyright").sync(creationState, "compositionCopyright"),
             TextInput("text", "Sound Recording Copyright").sync(creationState, "soundRecordingCopyright"),
         )
             .setEvenColumns(1)
             .addClass("grid-area")
             .setGap(),
-        //only for the user exp
-        Horizontal(Spacer(), Button("Save").onClick(() => additionalDropInformation.close())),
     ).setGap(),
 );
 
@@ -103,6 +104,23 @@ const wizard = creationState.$page.map((page) => {
     if (page == 0) {
         return Vertical(
             Spacer(),
+            MediaQuery(
+                "(max-width: 500px)",
+                (small) =>
+                    Label("Lets make your Drop hit!")
+                        .setWidth(small ? "max(1rem, 15rem)" : "max(1rem, 25rem)")
+                        .setFontWeight("extrabold")
+                        .setTextSize(small ? "3xl" : "6xl"),
+            ).setAttribute("style", "display: flex"),
+            Spacer(),
+            Center(),
+            Spacer(),
+            Spacer(),
+            footer(page),
+        ).addClass("wwizard");
+    } else if (page == 1) {
+        return Vertical(
+            Spacer(),
             MediaQuery("(max-width: 450px)", (small) =>
                 Grid(
                     Center(Label("Enter your Album details.").addClass("title")),
@@ -141,7 +159,13 @@ const wizard = creationState.$page.map((page) => {
             Spacer(),
             footer(page),
         ).addClass("wwizard");
-    } else if (page == 1) {
+    } else if (page == 2) {
+        return Vertical(
+            Spacer(),
+            Spacer(),
+            footer(page),
+        ).addClass("wwizard");
+    } else if (page == 3) {
         return Vertical(
             Spacer(),
             Center(
@@ -163,7 +187,7 @@ const wizard = creationState.$page.map((page) => {
             Spacer(),
             footer(page),
         ).addClass("wwizard");
-    } else if (page == 2) {
+    } else if (page == 4) {
         return Vertical(
             Spacer(),
             Horizontal(
@@ -181,7 +205,7 @@ const wizard = creationState.$page.map((page) => {
             Spacer(),
             footer(page),
         ).addClass("wwizard");
-    } else if (page == 3) {
+    } else if (page == 5) {
         return Vertical(
             Spacer(),
             Horizontal(

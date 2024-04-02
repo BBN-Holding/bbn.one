@@ -20,7 +20,7 @@ export function ChangeDrop(drop: Drop) {
         asState(drop),
         zod.object({
             title: userString,
-            artists: artistref.array().refine((x) => x.some(({type}) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+            artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
             release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
             language: zod.string(),
             primaryGenre: zod.string(),
