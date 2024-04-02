@@ -140,7 +140,7 @@ export const API = {
                 .catch(reject),
     },
     auth: {
-        oauthRedirect: (type: "discord" | "google" | "microsoft") => `${API.BASE_URL}auth/redirect/${type}?goal=${localStorage.getItem("goal") ?? "/music"}`,
+        oauthRedirect: (type: "discord" | "google" | "microsoft") => `${API.BASE_URL}auth/redirect/${type}?goal=${localStorage.getItem("goal") ?? "/c/music"}`,
         refreshAccessToken: {
             post: (refreshToken: string) =>
                 fetch(`${API.BASE_URL}auth/refresh-access-token`, {

@@ -21,7 +21,7 @@ const params = new URLSearchParams(location.search);
 const data = Object.fromEntries(params.entries());
 if (!data.id) {
     alert("ID is missing");
-    location.href = "/music";
+    location.href = "/c/music";
 }
 
 const state = asState({

@@ -22,7 +22,7 @@ const params = new URLSearchParams(location.search);
 
 if (!params.has("id")) {
     alert("ID is missing");
-    location.href = "/music";
+    location.href = "/c/music";
 }
 const dropId = params.get("id")!;
 
@@ -83,7 +83,7 @@ const validator = (page: number) => async () => {
 
 const footer = (page: number) =>
     Horizontal(
-        page == 0 ? Button("Cancel").setJustifyContent("center").setStyle(ButtonStyle.Secondary).onClick(() => location.href = "/music") : Button("Back").setJustifyContent("center").setStyle(ButtonStyle.Secondary).onClick(() => creationState.page--),
+        page == 0 ? Button("Cancel").setJustifyContent("center").setStyle(ButtonStyle.Secondary).onClick(() => location.href = "/c/music") : Button("Back").setJustifyContent("center").setStyle(ButtonStyle.Secondary).onClick(() => creationState.page--),
         Spacer(),
         Box(
             creationState.$validationState.map((error) =>
@@ -203,7 +203,7 @@ const wizard = creationState.$page.map((page) => {
                     await API.music.id(dropId).update(creationState);
 
                     await API.music.id(dropId).type.post(DropType.UnderReview);
-                    location.href = "/music";
+                    location.href = "/c/music";
                 }),
             ).addClass("footer"),
         ).addClass("wwizard");
