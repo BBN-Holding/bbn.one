@@ -1,4 +1,4 @@
-import { BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, StoreItems, Wallet } from "../../spec/music.ts";
+import { Artist, BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, StoreItems, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
@@ -461,6 +461,14 @@ export const API = {
         }),
     }),
     music: ({
+        artists: {
+            list: () =>
+                fetch(`${API.BASE_URL}music/artists`, {
+                    headers: headers(API.getToken()),
+                })
+                    .then(json<Artist[]>())
+                    .catch(reject),
+        },
         drops: {
             list: () =>
                 fetch(`${API.BASE_URL}music/drops`, {

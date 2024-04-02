@@ -10,6 +10,7 @@ import { uploadArtwork, uploadSongToDrop } from "../_legacy/music/data.ts";
 import { ManageSongs } from "../_legacy/music/table.ts";
 import { creationState } from "./state.ts";
 // Do no move this import
+import { ArtistTypes } from "../../spec/music.ts";
 import "./newDrop.css";
 
 await RegisterAuthRefresh();
@@ -33,11 +34,11 @@ API.music.id(dropId).get().then(stupidErrorAlert)
         creationState.title = drop.title;
         creationState.release = drop.release;
         creationState.language = drop.language;
-        creationState.artists = asState(drop.artists ?? [["", "", "PRIMARY"]]);
+        creationState.artists = asState(drop.artists ?? [{ type: ArtistTypes.Primary, _id: "123" }]);
         creationState.primaryGenre = drop.primaryGenre;
         creationState.secondaryGenre = drop.secondaryGenre;
-        creationState.compositionCopyright = drop.compositionCopyright;
-        creationState.soundRecordingCopyright = drop.soundRecordingCopyright;
+        creationState.compositionCopyright = drop.compositionCopyright ?? "BBN Music (via bbn.one)";
+        creationState.soundRecordingCopyright = drop.soundRecordingCopyright ?? "BBN Music (via bbn.one)";
         creationState.artwork = drop.artwork;
         creationState.artworkClientData = <AdvancedImage | undefined> (drop.artwork ? <AdvancedImage> { type: "direct", source: () => API.music.id(dropId).artwork().then(stupidErrorAlert) } : undefined);
         creationState.songs = asState(drop.songs ?? []);

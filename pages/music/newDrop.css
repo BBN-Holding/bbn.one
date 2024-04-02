@@ -108,3 +108,7 @@ span.title {
     max-width: 50rem;
     --color-grayscaled-inline-font: black;
 }
+
+.winput input {
+    padding: 10px
+}

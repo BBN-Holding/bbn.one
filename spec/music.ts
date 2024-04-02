@@ -104,6 +104,12 @@ export const drop = pureDrop
     }));
 
 const pageOne = zod.object({
+    title: userString,
+    artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+    release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
+    language: zod.string(),
+    primaryGenre: zod.string(),
+    secondaryGenre: zod.string(),
     gtin: zod.string()
         .trim()
         .min(12, { message: "UPC/EAN: Invalid length" })
@@ -112,33 +118,21 @@ const pageOne = zod.object({
         .refine((gtin) => parseInt(gtin.slice(-1), 10) === (10 - (sumOf(gtin.slice(0, -1).split("").map((digit, index) => parseInt(digit, 10) * ((16 - gtin.length + index) % 2 === 0 ? 3 : 1)), (x) => x) % 10)) % 10, {
             message: "UPC/EAN: Invalid checksum",
         }).or(zod.string().trim().max(0, { message: "UPC/EAN: Invalid" }).nullable()),
-});
-
-const pageTwo = zod.object({
-    title: userString,
-    artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
-    release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
-    language: zod.string(),
-    primaryGenre: zod.string(),
-    secondaryGenre: zod.string(),
-});
-
-const pageThree = zod.object({
     compositionCopyright: userString,
     soundRecordingCopyright: userString,
 });
 
-const pageFour = zod.object({
+const pageTwo = zod.object({
     artwork: zod.string(),
     loading: zod.literal(false, { errorMap: () => ({ message: "Artwork is still uploading" }) }).transform(() => undefined),
 });
 
-const pageFive = zod.object({
+const pageThree = zod.object({
     songs: song.array().min(1, { message: "At least one song is required" }).refine((songs) => songs.every(({ instrumental, explicit }) => !(instrumental && explicit)), "Can't have an explicit instrumental song"),
     uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }),
 });
 
-export const pages = <zod.AnyZodObject[]> [pageOne, pageTwo, pageThree, pageFour, pageFive];
+export const pages = <zod.AnyZodObject[]> [pageOne, pageTwo, pageThree];
 
 export const payout = zod.object({
     _id: zod.string(),

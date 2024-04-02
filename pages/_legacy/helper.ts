@@ -1,8 +1,9 @@
 import { API, fileCache, Permission, stupidErrorAlert, Table2 } from "shared/mod.ts";
-import { asState, Box, Button, Cache, CenterV, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
+import { asRef, asState, Box, Button, ButtonStyle, Cache, CenterV, Component, Custom, DropDownInput, Grid, Horizontal, IconButton, Image, Items, Label, Layer, MIcon, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
+import { Popover } from "webgen/src/components/Popover.ts";
 import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
-import { ArtistRef, ArtistTypes, Drop } from "../../spec/music.ts";
+import { Artist, ArtistRef, ArtistTypes, Drop } from "../../spec/music.ts";
 
 export const allowedAudioFormats = ["audio/flac", "audio/wav", "audio/mp3"];
 export const allowedImageFormats = ["image/png", "image/jpeg"];
@@ -184,28 +185,89 @@ export function saveBlob(blob: Blob, fileName: string) {
     window.URL.revokeObjectURL(url);
 }
 
+const DropDownSearch = (artist: StateHandler<ArtistRef>, artists: Artist[]) => {
+    const content = asRef(Box());
+    const search = asRef("");
+    const button = Button(artist.$_id.map((id) => (artists.find((x) => x._id == id) ?? { name: "Select Artist" }).name))
+        .setWidth("100%");
+
+    const dropDownPopover = Popover(
+        Layer(
+            content.asRefComponent(),
+            5,
+        ).setBorderRadius("mid").addClass("wdropdown-outer-layer"),
+    )
+        .pullingAnchorPositioning("--wdropdown-default", (rect, style) => {
+            style.top = `max(-5px, ${rect.bottom}px)`;
+            style.left = `${rect.left}px`;
+            style.minWidth = `${rect.width}px`;
+            style.bottom = "var(--gap)";
+        });
+
+    button.onClick(() => {
+        if (dropDownPopover.isOpen()) {
+            dropDownPopover.hidePopover();
+            return;
+        }
+        dropDownPopover.clearAnchors("--wdropdown-default");
+        button.setAnchorName("--wdropdown-default");
+        dropDownPopover.showPopover();
+
+        content.setValue(
+            Vertical(
+                //pls fix this padding nightmare
+                TextInput("text", "Search").onChange((x) => search.setValue(x)).setPadding("0px"),
+                search.map((s) =>
+                    Grid(
+                        Items(asRef(artists.map((x) => x.name).filter((x) => x.includes(s))), (item) =>
+                            Button(item)
+                                .setStyle(ButtonStyle.Inline)
+                                .onClick(() => {
+                                    artist._id = artists.find((x) => x.name == item)!._id;
+                                    dropDownPopover.hidePopover();
+                                    search.setValue("");
+                                })),
+                    )
+                        .addClass("wdropdown-content")
+                        .setDirection("row")
+                        .setGap("5px")
+                        .setPadding("5px")
+                ).asRefComponent(),
+            ),
+        );
+    });
+
+    return button;
+};
+
 const ARTIST_ARRAY = <ArtistTypes[]> ["PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER"];
 export const EditArtistsDialog = (state: StateHandler<{ artists: ArtistRef[] }>) => {
+    const artists = asState({
+        artists: <Artist[]> [{ _id: "1", name: "Boss" }, { _id: "2", name: "Manu" }],
+    });
+
+    API.music.artists.list().then(stupidErrorAlert)
+        .then((x) => {
+            // artists.artists = asState(x);
+        });
+
     const dialog = SheetDialog(
         sheetStack,
         "Manage your Artists",
         Vertical(
             new Table2(state.$artists)
                 .addClass("artist-table")
-                .setColumnTemplate("10rem auto min-content")
+                .setColumnTemplate("10rem 10rem min-content")
                 .addColumn("Type", (artist: ArtistRef) =>
                     DropDownInput("Type", ARTIST_ARRAY)
-                        .setValue(artist[2])
-                        .onChange((data) => artist[2] = <ArtistTypes> data))
-                .addColumn("Name", (artist: ArtistRef) =>
-                    TextInput("text", "Name", "blur")
-                        .setValue(artist[0])
-                        .onChange((data) => artist[0] = data ?? ""))
+                        .setValue(artist.type)
+                        .onChange((data) => artist.type = <ArtistTypes> data))
+                .addColumn("Name", (x) => DropDownSearch(x, artists.artists))
                 .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => state.artists = state.artists.filter((_, i) => i != state.artists.indexOf(data)) as typeof state.artists)),
             Horizontal(
                 Spacer(),
                 Button("Add Artist")
-                    .onClick(() => state.artists = asState([...state.artists, ["", "", ArtistTypes.Primary]] as ArtistRef[])),
+                    .onClick(() => state.artists = asState([...state.artists, { type: ArtistTypes.Primary, _id: "" }] as ArtistRef[])),
             ).setPadding("0 0 3rem 0"),
             Horizontal(
                 Spacer(),
