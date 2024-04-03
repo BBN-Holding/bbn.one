@@ -215,7 +215,7 @@ const DropDownSearch = (artist: StateHandler<ArtistRef>, artists: Artist[]) => {
 
         content.setValue(
             Vertical(
-                //pls fix this padding nightmare
+                //TODO: use color-mix upstream ig
                 TextInput("text", "Search")
                     .onChange((x) => search.setValue(x!)),
                 search.map((s) =>
@@ -234,6 +234,27 @@ const DropDownSearch = (artist: StateHandler<ArtistRef>, artists: Artist[]) => {
                         .setGap("5px")
                         .setPadding("5px")
                 ).asRefComponent(),
+                Button("Create Artist")
+                    .addPrefix(MIcon("add"))
+                    .setStyle(ButtonStyle.Inline)
+                    .onClick(() => {
+                        const createArtistSheet = SheetDialog(
+                            sheetStack,
+                            "Create Artist",
+                            Grid(
+                                TextInput("text", "Artist Name"),
+                                TextInput("text", "Spotify URL"),
+                                TextInput("text", "Apple Music URL"),
+                                Button("Create").onClick(() => {
+                                    createArtistSheet.close();
+                                }),
+                            ).setGap(),
+                        );
+                        createArtistSheet.open();
+                        // artist._id = artists.find((x) => x.name == item)!._id;
+                        dropDownPopover.hidePopover();
+                        search.setValue("");
+                    }),
             ),
         );
     });
