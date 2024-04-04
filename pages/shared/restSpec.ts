@@ -468,6 +468,14 @@ export const API = {
                 })
                     .then(json<Artist[]>())
                     .catch(reject),
+            create: (data: { name: string; spotify?: string; apple?: string }) =>
+                fetch(`${API.BASE_URL}music/artists`, {
+                    method: "POST",
+                    headers: headers(API.getToken()),
+                    body: JSON.stringify(data),
+                })
+                    .then(json<{ id: string }>())
+                    .catch(reject),
         },
         drops: {
             list: () =>

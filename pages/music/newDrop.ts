@@ -117,7 +117,7 @@ const wizard = creationState.$page.map((page) => {
                         .setEvenColumns(small ? 1 : 2)
                         .setGap(),
                     Button("Artists")
-                        .onClick(() => EditArtistsDialog(creationState).open()),
+                        .onClick(() => EditArtistsDialog(creationState.$artists).open()),
                     Center(Label("Set your target Audience").addClass("title")),
                     Grid(
                         DropDownInput("Primary Genre", Object.keys(genres))
