@@ -52,8 +52,11 @@ export const artist = zod.object({
 
 export const artistref = zod.object({
     _id: zod.string(),
-    type: zod.nativeEnum(ArtistTypes),
-});
+    type: zod.literal(ArtistTypes.Primary).or(zod.literal(ArtistTypes.Featuring))
+}).or(zod.object({
+    name: zod.string(),
+    type: zod.literal(ArtistTypes.Producer).or(zod.literal(ArtistTypes.Songwriter))
+}))
 
 export const song = zod.object({
     _id: zod.string(),
