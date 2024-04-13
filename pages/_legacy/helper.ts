@@ -191,7 +191,7 @@ const createArtistSheet = (name?: string) => {
         spotify: <string | undefined> undefined,
         apple: <string | undefined> undefined,
     });
-    return SheetDialog(
+    const dialog = SheetDialog(
         sheetStack,
         "Create Artist",
         Grid(
@@ -200,17 +200,18 @@ const createArtistSheet = (name?: string) => {
             TextInput("text", "Apple Music URL").sync(state, "apple"),
             Button("Create").onPromiseClick(async () => {
                 await API.music.artists.create(state);
-                createArtistSheet().close();
+                dialog.close();
             }),
         ).setGap(),
     );
+    return dialog;
 };
 
-const DropDownSearch = (artist: Reference<ArtistRef>, artists: Reference<Artist[]>) => {
+const DropDownSearch = (artistRefs: Reference<ArtistRef[]>, artists: Reference<Artist[]>, artist: ArtistRef) => {
     const content = asRef(Box());
     const search = asRef("");
-    const ref = refMerge({ artist, artists });
-    const button = Button(ref.map((a) => (a.artists.find((b) => b._id == a.artist._id) ?? { name: "Select Artist" }).name))
+    const ref = refMerge({ artistRefs, artists });
+    const button = Button(ref.map((a) => (a.artists.find((b) => b._id == a.artistRefs._id) ?? { name: "Select Artist" }).name))
         .setWidth("100%");
 
     const dropDownPopover = Popover(
@@ -247,7 +248,7 @@ const DropDownSearch = (artist: Reference<ArtistRef>, artists: Reference<Artist[
                                 Button(item)
                                     .setStyle(ButtonStyle.Inline)
                                     .onClick(() => {
-                                        artist.setValue({ _id: ref.artists.find((x) => x.name == item)!._id, type: ref.artist.type });
+                                        artistRefs.setValue(artistRefs.getValue().map((x) => x == artist ? { _id: ref.artists.find((x) => x.name == item)!._id, type: ref.artistRefs.find((x) => x == artist)!.type } : x));
                                         dropDownPopover.hidePopover();
                                         search.setValue("");
                                     })
@@ -293,7 +294,7 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                     DropDownInput("Type", ARTIST_ARRAY)
                         .setValue(artist.type)
                         .onChange((data) => artist.type = <ArtistTypes> data))
-                .addColumn("Name", (artist) => DropDownSearch(artist, artistList))
+                .addColumn("Name", (artist) => DropDownSearch(artists, artistList, artist))
                 .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.filter((_, i) => i != artists.indexOf(data)) as typeof state))),
             Horizontal(
                 Spacer(),

@@ -13,4 +13,5 @@ export async function refreshState() {
         x.type === DropType.ReviewDeclined
     );
     state.payouts = await API.payment.payouts.get().then(stupidErrorAlert);
+    state.artists = await API.music.artists.list().then(stupidErrorAlert);
 }

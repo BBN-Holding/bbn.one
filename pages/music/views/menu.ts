@@ -1,5 +1,6 @@
 import { API, Chart, count, HeavyList, LoadingSpinner, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
-import { Button, Entry, Grid, isMobile, MediaQuery, ref } from "webgen/mod.ts";
+import { Button, Entry, Grid, Image, isMobile, MediaQuery, ref } from "webgen/mod.ts";
+import { templateArtwork } from "../../../assets/imports.ts";
 import { DropType } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
 import { state } from "../state.ts";
@@ -42,6 +43,18 @@ export const musicMenu = Navigation({
             children: state.$drafts.map((drafts) =>
                 drafts == "loading" ? [LoadingSpinner()] : [
                     musicList(drafts ?? [], DropType.Unsubmitted),
+                ]
+            ),
+        },
+        {
+            id: "artists",
+            title: ref`Artists ${count(state.$artists)}`,
+            children: state.$artists.map((artists) =>
+                artists == "loading" ? [LoadingSpinner()] : [
+                    HeavyList(artists, (x) =>
+                        Entry({
+                            title: x.name,
+                        }).addPrefix(Image(templateArtwork, "").addClass("image-square"))),
                 ]
             ),
         },
