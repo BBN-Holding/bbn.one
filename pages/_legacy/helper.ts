@@ -198,13 +198,19 @@ const createArtistSheet = (name?: string) => {
             TextInput("text", "Artist Name").sync(state, "name"),
             TextInput("text", "Spotify URL").sync(state, "spotify"),
             TextInput("text", "Apple Music URL").sync(state, "apple"),
-            Button("Create").onPromiseClick(async () => {
-                await API.music.artists.create(state);
-                dialog.close();
-            }),
-        ).setGap(),
+            Button("Create")
+                .setJustifySelf("start")
+                .onPromiseClick(async () => {
+                    await API.music.artists.create(state);
+                    dialog.close();
+                }),
+        )
+            .setAlignContent("start")
+            .setWidth("400px")
+            .setHeight("420px")
+            .setGap(),
     );
-    return dialog;
+    dialog.open();
 };
 
 const DropDownSearch = (artistRefs: Reference<ArtistRef[]>, artists: Reference<Artist[]>, artist: ArtistRef) => {
@@ -267,8 +273,8 @@ const DropDownSearch = (artistRefs: Reference<ArtistRef[]>, artists: Reference<A
                     .addPrefix(MIcon("add"))
                     .setStyle(ButtonStyle.Inline)
                     .onClick(() => {
-                        createArtistSheet(search.getValue()).open();
                         dropDownPopover.hidePopover();
+                        createArtistSheet(search.getValue());
                         search.setValue("");
                     }),
             ),
