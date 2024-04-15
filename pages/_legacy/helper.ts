@@ -211,7 +211,10 @@ const DropDownSearch = (artistRefs: Reference<ArtistRef[]>, artists: Reference<A
     const content = asRef(Box());
     const search = asRef("");
     const ref = refMerge({ artistRefs, artists });
-    const button = Button(ref.map((a) => (a.artists.find((b) => b._id == a.artistRefs._id) ?? { name: "Select Artist" }).name))
+    const title = ref.map((a) => (a.artists.find((b) => b._id == a.artistRefs._id) ?? { name: "Select Artist" }).name);
+    const button = Button(title)
+        .addSuffix(MIcon("keyboard_arrow_down"))
+        .setJustifyContent("space-between")
         .setWidth("100%");
 
     const dropDownPopover = Popover(
@@ -240,7 +243,8 @@ const DropDownSearch = (artistRefs: Reference<ArtistRef[]>, artists: Reference<A
             Vertical(
                 //TODO: use color-mix upstream ig
                 TextInput("text", "Search")
-                    .onChange((x) => search.setValue(x!)),
+                    .onChange((x) => search.setValue(x!))
+                    .setMargin("5px"),
                 search.map((s) =>
                     Grid(
                         Items(artists.map((x) => x.map((y) => y.name).filter((x) => x.includes(s))), (item) =>
