@@ -191,6 +191,7 @@ const createArtistSheet = (name?: string) => {
         spotify: <string | undefined> undefined,
         apple: <string | undefined> undefined,
     });
+    const { promise, resolve } = Promise.withResolvers<void>();
     const dialog = SheetDialog(
         sheetStack,
         "Create Artist",
@@ -203,6 +204,7 @@ const createArtistSheet = (name?: string) => {
                 .onPromiseClick(async () => {
                     await API.music.artists.create(state);
                     dialog.close();
+                    resolve();
                 }),
         )
             .setAlignContent("start")
@@ -211,6 +213,7 @@ const createArtistSheet = (name?: string) => {
             .setGap(),
     );
     dialog.open();
+    return promise;
 };
 
 const DropDownSearch = (artistRefs: Reference<ArtistRef[]>, artists: Reference<Artist[]>, artist: ArtistRef) => {
@@ -227,7 +230,9 @@ const DropDownSearch = (artistRefs: Reference<ArtistRef[]>, artists: Reference<A
         Layer(
             content.asRefComponent(),
             5,
-        ).setBorderRadius("mid").addClass("wdropdown-outer-layer"),
+        )
+            .setBorderRadius("mid")
+            .addClass("wdropdown-outer-layer"),
     )
         .pullingAnchorPositioning("--wdropdown-default", (rect, style) => {
             style.top = `max(-5px, ${rect.bottom}px)`;
@@ -274,7 +279,12 @@ const DropDownSearch = (artistRefs: Reference<ArtistRef[]>, artists: Reference<A
                     .setStyle(ButtonStyle.Inline)
                     .onClick(() => {
                         dropDownPopover.hidePopover();
-                        createArtistSheet(search.getValue());
+                        createArtistSheet(search.getValue()).then(() => {
+                            API.music.artists.list().then(stupidErrorAlert)
+                                .then((x) => {
+                                    artists.setValue(x);
+                                });
+                        });
                         search.setValue("");
                     }),
             ),
