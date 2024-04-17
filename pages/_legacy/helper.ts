@@ -314,8 +314,8 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                     DropDownInput("Type", ARTIST_ARRAY)
                         .setValue(artist.type)
                         .onChange((data) => artist.type = <ArtistTypes> data))
-                .addColumn("Name", (artist) => DropDownSearch(artists, artistList, artist))
-                .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.filter((_, i) => i != artists.indexOf(data)) as typeof state))),
+                .addColumn("Name", (artist) => [ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type) ? DropDownSearch(artists, artistList, artist) : TextInput("text", "Name"))
+                .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.getValue().filter((_, i) => i != artists.getValue().indexOf(data))))),
             Horizontal(
                 Spacer(),
                 Button("Add Artist")
