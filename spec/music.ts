@@ -43,25 +43,17 @@ export enum ReviewResponse {
     DeclineMaliciousActivity = "DECLINE_MALICIOUS_ACTIVITY",
 }
 
-export const artist = zod.object({
-    _id: zod.string(),
-    name: userString,
-    users: zod.string().array(),
-    avatar: zod.string().optional(),
-});
-
-export const artistref = zod.object({
-    _id: zod.string(),
-    type: zod.nativeEnum(ArtistTypes),
-});
+export const artist = zod.tuple([
+    userString,
+    zod.string(),
+    zod.nativeEnum(ArtistTypes),
+]);
 
 export const song = zod.object({
-    _id: zod.string(),
-    user: zod.string(),
+    id: zod.string(),
     isrc: zod.string().optional(),
     title: userString,
-    artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
-    primaryGenre: zod.string(),
+    artists: artist.array().refine((x) => x.some(([, , type]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
     secondaryGenre: zod.string(),
     year: zod.number(),
     country: zod.string(),
@@ -70,7 +62,9 @@ export const song = zod.object({
     explicit: zod.boolean(),
     instrumental: zod.boolean(),
     file: zod.string({ required_error: "a Song is missing its file." }),
-});
+    progress: zod.number().optional().transform((x) => <typeof x> undefined),
+})
+    .refine(({ instrumental, explicit }) => !(instrumental && explicit), "Can't have an explicit instrumental song");
 
 export const pureDrop = zod.object({
     upc: zod.string().trim().max(0).nullable().or(
@@ -84,7 +78,7 @@ export const pureDrop = zod.object({
             }),
     ),
     title: userString,
-    artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+    artists: artist.array().refine((x) => x.some(([, , type]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
     release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
     language: zod.string(),
     primaryGenre: zod.string(),
@@ -92,7 +86,7 @@ export const pureDrop = zod.object({
     compositionCopyright: userString,
     soundRecordingCopyright: userString,
     artwork: zod.string(),
-    songs: zod.string().array().min(1),
+    songs: song.array().min(1),
     comments: userString.optional(),
 });
 
@@ -116,7 +110,7 @@ const pageOne = zod.object({
 
 const pageTwo = zod.object({
     title: userString,
-    artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+    artists: artist.array().refine((x) => x.some(([, , type]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
     release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
     language: zod.string(),
     primaryGenre: zod.string(),
@@ -134,7 +128,7 @@ const pageFour = zod.object({
 });
 
 const pageFive = zod.object({
-    songs: song.array().min(1, { message: "At least one song is required" }).refine((songs) => songs.every(({ instrumental, explicit }) => !(instrumental && explicit)), "Can't have an explicit instrumental song"),
+    songs: song.array().min(1, { message: "At least one song is required" }),
     uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }),
 });
 
@@ -619,7 +613,6 @@ export type RequestPayoutResponse = zod.infer<typeof requestPayoutResponse>;
 export type SidecarResponse = zod.infer<typeof sidecarResponse>;
 export type Addon = zod.infer<typeof addon>;
 export type SidecarRequest = zod.infer<typeof sidecarRequest>;
-export type ArtistRef = zod.infer<typeof artistref>;
 export type Artist = zod.infer<typeof artist>;
 export type BugReport = zod.infer<typeof bugReport>;
 export type Drop = zod.infer<typeof drop>;

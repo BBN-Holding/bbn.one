@@ -1,9 +1,9 @@
 import { API, StreamingUploadHandler } from "shared/mod.ts";
 import { delay } from "std/async/delay.ts";
 import { AdvancedImage, asState, Reference, StateHandler } from "webgen/mod.ts";
-import { ArtistRef, Song } from "../../../spec/music.ts";
+import { Artist, Song } from "../../../spec/music.ts";
 
-export function uploadSongToDrop(state: StateHandler<{ songs: Song[]; artists: ArtistRef[]; language: string | undefined; primaryGenre: string | undefined; secondaryGenre: string | undefined; _id: string }>, uploadingSongs: Reference<string[]>, file: File) {
+export function uploadSongToDrop(state: StateHandler<{ songs: Song[]; artists: Artist[]; language: string | undefined; primaryGenre: string | undefined; secondaryGenre: string | undefined; _id: string }>, uploadingSongs: Reference<string[]>, file: File) {
     const uploadId = crypto.randomUUID();
     uploadingSongs.addItem(uploadId);
 

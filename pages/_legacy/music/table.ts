@@ -2,7 +2,7 @@ import { Progress, Table2 } from "shared/mod.ts";
 import { Box, ButtonStyle, Checkbox, Color, DropDownInput, IconButton, Image, InlineTextInput, Label, MIcon, StateHandler } from "webgen/mod.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
-import { ArtistRef, Song } from "../../../spec/music.ts";
+import { Artist, Song } from "../../../spec/music.ts";
 import { EditArtistsDialog, getSecondary, getYearList, ProfilePicture } from "../helper.ts";
 import "./table.css";
 
@@ -12,7 +12,7 @@ export function ManageSongs(state: StateHandler<{ songs: Song[]; primaryGenre: s
         .addColumn("Title", (song) => song.progress !== undefined ? Progress(song.progress) : InlineTextInput("text", "blur").addClass("low-level").sync(song, "title"))
         .addColumn("Artists", (song) =>
             song.$artists.map((artists) =>
-                Box(...artists.map(([name, url, _type]: ArtistRef) => ProfilePicture(url ? Image(url, "A profile picture") : Label(""), name)), IconButton(MIcon("add"), "add"))
+                Box(...artists.map(([name, url, _type]: Artist) => ProfilePicture(url ? Image(url, "A profile picture") : Label(""), name)), IconButton(MIcon("add"), "add"))
                     .addClass("artists-list")
                     .onClick(() => EditArtistsDialog(song).open())
             ).asRefComponent())
