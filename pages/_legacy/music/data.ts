@@ -1,5 +1,5 @@
+import { delay } from "@std/async";
 import { API, StreamingUploadHandler } from "shared/mod.ts";
-import { delay } from "std/async/delay.ts";
 import { AdvancedImage, asState, Reference, StateHandler } from "webgen/mod.ts";
 import { ArtistRef, Song } from "../../../spec/music.ts";
 

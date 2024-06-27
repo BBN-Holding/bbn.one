@@ -1,4 +1,4 @@
-import { sumOf } from "std/collections/mod.ts";
+import { sumOf } from "@std/collections";
 import { zod } from "webgen/zod.ts";
 
 export const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
@@ -52,11 +52,11 @@ export const artist = zod.object({
 
 export const artistref = zod.object({
     _id: zod.string(),
-    type: zod.literal(ArtistTypes.Primary).or(zod.literal(ArtistTypes.Featuring))
+    type: zod.literal(ArtistTypes.Primary).or(zod.literal(ArtistTypes.Featuring)),
 }).or(zod.object({
     name: zod.string(),
-    type: zod.literal(ArtistTypes.Producer).or(zod.literal(ArtistTypes.Songwriter))
-}))
+    type: zod.literal(ArtistTypes.Producer).or(zod.literal(ArtistTypes.Songwriter)),
+}));
 
 export const song = zod.object({
     _id: zod.string(),

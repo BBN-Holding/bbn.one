@@ -1,6 +1,6 @@
+import { format } from "@std/fmt/bytes";
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
 import { SliderInput } from "shared/slider.ts";
-import { format } from "std/fmt/bytes.ts";
 import { asState, Button, ButtonStyle, Color, DropDownInput, Grid, Label, MediaQuery, SheetDialog, TextInput } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" with { type: "json" };
 import serverTypes from "../../../data/servers.json" with { type: "json" };

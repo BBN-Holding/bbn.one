@@ -1,6 +1,5 @@
+import { sortBy, sumOf } from "@std/collections";
 import { API, MenuNode, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { sortBy } from "std/collections/sort_by.ts";
-import { sumOf } from "std/collections/sum_of.ts";
 import { asRef, asState, Body, isMobile, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";

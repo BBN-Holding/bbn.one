@@ -1,4 +1,5 @@
-import { randomInteger } from "std/collections/_utils.ts";
+// import { randomInteger } from "@std/collections/_utils.ts";
+import { randomInteger } from "https://jsr.io/@std/collections/1.0.1/_utils.ts";
 import { asRef, Box, css, Label, Reference } from "webgen/mod.ts";
 
 export function Counter(value: Reference<number>) {

@@ -1,5 +1,5 @@
+import { dirname } from "@std/path";
 import { RenderItem } from "shared/mod.ts";
-import { dirname } from "std/path/mod.ts";
 import { asRef, Component, refMerge } from "webgen/mod.ts";
 import { RemotePath } from "../types.ts";
 

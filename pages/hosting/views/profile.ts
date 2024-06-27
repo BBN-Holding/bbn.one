@@ -1,6 +1,6 @@
+import { format } from "@std/fmt/bytes";
 import { confettiFromElement } from "shared/libs/canvasConfetti.ts";
 import { API, stupidErrorAlert } from "shared/mod.ts";
-import { format } from "std/fmt/bytes.ts";
 import { Box, Button, ButtonStyle, Color, Empty, Entry, Grid, Label, MediaQuery, Refable, Vertical } from "webgen/mod.ts";
 import { MB, state } from "../data.ts";
 import { refreshState } from "../loading.ts";
