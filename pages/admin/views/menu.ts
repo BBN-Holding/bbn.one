@@ -1,7 +1,7 @@
-import { debounce } from "https://deno.land/std@0.220.1/async/debounce.ts";
+import { debounce } from "@std/async";
+import { sumOf } from "@std/collections";
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { API, HeavyList, loadMore, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
-import { sumOf } from "std/collections/mod.ts";
 import { asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, Items, Label, lazyInit, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
 import { Drop, DropType, Server, Transcript } from "../../../spec/music.ts";
 import { activeUser, ProfileData, sheetStack, showProfilePicture } from "../../_legacy/helper.ts";

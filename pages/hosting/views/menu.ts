@@ -1,8 +1,7 @@
+import { debounce, delay } from "@std/async";
+import { WEEK } from "@std/datetime";
 import { API, count, LoadingSpinner, Navigation, placeholder, RenderItem, stupidErrorAlert } from "shared/mod.ts";
 import { calculateUptime } from "shared/uptime.ts";
-import { debounce } from "std/async/debounce.ts";
-import { delay } from "std/async/delay.ts";
-import { WEEK } from "std/datetime/constants.ts";
 import { asRef, asState, BasicLabel, Box, Button, Cache, Color, Empty, Entry, Grid, Image, isMobile, Label, List, MIcon, ref, refMerge, StateHandler, TextInput } from "webgen/mod.ts";
 import { createCachedLoader, createIndexPaginationLoader } from "webgen/network.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
@@ -18,13 +17,13 @@ import { installAddon, startSidecarConnection, stopSidecarConnection, uninstallA
 import { collectDownloadList, getRealFiltered, ModrinthDownload } from "../modrinth.ts";
 import { auditLabels, labels } from "../translation.ts";
 import { profileView } from "../views/profile.ts";
+import { FileBrowser } from "./FileBrowser.ts";
+import { Loader } from "./Loader.ts";
+import { ServerDetails } from "./ServerDetails.ts";
 import { ChangeStateButton } from "./changeStateButton.ts";
 import "./details.css";
 import "./fileBrowser.css";
-import { FileBrowser } from "./FileBrowser.ts";
-import { Loader } from "./Loader.ts";
 import "./menu.css";
-import { ServerDetails } from "./ServerDetails.ts";
 import { auditLogs, hostingButtons } from "./state.ts";
 
 export const hostingMenu = Navigation({

@@ -1,6 +1,6 @@
+import { assert } from "@std/assert";
 import { Footer } from "shared/footer.ts";
 import { API, LoadingSpinner } from "shared/mod.ts";
-import { assert } from "std/assert/assert.ts";
 import { Body, Box, Button, ButtonStyle, Color, Component, createElement, Custom, Grid, Horizontal, Image, isMobile, Label, LinkButton, Spacer, TextInput, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import { discordLogo, googleLogo } from "../../assets/imports.ts";

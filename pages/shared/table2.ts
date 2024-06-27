@@ -17,35 +17,35 @@ export type RowClickHandler = (rowIndex: number, columnIndex: number) => void;
 export type RowClickEnabledHandler = (rowIndex: number) => boolean;
 
 export class Table2<Data> extends Component {
-    private columns = asRef<TableColumn<Data>[]>([]);
-    private hoveredRow = asRef<number | undefined>(undefined);
-    private rowClick = asRef<RowClickHandler | undefined>(undefined);
-    private rowClickable = asRef<RowClickEnabledHandler | undefined>(undefined);
+    #columns = asRef<TableColumn<Data>[]>([]);
+    #hoveredRow = asRef<number | undefined>(undefined);
+    #rowClick = asRef<RowClickHandler | undefined>(undefined);
+    #rowClickable = asRef<RowClickEnabledHandler | undefined>(undefined);
     constructor(dataSource: Reference<Data[]>) {
         super();
         this.wrapper.append(
-            this.columns.map((columns) =>
+            this.#columns.map((columns) =>
                 Box(
                     ...columns.map((column, columnIndex) =>
                         Box(
-                            this.header(column),
+                            this.#header(column),
                             dataSource.map((rows) =>
                                 Box(
                                     ...rows.map((row, rowIndex) => {
-                                        const clickEnabled = this.rowClick.map((it) => !!it && (this.rowClickable.getValue()?.(rowIndex) ?? true));
+                                        const clickEnabled = this.#rowClick.map((it) => !!it && (this.#rowClickable.getValue()?.(rowIndex) ?? true));
                                         const hovering = refMerge({
                                             clickEnabled,
-                                            hoveredRow: this.hoveredRow,
+                                            hoveredRow: this.#hoveredRow,
                                         });
                                         const item = Box(column.converter(row))
                                             .addClass(rowIndex % 2 == 0 ? "even" : "odd", "item", columnIndex == 0 ? "left" : (columnIndex == columns.length - 1 ? "right" : "middle"))
                                             .addClass(hovering.map(({ clickEnabled, hoveredRow }) => clickEnabled && hoveredRow === rowIndex ? "hover" : "non-hover"))
                                             .draw();
-                                        item.addEventListener("pointerenter", () => this.hoveredRow.setValue(rowIndex));
-                                        item.addEventListener("pointerleave", () => this.hoveredRow.setValue(undefined));
+                                        item.addEventListener("pointerenter", () => this.#hoveredRow.setValue(rowIndex));
+                                        item.addEventListener("pointerleave", () => this.#hoveredRow.setValue(undefined));
                                         item.onclick = () => {
                                             if (clickEnabled.getValue()) {
-                                                this.rowClick.getValue()?.(rowIndex, columnIndex);
+                                                this.#rowClick.getValue()?.(rowIndex, columnIndex);
                                             }
                                         };
                                         return Custom(item);
@@ -70,8 +70,8 @@ export class Table2<Data> extends Component {
     }
 
     addColumn(title: Reference<string> | string, converter: TableColumn<Data>["converter"], sorting?: Reference<undefined | TableSorting> | undefined | TableSorting) {
-        this.columns.setValue([
-            ...this.columns.getValue(),
+        this.#columns.setValue([
+            ...this.#columns.getValue(),
             <TableColumn<Data>> {
                 converter,
                 title: asRef(title ?? ""),
@@ -82,16 +82,16 @@ export class Table2<Data> extends Component {
     }
 
     setRowClickEnabled(clickableHandler: Refable<RowClickEnabledHandler>) {
-        asRef(clickableHandler).listen((value) => this.rowClickable.setValue(value));
+        asRef(clickableHandler).listen((value) => this.#rowClickable.setValue(value));
         return this;
     }
 
     setRowClick(clickHandler: Refable<RowClickHandler>) {
-        asRef(clickHandler).listen((value) => this.rowClick.setValue(value));
+        asRef(clickHandler).listen((value) => this.#rowClick.setValue(value));
         return this;
     }
 
-    private header(column: TableColumn<Data>) {
+    #header(column: TableColumn<Data>) {
         return Box(
             Label(column.title),
         ).addClass("header");

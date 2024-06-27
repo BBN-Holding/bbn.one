@@ -108,7 +108,3 @@ span.title {
     max-width: 50rem;
     --color-grayscaled-inline-font: black;
 }
-
-.wlayer-inner {
-    z-index: -1;
-}

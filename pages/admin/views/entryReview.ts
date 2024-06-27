@@ -6,7 +6,7 @@ import { sheetStack, showPreviewImage } from "../../_legacy/helper.ts";
 export function ReviewEntry(x: Drop) {
     return Entry({
         title: x.title ?? "(no drop name)",
-        subtitle: `release: ${x.release ?? "(no release date)"} - user: ${x.user} - upc: ${x.upc ?? "(no upc number)"} - id: ${x._id} - type: ${x.type}`,
+        subtitle: `release: ${x.release ?? "(no release date)"} - user: ${x.user} - gtin: ${x.gtin ?? "(no GTIN)"} - id: ${x._id} - type: ${x.type}`,
     })
         .addClass("small")
         .addSuffix(

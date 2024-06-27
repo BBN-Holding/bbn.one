@@ -1,8 +1,9 @@
 import { API, fileCache, Permission, stupidErrorAlert, Table2 } from "shared/mod.ts";
-import { asState, Box, Button, Cache, CenterV, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
+import { asRef, asState, Box, Button, ButtonStyle, Cache, CenterV, Component, Custom, DropDownInput, Grid, Horizontal, IconButton, Image, Items, Label, Layer, MIcon, Reference, refMerge, SheetDialog, SheetsStack, Spacer, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
+import { Popover } from "webgen/src/components/Popover.ts";
 import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
-import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
+import { Artist, ArtistRef, ArtistTypes, Drop } from "../../spec/music.ts";
 
 export const allowedAudioFormats = ["audio/flac", "audio/wav", "audio/mp3"];
 export const allowedImageFormats = ["image/png", "image/jpeg"];
@@ -184,28 +185,141 @@ export function saveBlob(blob: Blob, fileName: string) {
     window.URL.revokeObjectURL(url);
 }
 
+const createArtistSheet = (name?: string) => {
+    const state = asState({
+        name,
+        spotify: <string | undefined> undefined,
+        apple: <string | undefined> undefined,
+    });
+    const { promise, resolve } = Promise.withResolvers<void>();
+    const dialog = SheetDialog(
+        sheetStack,
+        "Create Artist",
+        Grid(
+            TextInput("text", "Artist Name").sync(state, "name"),
+            TextInput("text", "Spotify URL").sync(state, "spotify"),
+            TextInput("text", "Apple Music URL").sync(state, "apple"),
+            Button("Create")
+                .setJustifySelf("start")
+                .onPromiseClick(async () => {
+                    await API.music.artists.create(state);
+                    dialog.close();
+                    resolve();
+                }),
+        )
+            .setAlignContent("start")
+            .setWidth("400px")
+            .setHeight("420px")
+            .setGap(),
+    );
+    dialog.open();
+    return promise;
+};
+
+const DropDownSearch = (artistRefs: Reference<ArtistRef[]>, artists: Reference<Artist[]>, artist: ArtistRef) => {
+    const content = asRef(Box());
+    const search = asRef("");
+    const ref = refMerge({ artistRefs, artists });
+    const title = ref.map((a) => (a.artists.find((b) => b._id == a.artistRefs._id) ?? { name: "Select Artist" }).name);
+    const button = Button(title)
+        .addSuffix(MIcon("keyboard_arrow_down"))
+        .setJustifyContent("space-between")
+        .setWidth("100%");
+
+    const dropDownPopover = Popover(
+        Layer(
+            content.asRefComponent(),
+            5,
+        )
+            .setBorderRadius("mid")
+            .addClass("wdropdown-outer-layer"),
+    )
+        .pullingAnchorPositioning("--wdropdown-default", (rect, style) => {
+            style.top = `max(-5px, ${rect.bottom}px)`;
+            style.left = `${rect.left}px`;
+            style.minWidth = `${rect.width}px`;
+            style.bottom = "var(--gap)";
+        });
+
+    button.onClick(() => {
+        if (dropDownPopover.isOpen()) {
+            dropDownPopover.hidePopover();
+            return;
+        }
+        dropDownPopover.clearAnchors("--wdropdown-default");
+        button.setAnchorName("--wdropdown-default");
+        dropDownPopover.showPopover();
+
+        content.setValue(
+            Vertical(
+                //TODO: use color-mix upstream ig
+                TextInput("text", "Search")
+                    .onChange((x) => search.setValue(x!))
+                    .setMargin("5px"),
+                search.map((s) =>
+                    Grid(
+                        Items(artists.map((x) => x.map((y) => y.name).filter((x) => x.includes(s))), (item) =>
+                            ref.map((ref) =>
+                                Button(item)
+                                    .setStyle(ButtonStyle.Inline)
+                                    .onClick(() => {
+                                        artistRefs.setValue(artistRefs.getValue().map((x) => x == artist ? { _id: ref.artists.find((x) => x.name == item)!._id, type: ref.artistRefs.find((x) => x == artist)!.type } : x));
+                                        dropDownPopover.hidePopover();
+                                        search.setValue("");
+                                    })
+                            ).asRefComponent()),
+                    )
+                        .addClass("wdropdown-content")
+                        .setDirection("row")
+                        .setGap("5px")
+                        .setPadding("5px")
+                ).asRefComponent(),
+                Button("Create Artist")
+                    .addPrefix(MIcon("add"))
+                    .setStyle(ButtonStyle.Inline)
+                    .onClick(() => {
+                        dropDownPopover.hidePopover();
+                        createArtistSheet(search.getValue()).then(() => {
+                            API.music.artists.list().then(stupidErrorAlert)
+                                .then((x) => {
+                                    artists.setValue(x);
+                                });
+                        });
+                        search.setValue("");
+                    }),
+            ),
+        );
+    });
+
+    return button;
+};
+
 const ARTIST_ARRAY = <ArtistTypes[]> ["PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER"];
-export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[] }>) => {
+export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
+    const artistList = asRef(<Artist[]> []);
+
+    API.music.artists.list().then(stupidErrorAlert)
+        .then((x) => {
+            artistList.setValue(x);
+        });
+
     const dialog = SheetDialog(
         sheetStack,
         "Manage your Artists",
         Vertical(
-            new Table2(state.$artists)
+            new Table2(artists)
                 .addClass("artist-table")
-                .setColumnTemplate("10rem auto min-content")
-                .addColumn("Type", (artist: Artist) =>
+                .setColumnTemplate("10rem 10rem min-content")
+                .addColumn("Type", (artist) =>
                     DropDownInput("Type", ARTIST_ARRAY)
-                        .setValue(artist[2])
-                        .onChange((data) => artist[2] = <ArtistTypes> data))
-                .addColumn("Name", (artist: Artist) =>
-                    TextInput("text", "Name", "blur")
-                        .setValue(artist[0])
-                        .onChange((data) => artist[0] = data ?? ""))
-                .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => state.artists = state.artists.filter((_, i) => i != state.artists.indexOf(data)) as typeof state.artists)),
+                        .setValue(artist.type)
+                        .onChange((data) => artist.type = <ArtistTypes> data))
+                .addColumn("Name", (artist) => [ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type) ? DropDownSearch(artists, artistList, artist) : TextInput("text", "Name"))
+                .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.getValue().filter((_, i) => i != artists.getValue().indexOf(data))))),
             Horizontal(
                 Spacer(),
                 Button("Add Artist")
-                    .onClick(() => state.artists = asState([...state.artists, ["", "", ArtistTypes.Primary]] as Artist[])),
+                    .onClick(() => artists.setValue([...artists.getValue(), { type: ArtistTypes.Primary, _id: "" }] as ArtistRef[])),
             ).setPadding("0 0 3rem 0"),
             Horizontal(
                 Spacer(),
@@ -214,6 +328,7 @@ export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[] }>) =>
             ),
         ),
     );
+
     return dialog;
 };
 

@@ -1,4 +1,4 @@
-import { BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, StoreItems, Wallet } from "../../spec/music.ts";
+import { Artist, BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, StoreItems, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
@@ -140,7 +140,7 @@ export const API = {
                 .catch(reject),
     },
     auth: {
-        oauthRedirect: (type: "discord" | "google" | "microsoft") => `${API.BASE_URL}auth/redirect/${type}?goal=${localStorage.getItem("goal") ?? "/music"}`,
+        oauthRedirect: (type: "discord" | "google" | "microsoft") => `${API.BASE_URL}auth/redirect/${type}?goal=${localStorage.getItem("goal") ?? "/c/music"}`,
         refreshAccessToken: {
             post: (refreshToken: string) =>
                 fetch(`${API.BASE_URL}auth/refresh-access-token`, {
@@ -461,6 +461,22 @@ export const API = {
         }),
     }),
     music: ({
+        artists: {
+            list: () =>
+                fetch(`${API.BASE_URL}music/artists`, {
+                    headers: headers(API.getToken()),
+                })
+                    .then(json<Artist[]>())
+                    .catch(reject),
+            create: (data: { name: string; spotify?: string; apple?: string }) =>
+                fetch(`${API.BASE_URL}music/artists`, {
+                    method: "POST",
+                    headers: headers(API.getToken()),
+                    body: JSON.stringify(data),
+                })
+                    .then(json<{ id: string }>())
+                    .catch(reject),
+        },
         drops: {
             list: () =>
                 fetch(`${API.BASE_URL}music/drops`, {

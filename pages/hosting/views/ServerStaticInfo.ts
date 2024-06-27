@@ -1,5 +1,5 @@
+import { format } from "@std/fmt/bytes";
 import { calculateUptime } from "shared/uptime.ts";
-import { format } from "std/fmt/bytes.ts";
 import { asRef, BasicLabel, Component, Entry, Grid, ref, refMerge, StateHandler } from "webgen/mod.ts";
 import { Server } from "../../../spec/music.ts";
 import { MB } from "../data.ts";
