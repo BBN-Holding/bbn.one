@@ -1,7 +1,7 @@
 import { FitAddon } from "https://esm.sh/@xterm/addon-fit@0.10.0";
-import { WebglAddon } from "https://esm.sh/@xterm/addon-webgl@0.18.0";
-import { Terminal } from "https://esm.sh/@xterm/xterm@5.5.0";
 import "https://esm.sh/@xterm/xterm@5.5.0/css/xterm.css";
+import { WebglAddon } from "https://esm.sh/xterm-addon-webgl@0.16.0";
+import { Terminal } from "https://esm.sh/xterm@5.3.0";
 import { asRef } from "webgen/mod.ts";
 
 export class TerminalComponent extends HTMLElement {
