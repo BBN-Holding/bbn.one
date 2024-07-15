@@ -8,7 +8,8 @@
         "@std/fmt": "jsr:@std/fmt@^0.225.4",
         "@std/path": "jsr:@std/path@^0.225.2",
         "shared/": "./pages/shared/",
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/a369db1/"
+        "webgen/": "../WebGen/"
+        // "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/a369db1/"
     },
     "lock": false,
     "compilerOptions": {

@@ -1,5 +1,6 @@
-import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Body, Button, Color, Grid, isMobile, Label, LinkButton, MediaQuery, SheetDialog, Table, TextInput, Vertical, WebGen } from "webgen/mod.ts";
+import { DropDownSearch } from "shared/DropDownSearch.ts";
+import { API, stupidErrorAlert } from "shared/mod.ts";
+import { asState, Body, Content, Grid, Label, LinkButton, SheetDialog, Vertical, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
 import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../_legacy/helper.ts";
@@ -59,73 +60,7 @@ async function handlePayoutResponse(amount: number) {
 
 sheetStack.setDefault(Vertical(
     DynaNavigation("Wallet"),
-    state.$wallet.map((wallet) =>
-        wallet
-            ? Vertical(
-                Navigation({
-                    title: "Your Wallet",
-                    actions: [
-                        Button("Request Payout")
-                            .onClick(() => {
-                                const amount = asState({ value: "0" });
-                                const dialog = SheetDialog(
-                                    sheetStack,
-                                    "Request Payout",
-                                    Grid(
-                                        Label("How much would you like to withdraw?"),
-                                        TextInput("text", "Amount").sync(amount, "value"),
-                                        Button("Request")
-                                            .onClick(() => {
-                                                handlePayoutResponse(Number(amount.value));
-                                                dialog.close();
-                                            }),
-                                    )
-                                        .setGap()
-                                        .setMargin("10px"),
-                                );
-                                dialog.open();
-                            })
-                            .setColor(wallet.balance?.unrestrained! + wallet.balance?.restrained! > 10 ? Color.Grayscaled : Color.Disabled),
-                    ],
-                }).addClass(
-                    isMobile.map((mobile) => mobile ? "mobile-navigation" : "navigation"),
-                    "limited-width",
-                ),
-                MediaQuery("(max-width: 700px)", (small) =>
-                    Vertical(
-                        Grid(
-                            Grid(
-                                Label(`${Number(wallet.balance?.unrestrained! + wallet.balance?.restrained!).toFixed(2)} £`)
-                                    .setTextSize("4xl")
-                                    .setFontWeight("bold"),
-                                Label("Balance")
-                                    .setFontWeight("bold")
-                                    .addClass("gray-color"),
-                            )
-                                .addClass("details-item"),
-                            Grid(
-                                Label(`${wallet.cut}%`)
-                                    .setTextSize("4xl")
-                                    .setFontWeight("bold"),
-                                Label("Your Cut")
-                                    .setFontWeight("bold")
-                                    .addClass("gray-color"),
-                            )
-                                .addClass("details-item"),
-                        )
-                            .setWidth("100%")
-                            .setEvenColumns(small ? 1 : 2)
-                            .setGap(),
-                        Table([
-                            ["Amount", "auto", ({ amount }) => Label(`${amount.toFixed(2)} £`)],
-                            ["Description", "auto", ({ description }) => Label(description)],
-                            ["Counterparty", "auto", ({ counterParty }) => Label(counterParty)],
-                            ["Date", "auto", ({ timestamp }) => Label(new Date(Number(timestamp)).toDateString())],
-                        ], wallet.transactions),
-                    ).setGap()),
-            ).addClass("limited-width")
-            : LoadingSpinner()
-    ).asRefComponent(),
+    Content(DropDownSearch("dings", ["1", "2"])),
 ));
 
 Body(sheetStack);
