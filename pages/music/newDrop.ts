@@ -1,16 +1,16 @@
+import { DropDownInput2 } from "shared/DropDownInput2.ts";
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
 import { AdvancedImage, asState, Body, Box, Button, ButtonStyle, Center, CenterV, Color, createFilePicker, Custom, DropAreaInput, DropDownInput, Empty, getErrorMessage, Grid, Horizontal, Image, Label, MediaQuery, SheetDialog, Spacer, SupportedThemes, TextInput, Validate, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
 import language from "../../data/language.json" with { type: "json" };
-import { DropType, pages } from "../../spec/music.ts";
+import { ArtistTypes, DropType, pages } from "../../spec/music.ts";
 import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtistsDialog, getSecondary, RegisterAuthRefresh, sheetStack } from "../_legacy/helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "../_legacy/music/data.ts";
 import { ManageSongs } from "../_legacy/music/table.ts";
 import { creationState } from "./state.ts";
 // Do no move this import
-import { ArtistTypes } from "../../spec/music.ts";
 import "./newDrop.css";
 
 await RegisterAuthRefresh();
@@ -110,7 +110,8 @@ const wizard = creationState.$page.map((page) => {
                     TextInput("text", "Title").sync(creationState, "title"),
                     Grid(
                         TextInput("date", "Release Date", "live").sync(creationState, "release"),
-                        DropDownInput("Language", Object.keys(language))
+                        DropDownInput2("Language", Object.keys(language))
+                            .enableSearch()
                             .setRender((key) => language[<keyof typeof language> key])
                             .sync(creationState, "language"),
                     )

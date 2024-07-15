@@ -1,7 +1,5 @@
-import { asRef, Box, Button, ButtonComponent, ButtonStyle, Color, Component, createElement, Grid, InputForm, Items, Layer, MIcon, Refable, TextInput } from "webgen/mod.ts";
+import { asRef, Box, Button, ButtonComponent, ButtonStyle, Color, Component, createElement, Empty, Grid, InputForm, Items, Layer, MIcon, Refable, TextInput } from "webgen/mod.ts";
 import { Popover } from "webgen/src/components/Popover.ts";
-
-export const DropDownSearch = (label: string, list: Refable<string[]>) => new DropDownSearchComponent(list, label);
 
 const content = asRef(Box());
 const dropDownPopover = Popover(
@@ -17,9 +15,10 @@ const dropDownPopover = Popover(
         style.bottom = "var(--gap)";
     });
 
-export class DropDownSearchComponent<Value extends string> extends InputForm<Value> {
+class DropDownInputComponent<Value extends string> extends InputForm<Value> {
     prog = createElement("div");
     text = createElement("span");
+    search = false;
     button: ButtonComponent;
     constructor(dropdown: Refable<string[]>, label: Refable<string | Component>, icon = MIcon("keyboard_arrow_down")) {
         super();
@@ -29,8 +28,6 @@ export class DropDownSearchComponent<Value extends string> extends InputForm<Val
             .setWidth("100%")
             .setJustifyContent("space-between")
             .addSuffix(icon);
-
-        const search = asRef("");
 
         this.wrapper.innerHTML = "";
         this.color.setValue(Color.Disabled);
@@ -44,20 +41,22 @@ export class DropDownSearchComponent<Value extends string> extends InputForm<Val
         });
 
         this.button.onClick(() => {
-            if (dropDownPopover.togglePopover()) {
-                console.log("shown");
-                dropDownPopover.clearAnchors("--wdropdown-default");
-                this.button.setAnchorName("--wdropdown-default");
-            } else {
-                console.log("clear");
+            if (dropDownPopover.isOpen()) {
+                dropDownPopover.hidePopover();
+                return;
             }
-            //  dropDownPopover.showPopover();
+            dropDownPopover.clearAnchors("--wdropdown-default");
+            this.button.setAnchorName("--wdropdown-default");
+            dropDownPopover.showPopover();
+            const search = asRef("");
             content.setValue(
                 Grid(
-                    TextInput("text", "Search")
-                        .onChange((x) => search.setValue(x!))
-                        //idk if that's a real 10/10 solution
-                        .setAttribute("style", "z-index: 0"),
+                    this.search
+                        ? TextInput("text", "Search")
+                            .onChange((x) => search.setValue(x!))
+                            //idk if that's a real 10/10 solution
+                            .setAttribute("style", "z-index: 0")
+                        : Empty(),
                     search.map((s) =>
                         Items(asRef(dropdown).map((x) => x.filter((y) => y.includes(s))), (item) =>
                             Button(this.valueRender(item as Value))
@@ -78,4 +77,10 @@ export class DropDownSearchComponent<Value extends string> extends InputForm<Val
         this.button.setStyle(style, progress);
         return this;
     }
+    enableSearch() {
+        this.search = true;
+        return this;
+    }
 }
+
+export const DropDownInput2 = (label: string, list: Refable<string[]>) => new DropDownInputComponent(list, label);
