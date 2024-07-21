@@ -1,6 +1,6 @@
 import { DropDownInput2 } from "shared/DropDownInput2.ts";
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { AdvancedImage, asState, Body, Box, Button, ButtonStyle, Center, CenterV, Color, createFilePicker, Custom, DropAreaInput, DropDownInput, Empty, getErrorMessage, Grid, Horizontal, Image, Label, MediaQuery, SheetDialog, Spacer, SupportedThemes, TextInput, Validate, Vertical, WebGen } from "webgen/mod.ts";
+import { AdvancedImage, asState, Body, Box, Button, ButtonStyle, Center, CenterV, Color, createFilePicker, Custom, DropAreaInput, Empty, getErrorMessage, Grid, Horizontal, Image, Label, MediaQuery, SheetDialog, Spacer, SupportedThemes, TextInput, Validate, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
@@ -121,11 +121,13 @@ const wizard = creationState.$page.map((page) => {
                         .onClick(() => EditArtistsDialog(creationState.$artists).open()),
                     Center(Label("Set your target Audience").addClass("title")),
                     Grid(
-                        DropDownInput("Primary Genre", Object.keys(genres))
+                        DropDownInput2("Primary Genre", Object.keys(genres))
+                            .enableSearch()
                             .sync(creationState, "primaryGenre")
                             .onChange(() => creationState.secondaryGenre = undefined),
                         creationState.$primaryGenre.map(() =>
-                            DropDownInput("Secondary Genre", getSecondary(genres, creationState.primaryGenre) ?? [])
+                            DropDownInput2("Secondary Genre", getSecondary(genres, creationState.primaryGenre) ?? [])
+                                .enableSearch()
                                 .sync(creationState, "secondaryGenre")
                                 .setColor(getSecondary(genres, creationState.primaryGenre) ? Color.Grayscaled : Color.Disabled)
                                 .addClass("border-box")

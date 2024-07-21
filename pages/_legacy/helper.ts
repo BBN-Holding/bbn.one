@@ -1,6 +1,6 @@
+import { DropDownInput2 } from "shared/DropDownInput2.ts";
 import { API, fileCache, Permission, stupidErrorAlert, Table2 } from "shared/mod.ts";
-import { asRef, asState, Box, Button, ButtonStyle, Cache, CenterV, Component, Custom, DropDownInput, Grid, Horizontal, IconButton, Image, Items, Label, Layer, MIcon, Reference, refMerge, SheetDialog, SheetsStack, Spacer, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
-import { Popover } from "webgen/src/components/Popover.ts";
+import { asRef, asState, Box, Button, ButtonStyle, Cache, CenterV, Component, Custom, DropDownInput, Grid, Horizontal, IconButton, Image, Label, MIcon, Reference, SheetDialog, SheetsStack, Spacer, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
 import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistRef, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -216,84 +216,6 @@ const createArtistSheet = (name?: string) => {
     return promise;
 };
 
-const DropDownSearch = (artistRefs: Reference<ArtistRef[]>, artists: Reference<Artist[]>, artist: ArtistRef) => {
-    const content = asRef(Box());
-    const search = asRef("");
-    const ref = refMerge({ artistRefs, artists });
-    const title = ref.map((a) => (a.artists.find((b) => b._id == a.artistRefs._id) ?? { name: "Select Artist" }).name);
-    const button = Button(title)
-        .addSuffix(MIcon("keyboard_arrow_down"))
-        .setJustifyContent("space-between")
-        .setWidth("100%");
-
-    const dropDownPopover = Popover(
-        Layer(
-            content.asRefComponent(),
-            5,
-        )
-            .setBorderRadius("mid")
-            .addClass("wdropdown-outer-layer"),
-    )
-        .pullingAnchorPositioning("--wdropdown-default", (rect, style) => {
-            style.top = `max(-5px, ${rect.bottom}px)`;
-            style.left = `${rect.left}px`;
-            style.minWidth = `${rect.width}px`;
-            style.bottom = "var(--gap)";
-        });
-
-    button.onClick(() => {
-        if (dropDownPopover.isOpen()) {
-            dropDownPopover.hidePopover();
-            return;
-        }
-        dropDownPopover.clearAnchors("--wdropdown-default");
-        button.setAnchorName("--wdropdown-default");
-        dropDownPopover.showPopover();
-
-        content.setValue(
-            Vertical(
-                //TODO: use color-mix upstream ig
-                TextInput("text", "Search")
-                    .onChange((x) => search.setValue(x!))
-                    .setMargin("5px"),
-                search.map((s) =>
-                    Grid(
-                        Items(artists.map((x) => x.map((y) => y.name).filter((x) => x.includes(s))), (item) =>
-                            ref.map((ref) =>
-                                Button(item)
-                                    .setStyle(ButtonStyle.Inline)
-                                    .onClick(() => {
-                                        artistRefs.setValue(artistRefs.getValue().map((x) => x == artist ? { _id: ref.artists.find((x) => x.name == item)!._id, type: ref.artistRefs.find((x) => x == artist)!.type } : x));
-                                        dropDownPopover.hidePopover();
-                                        search.setValue("");
-                                    })
-                            ).asRefComponent()),
-                    )
-                        .addClass("wdropdown-content")
-                        .setDirection("row")
-                        .setGap("5px")
-                        .setPadding("5px")
-                ).asRefComponent(),
-                Button("Create Artist")
-                    .addPrefix(MIcon("add"))
-                    .setStyle(ButtonStyle.Inline)
-                    .onClick(() => {
-                        dropDownPopover.hidePopover();
-                        createArtistSheet(search.getValue()).then(() => {
-                            API.music.artists.list().then(stupidErrorAlert)
-                                .then((x) => {
-                                    artists.setValue(x);
-                                });
-                        });
-                        search.setValue("");
-                    }),
-            ),
-        );
-    });
-
-    return button;
-};
-
 const ARTIST_ARRAY = <ArtistTypes[]> ["PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER"];
 export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
     const artistList = asRef(<Artist[]> []);
@@ -320,10 +242,35 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                         })
                         .onChange((data) => artist.type = <ArtistTypes> data))
                 .addColumn("Name", (artist) =>
-                    [ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type) ? DropDownSearch(artists, artistList, artist) : TextInput("text", "Name")
-                        .onChange((data) => {
-                            artist.name = data;
-                        }))
+                    [ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type)
+                        ? DropDownInput2("Select Artist", artistList.map((x) => x.map((y) => y.name)))
+                            .enableSearch()
+                            .addDropdownSuffix(
+                                Button("Create Artist")
+                                    .addPrefix(MIcon("add"))
+                                    .setStyle(ButtonStyle.Inline)
+                                    .onClick(() => {
+                                        //TODO: dropDownPopover.hidePopover();
+                                        createArtistSheet().then(() => {
+                                            API.music.artists.list().then(stupidErrorAlert)
+                                                .then((x) => {
+                                                    artists.setValue(x);
+                                                });
+                                        });
+                                    }),
+                            ).onChange((data) => {
+                                const state = artists.getValue();
+                                state[state.indexOf(artist)]._id = artistList.getValue().find((x) => x.name == data)?._id ?? "";
+                                artists.setValue(state);
+                                // artist._id = artistList.getValue().find((x) => x.name == data)?._id ?? "";
+                            })
+                        : TextInput("text", "Name")
+                            .onChange((data) => {
+                                //HELP PLS
+                                const state = artists.getValue();
+                                state[state.indexOf(artist)].name = data;
+                                artists.setValue(state);
+                            }))
                 .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.getValue().filter((_, i) => i != artists.getValue().indexOf(data))))),
             Horizontal(
                 Spacer(),

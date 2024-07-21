@@ -18,7 +18,8 @@ const dropDownPopover = Popover(
 class DropDownInputComponent<Value extends string> extends InputForm<Value> {
     prog = createElement("div");
     text = createElement("span");
-    search = false;
+    #search = false;
+    suffix: Component | undefined;
     button: ButtonComponent;
     constructor(dropdown: Refable<string[]>, label: Refable<string | Component>, icon = MIcon("keyboard_arrow_down")) {
         super();
@@ -51,7 +52,7 @@ class DropDownInputComponent<Value extends string> extends InputForm<Value> {
             const search = asRef("");
             content.setValue(
                 Grid(
-                    this.search
+                    this.#search
                         ? TextInput("text", "Search")
                             .onChange((x) => search.setValue(x!))
                             //idk if that's a real 10/10 solution
@@ -65,6 +66,7 @@ class DropDownInputComponent<Value extends string> extends InputForm<Value> {
                                     this.setValue(item as Value);
                                 }))
                     ).asRefComponent(),
+                    this.suffix ?? Empty(),
                 )
                     .addClass("wdropdown-content")
                     .setDirection("row")
@@ -78,7 +80,11 @@ class DropDownInputComponent<Value extends string> extends InputForm<Value> {
         return this;
     }
     enableSearch() {
-        this.search = true;
+        this.#search = true;
+        return this;
+    }
+    addDropdownSuffix(component: Component) {
+        this.suffix = component;
         return this;
     }
 }
