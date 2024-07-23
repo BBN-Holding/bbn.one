@@ -1,6 +1,5 @@
-import { DropDownInput2 } from "shared/DropDownInput2.ts";
 import { API, fileCache, Permission, stupidErrorAlert, Table2 } from "shared/mod.ts";
-import { asRef, asState, Box, Button, ButtonStyle, Cache, CenterV, Component, Custom, DropDownInput, Grid, Horizontal, IconButton, Image, Label, MIcon, Reference, SheetDialog, SheetsStack, Spacer, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
+import { asRef, asState, Box, Button, Cache, CenterV, Component, Custom, DropDownInput, Grid, Horizontal, IconButton, Image, Label, MIcon, Reference, SheetDialog, SheetsStack, Spacer, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
 import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
 import { Artist, ArtistRef, ArtistTypes, Drop } from "../../spec/music.ts";
@@ -229,49 +228,55 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
         sheetStack,
         "Manage your Artists",
         Vertical(
-            new Table2(artists)
-                .addClass("artist-table")
-                .setColumnTemplate("10rem 10rem min-content")
-                .addColumn("Type", (artist) =>
-                    DropDownInput("Type", ARTIST_ARRAY)
-                        .setValue(artist.type)
-                        .onChange((data) => {
-                            const state = artists.getValue();
-                            state[state.indexOf(artist)].type = <ArtistTypes> data;
-                            artists.setValue(state);
-                        })
-                        .onChange((data) => artist.type = <ArtistTypes> data))
-                .addColumn("Name", (artist) =>
-                    [ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type)
-                        ? DropDownInput2("Select Artist", artistList.map((x) => x.map((y) => y.name)))
-                            .enableSearch()
-                            .addDropdownSuffix(
-                                Button("Create Artist")
-                                    .addPrefix(MIcon("add"))
-                                    .setStyle(ButtonStyle.Inline)
-                                    .onClick(() => {
-                                        //TODO: dropDownPopover.hidePopover();
-                                        createArtistSheet().then(() => {
-                                            API.music.artists.list().then(stupidErrorAlert)
-                                                .then((x) => {
-                                                    artists.setValue(x);
-                                                });
-                                        });
-                                    }),
-                            ).onChange((data) => {
-                                const state = artists.getValue();
-                                state[state.indexOf(artist)]._id = artistList.getValue().find((x) => x.name == data)?._id ?? "";
-                                artists.setValue(state);
-                                // artist._id = artistList.getValue().find((x) => x.name == data)?._id ?? "";
-                            })
-                        : TextInput("text", "Name")
-                            .onChange((data) => {
-                                //HELP PLS
-                                const state = artists.getValue();
-                                state[state.indexOf(artist)].name = data;
-                                artists.setValue(state);
-                            }))
-                .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.getValue().filter((_, i) => i != artists.getValue().indexOf(data))))),
+            artistList.map((list) =>
+                new Table2(artists)
+                    .addClass("artist-table")
+                    .setColumnTemplate("10rem 10rem min-content")
+                    .addColumn("Type", (artist) => {
+                        const data = asRef(artist.type);
+                        data.listen((type, oldVal) => {
+                            if (oldVal != undefined) {
+                                artists.updateItem(artist, { ...artist, type } as ArtistRef);
+                            }
+                        });
+                        return DropDownInput("Type", ARTIST_ARRAY)
+                            .ref(data);
+                    })
+                    .addColumn("Name", (artist) => {
+                        if ([ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type)) {
+                            const data = asRef(artist._id as string);
+                            data.listen((_id, oldVal) => {
+                                if (oldVal != undefined) {
+                                    artists.updateItem(artist, { ...artist, _id } as ArtistRef);
+                                }
+                            });
+                            return DropDownInput("Select Artist", list.map((y) => y._id))
+                                .ref(data)
+                                .setRender((data) => {
+                                    const artist = list.find((y) => y._id === data);
+                                    return artist ? artist.name : "sdf";
+                                })
+                                .addAction(MIcon("add"), "Create Artist", () => {
+                                    createArtistSheet().then(() => {
+                                        API.music.artists.list().then(stupidErrorAlert)
+                                            .then((x) => {
+                                                artistList.setValue(x);
+                                            });
+                                    });
+                                });
+                        } else {
+                            const data = asRef(artist.name as string);
+                            data.listen((name, oldVal) => {
+                                if (oldVal != undefined) {
+                                    artists.updateItem(artist, { ...artist, name } as ArtistRef);
+                                }
+                            });
+                            return TextInput("text", "Name")
+                                .ref(data);
+                        }
+                    })
+                    .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.getValue().filter((_, i) => i != artists.getValue().indexOf(data)))))
+            ).asRefComponent().removeFromLayout(),
             Horizontal(
                 Spacer(),
                 Button("Add Artist")

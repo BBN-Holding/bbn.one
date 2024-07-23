@@ -75,6 +75,10 @@ export const song = zod.object({
     file: zod.string({ required_error: "a Song is missing its file." }),
 });
 
+const frontendSong = song.extend({
+    progress: zod.number().nullable(),
+});
+
 export const pureDrop = zod.object({
     gtin: zod.string().trim().max(0).nullable().or(
         zod.string()

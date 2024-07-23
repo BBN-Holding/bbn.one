@@ -1,11 +1,10 @@
-import { DropDownInput2 } from "shared/DropDownInput2.ts";
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { AdvancedImage, asState, Body, Box, Button, ButtonStyle, Center, CenterV, Color, createFilePicker, Custom, DropAreaInput, Empty, getErrorMessage, Grid, Horizontal, Image, Label, MediaQuery, SheetDialog, Spacer, SupportedThemes, TextInput, Validate, Vertical, WebGen } from "webgen/mod.ts";
+import { AdvancedImage, asRef, asState, Body, Box, Button, ButtonStyle, Center, CenterV, Color, createFilePicker, Custom, DropAreaInput, DropDownInput, Empty, getErrorMessage, Grid, Horizontal, Image, Label, MediaQuery, SheetDialog, Spacer, SupportedThemes, TextInput, Validate, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
 import language from "../../data/language.json" with { type: "json" };
-import { ArtistTypes, DropType, pages } from "../../spec/music.ts";
+import { ArtistRef, ArtistTypes, DropType, pages, Song } from "../../spec/music.ts";
 import { allowedAudioFormats, allowedImageFormats, CenterAndRight, EditArtistsDialog, getSecondary, RegisterAuthRefresh, sheetStack } from "../_legacy/helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "../_legacy/music/data.ts";
 import { ManageSongs } from "../_legacy/music/table.ts";
@@ -110,24 +109,25 @@ const wizard = creationState.$page.map((page) => {
                     TextInput("text", "Title").sync(creationState, "title"),
                     Grid(
                         TextInput("date", "Release Date", "live").sync(creationState, "release"),
-                        DropDownInput2("Language", Object.keys(language))
-                            .enableSearch()
+                        DropDownInput("Language", Object.keys(language))
                             .setRender((key) => language[<keyof typeof language> key])
                             .sync(creationState, "language"),
                     )
                         .setEvenColumns(small ? 1 : 2)
                         .setGap(),
                     Button("Artists")
-                        .onClick(() => EditArtistsDialog(creationState.$artists).open()),
+                        .onClick(() => {
+                            const artists = asRef(creationState.artists as ArtistRef[]);
+                            artists.listen((x) => creationState.artists = asState(x));
+                            return EditArtistsDialog(artists).open();
+                        }),
                     Center(Label("Set your target Audience").addClass("title")),
                     Grid(
-                        DropDownInput2("Primary Genre", Object.keys(genres))
-                            .enableSearch()
+                        DropDownInput("Primary Genre", Object.keys(genres))
                             .sync(creationState, "primaryGenre")
                             .onChange(() => creationState.secondaryGenre = undefined),
                         creationState.$primaryGenre.map(() =>
-                            DropDownInput2("Secondary Genre", getSecondary(genres, creationState.primaryGenre) ?? [])
-                                .enableSearch()
+                            DropDownInput("Secondary Genre", getSecondary(genres, creationState.primaryGenre) ?? [])
                                 .sync(creationState, "secondaryGenre")
                                 .setColor(getSecondary(genres, creationState.primaryGenre) ? Color.Grayscaled : Color.Disabled)
                                 .addClass("border-box")
@@ -168,6 +168,12 @@ const wizard = creationState.$page.map((page) => {
             footer(page),
         ).addClass("wwizard");
     } else if (page == 2) {
+        const songs = asRef(creationState.songs as Song[]);
+        songs.listen((songs, oldVal) => {
+            if (oldVal != undefined) {
+                creationState.songs = asState(songs);
+            }
+        });
         return Vertical(
             Spacer(),
             Horizontal(
@@ -178,7 +184,7 @@ const wizard = creationState.$page.map((page) => {
                         Button("Manual Upload")
                             .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(creationState, creationState.$uploadingSongs, file))),
                     ),
-                    ManageSongs(creationState),
+                    ManageSongs(songs, creationState.primaryGenre!),
                 ).setGap(),
                 Spacer(),
             ),

@@ -1,3 +1,3 @@
-import { createKeyValue, lazyInit } from "webgen/mod.ts";
+import { createKeyValue, lazy } from "webgen/mod.ts";
 
-export const fileCache = lazyInit(() => createKeyValue<Blob>("file-cache"));
+export const fileCache = lazy(() => createKeyValue<Blob>("file-cache"));

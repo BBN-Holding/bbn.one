@@ -88,7 +88,7 @@ export function ChangeDrop(drop: Drop) {
             { width: 2 },
             Button("Artists")
                 .onClick(() => {
-                    EditArtistsDialog(data).open();
+                    EditArtistsDialog(data.$artists).open();
                 }),
         ],
         [{ width: 2, height: 2 }, Spacer()],
