@@ -236,7 +236,11 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                         const data = asRef(artist.type);
                         data.listen((type, oldVal) => {
                             if (oldVal != undefined) {
-                                artists.updateItem(artist, { ...artist, type } as ArtistRef);
+                                if (type == ArtistTypes.Primary || type == ArtistTypes.Featuring) {
+                                    artists.updateItem(artist, { type, _id: "123" } as ArtistRef);
+                                } else {
+                                    artists.updateItem(artist, { type, name: "" } as ArtistRef);
+                                }
                             }
                         });
                         return DropDownInput("Type", ARTIST_ARRAY)
@@ -271,7 +275,7 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                                     artists.updateItem(artist, { ...artist, name } as ArtistRef);
                                 }
                             });
-                            return TextInput("text", "Name")
+                            return TextInput("text", "Name", "blur")
                                 .ref(data);
                         }
                     })

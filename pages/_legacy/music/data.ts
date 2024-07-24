@@ -1,34 +1,34 @@
 import { delay } from "@std/async";
 import { API, StreamingUploadHandler } from "shared/mod.ts";
-import { AdvancedImage, asState, Reference, StateHandler } from "webgen/mod.ts";
+import { AdvancedImage, asState, Reference } from "webgen/mod.ts";
 import { ArtistRef, Song } from "../../../spec/music.ts";
 
-export function uploadSongToDrop(state: StateHandler<{ songs: Song[]; artists: ArtistRef[]; language: string | undefined; primaryGenre: string | undefined; secondaryGenre: string | undefined; _id: string }>, uploadingSongs: Reference<string[]>, file: File) {
+export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[], language: string, primaryGenre: string, secondaryGenre: string, uploadingSongs: Reference<Record<string, number>[]>, file: File) {
     const uploadId = crypto.randomUUID();
-    uploadingSongs.addItem(uploadId);
+    uploadingSongs.addItem({ [uploadId]: 0 });
 
     const cleanedUpTitle = file.name
         .replaceAll("_", " ")
         .replaceAll("-", " ")
         .replace(/\.[^/.]+$/, "");
 
-    state.songs = asState<Song[]>([...state.songs, {
-        id: uploadId,
+    songs.addItem({
+        _id: uploadId,
         title: cleanedUpTitle,
-        artists: state.artists,
+        artists,
         // TODO: country should be real country
-        country: state.language!,
+        country: language,
         instrumental: false,
         explicit: false,
-        secondaryGenre: state.secondaryGenre!,
+        secondaryGenre,
         year: new Date().getFullYear(),
-        progress: 0,
         file: undefined!,
-    }]);
+    });
 
-    StreamingUploadHandler(`music/drops/${state._id}/upload`, {
+    StreamingUploadHandler(`music/songs/upload`, {
         failure: () => {
             uploadingSongs.removeItem(uploadId);
+            songs.updateItem({ _id: uploadId }, {});
             if (state.songs) {
                 state.songs[state.songs.findIndex((x) => x.id == uploadId)].progress = -1;
             }

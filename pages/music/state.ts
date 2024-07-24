@@ -25,7 +25,7 @@ export const creationState = asState({
     artwork: <string | undefined> undefined,
     artworkClientData: <AdvancedImage | undefined> undefined,
     loading: false,
-    uploadingSongs: <string[]> [],
+    uploadingSongs: <Record<string, number>[]> [],
     songs: <Song[]> [],
     comments: <string | undefined> undefined,
     page: 0,

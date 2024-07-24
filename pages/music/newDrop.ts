@@ -118,7 +118,10 @@ const wizard = creationState.$page.map((page) => {
                     Button("Artists")
                         .onClick(() => {
                             const artists = asRef(creationState.artists as ArtistRef[]);
-                            artists.listen((x) => creationState.artists = asState(x));
+                            artists.listen((x, oldVal) => {
+                                if (oldVal != undefined) creationState.$artists.setValue(asState(x));
+                                console.log(x, oldVal);
+                            });
                             return EditArtistsDialog(artists).open();
                         }),
                     Center(Label("Set your target Audience").addClass("title")),
