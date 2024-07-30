@@ -66,10 +66,6 @@ nav.music {
     height: 100%;
 }
 
-.wbutton.disabled {
-    z-index: 0;
-}
-
 span.title {
     font-size: 19px;
     font-weight: 700;

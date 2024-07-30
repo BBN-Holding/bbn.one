@@ -1,8 +1,8 @@
-import { API, fileCache, Permission, stupidErrorAlert, Table2 } from "shared/mod.ts";
-import { asRef, asState, Box, Button, Cache, CenterV, Component, Custom, DropDownInput, Grid, Horizontal, IconButton, Image, Label, MIcon, Reference, SheetDialog, SheetsStack, Spacer, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
+import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
+import { asState, Box, Cache, CenterV, Component, Custom, Horizontal, Image, Label, SheetsStack, Spacer, Style, SupportedThemes } from "webgen/mod.ts";
 import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
-import { Artist, ArtistRef, ArtistTypes, Drop } from "../../spec/music.ts";
+import { Drop } from "../../spec/music.ts";
 
 export const allowedAudioFormats = ["audio/flac", "audio/wav", "audio/mp3"];
 export const allowedImageFormats = ["image/png", "image/jpeg"];
@@ -183,119 +183,6 @@ export function saveBlob(blob: Blob, fileName: string) {
     a.click();
     window.URL.revokeObjectURL(url);
 }
-
-const createArtistSheet = (name?: string) => {
-    const state = asState({
-        name,
-        spotify: <string | undefined> undefined,
-        apple: <string | undefined> undefined,
-    });
-    const { promise, resolve } = Promise.withResolvers<void>();
-    const dialog = SheetDialog(
-        sheetStack,
-        "Create Artist",
-        Grid(
-            TextInput("text", "Artist Name").sync(state, "name"),
-            TextInput("text", "Spotify URL").sync(state, "spotify"),
-            TextInput("text", "Apple Music URL").sync(state, "apple"),
-            Button("Create")
-                .setJustifySelf("start")
-                .onPromiseClick(async () => {
-                    await API.music.artists.create(state);
-                    dialog.close();
-                    resolve();
-                }),
-        )
-            .setAlignContent("start")
-            .setWidth("400px")
-            .setHeight("420px")
-            .setGap(),
-    );
-    dialog.open();
-    return promise;
-};
-
-const ARTIST_ARRAY = <ArtistTypes[]> ["PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER"];
-export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
-    const artistList = asRef(<Artist[]> []);
-
-    API.music.artists.list().then(stupidErrorAlert)
-        .then((x) => {
-            artistList.setValue(x);
-        });
-
-    const dialog = SheetDialog(
-        sheetStack,
-        "Manage your Artists",
-        Vertical(
-            artistList.map((list) =>
-                new Table2(artists)
-                    .addClass("artist-table")
-                    .setColumnTemplate("10rem 10rem min-content")
-                    .addColumn("Type", (artist) => {
-                        const data = asRef(artist.type);
-                        data.listen((type, oldVal) => {
-                            if (oldVal != undefined) {
-                                if (type == ArtistTypes.Primary || type == ArtistTypes.Featuring) {
-                                    artists.updateItem(artist, { type, _id: "123" } as ArtistRef);
-                                } else {
-                                    artists.updateItem(artist, { type, name: "" } as ArtistRef);
-                                }
-                            }
-                        });
-                        return DropDownInput("Type", ARTIST_ARRAY)
-                            .ref(data);
-                    })
-                    .addColumn("Name", (artist) => {
-                        if ([ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type)) {
-                            const data = asRef(artist._id as string);
-                            data.listen((_id, oldVal) => {
-                                if (oldVal != undefined) {
-                                    artists.updateItem(artist, { ...artist, _id } as ArtistRef);
-                                }
-                            });
-                            return DropDownInput("Select Artist", list.map((y) => y._id))
-                                .ref(data)
-                                .setRender((data) => {
-                                    const artist = list.find((y) => y._id === data);
-                                    return artist ? artist.name : "sdf";
-                                })
-                                .addAction(MIcon("add"), "Create Artist", () => {
-                                    createArtistSheet().then(() => {
-                                        API.music.artists.list().then(stupidErrorAlert)
-                                            .then((x) => {
-                                                artistList.setValue(x);
-                                            });
-                                    });
-                                });
-                        } else {
-                            const data = asRef(artist.name as string);
-                            data.listen((name, oldVal) => {
-                                if (oldVal != undefined) {
-                                    artists.updateItem(artist, { ...artist, name } as ArtistRef);
-                                }
-                            });
-                            return TextInput("text", "Name", "blur")
-                                .ref(data);
-                        }
-                    })
-                    .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.getValue().filter((_, i) => i != artists.getValue().indexOf(data)))))
-            ).asRefComponent().removeFromLayout(),
-            Horizontal(
-                Spacer(),
-                Button("Add Artist")
-                    .onClick(() => artists.setValue([...artists.getValue(), { type: ArtistTypes.Primary, _id: "" }] as ArtistRef[])),
-            ).setPadding("0 0 3rem 0"),
-            Horizontal(
-                Spacer(),
-                Button("Save")
-                    .onClick(() => dialog.close()),
-            ),
-        ),
-    );
-
-    return dialog;
-};
 
 export function showPreviewImage(x: Drop) {
     return x.artwork ? Cache(`image-preview-${x.artwork}`, () => Promise.resolve(), (type) => type == "loaded" ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork") : Box()) : Image(templateArtwork, "A Placeholder Artwork.");

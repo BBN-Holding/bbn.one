@@ -76,16 +76,14 @@ export const song = zod.object({
 });
 
 export const pureDrop = zod.object({
-    gtin: zod.string().trim().max(0).nullable().or(
-        zod.string()
-            .trim()
-            .min(12, { message: "UPC/EAN: Invalid length" })
-            .max(13, { message: "UPC/EAN: Invalid length" })
-            .regex(/^\d+$/, { message: "UPC/EAN: Not a number" })
-            .refine((gtin) => parseInt(gtin.slice(-1), 10) === (10 - (sumOf(gtin.slice(0, -1).split("").map((digit, index) => parseInt(digit, 10) * ((16 - gtin.length + index) % 2 === 0 ? 3 : 1)), (x) => x) % 10)) % 10, {
-                message: "UPC/EAN: Invalid",
-            }),
-    ),
+    gtin: zod.string()
+        .trim()
+        .min(12, { message: "UPC/EAN: Invalid length" })
+        .max(13, { message: "UPC/EAN: Invalid length" })
+        .regex(/^\d+$/, { message: "UPC/EAN: Not a number" })
+        .refine((gtin) => parseInt(gtin.slice(-1), 10) === (10 - (sumOf(gtin.slice(0, -1).split("").map((digit, index) => parseInt(digit, 10) * ((16 - gtin.length + index) % 2 === 0 ? 3 : 1)), (x) => x) % 10)) % 10, {
+            message: "UPC/EAN: Invalid",
+        }).optional(),
     title: userString,
     artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
     release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
@@ -120,14 +118,16 @@ const pageOne = zod.object({
         .regex(/^\d+$/, { message: "UPC/EAN: Not a number" })
         .refine((gtin) => parseInt(gtin.slice(-1), 10) === (10 - (sumOf(gtin.slice(0, -1).split("").map((digit, index) => parseInt(digit, 10) * ((16 - gtin.length + index) % 2 === 0 ? 3 : 1)), (x) => x) % 10)) % 10, {
             message: "UPC/EAN: Invalid checksum",
-        }).or(zod.string().trim().max(0, { message: "UPC/EAN: Invalid" }).nullable()),
+        }).optional(),
     compositionCopyright: userString,
     soundRecordingCopyright: userString,
 });
 
 const pageTwo = zod.object({
     artwork: zod.string(),
-    loading: zod.literal(false, { errorMap: () => ({ message: "Artwork is still uploading" }) }).transform(() => undefined),
+    artworkClientData: zod.object({
+        type: zod.string().refine((x) => x !== "uploading", { message: "Artwork is still uploading" }),
+    }).transform(() => undefined),
 });
 
 const pageThree = zod.object({

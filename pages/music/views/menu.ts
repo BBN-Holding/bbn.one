@@ -1,15 +1,23 @@
 import { API, Chart, count, HeavyList, LoadingSpinner, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
-import { Button, Entry, Grid, Image, isMobile, MediaQuery, ref } from "webgen/mod.ts";
+import { asState, Button, Entry, Grid, Image, isMobile, MediaQuery, ref } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
-import { DropType } from "../../../spec/music.ts";
+import { Artist, Drop, DropType, Payout } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
-import { state } from "../state.ts";
+import { state } from "../../admin/state.ts";
 import { musicList } from "./list.ts";
+
+export const menuState = asState({
+    published: <Drop[] | "loading"> "loading",
+    unpublished: <Drop[] | "loading"> "loading",
+    drafts: <Drop[] | "loading"> "loading",
+    payouts: <Payout[] | "loading"> "loading",
+    artists: <Artist[] | "loading"> "loading",
+});
 
 export const musicMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
     actions: [
-        Button("Submit new Drop")
+        Button("Create new Drop")
             .onPromiseClick(async () => {
                 const { id } = await API.music.drops.create().then(stupidErrorAlert);
                 location.href = `/c/music/new-drop?id=${id}`;
@@ -18,7 +26,7 @@ export const musicMenu = Navigation({
     categories: [
         {
             id: "published",
-            title: ref`Published ${count(state.$published)}`,
+            title: ref`Published ${count(menuState.$published)}`,
             // TODO: Use HeavyList
             children: state.$published.map((published) =>
                 published == "loading" ? [LoadingSpinner()] : [
@@ -28,9 +36,9 @@ export const musicMenu = Navigation({
         },
         {
             id: "unpublished",
-            title: ref`Unpublished ${count(state.$unpublished)}`,
+            title: ref`Unpublished ${count(menuState.$unpublished)}`,
             // TODO: Use HeavyList
-            children: state.$unpublished.map((unpublished) =>
+            children: menuState.$unpublished.map((unpublished) =>
                 unpublished == "loading" ? [LoadingSpinner()] : [
                     musicList(unpublished ?? [], DropType.Private),
                 ]
@@ -38,9 +46,9 @@ export const musicMenu = Navigation({
         },
         {
             id: "drafts",
-            title: ref`Drafts ${count(state.$drafts)}`,
+            title: ref`Drafts ${count(menuState.$drafts)}`,
             // TODO: Use HeavyList
-            children: state.$drafts.map((drafts) =>
+            children: menuState.$drafts.map((drafts) =>
                 drafts == "loading" ? [LoadingSpinner()] : [
                     musicList(drafts ?? [], DropType.Unsubmitted),
                 ]
@@ -48,8 +56,8 @@ export const musicMenu = Navigation({
         },
         {
             id: "artists",
-            title: ref`Artists ${count(state.$artists)}`,
-            children: state.$artists.map((artists) =>
+            title: ref`Artists ${count(menuState.$artists)}`,
+            children: menuState.$artists.map((artists) =>
                 artists == "loading" ? [LoadingSpinner()] : [
                     HeavyList(artists, (x) =>
                         Entry({
@@ -60,8 +68,8 @@ export const musicMenu = Navigation({
         },
         {
             id: "payouts",
-            title: ref`Payouts ${count(state.$payouts)}`,
-            children: state.$payouts.map((payouts) =>
+            title: ref`Payouts ${count(menuState.$payouts)}`,
+            children: menuState.$payouts.map((payouts) =>
                 payouts == "loading" ? [LoadingSpinner()] : [
                     MediaQuery("(max-width: 700px)", (small) =>
                         Grid(
@@ -132,7 +140,7 @@ export const musicMenu = Navigation({
                                 },
                             }),
                         ).setEvenColumns(small ? 1 : 2)),
-                    HeavyList(state.$payouts, (x) =>
+                    HeavyList(menuState.$payouts, (x) =>
                         Entry({
                             title: x.period,
                             subtitle: x.moneythisperiod,
@@ -149,4 +157,4 @@ export const musicMenu = Navigation({
         "limited-width",
     );
 
-state.$drafts.listen((drafts) => musicMenu.path.setValue((drafts?.length ?? 0) > 0 ? "drafts/" : "published/"));
+menuState.$drafts.listen((drafts) => musicMenu.path.setValue((drafts?.length ?? 0) > 0 ? "drafts/" : "published/"));

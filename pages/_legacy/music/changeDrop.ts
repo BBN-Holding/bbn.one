@@ -6,13 +6,13 @@ import { templateArtwork } from "../../../assets/imports.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
 import { artistref, DATE_PATTERN, Drop, song, userString } from "../../../spec/music.ts";
-import { allowedImageFormats, EditArtistsDialog, getSecondary } from "../helper.ts";
-import { uploadArtwork } from "./data.ts";
+import { uploadArtwork } from "../../music/data.ts";
+import { EditArtistsDialog } from "../../music/views/table.ts";
+import { allowedImageFormats, getSecondary } from "../helper.ts";
 
 export function ChangeDrop(drop: Drop) {
     const state = asState({
         artworkClientData: <AdvancedImage | undefined> (drop.artwork ? <AdvancedImage> { type: "direct", source: () => API.music.id(drop._id!).artwork().then(stupidErrorAlert) } : undefined),
-        loading: false,
         validationState: <zod.ZodError | undefined> undefined,
     });
 
@@ -72,8 +72,8 @@ export function ChangeDrop(drop: Drop) {
                     Box(artworkData ? Image(artworkData, "A Music Album Artwork.") : Image(templateArtwork, "A Default Alubm Artwork."), IconButton(MIcon("edit"), "edit icon"))
                         .addClass("upload-image"),
                     allowedImageFormats,
-                    ([{ file }]) => uploadArtwork(drop._id!, file, state.$artworkClientData, state.$loading, data.$artwork),
-                ).onClick(() => createFilePicker(allowedImageFormats.join(",")).then((file) => uploadArtwork(drop._id!, file, state.$artworkClientData, state.$loading, data.$artwork)))
+                    ([{ file }]) => uploadArtwork(drop._id!, file, state.$artworkClientData, data.$artwork),
+                ).onClick(() => createFilePicker(allowedImageFormats.join(",")).then((file) => uploadArtwork(drop._id!, file, state.$artworkClientData, data.$artwork)))
             ).asRefComponent(),
         ).setDynamicColumns(2, "12rem"),
         [

@@ -1,7 +1,7 @@
 import { delay } from "@std/async";
 import { API, StreamingUploadHandler } from "shared/mod.ts";
 import { AdvancedImage, asState, Reference } from "webgen/mod.ts";
-import { ArtistRef, Song } from "../../../spec/music.ts";
+import { ArtistRef, Song } from "../../spec/music.ts";
 
 export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[], language: string, primaryGenre: string, secondaryGenre: string, uploadingSongs: Reference<Record<string, number>[]>, file: File) {
     const uploadId = crypto.randomUUID();
@@ -60,16 +60,13 @@ export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[],
     }, file);
 }
 
-//is there a better way for those typings??
-export function uploadArtwork(id: string, file: File, artworkClientData: Reference<AdvancedImage | undefined>, loading: Reference<boolean>, artwork: Reference<string> | Reference<string | undefined>) {
+export function uploadArtwork(id: string, file: File, artworkClientData: Reference<AdvancedImage | undefined>, artwork: Reference<string | undefined>) {
     const blobUrl = URL.createObjectURL(file);
     artworkClientData.setValue({ type: "uploading", filename: file.name, blobUrl, percentage: 0 });
-    loading.setValue(true);
 
     setTimeout(() => {
         StreamingUploadHandler(`music/drops/${id}/upload`, {
             failure: () => {
-                loading.setValue(false);
                 artworkClientData.setValue(undefined);
                 alert("Your Upload has failed. Please try a different file or try again later");
             },
@@ -80,7 +77,6 @@ export function uploadArtwork(id: string, file: File, artworkClientData: Referen
             backendResponse: (id) => {
                 artworkClientData.setValue({ type: "direct", source: async () => await file });
                 artwork.setValue(id);
-                loading.setValue(false);
             },
             onUploadTick: async (percentage) => {
                 artworkClientData.setValue({ type: "uploading", filename: file.name, blobUrl, percentage });
