@@ -6,10 +6,10 @@ import { Artist, ArtistRef, ArtistTypes, Song } from "../../../spec/music.ts";
 import { getSecondary, getYearList, ProfilePicture, sheetStack } from "../../_legacy/helper.ts";
 import "./table.css";
 
-export function ManageSongs(songs: Reference<Song[]>, primaryGenre: string) {
+export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<{ [uploadId: string]: number }[]>, primaryGenre: string) {
     return new Table2(songs)
         .setColumnTemplate("auto max-content max-content max-content max-content max-content max-content min-content")
-        .addColumn("Title", (song) => song.progress !== undefined ? Progress(song.progress) : InlineTextInput("text", "blur").addClass("low-level").sync(song, "title"))
+        .addColumn("Title", (song) => uploadingSongs.map((x) => x.filter((y) => y[song._id] !== undefined).length > 0 ? Progress(x.find((y) => y[song._id] !== undefined)[song._id]) : InlineTextInput("text", "blur").addClass("low-level").sync(song, "title")).asRefComponent())
         .addColumn("Artists", (song) =>
             Box(...song.artists.map((artist) => ProfilePicture(Label(""), "artist.name ?? artist._id")), IconButton(MIcon("add"), "add"))
                 .addClass("artists-list")

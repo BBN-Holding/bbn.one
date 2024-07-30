@@ -60,7 +60,7 @@ export const artistref = zod.object({
 
 export const song = zod.object({
     _id: zod.string(),
-    user: zod.string(),
+    user: zod.string().optional(),
     isrc: zod.string().optional(),
     title: userString,
     artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),

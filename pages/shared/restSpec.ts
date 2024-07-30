@@ -1,4 +1,4 @@
-import { Artist, BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, StoreItems, Wallet } from "../../spec/music.ts";
+import { Artist, BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, Song, StoreItems, Wallet } from "../../spec/music.ts";
 import { ProfileData } from "../_legacy/helper.ts";
 
 export const Permissions = [
@@ -461,6 +461,22 @@ export const API = {
         }),
     }),
     music: ({
+        songs: {
+            list: () =>
+                fetch(`${API.BASE_URL}music/songs`, {
+                    headers: headers(API.getToken()),
+                })
+                    .then(json<Drop[]>())
+                    .catch(reject),
+            create: (data: Partial<Song>) =>
+                fetch(`${API.BASE_URL}music/songs`, {
+                    method: "POST",
+                    headers: headers(API.getToken()),
+                    body: JSON.stringify(data),
+                })
+                    .then(json<{ id: string }>())
+                    .catch(reject),
+        },
         artists: {
             list: () =>
                 fetch(`${API.BASE_URL}music/artists`, {

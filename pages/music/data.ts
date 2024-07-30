@@ -1,9 +1,9 @@
 import { delay } from "@std/async";
-import { API, StreamingUploadHandler } from "shared/mod.ts";
-import { AdvancedImage, asState, Reference } from "webgen/mod.ts";
+import { API, StreamingUploadHandler, stupidErrorAlert } from "shared/mod.ts";
+import { AdvancedImage, Reference } from "webgen/mod.ts";
 import { ArtistRef, Song } from "../../spec/music.ts";
 
-export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[], language: string, primaryGenre: string, secondaryGenre: string, uploadingSongs: Reference<Record<string, number>[]>, file: File) {
+export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[], language: string, primaryGenre: string, secondaryGenre: string, uploadingSongs: Reference<{ [key: string]: number }[]>, file: File) {
     const uploadId = crypto.randomUUID();
     uploadingSongs.addItem({ [uploadId]: 0 });
 
@@ -20,6 +20,7 @@ export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[],
         country: language,
         instrumental: false,
         explicit: false,
+        primaryGenre,
         secondaryGenre,
         year: new Date().getFullYear(),
         file: undefined!,
@@ -27,35 +28,32 @@ export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[],
 
     StreamingUploadHandler(`music/songs/upload`, {
         failure: () => {
-            uploadingSongs.removeItem(uploadId);
-            songs.updateItem({ _id: uploadId }, {});
-            if (state.songs) {
-                state.songs[state.songs.findIndex((x) => x.id == uploadId)].progress = -1;
-            }
-            state.songs = asState<Song[]>([...state.songs]);
+            songs.setValue(songs.getValue().filter((x) => x._id != uploadId));
+            uploadingSongs.setValue(uploadingSongs.getValue().map((x) => ({ ...x, [uploadId]: -1 })));
             alert("Your Upload has failed. Please try a different file or try again later");
         },
         uploadDone: () => {
-            if (state.songs) {
-                state.songs[state.songs.findIndex((x) => x.id == uploadId)].progress = 100;
-            }
-            state.songs = asState<Song[]>([...state.songs]);
+            uploadingSongs.setValue(uploadingSongs.getValue().map((x) => ({ ...x, [uploadId]: 100 })));
         },
         credentials: () => API.getToken(),
-        backendResponse: (id: string) => {
-            if (state.songs) {
-                state.songs[state.songs.findIndex((x) => x.id == uploadId)].progress = undefined;
-                state.songs[state.songs.findIndex((x) => x.id == uploadId)].file = id;
-            }
-            uploadingSongs.removeItem(uploadId);
-            state.songs = asState<Song[]>([...state.songs]);
+        backendResponse: async (id: string) => {
+            uploadingSongs.setValue(uploadingSongs.getValue().filter((x) => !x[uploadId]));
+            const song = await API.music.songs.create({
+                title: cleanedUpTitle,
+                artists,
+                country: language,
+                instrumental: false,
+                explicit: false,
+                primaryGenre,
+                secondaryGenre,
+                year: new Date().getFullYear(),
+                file: id,
+            }).then(stupidErrorAlert);
+            songs.setValue(songs.getValue().map((x) => x._id == uploadId ? { ...x, _id: song.id, file: id } : x));
         },
         // deno-lint-ignore require-await
         onUploadTick: async (percentage) => {
-            if (state.songs) {
-                state.songs[state.songs.findIndex((x) => x.id == uploadId)].progress = percentage;
-            }
-            state.songs = asState<Song[]>([...state.songs]);
+            uploadingSongs.setValue(uploadingSongs.getValue().map((x) => ({ ...x, [uploadId]: percentage })));
         },
     }, file);
 }

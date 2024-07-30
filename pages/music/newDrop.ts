@@ -197,9 +197,9 @@ const wizard = creationState.$page.map((page) => {
                     CenterAndRight(
                         Label("Manage your Music").addClass("title"),
                         Button("Manual Upload")
-                            .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(creationState, creationState.$uploadingSongs, file))),
+                            .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(creationState.$songs, creationState.artists, creationState.language, creationState.primaryGenre, creationState.secondaryGenre, creationState.$uploadingSongs, file))),
                     ),
-                    ManageSongs(creationState.$songs as unknown as Reference<Song[]>, creationState.primaryGenre!),
+                    ManageSongs(creationState.$songs as unknown as Reference<Song[]>, creationState.$uploadingSongs, creationState.primaryGenre!),
                 ).setGap(),
                 Spacer(),
             ),
