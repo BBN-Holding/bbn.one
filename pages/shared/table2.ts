@@ -2,7 +2,7 @@ import { asRef, Box, Component, Custom, Label, Refable, Reference, refMerge } fr
 import "./table2.css";
 
 export type TableColumn<Data> = {
-    converter: (data: Data) => Component;
+    converter: (data: Readonly<Data>) => Component;
     title: Reference<string>;
     sorting: Reference<TableSorting | undefined>;
 };
