@@ -1,5 +1,5 @@
 import { API, Progress, stupidErrorAlert, Table2 } from "shared/mod.ts";
-import { asRef, asState, Box, Button, ButtonStyle, Checkbox, Color, DropDownInput, Grid, Horizontal, IconButton, InlineTextInput, Label, MIcon, Reference, SheetDialog, Spacer, TextInput, Vertical } from "webgen/mod.ts";
+import { asRef, asState, Box, Button, Checkbox, Color, DropDownInput, Grid, Horizontal, IconButton, InlineTextInput, Label, MIcon, Reference, SheetDialog, Spacer, TextInput, Vertical } from "webgen/mod.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
 import { Artist, ArtistRef, ArtistTypes, Song } from "../../../spec/music.ts";
@@ -27,7 +27,6 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
             data.listen((x) => songs.updateItem(song, { ...song, year: parseInt(x) }));
             return DropDownInput("Year", getYearList())
                 .ref(data)
-                .setStyle(ButtonStyle.Inline)
                 .addClass("low-level");
         })
         //TODO: create real country.json
@@ -37,7 +36,6 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
             return DropDownInput("Country", Object.keys(language))
                 .setRender((key) => language[<keyof typeof language> key])
                 .ref(data)
-                .setStyle(ButtonStyle.Inline)
                 .addClass("low-level");
         })
         .addColumn("Secondary Genre", (song) => {
@@ -45,7 +43,6 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
             data.listen((x) => songs.updateItem(song, { ...song, secondaryGenre: x }));
             return DropDownInput("Secondary Genre", getSecondary(genres, primaryGenre) ?? [])
                 .ref(data)
-                .setStyle(ButtonStyle.Inline)
                 .addClass("low-level");
         })
         .addColumn("Instrumental", (song) =>

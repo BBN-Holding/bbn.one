@@ -18,6 +18,8 @@ await RegisterAuthRefresh();
 WebGen({
     theme: SupportedThemes.dark,
 });
+// Because this is a mix of light and dark mode we force dropdowns to be dark
+document.querySelector(".wpopover")?.setAttribute("data-theme", "dark");
 
 const params = new URLSearchParams(location.search);
 

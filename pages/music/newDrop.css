@@ -2,10 +2,6 @@ body {
     color: rgb(246, 246, 246);
 }
 
-.wpopover {
-    --color-grayscaled-inline-font: black;
-}
-
 .fullscreen .wwizard {
     height: 100%;
     max-width: 69rem;

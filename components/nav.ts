@@ -14,7 +14,7 @@ const Nav = (component: Component) => {
 
 const navMenuPopover = Popover(
     Box(
-        activeUser.$permission.map(() =>
+        activeUser.$permission.map((perm) =>
             Vertical(
                 Label("SWITCH TO").addClass("title"),
                 pages.map(([logo, permission, route, login]) =>
@@ -28,12 +28,12 @@ const navMenuPopover = Popover(
                             .onClick(() => location.pathname = route)
                         : Empty()
                 ),
-                Horizontal(
+                perm.length > 0 ? Horizontal(
                     Label("Go to Settings"),
                     Spacer(),
                     MIcon("arrow_forward_ios"),
                 ).addClass("small-entry", "settings")
-                    .onClick(() => location.href = "/settings"),
+                    .onClick(() => location.href = "/settings") : Empty(),
             )
         )
             .asRefComponent(),
