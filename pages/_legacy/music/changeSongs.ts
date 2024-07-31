@@ -41,7 +41,7 @@ export function ChangeSongs(drop: Drop) {
                     location.reload(); // Handle this Smarter => Make it a Reload Event.
                 }),
         ),
-        ManageSongs(data.$songs, data.primaryGenre),
+        ManageSongs(data.$songs, state.$uploadingSongs, data.primaryGenre),
         Horizontal(
             Spacer(),
             Button("Add a new Song")

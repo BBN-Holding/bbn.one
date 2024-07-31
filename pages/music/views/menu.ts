@@ -3,7 +3,6 @@ import { asState, Button, Entry, Grid, Image, isMobile, MediaQuery, ref } from "
 import { templateArtwork } from "../../../assets/imports.ts";
 import { Artist, Drop, DropType, Payout } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
-import { state } from "../../admin/state.ts";
 import { musicList } from "./list.ts";
 
 export const menuState = asState({
@@ -28,7 +27,7 @@ export const musicMenu = Navigation({
             id: "published",
             title: ref`Published ${count(menuState.$published)}`,
             // TODO: Use HeavyList
-            children: state.$published.map((published) =>
+            children: menuState.$published.map((published) =>
                 published == "loading" ? [LoadingSpinner()] : [
                     musicList(published ?? [], DropType.Published),
                 ]

@@ -9,7 +9,7 @@
         "@std/path": "jsr:@std/path@^0.225.2",
         "shared/": "./pages/shared/",
         // "webgen/": "../WebGen/"
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/0a4b297/"
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/037188a/"
     },
     "lock": false,
     "compilerOptions": {

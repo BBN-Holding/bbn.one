@@ -11,11 +11,15 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
         .setColumnTemplate("auto max-content max-content max-content max-content max-content max-content min-content")
         .addColumn("Title", (song) => uploadingSongs.map((x) => x.filter((y) => y[song._id] !== undefined).length > 0 ? Progress(x.find((y) => y[song._id] !== undefined)[song._id]) : InlineTextInput("text", "blur").addClass("low-level").sync(song, "title")).asRefComponent())
         .addColumn("Artists", (song) =>
-            Box(...song.artists.map((artist) => ProfilePicture(Label(""), "artist.name ?? artist._id")), IconButton(MIcon("add"), "add"))
+            Box(...song.artists.map((artist) => "name" in artist ? ProfilePicture(Label(""), artist.name) : ProfilePicture(Label(""), artist._id)), IconButton(MIcon("add"), "add"))
                 .addClass("artists-list")
                 .onClick(() => {
                     const artists = asRef(song.artists);
-                    artists.listen((x) => songs.updateItem(song, { ...song, artists: x }));
+                    artists.listen((newVal, oldVal) => {
+                        if (oldVal != undefined) {
+                            songs.setValue(songs.getValue().map((x) => x._id == song._id ? { ...song, artists: newVal } : x));
+                        }
+                    });
                     EditArtistsDialog(artists).open();
                 }))
         .addColumn("Year", (song) => {
@@ -31,8 +35,8 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
             const data = asRef(song.country);
             data.listen((x) => songs.updateItem(song, { ...song, country: x }));
             return DropDownInput("Country", Object.keys(language))
-                .ref(data)
                 .setRender((key) => language[<keyof typeof language> key])
+                .ref(data)
                 .setStyle(ButtonStyle.Inline)
                 .addClass("low-level");
         })
@@ -105,16 +109,15 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
             artistList.map((list) =>
                 new Table2(artists)
                     .addClass("artist-table")
-                    .setColumnTemplate("10rem 10rem min-content")
+                    .setColumnTemplate("10rem 12rem min-content")
                     .addColumn("Type", (artist) => {
                         const data = asRef(artist.type);
                         data.listen((type, oldVal) => {
                             if (oldVal != undefined) {
-                                console.log(type);
                                 if (type == ArtistTypes.Primary || type == ArtistTypes.Featuring) {
-                                    artists.updateItem(artist, { type, _id: "123" } as ArtistRef);
+                                    artists.setValue(artists.getValue().map((x) => x == artist ? { type, _id: "123" } : x));
                                 } else {
-                                    artists.updateItem(artist, { type, name: "" } as ArtistRef);
+                                    artists.setValue(artists.getValue().map((x) => x == artist ? { type, name: "" } : x));
                                 }
                             }
                         });
@@ -130,11 +133,11 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                                 }
                             });
                             return DropDownInput("Select Artist", list.map((y) => y._id))
-                                .ref(data)
                                 .setRender((data) => {
                                     const artist = list.find((y) => y._id === data);
                                     return artist ? artist.name : "sdf";
                                 })
+                                .ref(data)
                                 .addAction(MIcon("add"), "Create Artist", () => {
                                     createArtistSheet().then(() => {
                                         API.music.artists.list().then(stupidErrorAlert)
