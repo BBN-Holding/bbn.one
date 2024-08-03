@@ -142,7 +142,7 @@ export async function RegisterAuthRefresh() {
     }
 }
 
-export function shouldLoginPage() {
+function shouldLoginPage() {
     if (!loginRequired.find((x) => location.pathname.startsWith(x))) {
         return;
     }
@@ -172,11 +172,8 @@ export function getYearList(): string[] {
         .map((x) => x.toString());
 }
 
-const a = document.createElement("a");
-document.body.appendChild(a);
-a.setAttribute("style", "display: none");
-
 export function saveBlob(blob: Blob, fileName: string) {
+    const a = document.createElement("a");
     const url = window.URL.createObjectURL(blob);
     a.href = url;
     a.download = fileName;

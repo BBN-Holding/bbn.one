@@ -13,6 +13,12 @@
     "orientation": "portrait",
     "scope": "/",
     "start_url": "/",
+    "protocol_handlers": [
+        {
+            "protocol": "web+bbn",
+            "url": "/%s"
+        }
+    ],
     "icons": [
         {
             "src": "images/icons/icon-72x72.png",

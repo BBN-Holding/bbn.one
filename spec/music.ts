@@ -111,14 +111,16 @@ const pageOne = zod.object({
     language: zod.string(),
     primaryGenre: zod.string(),
     secondaryGenre: zod.string(),
-    gtin: zod.string()
-        .trim()
-        .min(12, { message: "UPC/EAN: Invalid length" })
-        .max(13, { message: "UPC/EAN: Invalid length" })
-        .regex(/^\d+$/, { message: "UPC/EAN: Not a number" })
-        .refine((gtin) => parseInt(gtin.slice(-1), 10) === (10 - (sumOf(gtin.slice(0, -1).split("").map((digit, index) => parseInt(digit, 10) * ((16 - gtin.length + index) % 2 === 0 ? 3 : 1)), (x) => x) % 10)) % 10, {
-            message: "UPC/EAN: Invalid checksum",
-        }).optional(),
+    gtin: zod.preprocess(
+        (x) => x === "" ? undefined : x,
+        zod.string().trim()
+            .min(12, { message: "UPC/EAN: Invalid length" })
+            .max(13, { message: "UPC/EAN: Invalid length" })
+            .regex(/^\d+$/, { message: "UPC/EAN: Not a number" })
+            .refine((gtin) => parseInt(gtin.slice(-1), 10) === (10 - (sumOf(gtin.slice(0, -1).split("").map((digit, index) => parseInt(digit, 10) * ((16 - gtin.length + index) % 2 === 0 ? 3 : 1)), (x) => x) % 10)) % 10, {
+                message: "UPC/EAN: Invalid checksum",
+            }).optional(),
+    ),
     compositionCopyright: userString,
     soundRecordingCopyright: userString,
 });

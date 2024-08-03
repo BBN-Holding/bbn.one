@@ -66,6 +66,7 @@ sheetStack.setDefault(Vertical(
                     title: "Your Wallet",
                     actions: [
                         Button("Request Payout")
+                            .setColor(wallet.balance?.unrestrained! + wallet.balance?.restrained! > 10 ? Color.Grayscaled : Color.Disabled)
                             .onClick(() => {
                                 const amount = asState({ value: "0" });
                                 const dialog = SheetDialog(
@@ -84,8 +85,7 @@ sheetStack.setDefault(Vertical(
                                         .setMargin("10px"),
                                 );
                                 dialog.open();
-                            })
-                            .setColor(wallet.balance?.unrestrained! + wallet.balance?.restrained! > 10 ? Color.Grayscaled : Color.Disabled),
+                            }),
                     ],
                 }).addClass(
                     isMobile.map((mobile) => mobile ? "mobile-navigation" : "navigation"),

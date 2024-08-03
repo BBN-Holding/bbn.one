@@ -1,5 +1,5 @@
 import { API, Progress, stupidErrorAlert, Table2 } from "shared/mod.ts";
-import { asRef, asState, Box, Button, Checkbox, Color, DropDownInput, Grid, Horizontal, IconButton, InlineTextInput, Label, MIcon, Reference, SheetDialog, Spacer, TextInput, Vertical } from "webgen/mod.ts";
+import { asRef, asState, Box, Button, Checkbox, Color, DropDownInput, Grid, Horizontal, IconButton, InlineTextInput, Label, MIcon, Reference, SheetDialog, Spacer, TextInput } from "webgen/mod.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
 import { Artist, ArtistRef, ArtistTypes, Song } from "../../../spec/music.ts";
@@ -59,7 +59,7 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
         .addClass("inverted-class");
 }
 
-const createArtistSheet = (name?: string) => {
+export const createArtistSheet = (name?: string) => {
     const state = asState({
         name,
         spotify: <string | undefined> undefined,
@@ -70,10 +70,12 @@ const createArtistSheet = (name?: string) => {
         sheetStack,
         "Create Artist",
         Grid(
-            TextInput("text", "Artist Name").ref(state.$name),
+            TextInput("text", "Artist Name").required().ref(state.$name),
             TextInput("text", "Spotify URL").ref(state.$spotify),
             TextInput("text", "Apple Music URL").ref(state.$apple),
             Button("Create")
+                //still disabled if name exists
+                .setColor(state.$name.map((x) => x ? Color.Grayscaled : Color.Disabled))
                 .setJustifySelf("start")
                 .onPromiseClick(async () => {
                     await API.music.artists.create(state);
@@ -90,82 +92,76 @@ const createArtistSheet = (name?: string) => {
     return promise;
 };
 
-const ARTIST_ARRAY = Object.values(ArtistTypes);
 export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
     const artistList = asRef(<Artist[]> []);
 
     API.music.artists.list().then(stupidErrorAlert)
-        .then((x) => {
-            artistList.setValue(x);
-        });
+        .then((x) => artistList.setValue(x));
 
     const dialog = SheetDialog(
         sheetStack,
         "Manage your Artists",
-        Vertical(
-            artistList.map((list) =>
-                new Table2(artists)
-                    .addClass("artist-table")
-                    .setColumnTemplate("10rem 12rem min-content")
-                    .addColumn("Type", (artist) => {
-                        const data = asRef(artist.type);
-                        data.listen((type, oldVal) => {
+        artistList.map((list) =>
+            new Table2(artists)
+                .addClass("artist-table")
+                .setColumnTemplate("10rem 12rem min-content")
+                .addColumn("Type", (artist) => {
+                    const data = asRef(artist.type);
+                    data.listen((type, oldVal) => {
+                        if (oldVal != undefined) {
+                            if (type == ArtistTypes.Primary || type == ArtistTypes.Featuring) {
+                                artists.setValue(artists.getValue().map((x) => x == artist ? { type, _id: undefined! } : x));
+                            } else {
+                                artists.setValue(artists.getValue().map((x) => x == artist ? { type, name: "" } : x));
+                            }
+                        }
+                    });
+                    return DropDownInput("Type", Object.values(ArtistTypes))
+                        .ref(data);
+                })
+                .addColumn("Name", (artist) => {
+                    if ([ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type)) {
+                        const data = asRef(artist._id as string);
+                        data.listen((_id, oldVal) => {
                             if (oldVal != undefined) {
-                                if (type == ArtistTypes.Primary || type == ArtistTypes.Featuring) {
-                                    artists.setValue(artists.getValue().map((x) => x == artist ? { type, _id: "123" } : x));
-                                } else {
-                                    artists.setValue(artists.getValue().map((x) => x == artist ? { type, name: "" } : x));
-                                }
+                                artists.updateItem(artist, { ...artist, _id } as ArtistRef);
                             }
                         });
-                        return DropDownInput("Type", ARTIST_ARRAY)
-                            .ref(data);
-                    })
-                    .addColumn("Name", (artist) => {
-                        if ([ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type)) {
-                            const data = asRef(artist._id as string);
-                            data.listen((_id, oldVal) => {
-                                if (oldVal != undefined) {
-                                    artists.updateItem(artist, { ...artist, _id } as ArtistRef);
-                                }
-                            });
-                            return DropDownInput("Select Artist", list.map((y) => y._id))
-                                .setRender((data) => {
-                                    const artist = list.find((y) => y._id === data);
-                                    return artist ? artist.name : "sdf";
-                                })
-                                .ref(data)
-                                .addAction(MIcon("add"), "Create Artist", () => {
-                                    createArtistSheet().then(() => {
-                                        API.music.artists.list().then(stupidErrorAlert)
-                                            .then((x) => {
-                                                artistList.setValue(x);
-                                            });
-                                    });
+                        return DropDownInput("Select Artist", list.map((y) => y._id))
+                            .setRender((data) => {
+                                const artist = list.find((y) => y._id === data);
+                                return artist ? artist.name : "sdf";
+                            })
+                            .ref(data)
+                            .addAction(MIcon("add"), "Create Artist", () => {
+                                createArtistSheet().then(() => {
+                                    API.music.artists.list().then(stupidErrorAlert)
+                                        .then((x) => {
+                                            artistList.setValue(x);
+                                        });
                                 });
-                        } else {
-                            const data = asRef(artist.name as string);
-                            data.listen((name, oldVal) => {
-                                if (oldVal != undefined) {
-                                    artists.updateItem(artist, { ...artist, name } as ArtistRef);
-                                }
                             });
-                            return TextInput("text", "Name", "blur")
-                                .ref(data);
+                    }
+                    const data = asRef(artist.name as string);
+                    data.listen((name, oldVal) => {
+                        if (oldVal != undefined) {
+                            artists.updateItem(artist, { ...artist, name } as ArtistRef);
                         }
-                    })
-                    .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.getValue().filter((_, i) => i != artists.getValue().indexOf(data)))))
-            ).asRefComponent(),
-            Horizontal(
-                Spacer(),
-                Button("Add Artist")
-                    .onClick(() => artists.setValue([...artists.getValue(), { type: ArtistTypes.Primary, _id: "" }] as ArtistRef[])),
-            ).setPadding("0 0 3rem 0"),
-            Horizontal(
-                Spacer(),
-                Button("Save")
-                    .onClick(() => dialog.close()),
-            ),
+                    });
+                    return TextInput("text", "Name", "blur")
+                        .ref(data);
+                })
+                .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.getValue().filter((_, i) => i != artists.getValue().indexOf(data)))))
+        ).asRefComponent(),
+        Horizontal(
+            Spacer(),
+            Button("Add Artist")
+                .onClick(() => artists.addItem({ type: ArtistTypes.Primary, _id: undefined! } as ArtistRef)),
+        ).setPadding("0 0 3rem 0"),
+        Horizontal(
+            Spacer(),
+            Button("Save")
+                .onClick(() => dialog.close()),
         ),
     );
 

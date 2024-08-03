@@ -28,12 +28,14 @@ const navMenuPopover = Popover(
                             .onClick(() => location.pathname = route)
                         : Empty()
                 ),
-                perm.length > 0 ? Horizontal(
-                    Label("Go to Settings"),
-                    Spacer(),
-                    MIcon("arrow_forward_ios"),
-                ).addClass("small-entry", "settings")
-                    .onClick(() => location.href = "/settings") : Empty(),
+                perm.length
+                    ? Horizontal(
+                        Label("Go to Settings"),
+                        Spacer(),
+                        MIcon("arrow_forward_ios"),
+                    ).addClass("small-entry", "settings")
+                        .onClick(() => location.href = "/settings")
+                    : Empty(),
             )
         )
             .asRefComponent(),
@@ -75,7 +77,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     email
                         ? LinkButton(
                             Grid(
-                                showProfilePicture(IsLoggedIn()!),
+                                showProfilePicture(IsLoggedIn()!).setWidth("29px").setHeight("29px"),
                                 Label(activeUser.$username)
                                     .setFontWeight("bold"),
                             )

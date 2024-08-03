@@ -4,7 +4,7 @@ import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import { DropType } from "../../spec/music.ts";
-import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
+import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../_legacy/helper.ts";
 import { menuState, musicMenu } from "./views/menu.ts";
 
 await RegisterAuthRefresh();
@@ -14,7 +14,9 @@ WebGen({
     },
 });
 
-Body(Vertical(DynaNavigation("Music"), musicMenu));
+sheetStack.setDefault(musicMenu);
+
+Body(Vertical(DynaNavigation("Music"), sheetStack));
 
 renewAccessTokenIfNeeded()
     .then(async () => {

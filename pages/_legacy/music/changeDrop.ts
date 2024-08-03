@@ -103,7 +103,6 @@ export function ChangeDrop(drop: Drop) {
                 data.$primaryGenre.map((primaryGenre) =>
                     DropDownInput("Secondary Genre", getSecondary(genres, primaryGenre) ?? [])
                         .ref(data.$secondaryGenre)
-                        .addClass("border-box")
                         .setWidth("100%")
                 ).asRefComponent(),
             )

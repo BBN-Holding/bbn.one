@@ -87,7 +87,7 @@ export function displayError(data: unknown) {
         try {
             const jdata = JSON.parse(data) as unknown;
             // display assert errors that have a message
-            if (jdata && typeof jdata === "object" && "type" in jdata && "message" in jdata && jdata.type === "assert" && jdata.message) return `Error: ${jdata.message}`;
+            if (jdata && typeof jdata === "object" && "type" in jdata && "message" in jdata && (jdata.type === "assert" || jdata.type === "zod") && jdata.message) return `Error: ${jdata.message}`;
         } catch (_e) {
             //
         }

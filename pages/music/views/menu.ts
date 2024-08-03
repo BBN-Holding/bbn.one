@@ -1,9 +1,14 @@
 import { API, Chart, count, HeavyList, LoadingSpinner, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Button, Entry, Grid, Image, isMobile, MediaQuery, ref } from "webgen/mod.ts";
+import { asRef, asState, Button, Component, Entry, Grid, Horizontal, Image, isMobile, LinkButton, MediaQuery, ref } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { Artist, Drop, DropType, Payout } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
 import { musicList } from "./list.ts";
+import { createArtistSheet } from "./table.ts";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import spotify from "../../music-landing/assets/spotify.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import apple from "../../music-landing/assets/apple.svg";
 
 export const menuState = asState({
     published: <Drop[] | "loading"> "loading",
@@ -13,15 +18,11 @@ export const menuState = asState({
     artists: <Artist[] | "loading"> "loading",
 });
 
+const menuButtons = asRef(<Component[]> []);
+
 export const musicMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
-    actions: [
-        Button("Create new Drop")
-            .onPromiseClick(async () => {
-                const { id } = await API.music.drops.create().then(stupidErrorAlert);
-                location.href = `/c/music/new-drop?id=${id}`;
-            }),
-    ],
+    actions: menuButtons,
     categories: [
         {
             id: "published",
@@ -56,14 +57,15 @@ export const musicMenu = Navigation({
         {
             id: "artists",
             title: ref`Artists ${count(menuState.$artists)}`,
-            children: menuState.$artists.map((artists) =>
-                artists == "loading" ? [LoadingSpinner()] : [
-                    HeavyList(artists, (x) =>
-                        Entry({
-                            title: x.name,
-                        }).addPrefix(Image(templateArtwork, "").addClass("image-square"))),
-                ]
-            ),
+            children: [
+                HeavyList(menuState.$artists, (x) =>
+                    Entry({
+                        title: x.name,
+                    })
+                        .addSuffix(Horizontal(LinkButton(Image(spotify, "Spotify"), "fdgdf").setHeight("2rem").setCssStyle("aspectRatio", "1 / 1"), LinkButton(Image(apple, "apple").setHeight("2rem").setCssStyle("aspectRatio", "1 / 1"), "fdgdf")).setGap())
+                        .addPrefix(Image(templateArtwork, "").addClass("image-square")))
+                    .setPlaceholder(placeholder("No Artists", "Create a new Artist to release music")),
+            ],
         },
         {
             id: "payouts",
@@ -155,5 +157,24 @@ export const musicMenu = Navigation({
         isMobile.map((mobile) => mobile ? "mobile-navigation" : "navigation"),
         "limited-width",
     );
+
+musicMenu.path.listen((path) => {
+    if (path === "artists/") {
+        menuButtons.setValue(
+            [
+                Button("Create new Artist")
+                    .onClick(() => createArtistSheet().then(async () => menuState.artists = await API.music.artists.list().then(stupidErrorAlert))),
+            ],
+        );
+    } else {
+        menuButtons.setValue([
+            Button("Create new Drop")
+                .onPromiseClick(async () => {
+                    const { id } = await API.music.drops.create().then(stupidErrorAlert);
+                    location.href = `/c/music/new-drop?id=${id}`;
+                }),
+        ]);
+    }
+});
 
 menuState.$drafts.listen((drafts) => musicMenu.path.setValue((drafts?.length ?? 0) > 0 ? "drafts/" : "published/"));
