@@ -2,6 +2,9 @@ nav {
     color: white;
     font-weight: 500;
     position: sticky;
+    left: 0;
+    right: 0;
+    top: 0;
     z-index: 11;
     padding: 0 1rem;
     user-select: none;
