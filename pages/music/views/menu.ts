@@ -6,9 +6,7 @@ import { activeUser } from "../../_legacy/helper.ts";
 import { musicList } from "./list.ts";
 import { createArtistSheet } from "./table.ts";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-import spotify from "../../music-landing/assets/spotify.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-import apple from "../../music-landing/assets/apple.svg";
 
 export const menuState = asState({
     published: <Drop[] | "loading"> "loading",
@@ -61,8 +59,14 @@ export const musicMenu = Navigation({
                 HeavyList(menuState.$artists, (x) =>
                     Entry({
                         title: x.name,
+                        // TODO: Add used on x songs, x drops, maybe even streams?
                     })
-                        .addSuffix(Horizontal(LinkButton(Image(spotify, "Spotify"), "fdgdf").setHeight("2rem").setCssStyle("aspectRatio", "1 / 1"), LinkButton(Image(apple, "apple").setHeight("2rem").setCssStyle("aspectRatio", "1 / 1"), "fdgdf")).setGap())
+                        .addSuffix(
+                            Horizontal(
+                                LinkButton("Spotify", "fdgdf"),
+                                LinkButton("Apple Music", "fdgdf"),
+                            ).setGap(),
+                        )
                         .addPrefix(Image(templateArtwork, "").addClass("image-square")))
                     .setPlaceholder(placeholder("No Artists", "Create a new Artist to release music")),
             ],
