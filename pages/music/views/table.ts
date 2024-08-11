@@ -131,7 +131,7 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                         return DropDownInput("Select Artist", list.map((y) => y._id))
                             .setRender((data) => {
                                 const artist = list.find((y) => y._id === data);
-                                return artist ? artist.name : "sdf";
+                                return artist ? artist.name : "";
                             })
                             .ref(data)
                             .addAction(MIcon("add"), "Create Artist", () => {

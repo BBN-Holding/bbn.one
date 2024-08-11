@@ -5,7 +5,7 @@ import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
 import language from "../../data/language.json" with { type: "json" };
-import { ArtistRef, DropType, pages, Song } from "../../spec/music.ts";
+import { ArtistRef, ArtistTypes, DropType, pages, Song } from "../../spec/music.ts";
 import { allowedAudioFormats, allowedImageFormats, CenterAndRight, getSecondary, RegisterAuthRefresh, sheetStack } from "../_legacy/helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./data.ts";
 import { EditArtistsDialog, ManageSongs } from "./views/table.ts";
@@ -57,7 +57,7 @@ API.music.id(dropId).get().then(stupidErrorAlert)
         creationState.title = drop.title;
         creationState.release = drop.release;
         creationState.language = drop.language;
-        creationState.artists = asState(drop.artists ?? []);
+        creationState.artists = asState(drop.artists ?? [{ type: ArtistTypes.Primary, _id: null! }]);
         creationState.primaryGenre = drop.primaryGenre;
         creationState.secondaryGenre = drop.secondaryGenre;
         creationState.compositionCopyright = drop.compositionCopyright ?? "BBN Music (via bbn.one)";
