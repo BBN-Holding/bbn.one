@@ -5,8 +5,6 @@ import { Artist, Drop, DropType, Payout } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
 import { musicList } from "./list.ts";
 import { createArtistSheet } from "./table.ts";
-// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 
 export const menuState = asState({
     published: <Drop[] | "loading"> "loading",
