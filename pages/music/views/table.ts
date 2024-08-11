@@ -74,14 +74,13 @@ export const createArtistSheet = (name?: string) => {
             TextInput("text", "Spotify URL").ref(state.$spotify),
             TextInput("text", "Apple Music URL").ref(state.$apple),
             Button("Create")
-                //still disabled if name exists
-                .setColor(state.$name.map((x) => x ? Color.Grayscaled : Color.Disabled))
                 .setJustifySelf("start")
                 .onPromiseClick(async () => {
                     await API.music.artists.create(state);
                     dialog.close();
                     resolve();
-                }),
+                })
+                .setColor(state.$name.map((x) => x ? Color.Grayscaled : Color.Disabled)),
         )
             .setAlignContent("start")
             .setWidth("400px")
@@ -110,8 +109,10 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                     data.listen((type, oldVal) => {
                         if (oldVal != undefined) {
                             if (type == ArtistTypes.Primary || type == ArtistTypes.Featuring) {
-                                artists.setValue(artists.getValue().map((x) => x == artist ? { type, _id: undefined! } : x));
+                                //artists.updateItem(artist, { type, _id: null! } as ArtistRef);
+                                artists.setValue(artists.getValue().map((x) => x == artist ? { type, _id: null! } : x));
                             } else {
+                                //artists.updateItem(artist, { type, name: "" } as ArtistRef);
                                 artists.setValue(artists.getValue().map((x) => x == artist ? { type, name: "" } : x));
                             }
                         }
@@ -123,8 +124,8 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                     if ([ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type)) {
                         const data = asRef(artist._id as string);
                         data.listen((_id, oldVal) => {
-                            if (oldVal != undefined) {
-                                artists.updateItem(artist, { ...artist, _id } as ArtistRef);
+                            if (oldVal !== undefined) {
+                                artists.updateItem(artist, { ...artist, _id });
                             }
                         });
                         return DropDownInput("Select Artist", list.map((y) => y._id))
@@ -156,7 +157,7 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
         Horizontal(
             Spacer(),
             Button("Add Artist")
-                .onClick(() => artists.addItem({ type: ArtistTypes.Primary, _id: undefined! } as ArtistRef)),
+                .onClick(() => artists.addItem({ type: ArtistTypes.Primary, _id: null! } as ArtistRef)),
         ).setPadding("0 0 3rem 0"),
         Horizontal(
             Spacer(),

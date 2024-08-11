@@ -70,14 +70,13 @@ export class Table2<Data> extends Component {
     }
 
     addColumn(title: Reference<string> | string, converter: TableColumn<Data>["converter"], sorting?: Reference<undefined | TableSorting> | undefined | TableSorting) {
-        this.#columns.setValue([
-            ...this.#columns.getValue(),
+        this.#columns.addItem(
             <TableColumn<Data>> {
                 converter,
                 title: asRef(title ?? ""),
                 sorting: asRef(sorting),
             },
-        ]);
+        );
         return this;
     }
 
