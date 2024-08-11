@@ -48,6 +48,8 @@ export const artist = zod.object({
     name: userString,
     users: zod.string().array(),
     avatar: zod.string().optional(),
+    spotify: zod.string().optional(),
+    apple: zod.string().optional(),
 });
 
 export const artistref = zod.object({

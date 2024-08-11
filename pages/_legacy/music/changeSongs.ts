@@ -45,7 +45,7 @@ export function ChangeSongs(drop: Drop) {
         Horizontal(
             Spacer(),
             Button("Add a new Song")
-                .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(data, state.$uploadingSongs, file))),
+                .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(data.$songs, drop.artists, drop.language, drop.primaryGenre, drop.secondaryGenre, state.$uploadingSongs, file))),
         ),
     )
         .setGap("15px")
