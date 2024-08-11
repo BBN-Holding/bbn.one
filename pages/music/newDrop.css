@@ -2,10 +2,6 @@ body {
     color: rgb(246, 246, 246);
 }
 
-.wpopover {
-    --color-grayscaled-inline-font: black;
-}
-
 .fullscreen .wwizard {
     height: 100%;
     max-width: 69rem;
@@ -66,10 +62,6 @@ nav.music {
     height: 100%;
 }
 
-.wbutton.disabled {
-    z-index: 0;
-}
-
 span.title {
     font-size: 19px;
     font-weight: 700;
@@ -105,6 +97,10 @@ span.title {
 
 .inverted-class .wgtable {
     width: calc(100vw - 32px);
-    max-width: 50rem;
+    max-width: 60rem;
     --color-grayscaled-inline-font: black;
+}
+
+.wlayer-inner {
+    z-index: -1;
 }

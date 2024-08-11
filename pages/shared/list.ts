@@ -23,7 +23,7 @@ export const HeavyList = <T>(items: Refable<External<T[]> | "loading" | T[]>, ma
                     if (val.status === "fulfilled") {
                         this.wrapper.append(
                             this.paging.$enabled.map(() =>
-                                this.canLoadMore(val.value.length)
+                                this.#canLoadMore(val.value.length)
                                     ? Vertical(
                                         ...val.value.length == 0 ? [this.placeholder] : val.value.map((x) => map(x))
                                             .filter((_, index) => index % this.paging.limit !== 1),
@@ -67,7 +67,7 @@ export const HeavyList = <T>(items: Refable<External<T[]> | "loading" | T[]>, ma
                 }
             });
         }
-        private canLoadMore(length: number) {
+        #canLoadMore(length: number) {
             return this.paging.enabled && (length % this.paging.limit == 1);
         }
         enablePaging(loadMore: (offset: number, limit: number) => Promise<void>, limit = 30) {

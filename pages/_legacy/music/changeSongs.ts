@@ -2,9 +2,9 @@ import { API } from "shared/mod.ts";
 import { asState, Box, Button, CenterV, createFilePicker, Empty, getErrorMessage, Grid, Horizontal, Label, Spacer, Validate } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
 import { Drop, song } from "../../../spec/music.ts";
+import { uploadSongToDrop } from "../../music/data.ts";
+import { ManageSongs } from "../../music/views/table.ts";
 import { allowedAudioFormats } from "../helper.ts";
-import { uploadSongToDrop } from "./data.ts";
-import { ManageSongs } from "./table.ts";
 
 export function ChangeSongs(drop: Drop) {
     const state = asState({
@@ -41,11 +41,11 @@ export function ChangeSongs(drop: Drop) {
                     location.reload(); // Handle this Smarter => Make it a Reload Event.
                 }),
         ),
-        ManageSongs(data),
+        ManageSongs(data.$songs, state.$uploadingSongs, data.primaryGenre),
         Horizontal(
             Spacer(),
             Button("Add a new Song")
-                .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(data, state.$uploadingSongs, file))),
+                .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(data.$songs, drop.artists, drop.language, drop.primaryGenre, drop.secondaryGenre, state.$uploadingSongs, file))),
         ),
     )
         .setGap("15px")

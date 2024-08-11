@@ -1,13 +1,13 @@
+import { format } from "@std/fmt/bytes";
 import { confettiFromElement } from "shared/libs/canvasConfetti.ts";
 import { API, stupidErrorAlert } from "shared/mod.ts";
-import { format } from "std/fmt/bytes.ts";
-import { Box, Button, ButtonStyle, Color, Empty, Entry, Grid, Label, MediaQuery, Refable, Vertical } from "webgen/mod.ts";
+import { Box, Button, ButtonStyle, Color, Empty, Entry, Grid, isMobile, Label, Refable, Vertical } from "webgen/mod.ts";
 import { MB, state } from "../data.ts";
 import { refreshState } from "../loading.ts";
 import "./profile.css";
 
 export const profileView = () =>
-    MediaQuery("(max-width: 700px)", (small) =>
+    isMobile.map((small) =>
         state.$meta.map((meta) =>
             Grid(
                 Entry(
@@ -137,7 +137,8 @@ export const profileView = () =>
                 .setEvenColumns(small ? 1 : 2)
                 .setGap()
                 .addClass("details-grid")
-        ).asRefComponent());
+        ).asRefComponent()
+    ).asRefComponent();
 
 type ShopVariant = { type: "available" | "recommended" | "blocked"; label: Refable<string>; sublabel: Refable<string>; action: (env: MouseEvent) => Promise<void> };
 

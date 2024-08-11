@@ -1,6 +1,6 @@
 import { API } from "shared/restSpec.ts";
-import { asState, lazyInit } from "webgen/mod.ts";
-import { createStableWebSocket } from "webgen/network.ts";
+import { createStableWebSocket } from "webgen/extended.ts";
+import { asState, lazy } from "webgen/mod.ts";
 
 export const data = asState({
     stats: {
@@ -10,7 +10,7 @@ export const data = asState({
     },
 });
 
-export const streamingPool = lazyInit(async () => {
+export const streamingPool = lazy(async () => {
     await createStableWebSocket({
         url: API.WS_URL.replace("/ws", "/api/@bbn/public/stats"),
     }, {

@@ -2,10 +2,6 @@
     --font: "Twemoji Country Flags", "Red Hat Display", "din alternate", system-ui, optima, avenir;
 }
 
-body {
-    color: var(--on-background-text);
-}
-
 @font-face {
     font-family: "Twemoji Country Flags";
     unicode-range: U+1F1E6-1F1FF, U+1F3F4, U+E0062-E0063, U+E0065, U+E0067,
@@ -22,9 +18,7 @@ body {
 }
 
 .link {
-    cursor: pointer;
-    margin: 0.1rem 0 0 0.2rem;
-    padding: 0 .2rem;
+    padding: 0 .3rem;
     height: 20px;
 }
 
@@ -50,21 +44,6 @@ body {
     opacity: 69%;
 }
 
-.history-list {
-    grid-auto-flow: column;
-    grid-auto-columns: auto;
-    justify-content: start;
-    white-space: nowrap;
-}
-
-.history-entry {
-    opacity: 60%;
-    cursor: pointer;
-    display: grid;
-    grid-auto-flow: column;
-    align-items: center;
-}
-
 .wbutton ul {
     max-height: 14rem;
     overflow: auto;
@@ -77,10 +56,6 @@ body {
 .upload-image .wimage {
     height: 12rem;
     aspect-ratio: 1/1;
-}
-
-.border-box {
-    box-sizing: border-box;
 }
 
 .upload-image .wiconbutton {
@@ -166,23 +141,12 @@ body {
 }
 
 .profile-picture {
-    width: 29px;
-    height: 29px;
+    aspect-ratio: 1/1;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 3px;
     border-radius: 9px;
-
     font-weight: 800;
     overflow: hidden;
-}
-
-.profile-picture img {
-    width: 29px;
-    height: 29px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 800;
 }

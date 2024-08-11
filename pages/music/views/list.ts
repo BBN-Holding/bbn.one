@@ -17,7 +17,7 @@ export const musicList = (list: Drop[], type: DropType) =>
     )
         .setGap("20px");
 
-function CategoryRender(dropList: Drop[], title: string): Component[] | null {
+export function CategoryRender(dropList: Drop[], title: string): Component[] | null {
     if (dropList.length == 0) {
         return null;
     }
@@ -28,7 +28,7 @@ function CategoryRender(dropList: Drop[], title: string): Component[] | null {
     ];
 }
 
-function EnumToDisplay(state: DropType) {
+export function EnumToDisplay(state: DropType) {
     switch (state) {
         case "PRIVATE":
             return "unpublished";

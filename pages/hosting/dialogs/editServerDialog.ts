@@ -1,7 +1,7 @@
+import { format } from "@std/fmt/bytes";
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
 import { SliderInput } from "shared/slider.ts";
-import { format } from "std/fmt/bytes.ts";
-import { asState, Button, ButtonStyle, Color, DropDownInput, Grid, Label, MediaQuery, SheetDialog, TextInput } from "webgen/mod.ts";
+import { asState, Button, ButtonStyle, Color, DropDownInput, Grid, isMobile, Label, SheetDialog, TextInput } from "webgen/mod.ts";
 import locations from "../../../data/locations.json" with { type: "json" };
 import serverTypes from "../../../data/servers.json" with { type: "json" };
 import { Server } from "../../../spec/music.ts";
@@ -23,7 +23,7 @@ export const editServerDialog = (server: Server, versions: string[]) => {
         `Edit '${server.name}'`,
         Grid(
             Label(`A ${serverTypes[server.type].name} Server.`),
-            MediaQuery("(max-width: 700px)", (small) =>
+            isMobile.map((small) =>
                 Grid(
                     [
                         {
@@ -54,7 +54,8 @@ export const editServerDialog = (server: Server, versions: string[]) => {
                         .sync(data, "version"),
                 )
                     .setGap()
-                    .setEvenColumns(small ? 1 : 3)).removeFromLayout(),
+                    .setEvenColumns(small ? 1 : 3)
+            ).asRefComponent().removeFromLayout(),
             Grid(
                 Button("Close")
                     .setStyle(ButtonStyle.Inline)

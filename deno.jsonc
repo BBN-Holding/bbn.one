@@ -1,9 +1,15 @@
 {
     "imports": {
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/d389a5b/",
-        // "webgen/": "../WebGen/",
-        "std/": "https://deno.land/std@0.221.0/",
-        "shared/": "./pages/shared/"
+        "@std/assert": "jsr:@std/assert@^0.226.0",
+        "@std/async": "jsr:@std/async@^0.224.2",
+        "@std/collections": "jsr:@std/collections@^1.0.1",
+        "@std/datetime": "jsr:@std/datetime@^0.224.1",
+        "@std/encoding": "jsr:@std/encoding@^0.224.3",
+        "@std/fmt": "jsr:@std/fmt@^0.225.4",
+        "@std/path": "jsr:@std/path@^0.225.2",
+        "shared/": "./pages/shared/",
+        // "webgen/": "../WebGen/"
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/e46dd0c/"
     },
     "lock": false,
     "compilerOptions": {
@@ -31,6 +37,6 @@
         ],
         "indentWidth": 4,
         "proseWrap": "never",
-        "lineWidth": 300
+        "lineWidth": 500
     }
 }

@@ -1,43 +1,40 @@
+import { delay } from "@std/async";
 import { API, StreamingUploadHandler, stupidErrorAlert } from "shared/mod.ts";
-import { delay } from "std/async/mod.ts";
-import { AdvancedImage, asState, Box, Button, CenterV, createFilePicker, Empty, getErrorMessage, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, TextInput, Validate, Vertical } from "webgen/mod.ts";
+import { asRef, asState, Box, Button, CenterV, createFilePicker, Empty, getErrorMessage, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, TextInput, Validate, Vertical } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
-import { activeUser, allowedImageFormats, forceRefreshToken } from "../_legacy/helper.ts";
+import { activeUser, allowedImageFormats, forceRefreshToken, IsLoggedIn, showProfilePicture } from "../_legacy/helper.ts";
 
 export function ChangePersonal() {
     const state = asState({
         email: activeUser.email,
         name: activeUser.username,
-        loading: false,
-        profilePicture: activeUser.avatar ? { type: "direct", source: async () => await API.user.picture(activeUser.id!).then(stupidErrorAlert) } : { type: "loading" } as AdvancedImage,
         validationState: <zod.ZodError | undefined> undefined,
     });
 
+    const profilePicture = asRef(showProfilePicture(IsLoggedIn()!).setTextSize("8xl"));
+
     return Vertical(
         Grid(
-            state.$profilePicture.map((profilePicture) =>
-                Box(Image(profilePicture, "Your Avatarimage"), IconButton(MIcon("edit"), "edit-icon")).addClass("upload-image").onClick(async () => {
+            profilePicture.map((pic) =>
+                Box(pic, IconButton(MIcon("edit"), "edit-icon")).addClass("upload-image").onClick(async () => {
                     const file = await createFilePicker(allowedImageFormats.join(","));
                     const blobUrl = URL.createObjectURL(file);
-                    profilePicture = <AdvancedImage> { type: "uploading", filename: file.name, blobUrl, percentage: 0 };
-                    state.loading = true;
+                    profilePicture.setValue(Image({ type: "uploading", filename: file.name, blobUrl, percentage: 0 }, "Profile Picture"));
                     setTimeout(() => {
                         StreamingUploadHandler(`user/set-me/avatar/upload`, {
                             failure: () => {
-                                state.loading = false;
-                                state.profilePicture = activeUser.avatar ? { type: "direct", source: async () => await API.user.picture(activeUser.id!).then(stupidErrorAlert) } : { type: "loading" };
+                                profilePicture.setValue(showProfilePicture(IsLoggedIn()!).setTextSize("8xl"));
                                 alert("Your Upload has failed. Please try a different file or try again later");
                             },
                             uploadDone: () => {
-                                state.profilePicture = <AdvancedImage> { type: "waiting-upload", filename: file.name, blobUrl };
+                                profilePicture.setValue(Image({ type: "waiting-upload", filename: file.name, blobUrl }, "Profile Picture"));
                             },
                             backendResponse: () => {
-                                state.loading = false;
-                                state.profilePicture = <AdvancedImage> { type: "direct", source: async () => await file };
+                                profilePicture.setValue(Image({ type: "direct", source: async () => await file }, "Profile Picture"));
                             },
                             credentials: () => API.getToken(),
                             onUploadTick: async (percentage) => {
-                                state.profilePicture = <AdvancedImage> { type: "uploading", filename: file.name, blobUrl, percentage };
+                                profilePicture.setValue(Image({ type: "uploading", filename: file.name, blobUrl, percentage }, "Profile Picture"));
                                 await delay(2);
                             },
                         }, file);
@@ -47,8 +44,8 @@ export function ChangePersonal() {
             [
                 { width: 2 },
                 Vertical(
-                    TextInput("text", "Name").sync(state, "name"),
-                    TextInput("email", "Email").sync(state, "email"),
+                    TextInput("text", "Name").ref(state.$name),
+                    TextInput("email", "Email").ref(state.$email),
                 ).setGap("20px"),
             ],
         )

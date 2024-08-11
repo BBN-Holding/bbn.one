@@ -1,7 +1,7 @@
+import { sumOf } from "@std/collections";
 import "https://cdn.jsdelivr.net/npm/native-file-system-adapter/src/getOriginPrivateDirectory.js";
 import { readableStreamFromIterable } from "https://deno.land/std@0.200.0/streams/readable_stream_from_iterable.ts";
 import { countFileTree, FileEntry, getFileStream } from "shared/fileHandler.ts";
-import { sumOf } from "std/collections/sum_of.ts";
 import { asRef, Component } from "webgen/mod.ts";
 
 declare global {

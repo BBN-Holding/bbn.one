@@ -1,6 +1,6 @@
+import { assert } from "@std/assert";
 import { Footer } from "shared/footer.ts";
 import { API, LoadingSpinner } from "shared/mod.ts";
-import { assert } from "std/assert/assert.ts";
 import { Body, Box, Button, ButtonStyle, Color, Component, createElement, Custom, Grid, Horizontal, Image, isMobile, Label, LinkButton, Spacer, TextInput, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import { discordLogo, googleLogo } from "../../assets/imports.ts";
@@ -26,7 +26,7 @@ export const Form = (ele: Component) => {
 };
 
 const ErrorMessage = () =>
-    state.$error.map(() => state.error != undefined ? Label(state.error ?? "Please try again later.").addClass("error-message").setMargin("1rem 0 0") : Box())
+    state.$error.map((error) => error != undefined ? Label(error ?? "Please try again later.").addClass("error-message").setMargin("1rem 0 0") : Box())
         .asRefComponent()
         .removeFromLayout();
 
@@ -42,11 +42,11 @@ Body(Vertical(
                     .setFontWeight("extrabold")
                     .setTextSize(small ? "6xl" : "7xl")
             ).asRefComponent().removeFromLayout(),
-            state.$type.map(() => {
-                if (state.type == "reset-password-from-email") {
+            state.$type.map((type) => {
+                if (type == "reset-password-from-email") {
                     return Form(Grid(
                         TextInput("password", "New Password")
-                            .sync(state, "password"),
+                            .ref(state.$password),
                         Button("Reset your Password")
                             .setId("submit-button")
                             .setJustifyContent("center")
@@ -65,10 +65,10 @@ Body(Vertical(
                         ErrorMessage(),
                     ));
                 }
-                if (state.type == "request-reset-password") {
+                if (type == "request-reset-password") {
                     return Form(Grid(
                         TextInput("email", "Email")
-                            .sync(state, "email")
+                            .ref(state.$email)
                             .onChange(() => state.error = undefined)
                             .setAutofill("email")
                             .required()
@@ -100,7 +100,7 @@ Body(Vertical(
                     ));
                 }
 
-                if (state.type == "login") {
+                if (type == "login") {
                     return Form(Grid(
                         LinkButton("Sign in with Google", API.auth.oauthRedirect("google"))
                             .setJustifyContent("center")
@@ -124,13 +124,13 @@ Body(Vertical(
                             //     )
                             .setMargin("0 0 2rem"),
                         TextInput("email", "Email")
-                            .sync(state, "email")
+                            .ref(state.$email)
                             .onChange(() => state.error = undefined)
                             .setAutofill("email")
                             .required()
                             .setMargin("0 0 .6rem"),
                         TextInput("password", "Password")
-                            .sync(state, "password")
+                            .ref(state.$password)
                             .onChange(() => state.error = undefined)
                             .setAutofill("current-password")
                             .required()
@@ -162,25 +162,25 @@ Body(Vertical(
                     ));
                 }
 
-                if (state.type == "register") {
+                if (type == "register") {
                     return Form(Grid(
                         TextInput("text", "Name")
                             .required()
                             .setAutofill("name")
                             .onChange(() => state.error = undefined)
-                            .sync(state, "name")
+                            .ref(state.$name)
                             .setMargin("0 0 .6rem"),
                         TextInput("email", "Email")
                             .setAutofill("email")
                             .required()
                             .onChange(() => state.error = undefined)
-                            .sync(state, "email")
+                            .ref(state.$email)
                             .setMargin("0 0 .6rem"),
                         TextInput("password", "Password")
                             .required()
                             .setAutofill("new-password")
                             .onChange(() => state.error = undefined)
-                            .sync(state, "password")
+                            .ref(state.$password)
                             .setMargin("0 0 .6rem"),
                         Button("Register")
                             .setId("register-button")

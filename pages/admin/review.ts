@@ -59,7 +59,7 @@ sheetStack.setDefault(Vertical(
                     : LoadingSpinner()
             ).asRefComponent(),
         )
-            .setAttribute("style", "border-style: solid;").setGap().setBorderRadius("tiny"),
+            .setCssStyle("border", "solid").setGap().setBorderRadius("tiny"),
         reviewState.$drop.map((drop) =>
             drop
                 ? Navigation({
@@ -171,7 +171,7 @@ sheetStack.setDefault(Vertical(
                         ApproveDialog.setOnClose(() => refreshReviewState());
                     }),
             ).setGap(),
-        ).setAttribute("style", "border-style: solid;").setBorderRadius("tiny"),
+        ).setCssStyle("border", "solid").setBorderRadius("tiny"),
     )
         .setGap()
         .setRawColumns("1fr 3fr 1fr"),

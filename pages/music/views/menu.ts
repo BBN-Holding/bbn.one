@@ -1,25 +1,30 @@
 import { API, Chart, count, HeavyList, LoadingSpinner, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
-import { Button, Entry, Grid, isMobile, MediaQuery, ref } from "webgen/mod.ts";
-import { DropType } from "../../../spec/music.ts";
+import { asRef, asState, Button, Component, Entry, Grid, Horizontal, Image, isMobile, LinkButton, MediaQuery, ref } from "webgen/mod.ts";
+import { templateArtwork } from "../../../assets/imports.ts";
+import { Artist, Drop, DropType, Payout } from "../../../spec/music.ts";
 import { activeUser } from "../../_legacy/helper.ts";
-import { state } from "../state.ts";
 import { musicList } from "./list.ts";
+import { createArtistSheet } from "./table.ts";
+
+export const menuState = asState({
+    published: <Drop[] | "loading"> "loading",
+    unpublished: <Drop[] | "loading"> "loading",
+    drafts: <Drop[] | "loading"> "loading",
+    payouts: <Payout[] | "loading"> "loading",
+    artists: <Artist[] | "loading"> "loading",
+});
+
+const menuButtons = asRef(<Component[]> []);
 
 export const musicMenu = Navigation({
     title: ref`Hi ${activeUser.$username} 👋`,
-    actions: [
-        Button("Submit new Drop")
-            .onPromiseClick(async () => {
-                const { id } = await API.music.drops.create().then(stupidErrorAlert);
-                location.href = `/c/music/new-drop?id=${id}`;
-            }),
-    ],
+    actions: menuButtons,
     categories: [
         {
             id: "published",
-            title: ref`Published ${count(state.$published)}`,
+            title: ref`Published ${count(menuState.$published)}`,
             // TODO: Use HeavyList
-            children: state.$published.map((published) =>
+            children: menuState.$published.map((published) =>
                 published == "loading" ? [LoadingSpinner()] : [
                     musicList(published ?? [], DropType.Published),
                 ]
@@ -27,9 +32,9 @@ export const musicMenu = Navigation({
         },
         {
             id: "unpublished",
-            title: ref`Unpublished ${count(state.$unpublished)}`,
+            title: ref`Unpublished ${count(menuState.$unpublished)}`,
             // TODO: Use HeavyList
-            children: state.$unpublished.map((unpublished) =>
+            children: menuState.$unpublished.map((unpublished) =>
                 unpublished == "loading" ? [LoadingSpinner()] : [
                     musicList(unpublished ?? [], DropType.Private),
                 ]
@@ -37,18 +42,37 @@ export const musicMenu = Navigation({
         },
         {
             id: "drafts",
-            title: ref`Drafts ${count(state.$drafts)}`,
+            title: ref`Drafts ${count(menuState.$drafts)}`,
             // TODO: Use HeavyList
-            children: state.$drafts.map((drafts) =>
+            children: menuState.$drafts.map((drafts) =>
                 drafts == "loading" ? [LoadingSpinner()] : [
                     musicList(drafts ?? [], DropType.Unsubmitted),
                 ]
             ),
         },
         {
+            id: "artists",
+            title: ref`Artists ${count(menuState.$artists)}`,
+            children: [
+                HeavyList(menuState.$artists, (x) =>
+                    Entry({
+                        title: x.name,
+                        // TODO: Add used on x songs, x drops, maybe even streams?
+                    })
+                        .addSuffix(
+                            Horizontal(
+                                LinkButton("Spotify", "fdgdf"),
+                                LinkButton("Apple Music", "fdgdf"),
+                            ).setGap(),
+                        )
+                        .addPrefix(Image(templateArtwork, "").addClass("image-square")))
+                    .setPlaceholder(placeholder("No Artists", "Create a new Artist to release music")),
+            ],
+        },
+        {
             id: "payouts",
-            title: ref`Payouts ${count(state.$payouts)}`,
-            children: state.$payouts.map((payouts) =>
+            title: ref`Payouts ${count(menuState.$payouts)}`,
+            children: menuState.$payouts.map((payouts) =>
                 payouts == "loading" ? [LoadingSpinner()] : [
                     MediaQuery("(max-width: 700px)", (small) =>
                         Grid(
@@ -119,7 +143,7 @@ export const musicMenu = Navigation({
                                 },
                             }),
                         ).setEvenColumns(small ? 1 : 2)),
-                    HeavyList(state.$payouts, (x) =>
+                    HeavyList(menuState.$payouts, (x) =>
                         Entry({
                             title: x.period,
                             subtitle: x.moneythisperiod,
@@ -136,4 +160,23 @@ export const musicMenu = Navigation({
         "limited-width",
     );
 
-state.$drafts.listen((drafts) => musicMenu.path.setValue((drafts?.length ?? 0) > 0 ? "drafts/" : "published/"));
+musicMenu.path.listen((path) => {
+    if (path === "artists/") {
+        menuButtons.setValue(
+            [
+                Button("Create new Artist")
+                    .onClick(() => createArtistSheet().then(async () => menuState.artists = await API.music.artists.list().then(stupidErrorAlert))),
+            ],
+        );
+    } else {
+        menuButtons.setValue([
+            Button("Create new Drop")
+                .onPromiseClick(async () => {
+                    const { id } = await API.music.drops.create().then(stupidErrorAlert);
+                    location.href = `/c/music/new-drop?id=${id}`;
+                }),
+        ]);
+    }
+});
+
+menuState.$drafts.listen((drafts) => musicMenu.path.setValue((drafts?.length ?? 0) > 0 ? "drafts/" : "published/"));

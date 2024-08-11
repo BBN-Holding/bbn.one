@@ -5,14 +5,14 @@ import { zod } from "webgen/zod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
-import { artist, DATE_PATTERN, Drop, song, userString } from "../../../spec/music.ts";
-import { allowedImageFormats, EditArtistsDialog, getSecondary } from "../helper.ts";
-import { uploadArtwork } from "./data.ts";
+import { artistref, DATE_PATTERN, Drop, song, userString } from "../../../spec/music.ts";
+import { uploadArtwork } from "../../music/data.ts";
+import { EditArtistsDialog } from "../../music/views/table.ts";
+import { allowedImageFormats, getSecondary } from "../helper.ts";
 
 export function ChangeDrop(drop: Drop) {
     const state = asState({
         artworkClientData: <AdvancedImage | undefined> (drop.artwork ? <AdvancedImage> { type: "direct", source: () => API.music.id(drop._id!).artwork().then(stupidErrorAlert) } : undefined),
-        loading: false,
         validationState: <zod.ZodError | undefined> undefined,
     });
 
@@ -20,7 +20,7 @@ export function ChangeDrop(drop: Drop) {
         asState(drop),
         zod.object({
             title: userString,
-            artists: artist.array().refine((x) => x.some(([, , type]) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+            artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
             release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
             language: zod.string(),
             primaryGenre: zod.string(),
@@ -35,7 +35,9 @@ export function ChangeDrop(drop: Drop) {
     const validator2 = Validate(
         state,
         zod.object({
-            loading: zod.literal(false, { errorMap: () => ({ message: "Artwork is still uploading" }) }).transform(() => undefined),
+            artworkClientData: zod.object({
+                type: zod.string().refine((x) => x !== "uploading", { message: "Artwork is still uploading" }),
+            }),
         }),
     );
 
@@ -72,23 +74,23 @@ export function ChangeDrop(drop: Drop) {
                     Box(artworkData ? Image(artworkData, "A Music Album Artwork.") : Image(templateArtwork, "A Default Alubm Artwork."), IconButton(MIcon("edit"), "edit icon"))
                         .addClass("upload-image"),
                     allowedImageFormats,
-                    ([{ file }]) => uploadArtwork(drop._id!, file, state.$artworkClientData, state.$loading, data.$artwork),
-                ).onClick(() => createFilePicker(allowedImageFormats.join(",")).then((file) => uploadArtwork(drop._id!, file, state.$artworkClientData, state.$loading, data.$artwork)))
+                    ([{ file }]) => uploadArtwork(drop._id, file, state.$artworkClientData, data.$artwork),
+                ).onClick(() => createFilePicker(allowedImageFormats.join(",")).then((file) => uploadArtwork(drop._id, file, state.$artworkClientData, data.$artwork)))
             ).asRefComponent(),
         ).setDynamicColumns(2, "12rem"),
         [
             { width: 2 },
-            TextInput("text", "Title").sync(data, "title"),
+            TextInput("text", "Title").ref(data.$title),
         ],
-        TextInput("date", "Release Date").sync(data, "release"),
+        TextInput("date", "Release Date").ref(data.$release),
         DropDownInput("Language", Object.keys(language))
             .setRender((key) => language[<keyof typeof language> key])
-            .sync(data, "language"),
+            .ref(data.$language),
         [
             { width: 2 },
             Button("Artists")
                 .onClick(() => {
-                    EditArtistsDialog(data).open();
+                    EditArtistsDialog(data.$artists).open();
                 }),
         ],
         [{ width: 2, height: 2 }, Spacer()],
@@ -96,20 +98,19 @@ export function ChangeDrop(drop: Drop) {
             { width: 2 },
             Grid(
                 DropDownInput("Primary Genre", Object.keys(genres))
-                    .sync(data, "primaryGenre")
+                    .ref(data.$primaryGenre)
                     .onChange(() => data.secondaryGenre = undefined!),
                 data.$primaryGenre.map((primaryGenre) =>
                     DropDownInput("Secondary Genre", getSecondary(genres, primaryGenre) ?? [])
-                        .sync(data, "secondaryGenre")
-                        .addClass("border-box")
+                        .ref(data.$secondaryGenre)
                         .setWidth("100%")
                 ).asRefComponent(),
             )
                 .setEvenColumns(2, "minmax(2rem, 20rem)")
                 .setGap("15px"),
         ],
-        TextInput("text", "Composition Copyright").sync(data, "compositionCopyright"),
-        TextInput("text", "Sound Recording Copyright").sync(data, "soundRecordingCopyright"),
+        TextInput("text", "Composition Copyright").ref(data.$compositionCopyright),
+        TextInput("text", "Sound Recording Copyright").ref(data.$soundRecordingCopyright),
     )
         .setEvenColumns(2, "minmax(2rem, 20rem)")
         .setJustifyContent("center")

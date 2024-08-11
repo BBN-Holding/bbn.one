@@ -5,7 +5,7 @@ import { showPreviewImage } from "../../_legacy/helper.ts";
 export function DropEntry(x: Drop, small: boolean) {
     return Entry({
         title: x.title ?? "(no drop name)",
-        subtitle: `${x.release ?? "(no release date)"} - ${x.upc ?? "(no upc number)"}`,
+        subtitle: `${x.release ?? "(no release date)"} - ${x.gtin ?? "(no GTIN)"}`,
     })
         .addClass(small ? "small" : "normal")
         .addPrefix(showPreviewImage(x).addClass("image-square"))

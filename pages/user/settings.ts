@@ -35,8 +35,8 @@ const settingsMenu = Navigation({
                     Grid([
                         { width: 2 },
                         Vertical(
-                            TextInput("password", "New Password").sync(state, "newPassword"),
-                            TextInput("password", "Verify New Password").sync(state, "verifyNewPassword"),
+                            TextInput("password", "New Password").ref(state.$newPassword),
+                            TextInput("password", "Verify New Password").ref(state.$verifyNewPassword),
                         ).setGap("20px"),
                     ])
                         .setDynamicColumns(1, "12rem")
@@ -59,8 +59,8 @@ const settingsMenu = Navigation({
                             const { error, validate } = Validate(
                                 state,
                                 zod.object({
-                                    newPassword: zod.string({ invalid_type_error: "New password is missing" }).min(4),
-                                    verifyNewPassword: zod.string({ invalid_type_error: "Verify New password is missing" }).min(4).refine((val) => val == state.newPassword, "Your new password didn't match"),
+                                    newPassword: zod.string({ invalid_type_error: "New password is missing" }).min(8),
+                                    verifyNewPassword: zod.string({ invalid_type_error: "Verify New password is missing" }).min(8).refine((val) => val == state.newPassword, "Your new password didn't match"),
                                 }),
                             );
 

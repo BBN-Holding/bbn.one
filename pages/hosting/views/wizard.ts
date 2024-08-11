@@ -1,5 +1,5 @@
+import { format } from "@std/fmt/bytes";
 import { API, displayError, LoadingSpinner, SliderInput } from "shared/mod.ts";
-import { format } from "std/fmt/bytes.ts";
 import { asState, BasicLabel, Box, Button, CenterV, DropDownInput, Empty, getErrorMessage, Grid, Horizontal, Label, refMerge, Spacer, TextInput, Validate, Vertical } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
 import locations from "../../../data/locations.json" with { type: "json" };

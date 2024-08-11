@@ -1,4 +1,4 @@
-import { assert } from "std/assert/assert.ts";
+import { assert } from "@std/assert";
 import { asRef, Box, Component, Empty, Entry, Grid, isMobile, isRef, Label, MIcon, Refable, Reference, Taglist, Vertical } from "webgen/mod.ts";
 import { HeavyList } from "./list.ts";
 import "./navigation.css";

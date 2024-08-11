@@ -1,5 +1,5 @@
+import { delay } from "@std/async";
 import { API } from "shared/mod.ts";
-import { delay } from "std/async/delay.ts";
 import { BasicLabel, Box, Button, ButtonStyle, Component, createElement, Custom, Empty, Grid, Horizontal, Image, Label, LinkButton, MIcon, Spacer, Vertical } from "webgen/mod.ts";
 import { Popover } from "webgen/src/components/Popover.ts";
 import { activeUser, IsLoggedIn, permCheck, showProfilePicture } from "../pages/_legacy/helper.ts";
@@ -14,7 +14,7 @@ const Nav = (component: Component) => {
 
 const navMenuPopover = Popover(
     Box(
-        activeUser.$permission.map(() =>
+        activeUser.$permission.map((perm) =>
             Vertical(
                 Label("SWITCH TO").addClass("title"),
                 pages.map(([logo, permission, route, login]) =>
@@ -28,12 +28,14 @@ const navMenuPopover = Popover(
                             .onClick(() => location.pathname = route)
                         : Empty()
                 ),
-                Horizontal(
-                    Label("Go to Settings"),
-                    Spacer(),
-                    MIcon("arrow_forward_ios"),
-                ).addClass("small-entry", "settings")
-                    .onClick(() => location.href = "/settings"),
+                perm.length
+                    ? Horizontal(
+                        Label("Go to Settings"),
+                        Spacer(),
+                        MIcon("arrow_forward_ios"),
+                    ).addClass("small-entry", "settings")
+                        .onClick(() => location.href = "/settings")
+                    : Empty(),
             )
         )
             .asRefComponent(),
@@ -75,7 +77,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     email
                         ? LinkButton(
                             Grid(
-                                showProfilePicture(IsLoggedIn()!),
+                                showProfilePicture(IsLoggedIn()!).setWidth("29px").setHeight("29px"),
                                 Label(activeUser.$username)
                                     .setFontWeight("bold"),
                             )

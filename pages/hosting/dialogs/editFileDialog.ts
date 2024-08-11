@@ -1,13 +1,13 @@
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { editor } from "https://esm.sh/monaco-editor@0.44.0/esm/vs/editor/editor.api.js";
 
-import { delay } from "std/async/delay.ts";
-import { asRef, Box, Button, Cache, Color, Custom, Grid, Label, lazyInit, MIcon, refMerge, SheetDialog, Vertical } from "webgen/mod.ts";
+import { delay } from "@std/async";
+import { asRef, Box, Button, Cache, Color, Custom, Grid, Label, lazy, MIcon, refMerge, SheetDialog, Vertical } from "webgen/mod.ts";
 import { sheetStack } from "../../_legacy/helper.ts";
 import { uploadFile } from "../loading.ts";
 import "./editFileDialog.css";
 
-const lazyMonaco = lazyInit(() => loader.init());
+const lazyMonaco = lazy(() => loader.init());
 
 export const editFileLanguage = asRef("yaml");
 export const editFilestreamingText = asRef(new Response("Loading file...").body?.pipeThrough(new TextDecoderStream())!);

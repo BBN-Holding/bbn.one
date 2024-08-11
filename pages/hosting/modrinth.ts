@@ -1,6 +1,7 @@
-import { assert } from "std/assert/assert.ts";
-import { retry } from "std/async/mod.ts";
-import { createThrottledPipeline, SchedulerPriority, ThrottleStrategy } from "webgen/network.ts";
+import { assert } from "@std/assert";
+import { retry } from "@std/async";
+import { SchedulerPriority } from "webgen/extended.ts";
+import { createThrottledPipeline, ThrottleStrategy } from "webgen/network.ts";
 import { InstalledAddon, ServerTypes } from "../../spec/music.ts";
 const apiUrl = "https://api.modrinth.com/v2";
 

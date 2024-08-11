@@ -26,3 +26,9 @@
 .artist-table .wgtable .column {
     gap: 12px;
 }
+
+.wdropdown.low-level>button {
+    height: 24px;
+    background: transparent;
+    color: rgb(32, 32, 32);
+}

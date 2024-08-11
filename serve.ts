@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/x/esbuild_serve@1.3.4/mod.ts";
+import { serve } from "https://deno.land/x/esbuild_serve@1.4.1/mod.ts";
 // import { serve } from "../esbuild_serve/mod.ts";
 
 const title = new Map(Object.entries({
@@ -92,7 +92,7 @@ function createTemplate(name: string, path: string) {
     <meta name="description" content="${description.get(path) ?? description.get("default")}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name='theme-color' content='black'>
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="${title.get(path) ?? "BBN Holding"}">
     <meta name="google" content="notranslate"/>

@@ -1,8 +1,8 @@
-import { API, fileCache, Permission, stupidErrorAlert, Table2 } from "shared/mod.ts";
-import { asState, Box, Button, Cache, CenterV, Component, Custom, DropDownInput, Horizontal, IconButton, Image, Label, MIcon, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, TextInput, Vertical } from "webgen/mod.ts";
+import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
+import { asState, Box, Cache, CenterV, Component, Custom, Horizontal, Image, Label, SheetsStack, Spacer, Style, SupportedThemes } from "webgen/mod.ts";
 import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
-import { Artist, ArtistTypes, Drop } from "../../spec/music.ts";
+import { Drop } from "../../spec/music.ts";
 
 export const allowedAudioFormats = ["audio/flac", "audio/wav", "audio/mp3"];
 export const allowedImageFormats = ["image/png", "image/jpeg"];
@@ -142,7 +142,7 @@ export async function RegisterAuthRefresh() {
     }
 }
 
-export function shouldLoginPage() {
+function shouldLoginPage() {
     if (!loginRequired.find((x) => location.pathname.startsWith(x))) {
         return;
     }
@@ -172,50 +172,14 @@ export function getYearList(): string[] {
         .map((x) => x.toString());
 }
 
-const a = document.createElement("a");
-document.body.appendChild(a);
-a.setAttribute("style", "display: none");
-
 export function saveBlob(blob: Blob, fileName: string) {
+    const a = document.createElement("a");
     const url = window.URL.createObjectURL(blob);
     a.href = url;
     a.download = fileName;
     a.click();
     window.URL.revokeObjectURL(url);
 }
-
-const ARTIST_ARRAY = <ArtistTypes[]> ["PRIMARY", "FEATURING", "PRODUCER", "SONGWRITER"];
-export const EditArtistsDialog = (state: StateHandler<{ artists: Artist[] }>) => {
-    const dialog = SheetDialog(
-        sheetStack,
-        "Manage your Artists",
-        Vertical(
-            new Table2(state.$artists)
-                .addClass("artist-table")
-                .setColumnTemplate("10rem auto min-content")
-                .addColumn("Type", (artist: Artist) =>
-                    DropDownInput("Type", ARTIST_ARRAY)
-                        .setValue(artist[2])
-                        .onChange((data) => artist[2] = <ArtistTypes> data))
-                .addColumn("Name", (artist: Artist) =>
-                    TextInput("text", "Name", "blur")
-                        .setValue(artist[0])
-                        .onChange((data) => artist[0] = data ?? ""))
-                .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => state.artists = state.artists.filter((_, i) => i != state.artists.indexOf(data)) as typeof state.artists)),
-            Horizontal(
-                Spacer(),
-                Button("Add Artist")
-                    .onClick(() => state.artists = asState([...state.artists, ["", "", ArtistTypes.Primary]] as Artist[])),
-            ).setPadding("0 0 3rem 0"),
-            Horizontal(
-                Spacer(),
-                Button("Save")
-                    .onClick(() => dialog.close()),
-            ),
-        ),
-    );
-    return dialog;
-};
 
 export function showPreviewImage(x: Drop) {
     return x.artwork ? Cache(`image-preview-${x.artwork}`, () => Promise.resolve(), (type) => type == "loaded" ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork") : Box()) : Image(templateArtwork, "A Placeholder Artwork.");
