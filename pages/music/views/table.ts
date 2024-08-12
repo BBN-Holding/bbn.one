@@ -15,11 +15,7 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
                     return Progress(x.find((y) => y[song._id] !== undefined)[song._id]);
                 }
                 const title = asRef(song.title);
-                title.listen((newVal, oldVal) => {
-                    if (oldVal != undefined) {
-                        songs.setValue(songs.getValue().map((x) => x._id == song._id ? { ...song, title: newVal } : x));
-                    }
-                });
+                title.listen((newVal, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, title: newVal }));
                 return InlineTextInput("text", "blur").addClass("low-level").ref(title);
             }).asRefComponent())
         .addColumn("Artists", (song) =>
@@ -27,16 +23,12 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
                 .addClass("artists-list")
                 .onClick(() => {
                     const artists = asRef(song.artists);
-                    artists.listen((newVal, oldVal) => {
-                        if (oldVal != undefined) {
-                            songs.setValue(songs.getValue().map((x) => x._id == song._id ? { ...song, artists: newVal } : x));
-                        }
-                    });
+                    artists.listen((newVal, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, artists: newVal }));
                     EditArtistsDialog(artists).open();
                 }))
         .addColumn("Year", (song) => {
             const data = asRef(song.year.toString());
-            data.listen((x) => songs.updateItem(song, { ...song, year: parseInt(x) }));
+            data.listen((x, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, year: parseInt(x) }));
             return DropDownInput("Year", getYearList())
                 .ref(data)
                 .addClass("low-level");
@@ -44,7 +36,7 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
         //TODO: create real country.json
         .addColumn("Country", (song) => {
             const data = asRef(song.country);
-            data.listen((x) => songs.updateItem(song, { ...song, country: x }));
+            data.listen((x, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, country: x }));
             return DropDownInput("Country", Object.keys(language))
                 .setRender((key) => language[<keyof typeof language> key])
                 .ref(data)
@@ -52,7 +44,7 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
         })
         .addColumn("Secondary Genre", (song) => {
             const data = asRef(song.secondaryGenre);
-            data.listen((x) => songs.updateItem(song, { ...song, secondaryGenre: x }));
+            data.listen((x, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, secondaryGenre: x }));
             return DropDownInput("Secondary Genre", getSecondary(genres, primaryGenre) ?? [])
                 .ref(data)
                 .addClass("low-level");
@@ -60,12 +52,12 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
         .addColumn("Instrumental", (song) =>
             Checkbox(song.instrumental ?? false)
                 .setColor(song.explicit ? Color.Disabled : Color.Grayscaled)
-                .onClick((_, value) => songs.updateItem(song, { ...song, instrumental: !value }))
+                .onClick((_, value) => songs.updateItem(song, { ...song, instrumental: value }))
                 .addClass("low-level"))
         .addColumn("Explicit", (song) =>
             Checkbox(song.explicit ?? false)
                 .setColor(song.instrumental ? Color.Disabled : Color.Grayscaled)
-                .onClick((_, value) => songs.updateItem(song, { ...song, explicit: !value }))
+                .onClick((_, value) => songs.updateItem(song, { ...song, explicit: value }))
                 .addClass("low-level"))
         .addColumn("", (song) => IconButton(MIcon("delete"), "Delete").onClick(() => songs.setValue(songs.getValue().filter((x) => x._id != song._id))))
         .addClass("inverted-class");
@@ -121,11 +113,9 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                     data.listen((type, oldVal) => {
                         if (oldVal != undefined) {
                             if (type == ArtistTypes.Primary || type == ArtistTypes.Featuring) {
-                                //artists.updateItem(artist, { type, _id: null! } as ArtistRef);
-                                artists.setValue(artists.getValue().map((x) => x == artist ? { type, _id: null! } : x));
+                                artists.updateItem(artist, { type, _id: null! } as ArtistRef);
                             } else {
-                                //artists.updateItem(artist, { type, name: "" } as ArtistRef);
-                                artists.setValue(artists.getValue().map((x) => x == artist ? { type, name: "" } : x));
+                                artists.updateItem(artist, { type, name: "" } as ArtistRef);
                             }
                         }
                     });
@@ -135,11 +125,7 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                 .addColumn("Name", (artist) => {
                     if ([ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type)) {
                         const data = asRef(artist._id as string);
-                        data.listen((_id, oldVal) => {
-                            if (oldVal !== undefined) {
-                                artists.updateItem(artist, { ...artist, _id });
-                            }
-                        });
+                        data.listen((_id, oldVal) => (oldVal !== undefined) && artists.updateItem(artist, { ...artist, _id }));
                         return DropDownInput("Select Artist", list.map((y) => y._id))
                             .setRender((data) => {
                                 const artist = list.find((y) => y._id === data);
@@ -156,11 +142,7 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
                             });
                     }
                     const data = asRef(artist.name as string);
-                    data.listen((name, oldVal) => {
-                        if (oldVal != undefined) {
-                            artists.updateItem(artist, { ...artist, name } as ArtistRef);
-                        }
-                    });
+                    data.listen((name, oldVal) => (oldVal != undefined) && artists.updateItem(artist, { ...artist, name } as ArtistRef));
                     return TextInput("text", "Name", "blur")
                         .ref(data);
                 })
