@@ -30,28 +30,28 @@ export const editServerDialog = (server: Server, versions: string[]) => {
                             width: small ? 1 : 2,
                         },
                         TextInput("text", "Friendly Name")
-                            .sync(data, "name"),
+                            .ref(data.$name),
                     ],
                     DropDownInput("Location", Object.keys(locations))
                         .setRender((location) => locations[location as keyof typeof locations])
-                        .sync(data, "location"),
+                        .ref(data.$location),
                     SliderInput("Memory (RAM)")
                         .setMin(1)
                         .setMax(state.meta.limits.memory - state.meta.used.memory + server.limits.memory)
-                        .sync(data, "memory")
+                        .ref(data.$memory)
                         .setRender((val) => format(val * MB)),
                     SliderInput("Disk (Storage)")
                         .setMin(server.limits.disk)
                         .setMax(state.meta.limits.disk - state.meta.used.disk + server.limits.disk)
-                        .sync(data, "disk")
+                        .ref(data.$disk)
                         .setRender((val) => format(val * MB)),
                     SliderInput("CPU (Processor)")
                         .setMin(1)
                         .setMax(state.meta.limits.cpu - state.meta.used.cpu + server.limits.cpu)
-                        .sync(data, "cpu")
+                        .ref(data.$cpu)
                         .setRender((val) => `${val.toString()} %`),
                     DropDownInput("Version", versions)
-                        .sync(data, "version"),
+                        .ref(data.$version),
                 )
                     .setGap()
                     .setEvenColumns(small ? 1 : 3)

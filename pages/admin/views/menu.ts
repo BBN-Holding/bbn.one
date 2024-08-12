@@ -227,7 +227,7 @@ const addOAuthDialog = SheetDialog(
     "Create new OAuth Application",
     Grid(
         Label("Create new OAuth Application"),
-        TextInput("text", "Name").sync(oAuthData, "name"),
+        TextInput("text", "Name").ref(oAuthData.$name),
         oAuthData.$redirectURI.map((x) =>
             Vertical(
                 Table([

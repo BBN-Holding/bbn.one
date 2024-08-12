@@ -74,7 +74,7 @@ sheetStack.setDefault(Vertical(
                                     "Request Payout",
                                     Grid(
                                         Label("How much would you like to withdraw?"),
-                                        TextInput("text", "Amount").sync(amount, "value"),
+                                        TextInput("text", "Amount").ref(amount.$value),
                                         Button("Request")
                                             .onClick(() => {
                                                 handlePayoutResponse(Number(amount.value));

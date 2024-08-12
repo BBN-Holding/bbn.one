@@ -48,10 +48,10 @@ export const creationView = () =>
                             .setFontWeight("bold"),
                         Grid(
                             TextInput("text", "Friendly Name")
-                                .sync(data, "name"),
+                                .ref(data.$name),
                             DropDownInput("Location", Object.keys(locations).filter((x) => x !== "bbn-sgp"))
                                 .setRender((val) => locations[val as keyof typeof locations])
-                                .sync(data, "location"),
+                                .ref(data.$location),
                         )
                             .setDynamicColumns(10)
                             .setMargin(".5rem 0 2rem")
@@ -63,19 +63,19 @@ export const creationView = () =>
                             SliderInput("Memory (RAM)")
                                 .setMax(state.meta.limits.memory - state.meta.used.memory)
                                 .setMin(1)
-                                .sync(data.limits, "memory")
+                                .ref(data.limits.$memory)
                                 .setRender((val) => format(val * MB)),
                             SliderInput("Storage (Disk)")
                                 .setMax(state.meta.limits.disk - state.meta.used.disk)
                                 .setMin(1)
-                                .sync(data.limits, "disk")
+                                .ref(data.limits.$disk)
                                 .setRender((val) => format(val * MB)),
                             SliderInput("Processor (CPU)")
                                 .setMax(state.meta.limits.cpu - state.meta.used.cpu)
                                 .setMin(1)
-                                .sync(data.limits, "cpu")
+                                .ref(data.limits.$cpu)
                                 .setRender((val) => `${val.toString()} %`),
-                            DropDownInput("Version", versions).sync(data, "version"),
+                            DropDownInput("Version", versions).ref(data.$version),
                         )
                             .setDynamicColumns(10)
                             .setMargin(".5rem 0 1.5rem")

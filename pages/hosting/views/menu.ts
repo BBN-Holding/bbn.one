@@ -206,7 +206,7 @@ function addonBrowser(server: StateHandler<Server>): RenderItem {
         children: [
             Grid(
                 TextInput("text", "Search")
-                    .sync(searchBox, "search"),
+                    .ref(searchBox.$search),
             ).setJustifyItems("end"),
             Loader(
                 loader,

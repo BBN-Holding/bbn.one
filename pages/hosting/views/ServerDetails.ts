@@ -51,7 +51,7 @@ export function ServerDetails(server: StateHandler<Server>) {
                                 Form(
                                     Grid(
                                         TextInput("text", "Send a Command")
-                                            .sync(input, "message"),
+                                            .ref(input.$message),
                                         Button("Send")
                                             .setId("submit-button")
                                             .onClick(() => {
