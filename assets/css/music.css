@@ -35,3 +35,7 @@ nav.music {
         background: linear-gradient(166deg, #F19D2D 6.59%, #db7621 101.73%);
     }
 }
+
+div.navigation>div.vertical-stack {
+    gap: unset !important;
+}

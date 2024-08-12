@@ -5,7 +5,7 @@ import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Drop, Payout } from "../../spec/music.ts";
-import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../_legacy/helper.ts";
+import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../shared/helper.ts";
 
 await RegisterAuthRefresh();
 

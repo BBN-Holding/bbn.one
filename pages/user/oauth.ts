@@ -5,7 +5,7 @@ import "../../assets/css/main.css";
 import { dots, templateArtwork } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { OAuthScopes } from "../../spec/music.ts";
-import { activeUser, getNameInital, logOut, ProfilePicture, RegisterAuthRefresh } from "../_legacy/helper.ts";
+import { activeUser, getNameInital, logOut, ProfilePicture, RegisterAuthRefresh } from "../shared/helper.ts";
 import "./oauth.css";
 import "./signin.css";
 

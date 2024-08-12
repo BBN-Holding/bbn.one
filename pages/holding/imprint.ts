@@ -1,7 +1,7 @@
 import { Footer } from "shared/footer.ts";
 import { Body, Box, ButtonStyle, Horizontal, Label, LinkButton, Spacer, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { RegisterAuthRefresh } from "../_legacy/helper.ts";
+import { RegisterAuthRefresh } from "../shared/helper.ts";
 import "./flowText.css";
 WebGen();
 await RegisterAuthRefresh();

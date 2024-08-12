@@ -1,6 +1,6 @@
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
 import { Button, ButtonStyle, Color, Grid, Label, SheetDialog } from "webgen/mod.ts";
-import { sheetStack } from "../../_legacy/helper.ts";
+import { sheetStack } from "../../shared/helper.ts";
 
 export const forceRestartDialog = (serverId: string) => {
     const sheet = SheetDialog(

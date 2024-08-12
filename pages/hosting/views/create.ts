@@ -4,7 +4,7 @@ import "../../../assets/css/hosting.css";
 import "../../../assets/css/main.css";
 import { DynaNavigation } from "../../../components/nav.ts";
 import { ServerTypes } from "../../../spec/music.ts";
-import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../../_legacy/helper.ts";
+import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../../shared/helper.ts";
 import { refreshState } from "../loading.ts";
 import { creationState, state } from "./../data.ts";
 import { creationView } from "./wizard.ts";

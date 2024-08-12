@@ -1,12 +1,12 @@
 import { API, createActionList, createBreadcrumb, createTagList, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { Body, Button, ButtonStyle, Color, Empty, Entry, Grid, Horizontal, isMobile, Label, Spacer, Vertical, WebGen } from "webgen/mod.ts";
+import { BasicLabel, Body, Button, ButtonStyle, Color, Empty, Entry, Grid, Horizontal, isMobile, Label, Spacer, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
-import { changeThemeColor, permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded, saveBlob, sheetStack, showPreviewImage, showProfilePicture } from "../_legacy/helper.ts";
-import { ChangeDrop } from "../_legacy/music/changeDrop.ts";
-import { ChangeSongs } from "../_legacy/music/changeSongs.ts";
+import { ChangeDrop } from "../music/views/changeDrop.ts";
+import { ChangeSongs } from "../music/views/changeSongs.ts";
 import { DropTypeToText } from "../music/views/list.ts";
+import { changeThemeColor, permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded, saveBlob, sheetStack, showPreviewImage, showProfilePicture } from "../shared/helper.ts";
 import { ApproveDialog, DeclineDialog, dialogState } from "./dialog.ts";
 import { reviewState } from "./state.ts";
 import { changeState, changeTypeDialog } from "./views/entryReview.ts";
@@ -59,17 +59,17 @@ sheetStack.setDefault(Vertical(
                     : LoadingSpinner()
             ).asRefComponent(),
         )
-            .setCssStyle("border", "solid").setGap().setBorderRadius("tiny"),
+            .setMaxHeight("calc(100vh - 53px)")
+            .setCssStyle("overflow", "auto")
+            .setCssStyle("border", "solid")
+            .setGap()
+            .setBorderRadius("tiny"),
         reviewState.$drop.map((drop) =>
             drop
                 ? Navigation({
                     title: drop.title,
                     children: [
-                        Horizontal(
-                            //TODO: Make this look better
-                            Label(DropTypeToText(drop.type)).setTextSize("2xl"),
-                            Spacer(),
-                        ),
+                        Label(DropTypeToText(drop.type)).setTextSize("2xl"),
                         {
                             id: "edit-drop",
                             title: "Drop",
@@ -104,13 +104,7 @@ sheetStack.setDefault(Vertical(
                     .setHeader((menu) =>
                         isMobile.map((mobile) => {
                             const list = Vertical(
-                                menu.path.map((x) =>
-                                    x == "-/"
-                                        ? Grid(
-                                            showPreviewImage(drop).addClass("image-preview"),
-                                        ).setEvenColumns(1, "10rem")
-                                        : Empty()
-                                ).asRefComponent(),
+                                menu.path.map((x) => x == "-/" ? Grid(showPreviewImage(drop).addClass("image-preview")).setEvenColumns(1, "10rem") : Empty()).asRefComponent(),
                                 createBreadcrumb(menu),
                                 createTagList(menu),
                             ).setGap();
@@ -124,9 +118,9 @@ sheetStack.setDefault(Vertical(
                         }).asRefComponent()
                     )
                 : LoadingSpinner()
-        ).asRefComponent().setJustifyItems("center").setAlignItems("center"),
+        ).asRefComponent(),
         Vertical(
-            Label("Drop History", "h1").setTextAlign("center"),
+            BasicLabel({ title: "", subtitle: "Drop History" }),
             reviewState.$drop.map((drop) =>
                 drop
                     ? Vertical(
@@ -171,7 +165,11 @@ sheetStack.setDefault(Vertical(
                         ApproveDialog.setOnClose(() => refreshReviewState());
                     }),
             ).setGap(),
-        ).setCssStyle("border", "solid").setBorderRadius("tiny"),
+        )
+            .setMaxHeight("calc(100vh - 53px)")
+            .setCssStyle("overflow", "auto")
+            .setCssStyle("border", "solid")
+            .setBorderRadius("tiny"),
     )
         .setGap()
         .setRawColumns("1fr 3fr 1fr"),

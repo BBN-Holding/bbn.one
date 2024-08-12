@@ -5,7 +5,7 @@ import { Body, Box, Button, ButtonStyle, Color, Component, createElement, Custom
 import "../../assets/css/main.css";
 import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { RegisterAuthRefresh } from "../_legacy/helper.ts";
+import { RegisterAuthRefresh } from "../shared/helper.ts";
 import { handleStateChange, loginUser, registerUser } from "./actions.ts";
 import "./signin.css";
 import { state } from "./state.ts";

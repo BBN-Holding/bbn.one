@@ -5,7 +5,7 @@ import { asState, Button, ButtonStyle, Color, DropDownInput, Grid, isMobile, Lab
 import locations from "../../../data/locations.json" with { type: "json" };
 import serverTypes from "../../../data/servers.json" with { type: "json" };
 import { Server } from "../../../spec/music.ts";
-import { sheetStack } from "../../_legacy/helper.ts";
+import { sheetStack } from "../../shared/helper.ts";
 import { MB, state } from "../data.ts";
 
 export const editServerDialog = (server: Server, versions: string[]) => {

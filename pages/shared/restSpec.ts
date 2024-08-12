@@ -1,5 +1,5 @@
 import { Artist, BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, Song, StoreItems, Wallet } from "../../spec/music.ts";
-import { ProfileData } from "../_legacy/helper.ts";
+import { ProfileData } from "./helper.ts";
 
 export const Permissions = [
     "/hmsys",

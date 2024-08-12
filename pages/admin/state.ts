@@ -1,7 +1,7 @@
 import { External } from "shared/mod.ts";
 import { asState } from "webgen/mod.ts";
 import { Drop, File, Group, OAuthApp, Payout, Server, Transcript, Wallet } from "../../spec/music.ts";
-import { ProfileData } from "../_legacy/helper.ts";
+import { ProfileData } from "../shared/helper.ts";
 
 export const state = asState({
     drops: {

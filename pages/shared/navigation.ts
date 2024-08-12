@@ -112,7 +112,7 @@ class MenuImpl extends Component {
                     }
 
                     const entry = Entry(item.replacement ? asRef(item.replacement).getValue() : item).addClass(isMobile.map((mobile) => mobile ? "small" : "desktop"));
-                    const click = this.createClickHandler(item);
+                    const click = this.#createClickHandler(item);
                     if (item.suffix) {
                         entry.addSuffix(asRef(item.suffix).getValue());
                     }
@@ -146,7 +146,7 @@ class MenuImpl extends Component {
         });
     }
 
-    private createClickHandler(menu: MenuNode): undefined | (() => Promise<void> | void) {
+    #createClickHandler(menu: MenuNode): undefined | (() => Promise<void> | void) {
         if (menu.clickHandler) {
             return async () => {
                 await menu.clickHandler?.(`${this.path.getValue() + menu.id}/`, menu);

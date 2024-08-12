@@ -1,8 +1,8 @@
 import { API, External, fileCache, RenderItem, stupidErrorAlert } from "shared/mod.ts";
-import { Box, Button, Cache, Color, Entry, Grid, Horizontal, IconButton, Image, MIcon, ref, SheetDialog, Spacer, TextInput, Vertical } from "webgen/mod.ts";
+import { asRef, Box, Button, Cache, Color, Entry, Grid, Horizontal, IconButton, Image, MIcon, ref, SheetDialog, Spacer, TextInput, Vertical } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
-import { saveBlob, sheetStack } from "../../_legacy/helper.ts";
+import { saveBlob, sheetStack } from "../../shared/helper.ts";
 import { state } from "../state.ts";
 
 export function entryWallet(wallet: Wallet) {
@@ -73,10 +73,10 @@ const oAuthViewDialog = (oauth: OAuthApp) =>
         "OAuth App Details",
         Vertical(
             Grid(
-                TextInput("text", "Name").setValue(oauth.name).setColor(Color.Disabled),
-                TextInput("text", "Client ID").setValue(oauth._id).setColor(Color.Disabled),
-                TextInput("text", "Client Secret").setValue(oauth.secret).setColor(Color.Disabled),
-                TextInput("text", "Redirect URI").setValue(oauth.redirect.join(",")).setColor(Color.Disabled),
+                TextInput("text", "Name").ref(asRef(oauth.name)).setColor(Color.Disabled),
+                TextInput("text", "Client ID").ref(asRef(oauth._id)).setColor(Color.Disabled),
+                TextInput("text", "Client Secret").ref(asRef(oauth.secret)).setColor(Color.Disabled),
+                TextInput("text", "Redirect URI").ref(asRef(oauth.redirect.join(","))).setColor(Color.Disabled),
             ),
             Horizontal(
                 Spacer(),

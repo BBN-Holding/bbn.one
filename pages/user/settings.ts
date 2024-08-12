@@ -3,7 +3,7 @@ import { asState, Body, Box, Button, CenterV, Empty, getErrorMessage, Grid, Hori
 import { zod } from "webgen/zod.ts";
 import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
-import { logOut, RegisterAuthRefresh } from "../_legacy/helper.ts";
+import { logOut, RegisterAuthRefresh } from "../shared/helper.ts";
 import { ChangePersonal } from "./settings.personal.ts";
 
 WebGen();

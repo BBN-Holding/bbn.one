@@ -4,7 +4,7 @@ import { API, ProgressTracker } from "shared/mod.ts";
 import { createStableWebSocket } from "webgen/extended.ts";
 import { asRef, asState, lazy, Reference } from "webgen/mod.ts";
 import { Deferred, InstalledAddon, Server, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
-import { activeUser, tokens } from "../_legacy/helper.ts";
+import { activeUser, tokens } from "../shared/helper.ts";
 import { state } from "./data.ts";
 import { canWriteInFolder, currentFiles } from "./views/state.ts";
 

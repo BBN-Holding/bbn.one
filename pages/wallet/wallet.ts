@@ -1,8 +1,8 @@
 import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Body, Button, Color, Grid, isMobile, Label, LinkButton, MediaQuery, SheetDialog, Table, TextInput, Vertical, WebGen } from "webgen/mod.ts";
+import { asState, Body, Button, Color, Grid, isMobile, Label, LinkButton, SheetDialog, Table, TextInput, Vertical, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
-import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../_legacy/helper.ts";
+import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../shared/helper.ts";
 import "./wallet.css";
 
 await RegisterAuthRefresh();
@@ -91,7 +91,7 @@ sheetStack.setDefault(Vertical(
                     isMobile.map((mobile) => mobile ? "mobile-navigation" : "navigation"),
                     "limited-width",
                 ),
-                MediaQuery("(max-width: 700px)", (small) =>
+                isMobile.map((mobile) =>
                     Vertical(
                         Grid(
                             Grid(
@@ -114,7 +114,7 @@ sheetStack.setDefault(Vertical(
                                 .addClass("details-item"),
                         )
                             .setWidth("100%")
-                            .setEvenColumns(small ? 1 : 2)
+                            .setEvenColumns(mobile ? 1 : 2)
                             .setGap(),
                         Table([
                             ["Amount", "auto", ({ amount }) => Label(`${amount.toFixed(2)} £`)],
@@ -122,7 +122,8 @@ sheetStack.setDefault(Vertical(
                             ["Counterparty", "auto", ({ counterParty }) => Label(counterParty)],
                             ["Date", "auto", ({ timestamp }) => Label(new Date(Number(timestamp)).toDateString())],
                         ], wallet.transactions),
-                    ).setGap()),
+                    ).setGap()
+                ).asRefComponent(),
             ).addClass("limited-width")
             : LoadingSpinner()
     ).asRefComponent(),

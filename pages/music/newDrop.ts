@@ -6,7 +6,7 @@ import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
 import language from "../../data/language.json" with { type: "json" };
 import { ArtistRef, ArtistTypes, DropType, pages, Song } from "../../spec/music.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, getSecondary, RegisterAuthRefresh, sheetStack } from "../_legacy/helper.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, getSecondary, RegisterAuthRefresh, sheetStack } from "../shared/helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./data.ts";
 import { EditArtistsDialog, ManageSongs } from "./views/table.ts";
 

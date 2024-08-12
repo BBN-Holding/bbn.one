@@ -1,13 +1,13 @@
 import { API, createActionList, createBreadcrumb, createTagList, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Body, Empty, Grid, Horizontal, isMobile, Label, Spacer, Vertical, WebGen } from "webgen/mod.ts";
-import "../../../assets/css/main.css";
-import "../../../assets/css/music.css";
-import { DynaNavigation } from "../../../components/nav.ts";
-import { Drop, DropType } from "../../../spec/music.ts";
-import { DropTypeToText } from "../../music/views/list.ts";
-import { changeThemeColor, permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded, saveBlob, sheetStack, showPreviewImage } from "../helper.ts";
-import { ChangeDrop } from "./changeDrop.ts";
-import { ChangeSongs } from "./changeSongs.ts";
+import { asRef, Body, Empty, Grid, isMobile, Label, Vertical, WebGen } from "webgen/mod.ts";
+import "../../assets/css/main.css";
+import "../../assets/css/music.css";
+import { DynaNavigation } from "../../components/nav.ts";
+import { Drop, DropType } from "../../spec/music.ts";
+import { changeThemeColor, permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded, saveBlob, sheetStack, showPreviewImage } from "../shared/helper.ts";
+import { ChangeDrop } from "./views/changeDrop.ts";
+import { ChangeSongs } from "./views/changeSongs.ts";
+import { DropTypeToText } from "./views/list.ts";
 
 await RegisterAuthRefresh();
 
@@ -24,22 +24,16 @@ if (!data.id) {
     location.href = "/c/music";
 }
 
-const state = asState({
-    drop: <Drop | undefined> undefined,
-});
+const drop = asRef(<Drop | undefined> undefined);
 
 sheetStack.setDefault(Vertical(
     DynaNavigation("Music"),
-    state.$drop.map((drop) =>
+    drop.map((drop) =>
         drop
             ? Navigation({
                 title: drop.title,
                 children: [
-                    Horizontal(
-                        //TODO: Make this look better
-                        Label(DropTypeToText(drop.type)).setTextSize("2xl"),
-                        Spacer(),
-                    ),
+                    Label(DropTypeToText(drop.type)).setTextSize("2xl"),
                     {
                         id: "edit-drop",
                         title: "Drop",
@@ -107,13 +101,7 @@ sheetStack.setDefault(Vertical(
                 .setHeader((menu) =>
                     isMobile.map((mobile) => {
                         const list = Vertical(
-                            menu.path.map((x) =>
-                                x == "-/"
-                                    ? Grid(
-                                        showPreviewImage(<Drop> { _id: drop._id, artwork: drop.artwork }).addClass("image-preview"),
-                                    ).setEvenColumns(1, "10rem")
-                                    : Empty()
-                            ).asRefComponent(),
+                            menu.path.map((x) => x == "-/" ? Grid(showPreviewImage(drop).addClass("image-preview")).setEvenColumns(1, "10rem") : Empty()).asRefComponent(),
                             createBreadcrumb(menu),
                             createTagList(menu),
                         ).setGap();
@@ -142,5 +130,5 @@ const Permissions = {
 renewAccessTokenIfNeeded().then(async () => {
     await API.music.id(data.id).get()
         .then(stupidErrorAlert)
-        .then((drop) => state.drop = drop);
+        .then((x) => drop.setValue(x));
 });

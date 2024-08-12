@@ -3,7 +3,7 @@ import { asState, Box, Button, ButtonStyle, CenterV, Checkbox, createElement, cs
 import { zod } from "webgen/zod.ts";
 import reviewTexts from "../../data/reviewTexts.json" with { type: "json" };
 import { Drop, ReviewResponse } from "../../spec/music.ts";
-import { sheetStack } from "../_legacy/helper.ts";
+import { sheetStack } from "../shared/helper.ts";
 import { clientRender, dropPatternMatching, rawTemplate, render } from "./email.ts";
 
 document.adoptedStyleSheets.push(css`

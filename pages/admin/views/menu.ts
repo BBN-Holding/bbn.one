@@ -233,7 +233,7 @@ const addOAuthDialog = SheetDialog(
                 Table([
                     ["URI", "auto", (_, index) =>
                         TextInput("text", "URI", "blur")
-                            .setValue(x[index])
+                            .ref(asRef(x[index]))
                             .onChange((data) => {
                                 x[index] = data ?? "";
                             })],
