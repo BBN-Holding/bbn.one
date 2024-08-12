@@ -2,7 +2,7 @@ import { debounce } from "@std/async";
 import { sumOf } from "@std/collections";
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { API, HeavyList, loadMore, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, Label, lazy, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { asRef, asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, Label, lazy, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
 import { Drop, DropType, File, Server, Transcript } from "../../../spec/music.ts";
 import { activeUser, ProfileData, sheetStack, showProfilePicture } from "../../shared/helper.ts";
 import { upload } from "../loading.ts";
