@@ -9,7 +9,19 @@ import "./table.css";
 export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<{ [uploadId: string]: number }[]>, primaryGenre: string) {
     return new Table2(songs)
         .setColumnTemplate("auto max-content max-content max-content max-content max-content max-content min-content")
-        .addColumn("Title", (song) => uploadingSongs.map((x) => x.filter((y) => y[song._id] !== undefined).length > 0 ? Progress(x.find((y) => y[song._id] !== undefined)[song._id]) : InlineTextInput("text", "blur").addClass("low-level").sync(song, "title")).asRefComponent())
+        .addColumn("Title", (song) =>
+            uploadingSongs.map((x) => {
+                if (x.filter((y) => y[song._id] !== undefined).length > 0) {
+                    return Progress(x.find((y) => y[song._id] !== undefined)[song._id]);
+                }
+                const title = asRef(song.title);
+                title.listen((newVal, oldVal) => {
+                    if (oldVal != undefined) {
+                        songs.setValue(songs.getValue().map((x) => x._id == song._id ? { ...song, title: newVal } : x));
+                    }
+                });
+                return InlineTextInput("text", "blur").addClass("low-level").ref(title);
+            }).asRefComponent())
         .addColumn("Artists", (song) =>
             Box(...song.artists.map((artist) => "name" in artist ? ProfilePicture(Label(""), artist.name) : ProfilePicture(Label(""), artist._id)), IconButton(MIcon("add"), "add"))
                 .addClass("artists-list")
