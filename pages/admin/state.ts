@@ -13,7 +13,8 @@ export const state = asState({
     oauth: <External<OAuthApp[]> | "loading"> "loading",
     files: <External<File[]> | "loading"> "loading",
     wallets: <External<Wallet[]> | "loading"> "loading",
-    search: <({ type: "transcript"; val: Transcript } | { type: "drop"; val: Drop } | { type: "server"; val: Server } | { type: "user"; val: ProfileData } | { type: "none" } | { type: "searching" })[]> [],
+    search: <({ _index: "transcripts"; _source: Transcript } | { _index: "drops"; _source: Drop } | { _index: "servers"; _source: Server } | { _index: "users"; _source: ProfileData } | { _index: "files"; _source: File } | { _index: "none" } | { _index: "searching" })[]>[],
+    searchStats: <External<{ total: number; took: number }> | "loading"> "loading",
 });
 
 export const reviewState = asState({

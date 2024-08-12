@@ -2,8 +2,8 @@ import { debounce } from "@std/async";
 import { sumOf } from "@std/collections";
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { API, HeavyList, loadMore, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, Items, Label, lazy, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
-import { Drop, DropType, Server, Transcript } from "../../../spec/music.ts";
+import { asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, Label, lazy, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { Drop, DropType, File, Server, Transcript } from "../../../spec/music.ts";
 import { activeUser, ProfileData, sheetStack, showProfilePicture } from "../../_legacy/helper.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
@@ -48,42 +48,41 @@ export const adminMenu = Navigation({
             title: ref`Search`,
             children: [
                 TextInput("text", "Search").onChange(debounce(async (data) => {
-                    state.search = asState([{ type: "searching" }]);
-                    const results = await API.admin.search(data ?? "").then(stupidErrorAlert);
-                    if (results.length === 0) {
-                        results.push({ type: "none" });
-                    }
-                    state.search = asState(results);
+                    state.search = asState([{ _index: "searching" }]);
+                    const elasticresults = await API.admin.search(data ?? "").then(stupidErrorAlert);
+                    state.search = asState(elasticresults.hits.hits);
+                    state.searchStats = asState({ total: elasticresults.hits.total.value, took: elasticresults.took });
                 }, 1000)),
-                Items(state.$search.map((it) => it as ({ type: "transcript"; val: Transcript } | { type: "drop"; val: Drop } | { type: "server"; val: Server } | { type: "user"; val: ProfileData } | { type: "none" } | { type: "searching" })[]), (it) => {
-                    switch (it.type) {
-                        case "transcript":
+                state.$searchStats.map((it) => (it === "loading" || it.status === "rejected") ? Box() : Label(`${state.$searchStats.getValue().took}ms | ${state.$searchStats.getValue().total} Entries`)).asRefComponent(),
+                HeavyList(state.$search.map((it) => it as ({ _index: "transcripts"; _source: Transcript } | { _index: "drops"; _source: Drop } | { _index: "servers"; _source: Server } | { _index: "users"; _source: ProfileData } | { _index: "files"; _source: File } | { _index: "user-events"; _source: any } | { _index: "none" } | { _index: "searching" })[]), (it) => {
+                    switch (it._index) {
+                        case "transcripts":
                             return Entry(
                                 {
-                                    title: it.val.with,
-                                    subtitle: it.type,
+                                    title: it._source.with,
+                                    subtitle: it._index,
                                 },
                             );
-                        case "drop":
-                            return ReviewEntry(it.val);
-                        case "server":
+                        case "drops":
+                            return ReviewEntry(it._source);
+                        case "servers":
                             return Entry(
                                 {
-                                    title: it.val._id,
-                                    subtitle: it.type,
+                                    title: it._source._id,
+                                    subtitle: it._index,
                                 },
                             );
-                        case "user":
+                        case "users":
                             return Entry({
-                                title: it.val.profile.username,
-                                subtitle: `${it.val._id} - ${it.val.profile.email}`,
+                                title: it._source.profile.username,
+                                subtitle: `${it._source._id} - ${it._source.profile.email}`,
                             })
                                 .addClass("small")
                                 .onPromiseClick(async () => {
                                     const monaco = await lazyMonaco();
                                     const box = document.createElement("div");
                                     monaco.editor.create(box, {
-                                        value: JSON.stringify(it.val, null, 2),
+                                        value: JSON.stringify(it._source, null, 2),
                                         language: "json",
                                         theme: "vs-dark",
                                         automaticLayout: true,
@@ -91,13 +90,24 @@ export const adminMenu = Navigation({
 
                                     SheetDialog(sheetStack, "User", Custom(box).setHeight("800px").setWidth("1200px")).open();
                                 })
-                                .addPrefix(showProfilePicture(it.val));
-                        case "none":
-                            return placeholder("No Results", "Try searching for something else.");
+                                .addPrefix(showProfilePicture(it._source));
+                        case "files":
+                            return Entry({
+                                title: it._source.filename,
+                                subtitle: `${it._source.length} bytes`,
+                            });
+                        case "user-events":
+                            return Entry({
+                                title: it._source.type,
+                                subtitle: `${it._source.userId} - ${it._source.ip}`,
+                            });
                         case "searching":
                             return placeholder("Searching", "Please wait...");
                     }
-                }),
+                    console.log("Unimplemented Type", it);
+                    return placeholder("Unimplemented Type", "Please implement");
+                })
+                    .setPlaceholder(placeholder("No Results", "No results found.")),
             ],
         },
         {

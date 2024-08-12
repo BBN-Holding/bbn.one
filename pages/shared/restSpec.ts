@@ -264,12 +264,18 @@ export const API = {
                 .then(none()),
     }),
     admin: ({
-        search: (query: string) =>
-            fetch(`${API.BASE_URL}admin/search?query=${query}`, {
+        search: (query: string, offset: number | undefined = undefined, limit: number = 31) => {
+            const paging = new URLSearchParams();
+            if (offset) {
+                paging.append("_offset", offset.toString());
+            }
+            paging.append("_limit", limit.toString());
+            return fetch(`${API.BASE_URL}admin/search/${query}?${paging}`, {
                 headers: headers(API.getToken()),
             })
                 .then(json<object[]>())
-                .catch(reject),
+                .catch(reject)
+        },
         files: {
             list: (offset: number | undefined = undefined) => {
                 const paging = new URLSearchParams();
