@@ -14,9 +14,9 @@ WebGen({
     },
 });
 
-sheetStack.setDefault(musicMenu);
+sheetStack.setDefault(Vertical(DynaNavigation("Music"), musicMenu));
 
-Body(Vertical(DynaNavigation("Music"), sheetStack));
+Body(sheetStack);
 
 renewAccessTokenIfNeeded()
     .then(async () => {
