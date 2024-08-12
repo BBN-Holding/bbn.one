@@ -1,7 +1,7 @@
 import { Footer } from "shared/footer.ts";
 import { Body, Box, Button, Color, Content, Empty, FullWidthSection, Grid, Image, Label, LinkButton, mediaQueryRef, MIcon, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { RegisterAuthRefresh } from "../_legacy/helper.ts";
+import { RegisterAuthRefresh } from "../shared/helper.ts";
 import "./main.css";
 
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"

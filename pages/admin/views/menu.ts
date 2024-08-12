@@ -4,7 +4,7 @@ import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { API, HeavyList, loadMore, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
 import { asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, Items, Label, lazy, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
 import { Drop, DropType, Server, Transcript } from "../../../spec/music.ts";
-import { activeUser, ProfileData, sheetStack, showProfilePicture } from "../../_legacy/helper.ts";
+import { activeUser, ProfileData, sheetStack, showProfilePicture } from "../../shared/helper.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";

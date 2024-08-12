@@ -3,7 +3,7 @@ import { editor } from "https://esm.sh/monaco-editor@0.44.0/esm/vs/editor/editor
 
 import { delay } from "@std/async";
 import { asRef, Box, Button, Cache, Color, Custom, Grid, Label, lazy, MIcon, refMerge, SheetDialog, Vertical } from "webgen/mod.ts";
-import { sheetStack } from "../../_legacy/helper.ts";
+import { sheetStack } from "../../shared/helper.ts";
 import { uploadFile } from "../loading.ts";
 import "./editFileDialog.css";
 

@@ -2,7 +2,7 @@ import { API, External, fileCache, RenderItem, stupidErrorAlert } from "shared/m
 import { Box, Button, Cache, Color, Entry, Grid, Horizontal, IconButton, Image, MIcon, ref, SheetDialog, Spacer, TextInput, Vertical } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
-import { saveBlob, sheetStack } from "../../_legacy/helper.ts";
+import { saveBlob, sheetStack } from "../../shared/helper.ts";
 import { state } from "../state.ts";
 
 export function entryWallet(wallet: Wallet) {

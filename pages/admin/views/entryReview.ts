@@ -1,7 +1,7 @@
 import { API } from "shared/mod.ts";
 import { asState, Button, ButtonStyle, Color, DropDownInput, Entry, Horizontal, SheetDialog, Spacer, Vertical } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
-import { sheetStack, showPreviewImage } from "../../_legacy/helper.ts";
+import { sheetStack, showPreviewImage } from "../../shared/helper.ts";
 
 export function ReviewEntry(x: Drop) {
     return Entry({

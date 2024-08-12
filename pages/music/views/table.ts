@@ -3,7 +3,7 @@ import { asRef, asState, Box, Button, Checkbox, Color, DropDownInput, Grid, Hori
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
 import { Artist, ArtistRef, ArtistTypes, Song } from "../../../spec/music.ts";
-import { getSecondary, getYearList, ProfilePicture, sheetStack } from "../../_legacy/helper.ts";
+import { getSecondary, getYearList, ProfilePicture, sheetStack } from "../../shared/helper.ts";
 import "./table.css";
 
 export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<{ [uploadId: string]: number }[]>, primaryGenre: string) {

@@ -4,7 +4,7 @@ import { createDownloadStream } from "shared/libs/streamSaver.ts";
 import { Progress, ProgressTracker, Table2 } from "shared/mod.ts";
 import { asRef, BasicLabel, BIcon, Box, Button, ButtonStyle, Color, Empty, Entry, Grid, IconButton, Label, MIcon, ref, refMerge, SheetDialog } from "webgen/mod.ts";
 import { SidecarResponse } from "../../../spec/music.ts";
-import { sheetStack } from "../../_legacy/helper.ts";
+import { sheetStack } from "../../shared/helper.ts";
 import { mapFiletoIcon } from "../constants.ts";
 import { deleteFileDialog } from "../dialogs/deleteFileDialog.ts";
 import { editFileDialog, editFileLanguage, editFilePath, editFileReadOnly, editFilestreamingText } from "../dialogs/editFileDialog.ts";

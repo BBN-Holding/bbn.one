@@ -2,7 +2,7 @@ import { API, Chart, count, HeavyList, LoadingSpinner, Navigation, placeholder, 
 import { asRef, asState, Button, Component, Entry, Grid, Horizontal, Image, isMobile, LinkButton, MediaQuery, ref } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { Artist, Drop, DropType, Payout } from "../../../spec/music.ts";
-import { activeUser } from "../../_legacy/helper.ts";
+import { activeUser } from "../../shared/helper.ts";
 import { musicList } from "./list.ts";
 import { createArtistSheet } from "./table.ts";
 

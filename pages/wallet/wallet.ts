@@ -2,7 +2,7 @@ import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts
 import { asState, Body, Button, Color, Grid, isMobile, Label, LinkButton, MediaQuery, SheetDialog, Table, TextInput, Vertical, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Wallet } from "../../spec/music.ts";
-import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../_legacy/helper.ts";
+import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../shared/helper.ts";
 import "./wallet.css";
 
 await RegisterAuthRefresh();

@@ -8,7 +8,7 @@ import { templateArtwork } from "../../../assets/imports.ts";
 import locations from "../../../data/locations.json" with { type: "json" };
 import serverTypes from "../../../data/servers.json" with { type: "json" };
 import { AuditTypes, InstalledAddon, Server, ServerAudit, ServerTypes } from "../../../spec/music.ts";
-import { activeUser, ProfileData, showProfilePicture } from "../../_legacy/helper.ts";
+import { activeUser, ProfileData, showProfilePicture } from "../../shared/helper.ts";
 import { state } from "../data.ts";
 import { deleteServerDialog } from "../dialogs/deleteServerDialog.ts";
 import { editServerDialog } from "../dialogs/editServerDialog.ts";
