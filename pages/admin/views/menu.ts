@@ -54,7 +54,7 @@ export const adminMenu = Navigation({
                     state.searchStats = asState({ total: elasticresults.hits.total.value, took: elasticresults.took });
                 }, 1000)),
                 state.$searchStats.map((it) => (it === "loading" || it.status === "rejected") ? Box() : Label(`${state.$searchStats.getValue().took}ms | ${state.$searchStats.getValue().total} Entries`)).asRefComponent(),
-                HeavyList(state.$search.map((it) => it as ({ _index: "transcripts"; _source: Transcript } | { _index: "drops"; _source: Drop } | { _index: "servers"; _source: Server } | { _index: "users"; _source: ProfileData } | { _index: "files"; _source: File } | { _index: "user-events"; _source: any } | { _index: "none" } | { _index: "searching" })[]), (it) => {
+                HeavyList(state.$search.map((it) => it as ({ _index: "transcripts"; _source: Transcript } | { _index: "drops"; _source: Drop } | { _index: "servers"; _source: Server } | { _index: "users"; _source: ProfileData } | { _index: "files"; _source: File } | { _index: "user-events"; _source: object } | { _index: "none" } | { _index: "searching" })[]), (it) => {
                     switch (it._index) {
                         case "transcripts":
                             return Entry(
