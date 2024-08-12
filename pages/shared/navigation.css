@@ -3,11 +3,8 @@
 }
 
 .sticky-footer {
+    position: sticky;
     height: 37px;
-}
-
-.sticky-footer .action-list-bar {
-    position: fixed;
     bottom: var(--gap);
     padding: 0 var(--gap);
     left: 0;
