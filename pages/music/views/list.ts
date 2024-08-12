@@ -1,14 +1,14 @@
 import { placeholder } from "shared/mod.ts";
-import { CenterV, Component, Empty, Entry, Label, MediaQuery, Vertical } from "webgen/mod.ts";
+import { CenterV, Component, Empty, Entry, isMobile, Label, Vertical } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
 import { showPreviewImage } from "../../shared/helper.ts";
 
-function DropEntry(x: Drop, small: boolean) {
+function DropEntry(x: Drop) {
     return Entry({
         title: x.title ?? "(no drop name)",
         subtitle: `${x.release ?? "(no release date)"} - ${x.gtin ?? "(no GTIN)"}`,
     })
-        .addClass(small ? "small" : "normal")
+        .addClass(isMobile.map((mobile) => mobile ? "small" : "normal"))
         .addPrefix(showPreviewImage(x).addClass("image-square"))
         .addSuffix((() => {
             if (x.type == DropType.UnderReview) {
@@ -51,7 +51,7 @@ export function CategoryRender(dropList: Drop[], title: string): Component[] | n
     return [
         Label(title)
             .addClass("list-title"),
-        MediaQuery("(max-width: 700px)", (matches) => Vertical(...dropList.map((x) => DropEntry(x, matches))).setGap("1rem")),
+        Vertical(...dropList.map((x) => DropEntry(x))).setGap("1rem"),
     ];
 }
 

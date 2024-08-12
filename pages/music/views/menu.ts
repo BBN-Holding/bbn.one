@@ -1,5 +1,5 @@
 import { API, Chart, count, HeavyList, LoadingSpinner, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, asState, Button, Component, Entry, Grid, Horizontal, Image, isMobile, LinkButton, MediaQuery, ref } from "webgen/mod.ts";
+import { asRef, asState, Button, Component, Entry, Grid, Horizontal, Image, isMobile, LinkButton, ref } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { Artist, Drop, DropType, Payout } from "../../../spec/music.ts";
 import { activeUser } from "../../shared/helper.ts";
@@ -66,6 +66,7 @@ export const musicMenu = Navigation({
                             ).setGap(),
                         )
                         .addPrefix(Image(templateArtwork, "").addClass("image-square")))
+                    .addClass(isMobile.map((mobile) => mobile ? "small" : "normal"))
                     .setPlaceholder(placeholder("No Artists", "Create a new Artist to release music")),
             ],
         },
@@ -74,7 +75,7 @@ export const musicMenu = Navigation({
             title: ref`Payouts ${count(menuState.$payouts)}`,
             children: menuState.$payouts.map((payouts) =>
                 payouts == "loading" ? [LoadingSpinner()] : [
-                    MediaQuery("(max-width: 700px)", (small) =>
+                    isMobile.map((mobile) =>
                         Grid(
                             Chart({
                                 type: "bar",
@@ -142,7 +143,8 @@ export const musicMenu = Navigation({
                                     },
                                 },
                             }),
-                        ).setEvenColumns(small ? 1 : 2)),
+                        ).setEvenColumns(mobile ? 1 : 2)
+                    ).asRefComponent(),
                     HeavyList(menuState.$payouts, (x) =>
                         Entry({
                             title: x.period,
