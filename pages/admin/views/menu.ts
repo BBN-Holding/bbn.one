@@ -3,8 +3,8 @@ import { sumOf } from "@std/collections";
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { API, HeavyList, loadMore, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
 import { asRef, asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, Label, lazy, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
-import { Drop, DropType, File, Server, Transcript } from "../../../spec/music.ts";
-import { activeUser, ProfileData, sheetStack, showProfilePicture } from "../../shared/helper.ts";
+import { DropType } from "../../../spec/music.ts";
+import { activeUser, sheetStack, showProfilePicture } from "../../shared/helper.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
@@ -54,7 +54,7 @@ export const adminMenu = Navigation({
                     state.searchStats = asState({ total: elasticresults.hits.total.value, took: elasticresults.took });
                 }, 1000)),
                 state.$searchStats.map((it) => (it === "loading" || it.status === "rejected") ? Box() : Label(`${state.$searchStats.getValue().took}ms | ${state.$searchStats.getValue().total} Entries`)).asRefComponent(),
-                HeavyList(state.$search.map((it) => it as ({ _index: "transcripts"; _source: Transcript } | { _index: "drops"; _source: Drop } | { _index: "servers"; _source: Server } | { _index: "users"; _source: ProfileData } | { _index: "files"; _source: File } | { _index: "user-events"; _source: object } | { _index: "none" } | { _index: "searching" })[]), (it) => {
+                HeavyList(state.$search, (it) => {
                     switch (it._index) {
                         case "transcripts":
                             return Entry(

@@ -13,9 +13,11 @@ export const state = asState({
     oauth: <External<OAuthApp[]> | "loading"> "loading",
     files: <External<File[]> | "loading"> "loading",
     wallets: <External<Wallet[]> | "loading"> "loading",
-    search: <({ _index: "transcripts"; _source: Transcript } | { _index: "drops"; _source: Drop } | { _index: "servers"; _source: Server } | { _index: "users"; _source: ProfileData } | { _index: "files"; _source: File } | { _index: "none" } | { _index: "searching" })[]>[],
+    search: <SearchResult[]> [],
     searchStats: <External<{ total: number; took: number }> | "loading"> "loading",
 });
+
+export type SearchResult = { _index: "transcripts"; _source: Transcript } | { _index: "drops"; _source: Drop } | { _index: "servers"; _source: Server } | { _index: "users"; _source: ProfileData } | { _index: "files"; _source: File } | { _index: "none" } | { _index: "searching" };
 
 export const reviewState = asState({
     // deno-lint-ignore no-explicit-any
