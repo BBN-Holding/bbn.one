@@ -1,10 +1,10 @@
 import { debounce } from "@std/async";
 import { sumOf } from "@std/collections";
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
-import { API, HeavyList, loadMore, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
+import { activeUser, sheetStack, showProfilePicture } from "shared/helper.ts";
+import { API, HeavyList, loadMore, Navigation, placeholder } from "shared/mod.ts";
 import { asRef, asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, Label, lazy, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
-import { activeUser, sheetStack, showProfilePicture } from "../../shared/helper.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
 import { ReviewEntry } from "./entryReview.ts";
@@ -45,13 +45,13 @@ export const adminMenu = Navigation({
         },
         {
             id: "search",
-            title: ref`Search`,
+            title: `Search`,
             children: [
                 TextInput("text", "Search").onChange(debounce(async (data) => {
                     if (!data) return;
-                    state.search = asState([{ _index: "searching" }]);
-                    state.searchQuery = data;
-                    state.search = await API.admin.search(data ?? "").then(stupidErrorAlert);
+                    state.$search.setValue("loading");
+                    state.$searchQuery.setValue(data);
+                    await API.admin.search(data).then((x) => state.$search.setValue(x));
                 }, 1000)),
                 HeavyList(state.$search, (it) => {
                     switch (it._index) {
@@ -100,13 +100,12 @@ export const adminMenu = Navigation({
                                 title: it._source.type,
                                 subtitle: `${it._source.userId} - ${it._source.ip}`,
                             });
-                        case "searching":
-                            return placeholder("Searching", "Please wait...");
+                        case "empty":
+                            return placeholder("Start Searching", "Type in the search bar to get started");
+                        case "none":
+                            return placeholder("No Results", "Try a different search term");
                     }
-                    console.log("Unimplemented Type", it);
-                    return placeholder("Unimplemented Type", "Please implement");
                 })
-                    .setPlaceholder(placeholder("No Results", "No results found."))
                     .enablePaging((offset, limit) => loadMore(state.$search, () => API.admin.search(state.searchQuery, offset, limit))),
             ],
         },
@@ -119,7 +118,7 @@ export const adminMenu = Navigation({
                     title: ref`Reviews`,
                     children: [
                         HeavyList(state.drops.$reviews, (it) => ReviewEntry(it))
-                            .setPlaceholder(placeholder("No Servers", "Welcome! Create a server to get going. 🤖🛠️"))
+                            .setPlaceholder(placeholder("No Drops", "Welcome! Create a server to get going. 🤖🛠️"))
                             .enablePaging((offset, limit) => loadMore(state.drops.$reviews, () => API.admin.drops.list(DropType.UnderReview, offset, limit))),
                     ],
                 },
@@ -128,6 +127,7 @@ export const adminMenu = Navigation({
                     title: ref`Publishing`,
                     children: [
                         HeavyList(state.drops.$publishing, (it) => ReviewEntry(it))
+                            .setPlaceholder(placeholder("No Drops", "Welcome! Create a server to get going. 🤖🛠️"))
                             .enablePaging((offset, limit) => loadMore(state.drops.$publishing, () => API.admin.drops.list(DropType.Publishing, offset, limit))),
                     ],
                 },
