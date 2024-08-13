@@ -48,12 +48,11 @@ export const adminMenu = Navigation({
             title: ref`Search`,
             children: [
                 TextInput("text", "Search").onChange(debounce(async (data) => {
+                    if (!data) return;
                     state.search = asState([{ _index: "searching" }]);
-                    const elasticresults = await API.admin.search(data ?? "").then(stupidErrorAlert);
-                    state.search = asState(elasticresults.hits.hits);
-                    state.searchStats = asState({ total: elasticresults.hits.total.value, took: elasticresults.took });
+                    state.searchQuery = data;
+                    state.search = await API.admin.search(data ?? "").then(stupidErrorAlert);
                 }, 1000)),
-                state.$searchStats.map((it) => (it === "loading" || it.status === "rejected") ? Box() : Label(`${state.$searchStats.getValue().took}ms | ${state.$searchStats.getValue().total} Entries`)).asRefComponent(),
                 HeavyList(state.$search, (it) => {
                     switch (it._index) {
                         case "transcripts":
@@ -107,7 +106,8 @@ export const adminMenu = Navigation({
                     console.log("Unimplemented Type", it);
                     return placeholder("Unimplemented Type", "Please implement");
                 })
-                    .setPlaceholder(placeholder("No Results", "No results found.")),
+                    .setPlaceholder(placeholder("No Results", "No results found."))
+                    .enablePaging((offset, limit) => loadMore(state.$search, () => API.admin.search(state.searchQuery, offset, limit))),
             ],
         },
         {

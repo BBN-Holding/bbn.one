@@ -1,4 +1,5 @@
 import { Artist, BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, Song, StoreItems, Wallet } from "../../spec/music.ts";
+import { SearchResult } from "../admin/state.ts";
 import { ProfileData } from "./helper.ts";
 
 export const Permissions = [
@@ -273,7 +274,7 @@ export const API = {
             return fetch(`${API.BASE_URL}admin/search/${query}?${paging}`, {
                 headers: headers(API.getToken()),
             })
-                .then(json<object[]>())
+                .then(json<SearchResult[]>())
                 .catch(reject)
         },
         files: {
