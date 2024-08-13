@@ -5,12 +5,12 @@ import { zod } from "webgen/zod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
-import { artistref, DATE_PATTERN, Drop, song, userString } from "../../../spec/music.ts";
+import { Artist, artistref, DATE_PATTERN, Drop, song, userString } from "../../../spec/music.ts";
 import { allowedImageFormats, getSecondary } from "../../shared/helper.ts";
 import { uploadArtwork } from "../data.ts";
 import { EditArtistsDialog } from "./table.ts";
 
-export function ChangeDrop(drop: Drop) {
+export function ChangeDrop(drop: Drop, artistList?: Artist[]) {
     const state = asState({
         artworkClientData: <AdvancedImage | undefined> (drop.artwork ? <AdvancedImage> { type: "direct", source: () => API.music.id(drop._id!).artwork().then(stupidErrorAlert) } : undefined),
         validationState: <zod.ZodError | undefined> undefined,
@@ -90,7 +90,7 @@ export function ChangeDrop(drop: Drop) {
             { width: 2 },
             Button("Artists")
                 .onClick(() => {
-                    EditArtistsDialog(data.$artists).open();
+                    EditArtistsDialog(data.$artists, artistList).open();
                 }),
         ],
         [{ width: 2, height: 2 }, Spacer()],

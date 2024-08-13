@@ -75,7 +75,7 @@ sheetStack.setDefault(Vertical(
                             title: "Drop",
                             subtitle: "Change Title, Release Date, ...",
                             children: [
-                                ChangeDrop(drop),
+                                ChangeDrop(drop, drop.artistList),
                             ],
                         },
                         {
@@ -83,7 +83,7 @@ sheetStack.setDefault(Vertical(
                             title: "Songs",
                             subtitle: "Move Songs, Remove Songs, Add Songs, ...",
                             children: [
-                                ChangeSongs(drop),
+                                ChangeSongs(drop, drop.artistList),
                             ],
                         },
                         {

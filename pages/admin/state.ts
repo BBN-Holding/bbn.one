@@ -1,7 +1,7 @@
 import { ProfileData } from "shared/helper.ts";
 import { External } from "shared/mod.ts";
 import { asState } from "webgen/mod.ts";
-import { Drop, File, Group, OAuthApp, Payout, Server, Transcript, Wallet } from "../../spec/music.ts";
+import { Artist, Drop, File, Group, OAuthApp, Payout, Server, Transcript, Wallet } from "../../spec/music.ts";
 
 export const state = asState({
     drops: {
@@ -21,6 +21,6 @@ export type SearchResult = { _index: "transcripts"; _source: Transcript } | { _i
 
 export const reviewState = asState({
     // deno-lint-ignore no-explicit-any
-    drop: <Drop & { user: ProfileData; events: any[] } | undefined> undefined,
+    drop: <Drop & { user: ProfileData; events: any[]; artistList: Artist[] } | undefined> undefined,
     drops: <Drop[] | undefined> undefined,
 });

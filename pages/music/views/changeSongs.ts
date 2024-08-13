@@ -1,12 +1,12 @@
 import { API } from "shared/mod.ts";
 import { asState, Box, Button, CenterV, createFilePicker, Empty, getErrorMessage, Grid, Horizontal, Label, Spacer, Validate } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
-import { Drop, song } from "../../../spec/music.ts";
+import { Artist, Drop, song } from "../../../spec/music.ts";
 import { allowedAudioFormats } from "../../shared/helper.ts";
 import { uploadSongToDrop } from "../data.ts";
 import { ManageSongs } from "./table.ts";
 
-export function ChangeSongs(drop: Drop) {
+export function ChangeSongs(drop: Drop, artistList?: Artist[]) {
     const state = asState({
         uploadingSongs: <string[]> [],
         validationState: <zod.ZodError | undefined> undefined,
@@ -41,7 +41,7 @@ export function ChangeSongs(drop: Drop) {
                     location.reload(); // Handle this Smarter => Make it a Reload Event.
                 }),
         ),
-        ManageSongs(data.$songs, state.$uploadingSongs, data.primaryGenre),
+        ManageSongs(data.$songs, state.$uploadingSongs, data.primaryGenre, artistList),
         Horizontal(
             Spacer(),
             Button("Add a new Song")

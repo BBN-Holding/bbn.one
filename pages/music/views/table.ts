@@ -6,7 +6,7 @@ import { Artist, ArtistRef, ArtistTypes, Song } from "../../../spec/music.ts";
 import { getSecondary, getYearList, ProfilePicture, sheetStack } from "../../shared/helper.ts";
 import "./table.css";
 
-export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<{ [uploadId: string]: number }[]>, primaryGenre: string) {
+export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<{ [uploadId: string]: number }[]>, primaryGenre: string, artistList?: Artist[]) {
     return new Table2(songs)
         .setColumnTemplate("auto max-content max-content max-content max-content max-content max-content min-content")
         .addColumn("Title", (song) =>
@@ -24,7 +24,7 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
                 .onClick(() => {
                     const artists = asRef(song.artists);
                     artists.listen((newVal, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, artists: newVal }));
-                    EditArtistsDialog(artists).open();
+                    EditArtistsDialog(artists, artistList).open();
                 }))
         .addColumn("Year", (song) => {
             const data = asRef(song.year.toString());
@@ -95,8 +95,8 @@ export const createArtistSheet = (name?: string) => {
     return promise;
 };
 
-export const EditArtistsDialog = (artists: Reference<ArtistRef[]>) => {
-    const artistList = asRef(<Artist[]> []);
+export const EditArtistsDialog = (artists: Reference<ArtistRef[]>, provided?: Artist[]) => {
+    const artistList = provided ? asRef(provided) : asRef(<Artist[]> []);
 
     API.music.artists.list().then(stupidErrorAlert)
         .then((x) => artistList.setValue(x));
