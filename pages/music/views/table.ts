@@ -98,8 +98,10 @@ export const createArtistSheet = (name?: string) => {
 export const EditArtistsDialog = (artists: Reference<ArtistRef[]>, provided?: Artist[]) => {
     const artistList = provided ? asRef(provided) : asRef(<Artist[]> []);
 
-    API.music.artists.list().then(stupidErrorAlert)
-        .then((x) => artistList.setValue(x));
+    if (!provided) {
+        API.music.artists.list().then(stupidErrorAlert)
+            .then((x) => artistList.setValue(x));
+    }
 
     const dialog = SheetDialog(
         sheetStack,
