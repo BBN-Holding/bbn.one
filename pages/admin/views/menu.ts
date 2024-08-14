@@ -91,10 +91,7 @@ export const adminMenu = Navigation({
                                 })
                                 .addPrefix(showProfilePicture(it._source));
                         case "files":
-                            return Entry({
-                                title: it._source.filename,
-                                subtitle: `${it._source.length} bytes`,
-                            });
+                            return entryFile(it._source);
                         case "user-events":
                             return Entry({
                                 title: it._source.type,
@@ -195,11 +192,6 @@ export const adminMenu = Navigation({
                     HeavyList(state.$oauth, entryOAuth),
                 ]
             ),
-        },
-        {
-            id: "files",
-            title: ref`Files`,
-            children: [HeavyList(state.$files, entryFile)],
         },
         {
             id: "wallets",

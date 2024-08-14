@@ -10,7 +10,6 @@ export async function refreshState() {
         (async () => state.drops.publishing = await API.admin.drops.list(DropType.Publishing))(),
         (async () => state.groups = await API.admin.groups.list())(),
         (async () => state.payouts = await API.admin.payouts.list())(),
-        (async () => state.files = await API.admin.files.list())(),
         (async () => state.wallets = await API.admin.wallets.list())(),
         (async () => state.oauth = await API.oauth.list())(),
     ]);

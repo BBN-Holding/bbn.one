@@ -1,4 +1,4 @@
-import { Artist, BugReport, Drop, DropType, File, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, Song, StoreItems, Wallet } from "../../spec/music.ts";
+import { Artist, BugReport, Drop, DropType, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, Song, StoreItems, Wallet } from "../../spec/music.ts";
 import { SearchResult } from "../admin/state.ts";
 import { ProfileData } from "./helper.ts";
 
@@ -275,21 +275,9 @@ export const API = {
                 headers: headers(API.getToken()),
             })
                 .then(json<SearchResult[]>())
-                .catch(reject)
+                .catch(reject);
         },
         files: {
-            list: (offset: number | undefined = undefined) => {
-                const paging = new URLSearchParams();
-                if (offset) {
-                    paging.append("_offset", offset.toString());
-                }
-                paging.append("_limit", "31");
-                return fetch(`${API.BASE_URL}admin/files?${paging}`, {
-                    headers: headers(API.getToken()),
-                })
-                    .then(json<File[]>())
-                    .catch(reject);
-            },
             download: (id: string) =>
                 fetch(`${API.BASE_URL}admin/files/${id}/download`, {
                     headers: headers(API.getToken()),
@@ -475,7 +463,7 @@ export const API = {
                 })
                     .then(json<Drop[]>())
                     .catch(reject),
-            create: (data: Partial<Song>) =>
+            create: (data: Omit<Song, "_id">) =>
                 fetch(`${API.BASE_URL}music/songs`, {
                     method: "POST",
                     headers: headers(API.getToken()),

@@ -11,7 +11,6 @@ export const state = asState({
     groups: <External<Group[]> | "loading"> "loading",
     payouts: <External<Payout[][]> | "loading"> "loading",
     oauth: <External<OAuthApp[]> | "loading"> "loading",
-    files: <External<File[]> | "loading"> "loading",
     wallets: <External<Wallet[]> | "loading"> "loading",
     search: <External<SearchResult[]> | "loading"> { status: "fulfilled", value: [{ _index: "empty" }] },
     searchQuery: <string> "",
