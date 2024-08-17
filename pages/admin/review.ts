@@ -1,5 +1,5 @@
 import { API, createActionList, createBreadcrumb, createTagList, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { BasicLabel, Body, Button, ButtonStyle, Color, Empty, Entry, Grid, Horizontal, isMobile, Label, Spacer, Vertical, WebGen } from "webgen/mod.ts";
+import { Body, Button, ButtonStyle, Color, Empty, Entry, Grid, Horizontal, isMobile, Label, Spacer, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -120,7 +120,7 @@ sheetStack.setDefault(Vertical(
                 : LoadingSpinner()
         ).asRefComponent(),
         Vertical(
-            BasicLabel({ title: "", subtitle: "Drop History" }),
+            Label("Drop History", "h1").setTextAlign("center"),
             reviewState.$drop.map((drop) =>
                 drop
                     ? Vertical(

@@ -1,9 +1,9 @@
+import { getSecondary, getYearList, ProfilePicture, sheetStack } from "shared/helper.ts";
 import { API, Progress, stupidErrorAlert, Table2 } from "shared/mod.ts";
 import { asRef, asState, Box, Button, Checkbox, Color, DropDownInput, Grid, Horizontal, IconButton, InlineTextInput, Label, MIcon, Reference, SheetDialog, Spacer, TextInput } from "webgen/mod.ts";
 import genres from "../../../data/genres.json" with { type: "json" };
 import language from "../../../data/language.json" with { type: "json" };
 import { Artist, ArtistRef, ArtistTypes, Song } from "../../../spec/music.ts";
-import { getSecondary, getYearList, ProfilePicture, sheetStack } from "../../shared/helper.ts";
 import "./table.css";
 
 export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<{ [uploadId: string]: number }[]>, primaryGenre: string, artistList?: Artist[]) {
@@ -33,11 +33,10 @@ export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<
                 .ref(data)
                 .addClass("low-level");
         })
-        //TODO: create real country.json
-        .addColumn("Country", (song) => {
-            const data = asRef(song.country);
-            data.listen((x, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, country: x }));
-            return DropDownInput("Country", Object.keys(language))
+        .addColumn("Language", (song) => {
+            const data = asRef(song.language);
+            data.listen((x, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, language: x }));
+            return DropDownInput("Language", Object.keys(language))
                 .setRender((key) => language[<keyof typeof language> key])
                 .ref(data)
                 .addClass("low-level");

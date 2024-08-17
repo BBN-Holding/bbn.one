@@ -69,9 +69,9 @@ export const song = zod.object({
     primaryGenre: zod.string(),
     secondaryGenre: zod.string(),
     year: zod.number(),
-    country: zod.string(),
-    //TODO: Add in frontend mby
-    language: zod.string().optional(),
+    //add in frontend with additional info sheet
+    country: zod.string().optional(),
+    language: zod.string(),
     explicit: zod.boolean(),
     instrumental: zod.boolean(),
     file: zod.string({ required_error: "a Song is missing its file." }),
