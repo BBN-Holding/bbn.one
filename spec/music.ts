@@ -256,6 +256,15 @@ export const serverCreate = zod.object({
     version: zod.string(),
 });
 
+export const changeRequest = zod.object({
+    name: userString,
+    location,
+    memory: zod.number(),
+    disk: zod.number(),
+    cpu: zod.number(),
+    version: zod.string(),
+}).partial();
+
 export const metaLimit = limits.extend({
     slots: zod.number(),
 });
