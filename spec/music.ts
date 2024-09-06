@@ -639,6 +639,7 @@ export type Meta = zod.infer<typeof meta>;
 export type OAuthApp = zod.infer<typeof oauthapp>;
 export type Payout = zod.infer<typeof payout>;
 export type PowerState = zod.infer<typeof serverPowerState>;
+export type PowerAction = zod.infer<typeof serverPowerActions>;
 export type Server = zod.infer<typeof server>;
 export type ServerCreate = zod.infer<typeof serverCreate>;
 export type Song = zod.infer<typeof song>;
