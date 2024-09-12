@@ -1,7 +1,7 @@
 import { decodeBase64, encodeBase64 } from "@std/encoding";
 import { LoginRequest, MessageType, SyncResponse, TriggerRequest } from "https://deno.land/x/hmsys_connector@0.9.0/mod.ts";
 import { API, ProgressTracker } from "shared/mod.ts";
-import { createStableWebSocket } from "webgen/extended.ts";
+import { createStableWebSocket } from "webgen/extended/mod.ts";
 import { asRef, asState, lazy, Reference } from "webgen/mod.ts";
 import { Deferred, InstalledAddon, Server, SidecarRequest, SidecarResponse } from "../../spec/music.ts";
 import { activeUser, tokens } from "../shared/helper.ts";

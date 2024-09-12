@@ -1,5 +1,5 @@
 import { API } from "shared/restSpec.ts";
-import { createStableWebSocket } from "webgen/extended.ts";
+import { createStableWebSocket } from "webgen/extended/mod.ts";
 import { asState, lazy } from "webgen/mod.ts";
 
 export const data = asState({
