@@ -92,6 +92,17 @@ sheetStack.setDefault(Vertical(
                             },
                         }
                         : Empty(),
+                    drop.type === "PUBLISHED"
+                        ? {
+                            id: "spotify",
+                            title: "Spotify",
+                            subtitle: "Open your Drop on Spotify",
+                            clickHandler: async () => {
+                                const url = await API.music.id(drop._id).spotify().then(stupidErrorAlert);
+                                globalThis.open(url.spotify, "_blank");
+                            },
+                        }
+                        : Empty(),
                 ],
             })
                 .addClass(
