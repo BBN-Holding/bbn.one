@@ -1,5 +1,5 @@
 import { API, createActionList, createBreadcrumb, createTagList, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, Body, Button, Color, Empty, Grid, Image, ImageComponent, isMobile, Label, SheetDialog, Vertical, WebGen } from "webgen/mod.ts";
+import { asRef, Body, Button, Empty, Grid, Image, ImageComponent, isMobile, Label, SheetDialog, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
