@@ -15,6 +15,8 @@ import spotify from "../music-landing/assets/spotify.svg";
 import deezer from "../music-landing/assets/deezer.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import tidal from "../music-landing/assets/tidal.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import apple from "../music-landing/assets/apple.svg";
 
 await RegisterAuthRefresh();
 
@@ -154,6 +156,7 @@ const streamingImages: Record<string, ImageComponent> = {
     spotify: Image(spotify, "Spotify"),
     deezer: Image(deezer, "Deezer"),
     tidal: Image(tidal, "Tidal"),
+    apple: Image(apple, "Apple Music"),
 };
 
 const StreamingServiesDialog = SheetDialog(
