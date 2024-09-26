@@ -1,5 +1,5 @@
 import { API, createActionList, createBreadcrumb, createTagList, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, Body, Empty, Grid, isMobile, Label, Vertical, WebGen } from "webgen/mod.ts";
+import { asRef, Body, Button, Color, Empty, Grid, Image, ImageComponent, isMobile, Label, SheetDialog, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -8,6 +8,13 @@ import { changeThemeColor, permCheck, RegisterAuthRefresh, renewAccessTokenIfNee
 import { ChangeDrop } from "./views/changeDrop.ts";
 import { ChangeSongs } from "./views/changeSongs.ts";
 import { DropTypeToText } from "./views/list.ts";
+
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import spotify from "../music-landing/assets/spotify.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import deezer from "../music-landing/assets/deezer.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import tidal from "../music-landing/assets/tidal.svg";
 
 await RegisterAuthRefresh();
 
@@ -94,12 +101,11 @@ sheetStack.setDefault(Vertical(
                         : Empty(),
                     drop.type === "PUBLISHED"
                         ? {
-                            id: "spotify",
-                            title: "Spotify",
-                            subtitle: "Open your Drop on Spotify",
-                            clickHandler: async () => {
-                                const url = await API.music.id(drop._id).spotify().then(stupidErrorAlert);
-                                globalThis.open(url.spotify, "_blank");
+                            id: "streamingservices",
+                            title: "Open",
+                            subtitle: "Navigate to your Drop on Streaming Services",
+                            clickHandler: () => {
+                                StreamingServiesDialog.open();
                             },
                         }
                         : Empty(),
@@ -143,3 +149,29 @@ renewAccessTokenIfNeeded().then(async () => {
         .then(stupidErrorAlert)
         .then((x) => drop.setValue(x));
 });
+
+const streamingImages: Record<string, ImageComponent> = {
+    spotify: Image(spotify, "Spotify"),
+    deezer: Image(deezer, "Deezer"),
+    tidal: Image(tidal, "Tidal"),
+};
+
+const StreamingServiesDialog = SheetDialog(
+    sheetStack,
+    "Streaming Services",
+    await API.music.id(data.id).services().then(stupidErrorAlert).then((x) =>
+        Vertical(
+            ...Object.entries(x).map(([key, value]) =>
+                Button("Open in " + key[0].toUpperCase() + key.slice(1))
+                    .onClick(() => globalThis.open(value, "_blank"))
+                    .addPrefix(
+                        streamingImages[key]
+                            .setHeight("1.5rem")
+                            .setWidth("1.5rem")
+                            .setMargin("0 0.35rem 0 -0.3rem"),
+                    )
+            ),
+            Object.values(x).every((x) => !x) ? Label("No Links available :(").setTextSize("2xl") : Empty(),
+        ).setGap("0.5rem")
+    ),
+);

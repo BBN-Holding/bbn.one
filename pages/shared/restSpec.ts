@@ -549,8 +549,8 @@ export const API = {
                 })
                     .then(blob())
                     .catch(reject),
-            spotify: () =>
-                fetch(`${API.BASE_URL}music/${id}/spotify`, {
+            services: () =>
+                fetch(`${API.BASE_URL}music/${id}/services`, {
                     headers: headers(API.getToken()),
                 })
                     .then(json<{ spotify: string }>())
