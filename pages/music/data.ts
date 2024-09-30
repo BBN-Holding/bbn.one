@@ -35,8 +35,14 @@ export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[],
             uploadingSongs.setValue(uploadingSongs.getValue().map((x) => ({ ...x, [uploadId]: 100 })));
         },
         credentials: () => API.getToken(),
-        backendResponse: async (id: string) => {
+        backendResponse: async (response) => {
             uploadingSongs.setValue(uploadingSongs.getValue().filter((x) => !x[uploadId]));
+            if (response.startsWith("duplicate:")) {
+                alert(`You already uploaded this song. Please use the add existing song button instead.`);
+                songs.setValue(songs.getValue().filter((x) => x._id !== uploadId));
+                // TODO: Open Dropover to automatically add the song using split at :
+                return;
+            }
             const song = await API.music.songs.create({
                 title: cleanedUpTitle,
                 artists,
@@ -46,9 +52,9 @@ export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[],
                 primaryGenre,
                 secondaryGenre,
                 year: new Date().getFullYear(),
-                file: id,
+                file: response,
             }).then(stupidErrorAlert);
-            songs.setValue(songs.getValue().map((x) => x._id == uploadId ? { ...x, _id: song.id, file: id } : x));
+            songs.setValue(songs.getValue().map((x) => x._id == uploadId ? { ...x, _id: song.id, file: response } : x));
         },
         // deno-lint-ignore require-await
         onUploadTick: async (percentage) => {
