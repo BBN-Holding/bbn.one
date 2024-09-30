@@ -1,8 +1,8 @@
+import { saveBlob, sheetStack } from "shared/helper.ts";
 import { API, External, fileCache, RenderItem, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, Box, Button, Cache, Color, Entry, Grid, Horizontal, IconButton, Image, MIcon, ref, SheetDialog, Spacer, TextInput, Vertical } from "webgen/mod.ts";
+import { asRef, Box, Button, Cache, Color, Entry, Grid, IconButton, Image, MIcon, ref, SheetDialog, TextInput } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
-import { saveBlob, sheetStack } from "../../shared/helper.ts";
 import { state } from "../state.ts";
 
 export function entryWallet(wallet: Wallet) {
@@ -67,25 +67,23 @@ export function entryOAuth(app: OAuthApp) {
         .addClass("small");
 }
 
-const oAuthViewDialog = (oauth: OAuthApp) =>
-    SheetDialog(
-        sheetStack,
+const oAuthViewDialog = (oauth: OAuthApp) => {
+    const sheet = SheetDialog(
+        sheetStack.setSheetWidth("30rem"),
         "OAuth App Details",
-        Vertical(
-            Grid(
-                TextInput("text", "Name").ref(asRef(oauth.name)).setColor(Color.Disabled),
-                TextInput("text", "Client ID").ref(asRef(oauth._id)).setColor(Color.Disabled),
-                TextInput("text", "Client Secret").ref(asRef(oauth.secret)).setColor(Color.Disabled),
-                TextInput("text", "Redirect URI").ref(asRef(oauth.redirect.join(","))).setColor(Color.Disabled),
-            ),
-            Horizontal(
-                Spacer(),
-                Button("Close").onClick(() => {
-                    oAuthViewDialog(oauth).close();
-                }),
-            ),
-        ),
+        Grid(
+            TextInput("text", "Name").ref(asRef(oauth.name)).setColor(Color.Disabled),
+            TextInput("text", "Client ID").ref(asRef(oauth._id)).setColor(Color.Disabled),
+            TextInput("text", "Client Secret").ref(asRef(oauth.secret)).setColor(Color.Disabled),
+            TextInput("text", "Redirect URI").ref(asRef(oauth.redirect.join(","))).setColor(Color.Disabled),
+            Button("Close").onClick(() => {
+                sheet.close();
+            }).setJustifySelf("end"),
+        ).setGap(),
     );
+
+    return sheet;
+};
 
 export function entryFile(file: File) {
     return Entry({

@@ -3,7 +3,7 @@ import { sumOf } from "@std/collections";
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { activeUser, sheetStack, showProfilePicture } from "shared/helper.ts";
 import { API, HeavyList, loadMore, Navigation, placeholder } from "shared/mod.ts";
-import { asRef, asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, Label, lazy, ref, SheetDialog, Spacer, Table, TextInput, Vertical } from "webgen/mod.ts";
+import { asRef, asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, lazy, ref, SheetDialog, Spacer, Table, TextInput } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
@@ -185,9 +185,7 @@ export const adminMenu = Navigation({
                     {
                         title: "Create new OAuth Application",
                         id: "add+oauth",
-                        clickHandler: () => {
-                            addOAuthDialog.open();
-                        },
+                        clickHandler: () => addOAuthDialog.open(),
                     },
                     HeavyList(state.$oauth, entryOAuth),
                 ]
@@ -218,10 +216,9 @@ const addOAuthDialog = SheetDialog(
     sheetStack,
     "Create new OAuth Application",
     Grid(
-        Label("Create new OAuth Application"),
         TextInput("text", "Name").ref(oAuthData.$name),
         oAuthData.$redirectURI.map((x) =>
-            Vertical(
+            Grid(
                 Table([
                     ["URI", "auto", (_, index) =>
                         TextInput("text", "URI", "blur")
@@ -239,11 +236,9 @@ const addOAuthDialog = SheetDialog(
                         .onClick(() => {
                             x.push("");
                         }),
-                ).setPadding("0 0 3rem 0"),
+                ),
             )
                 .setGap()
-                .setWidth("clamp(0rem, 100vw, 60vw)")
-                .setMargin("0 -.6rem 0 0")
         ).asRefComponent(),
         Button("Upload Image").onPromiseClick(async () => {
             oAuthData.image = await upload("oauth");
@@ -262,5 +257,5 @@ const addOAuthDialog = SheetDialog(
                         });
                 })
         ).asRefComponent(),
-    ).setGap("10px"),
+    ).setGap(),
 );
