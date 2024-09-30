@@ -34,6 +34,7 @@ if (!data.id) {
 }
 
 const drop = asRef(<Drop | undefined> undefined);
+const services = asRef<Record<string, string> | undefined>(undefined);
 
 sheetStack.setDefault(Vertical(
     DynaNavigation("Music"),
@@ -106,7 +107,10 @@ sheetStack.setDefault(Vertical(
                             id: "streamingservices",
                             title: "Open",
                             subtitle: "Navigate to your Drop on Streaming Services",
-                            clickHandler: () => {
+                            clickHandler: async () => {
+                                if (services.getValue() === undefined) {
+                                    services.setValue(await API.music.id(drop._id).services().then(stupidErrorAlert));
+                                }
                                 StreamingServiesDialog.open();
                             },
                         }
@@ -162,21 +166,19 @@ const streamingImages: Record<string, ImageComponent> = {
 const StreamingServiesDialog = SheetDialog(
     sheetStack,
     "Streaming Services",
-    data.type === "PUBLISHED"
-        ? await API.music.id(data.id).services().then(stupidErrorAlert).then((x) =>
-            Vertical(
-                ...Object.entries(x).map(([key, value]) =>
-                    Button("Open in " + key[0].toUpperCase() + key.slice(1))
-                        .onClick(() => globalThis.open(value, "_blank"))
-                        .addPrefix(
-                            streamingImages[key]
-                                .setHeight("1.5rem")
-                                .setWidth("1.5rem")
-                                .setMargin("0 0.35rem 0 -0.3rem"),
-                        )
-                ),
-                Object.values(x).every((x) => !x) ? Label("No Links available :(").setTextSize("2xl") : Empty(),
-            ).setGap("0.5rem")
-        )
-        : Empty(),
+    services.map((services) => services === undefined ? Empty() :
+        Vertical(
+            ...Object.entries(services).map(([key, value]) =>
+                Button("Open in " + key[0].toUpperCase() + key.slice(1))
+                    .onClick(() => globalThis.open(value, "_blank"))
+                    .addPrefix(
+                        streamingImages[key]
+                            .setHeight("1.5rem")
+                            .setWidth("1.5rem")
+                            .setMargin("0 0.35rem 0 -0.3rem"),
+                    )
+            ),
+            Object.values(services).every((x) => !x) ? Label("No Links available :(").setTextSize("2xl") : Empty(),
+        ).setGap("0.5rem")
+    ).asRefComponent(),
 );
