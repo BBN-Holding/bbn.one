@@ -162,19 +162,21 @@ const streamingImages: Record<string, ImageComponent> = {
 const StreamingServiesDialog = SheetDialog(
     sheetStack,
     "Streaming Services",
-    await API.music.id(data.id).services().then(stupidErrorAlert).then((x) =>
-        Vertical(
-            ...Object.entries(x).map(([key, value]) =>
-                Button("Open in " + key[0].toUpperCase() + key.slice(1))
-                    .onClick(() => globalThis.open(value, "_blank"))
-                    .addPrefix(
-                        streamingImages[key]
-                            .setHeight("1.5rem")
-                            .setWidth("1.5rem")
-                            .setMargin("0 0.35rem 0 -0.3rem"),
-                    )
-            ),
-            Object.values(x).every((x) => !x) ? Label("No Links available :(").setTextSize("2xl") : Empty(),
-        ).setGap("0.5rem")
-    ),
+    data.type === "PUBLISHED"
+        ? await API.music.id(data.id).services().then(stupidErrorAlert).then((x) =>
+            Vertical(
+                ...Object.entries(x).map(([key, value]) =>
+                    Button("Open in " + key[0].toUpperCase() + key.slice(1))
+                        .onClick(() => globalThis.open(value, "_blank"))
+                        .addPrefix(
+                            streamingImages[key]
+                                .setHeight("1.5rem")
+                                .setWidth("1.5rem")
+                                .setMargin("0 0.35rem 0 -0.3rem"),
+                        )
+                ),
+                Object.values(x).every((x) => !x) ? Label("No Links available :(").setTextSize("2xl") : Empty(),
+            ).setGap("0.5rem")
+        )
+        : Empty(),
 );
