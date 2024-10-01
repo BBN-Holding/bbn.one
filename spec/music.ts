@@ -60,6 +60,13 @@ export const artistref = zod.object({
     type: zod.literal(ArtistTypes.Producer).or(zod.literal(ArtistTypes.Songwriter)),
 }));
 
+export const share = zod.object({
+    _id: zod.string(),
+    drop: zod.string(),
+    slug: zod.string(),
+    services: zod.record(zod.string()),
+});
+
 export const song = zod.object({
     _id: zod.string(),
     user: zod.string().optional(),
