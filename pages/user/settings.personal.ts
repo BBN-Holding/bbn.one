@@ -1,8 +1,8 @@
 import { delay } from "@std/async";
+import { activeUser, allowedImageFormats, forceRefreshToken, IsLoggedIn, showProfilePicture } from "shared/helper.ts";
 import { API, StreamingUploadHandler, stupidErrorAlert } from "shared/mod.ts";
 import { asRef, asState, Box, Button, CenterV, createFilePicker, Empty, getErrorMessage, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, TextInput, Validate, Vertical } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
-import { activeUser, allowedImageFormats, forceRefreshToken, IsLoggedIn, showProfilePicture } from "../shared/helper.ts";
 
 export function ChangePersonal() {
     const state = asState({

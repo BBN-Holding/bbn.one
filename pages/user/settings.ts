@@ -1,9 +1,9 @@
+import { logOut, RegisterAuthRefresh } from "shared/helper.ts";
 import { API, Navigation } from "shared/mod.ts";
 import { asState, Body, Box, Button, CenterV, Empty, getErrorMessage, Grid, Horizontal, isMobile, Label, Spacer, TextInput, Validate, Vertical, WebGen } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
 import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
-import { logOut, RegisterAuthRefresh } from "../shared/helper.ts";
 import { ChangePersonal } from "./settings.personal.ts";
 
 WebGen();
