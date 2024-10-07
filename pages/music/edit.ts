@@ -178,7 +178,8 @@ const StreamingServiesDialog = SheetDialog(
         ).setGap("0.5rem")
     ).asRefComponent(),
 );
-
+//const prefix = "bbn.music/";
+const prefix = "bbn.one/share?s=";
 const SharingDialog = SheetDialog(
     sheetStack,
     "Manage Sharing Link",
@@ -186,7 +187,7 @@ const SharingDialog = SheetDialog(
         shareVal
             ? Vertical(
                 Label("Your Link:").setTextSize("xl").setCssStyle("color", shareVal.slug ? "" : "gray"),
-                LinkButton("bbn.music/" + (shareVal.slug ?? "xxx"), "https://bbn.music/" + (shareVal.slug ?? "xxx"), "_blank")
+                LinkButton(prefix + (shareVal.slug ?? "xxx"), "https://" + prefix + (shareVal.slug ?? "xxx"), "_blank")
                     .addClass("link")
                     .setStyle(ButtonStyle.Inline).setColor(shareVal.slug ? Color.Colored : Color.Disabled),
                 Label("Services Found:").setTextSize("xl").setCssStyle("color", shareVal.slug ? "" : "gray"),
