@@ -654,3 +654,4 @@ export type StoreItems = zod.infer<typeof storeItems>;
 export type Transcript = zod.infer<typeof transcript>;
 export type Wallet = zod.infer<typeof wallet>;
 export type SidecarFile = zod.infer<typeof sidecarFile>;
+export type Share = zod.infer<typeof share>;

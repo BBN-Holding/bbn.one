@@ -1,4 +1,4 @@
-import { Artist, BugReport, Drop, DropType, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, Song, StoreItems, Wallet } from "../../spec/music.ts";
+import { Artist, BugReport, Drop, DropType, Group, Meta, OAuthApp, Payout, RequestPayoutResponse, Server, ServerAudit, ServerCreate, ServerTypes, Share, Song, StoreItems, Wallet } from "../../spec/music.ts";
 import { SearchResult } from "../admin/state.ts";
 import { ProfileData } from "./helper.ts";
 
@@ -504,6 +504,26 @@ export const API = {
                     .catch(reject),
         },
         id: (id: string) => ({
+            share: {
+                get: () =>
+                    fetch(`${API.BASE_URL}music/drops/share/${id}`, {
+                        headers: headers(API.getToken()),
+                    }).then(json<Share>())
+                        .catch(reject),
+                create: () =>
+                    fetch(`${API.BASE_URL}music/drops/share`, {
+                        headers: headers(API.getToken()),
+                        method: "POST",
+                        body: JSON.stringify({
+                            id,
+                        }),
+                    }).then(json<Share>()).catch(reject),
+                remove: () =>
+                    fetch(`${API.BASE_URL}music/drops/share/${id}`, {
+                        headers: headers(API.getToken()),
+                        method: "DELETE",
+                    }).then(none()).catch(reject),
+            },
             get: () =>
                 fetch(`${API.BASE_URL}music/drops/${id}`, {
                     headers: headers(API.getToken()),
@@ -554,6 +574,21 @@ export const API = {
                     headers: headers(API.getToken()),
                 })
                     .then(json<{ spotify: string }>())
+                    .catch(reject),
+        }),
+        share: (slug: string) => ({
+            get: () =>
+                fetch(`${API.BASE_URL}music/share/${slug}`)
+                    .then(json<{
+                        services: Record<string, string>;
+                        title: string;
+                        artistNames: string[];
+                        artwork: string;
+                    }>())
+                    .catch(reject),
+            artwork: () =>
+                fetch(`${API.BASE_URL}music/share/${slug}/artwork`)
+                    .then(blob())
                     .catch(reject),
         }),
     }),

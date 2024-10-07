@@ -1,8 +1,17 @@
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Box, Cache, CenterV, Component, Custom, Horizontal, Image, Label, SheetsStack, Spacer, Style, SupportedThemes } from "webgen/mod.ts";
+import { asState, Box, Cache, CenterV, Component, Custom, Horizontal, Image, ImageComponent, Label, SheetsStack, Spacer, Style, SupportedThemes } from "webgen/mod.ts";
 import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
 import { Drop } from "../../spec/music.ts";
+
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import spotify from "../music-landing/assets/spotify.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import deezer from "../music-landing/assets/deezer.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import tidal from "../music-landing/assets/tidal.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import apple from "../music-landing/assets/apple.svg";
 
 export const allowedAudioFormats = ["audio/flac", "audio/wav", "audio/mp3"];
 export const allowedImageFormats = ["image/png", "image/jpeg"];
@@ -248,3 +257,10 @@ export function showProfilePicture(x: ProfileData) {
         x.profile.username,
     );
 }
+
+export const streamingImages: Record<string, ImageComponent> = {
+    spotify: Image(spotify, "Spotify"),
+    deezer: Image(deezer, "Deezer"),
+    tidal: Image(tidal, "Tidal"),
+    apple: Image(apple, "Apple Music"),
+};

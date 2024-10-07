@@ -1,0 +1,28 @@
+.bgImg {
+    filter: blur(20px) brightness(25%);
+    -webkit-filter: blur(20px) brightness(25%);
+
+
+    width: 100vw;
+    height: 100vh;
+
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.share {
+    background-color: black;
+    z-index: 2;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

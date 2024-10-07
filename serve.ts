@@ -69,6 +69,7 @@ serve({
         "admin": "./pages/admin/admin.ts",
         "admin/review": "./pages/admin/review.ts",
         "wallet": "./pages/wallet/wallet.ts",
+        "share": "./pages/music/share.ts",
     },
     defaultTemplate: createTemplate,
     poylfills: [

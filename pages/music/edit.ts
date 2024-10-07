@@ -1,22 +1,13 @@
 import { API, createActionList, createBreadcrumb, createTagList, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, Body, Button, Empty, Grid, Image, ImageComponent, isMobile, Label, SheetDialog, Vertical, WebGen } from "webgen/mod.ts";
+import { asRef, Body, Button, ButtonStyle, Color, Empty, Grid, Horizontal, isMobile, Label, LinkButton, SheetDialog, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
-import { Drop, DropType } from "../../spec/music.ts";
-import { changeThemeColor, permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded, saveBlob, sheetStack, showPreviewImage } from "../shared/helper.ts";
+import { Drop, DropType, Share } from "../../spec/music.ts";
+import { changeThemeColor, permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded, saveBlob, sheetStack, showPreviewImage, streamingImages } from "../shared/helper.ts";
 import { ChangeDrop } from "./views/changeDrop.ts";
 import { ChangeSongs } from "./views/changeSongs.ts";
 import { DropTypeToText } from "./views/list.ts";
-
-// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-import spotify from "../music-landing/assets/spotify.svg";
-// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-import deezer from "../music-landing/assets/deezer.svg";
-// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-import tidal from "../music-landing/assets/tidal.svg";
-// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-import apple from "../music-landing/assets/apple.svg";
 
 await RegisterAuthRefresh();
 
@@ -35,6 +26,7 @@ if (!data.id) {
 
 const drop = asRef(<Drop | undefined> undefined);
 const services = asRef<Record<string, string> | undefined>(undefined);
+const share = asRef(<Share | undefined | { slug: undefined }> undefined);
 
 sheetStack.setDefault(Vertical(
     DynaNavigation("Music"),
@@ -115,6 +107,17 @@ sheetStack.setDefault(Vertical(
                             },
                         }
                         : Empty(),
+                    drop.type === "PUBLISHED"
+                        ? {
+                            id: "share",
+                            title: "Sharing Link",
+                            subtitle: "Show your music to all your listeners",
+                            clickHandler: async () => {
+                                share.setValue(await API.music.id(drop._id).share.get().then(stupidErrorAlert));
+                                SharingDialog.open();
+                            },
+                        }
+                        : Empty(),
                 ],
             })
                 .addClass(
@@ -156,18 +159,11 @@ renewAccessTokenIfNeeded().then(async () => {
         .then((x) => drop.setValue(x));
 });
 
-const streamingImages: Record<string, ImageComponent> = {
-    spotify: Image(spotify, "Spotify"),
-    deezer: Image(deezer, "Deezer"),
-    tidal: Image(tidal, "Tidal"),
-    apple: Image(apple, "Apple Music"),
-};
-
 const StreamingServiesDialog = SheetDialog(
     sheetStack,
     "Streaming Services",
-    services.map((services) => services === undefined ? Empty() :
-        Vertical(
+    services.map((services) =>
+        services === undefined ? Empty() : Vertical(
             ...Object.entries(services).map(([key, value]) =>
                 Button("Open in " + key[0].toUpperCase() + key.slice(1))
                     .onClick(() => globalThis.open(value, "_blank"))
@@ -180,5 +176,37 @@ const StreamingServiesDialog = SheetDialog(
             ),
             Object.values(services).every((x) => !x) ? Label("No Links available :(").setTextSize("2xl") : Empty(),
         ).setGap("0.5rem")
+    ).asRefComponent(),
+);
+
+const SharingDialog = SheetDialog(
+    sheetStack,
+    "Manage Sharing Link",
+    share.map((shareVal) =>
+        shareVal
+            ? Vertical(
+                Label("Your Link:").setTextSize("xl").setCssStyle("color", shareVal.slug ? "" : "gray"),
+                LinkButton("bbn.music/" + (shareVal.slug ?? "xxx"), "https://bbn.music/" + (shareVal.slug ?? "xxx"), "_blank")
+                    .addClass("link")
+                    .setStyle(ButtonStyle.Inline).setColor(shareVal.slug ? Color.Colored : Color.Disabled),
+                Label("Services Found:").setTextSize("xl").setCssStyle("color", shareVal.slug ? "" : "gray"),
+                Horizontal(
+                    ...Object.keys(shareVal.slug ? shareVal.services : { spotify: "", deezer: "", tidal: "", apple: "" }).map((img) =>
+                        streamingImages[img]
+                            .setHeight("1.5rem")
+                            .setWidth("1.5rem")
+                            .setCssStyle("filter", shareVal.slug ? "brightness(0) invert(1)" : "brightness(0) invert(1) brightness(0.1)")
+                    ),
+                ).setGap("1rem").setJustifyContent("start").setPadding("0 .3rem"),
+                Button(shareVal.slug ? "Disable Link Sharing" : "Enable Link Sharing").onPromiseClick(async () => {
+                    if (shareVal.slug) {
+                        await API.music.id(drop.getValue()!._id).share.remove();
+                        share.setValue({ slug: undefined });
+                    } else {
+                        share.setValue(await API.music.id(drop.getValue()!._id).share.create().then(stupidErrorAlert));
+                    }
+                }).setMargin("1rem 0 0 0"),
+            )
+            : Empty()
     ).asRefComponent(),
 );
