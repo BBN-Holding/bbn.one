@@ -1,8 +1,8 @@
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Box, Cache, CenterV, Component, Custom, Horizontal, Image, ImageComponent, Label, SheetsStack, Spacer, Style, SupportedThemes } from "webgen/mod.ts";
+import { asRef, asState, Box, Button, Cache, CenterV, Component, Custom, DropDownInput, Horizontal, Image, ImageComponent, Label, Reference, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, Vertical } from "webgen/mod.ts";
 import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
-import { Drop } from "../../spec/music.ts";
+import { Drop, Song } from "../../spec/music.ts";
 
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import spotify from "../music-landing/assets/spotify.svg";
@@ -263,4 +263,24 @@ export const streamingImages: Record<string, ImageComponent> = {
     deezer: Image(deezer, "Deezer"),
     tidal: Image(tidal, "Tidal"),
     apple: Image(apple, "Apple Music"),
+};
+
+export const ExistingSongDialog = (dropSongs: StateHandler<Song[]>, songs: Reference<Song[]>) => {
+    const selected = asRef(<undefined | Song> undefined);
+    const dialog = SheetDialog(
+        sheetStack,
+        "Add Existing Song",
+        Vertical(
+            DropDownInput("Select Song", songs).setRender((song) => `${song.title}`).ref(selected),
+            Button("Add").setMargin("1rem 0 0 0").onClick(() => {
+                const selectedSong = selected.getValue();
+                if (selectedSong) {
+                    dropSongs.push(selectedSong);
+                }
+                dialog.close();
+                selected.setValue(undefined);
+            }),
+        ),
+    );
+    return dialog;
 };

@@ -1,12 +1,12 @@
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { AdvancedImage, asState, Body, Box, Button, ButtonStyle, Center, CenterV, Color, createFilePicker, Custom, DropAreaInput, DropDownInput, Empty, getErrorMessage, Grid, Horizontal, Image, Label, MediaQuery, Reference, SheetDialog, Spacer, SupportedThemes, TextInput, Validate, Vertical, WebGen } from "webgen/mod.ts";
+import { AdvancedImage, asRef, asState, Body, Box, Button, ButtonStyle, Center, CenterV, Color, createFilePicker, Custom, DropAreaInput, DropDownInput, Empty, getErrorMessage, Grid, Horizontal, Image, Label, MediaQuery, Reference, SheetDialog, Spacer, SupportedThemes, TextInput, Validate, Vertical, WebGen } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
 import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
 import language from "../../data/language.json" with { type: "json" };
 import { ArtistRef, ArtistTypes, DropType, pages, Song } from "../../spec/music.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, getSecondary, RegisterAuthRefresh, sheetStack } from "../shared/helper.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, ExistingSongDialog, getSecondary, RegisterAuthRefresh, sheetStack } from "../shared/helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./data.ts";
 import { EditArtistsDialog, ManageSongs } from "./views/table.ts";
 
@@ -190,6 +190,8 @@ const wizard = creationState.$page.map((page) => {
                 creationState.$songs.setValue(songs);
             }
         });
+        const songs = asRef(<undefined | Song[]> undefined);
+        const existingSongDialog = ExistingSongDialog(creationState.songs, songs);
         return Vertical(
             Spacer(),
             Horizontal(
@@ -197,8 +199,15 @@ const wizard = creationState.$page.map((page) => {
                 Vertical(
                     CenterAndRight(
                         Label("Manage your Music").addClass("title"),
-                        Button("Manual Upload")
-                            .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(creationState.$songs, creationState.artists, creationState.language, creationState.primaryGenre, creationState.secondaryGenre, creationState.$uploadingSongs, file))),
+                        Box(
+                            Button("Manual Upload")
+                                .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(creationState.$songs, creationState.artists, creationState.language, creationState.primaryGenre, creationState.secondaryGenre, creationState.$uploadingSongs, file))).setMargin("0 1rem 0 0"),
+                            Button("Add an existing Song")
+                                .onPromiseClick(async () => {
+                                    songs.setValue((await API.music.songs.list().then(stupidErrorAlert)).filter((song) => creationState.songs.some((dropsong) => dropsong._id !== song._id)));
+                                    existingSongDialog.open();
+                                }),
+                        ),
                     ),
                     ManageSongs(creationState.$songs as unknown as Reference<Song[]>, creationState.$uploadingSongs, creationState.primaryGenre!),
                 ).setGap(),

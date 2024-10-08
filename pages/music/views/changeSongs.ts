@@ -1,8 +1,8 @@
-import { API } from "shared/mod.ts";
-import { asState, Box, Button, CenterV, createFilePicker, Empty, getErrorMessage, Grid, Horizontal, Label, Spacer, Validate } from "webgen/mod.ts";
+import { API, stupidErrorAlert } from "shared/mod.ts";
+import { asRef, asState, Box, Button, CenterV, createFilePicker, Empty, getErrorMessage, Grid, Horizontal, Label, Spacer, Validate } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
-import { Artist, Drop, song } from "../../../spec/music.ts";
-import { allowedAudioFormats } from "../../shared/helper.ts";
+import { Artist, Drop, Song, song } from "../../../spec/music.ts";
+import { allowedAudioFormats, ExistingSongDialog } from "../../shared/helper.ts";
 import { uploadSongToDrop } from "../data.ts";
 import { ManageSongs } from "./table.ts";
 
@@ -18,6 +18,9 @@ export function ChangeSongs(drop: Drop, artistList?: Artist[]) {
             songs: song.array().min(1, { message: "At least one song is required" }),
         }),
     );
+
+    const songs = asRef(<undefined | Song[]> undefined);
+    const existingSongDialog = ExistingSongDialog(data.songs, songs);
 
     return Grid(
         Horizontal(
@@ -45,7 +48,15 @@ export function ChangeSongs(drop: Drop, artistList?: Artist[]) {
         Horizontal(
             Spacer(),
             Button("Add a new Song")
-                .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(data.$songs, drop.artists, drop.language, drop.primaryGenre, drop.secondaryGenre, state.$uploadingSongs, file))),
+                .onClick(() =>
+                    createFilePicker(allowedAudioFormats.join(","))
+                        .then((file) => uploadSongToDrop(data.$songs, drop.artists, drop.language, drop.primaryGenre, drop.secondaryGenre, state.$uploadingSongs, file))
+                ).setMargin("0 1rem 0 0"),
+            Button("Add an existing Song")
+                .onPromiseClick(async () => {
+                    songs.setValue((await API.music.songs.list().then(stupidErrorAlert)).filter((song) => !data.songs.some((dropsong) => dropsong._id === song._id)));
+                    existingSongDialog.open();
+                }),
         ),
     )
         .setGap("15px")
