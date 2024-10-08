@@ -461,7 +461,7 @@ export const API = {
                 fetch(`${API.BASE_URL}music/songs`, {
                     headers: headers(API.getToken()),
                 })
-                    .then(json<Drop[]>())
+                    .then(json<Song[]>())
                     .catch(reject),
             create: (data: Omit<Song, "_id">) =>
                 fetch(`${API.BASE_URL}music/songs`, {
