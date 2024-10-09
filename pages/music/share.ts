@@ -13,7 +13,7 @@ const params = new URLSearchParams(location.search);
 const data = Object.fromEntries(params.entries());
 if (!data.s) {
     location.href = "https://bbn.one/";
-    data.s = location.pathname;
+    data.s = location.pathname.replace("/", "");
     if (!data.s) {
         location.href = "https://bbn.one/";
     }
