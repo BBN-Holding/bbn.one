@@ -12,7 +12,6 @@ WebGen({
 const params = new URLSearchParams(location.search);
 const data = Object.fromEntries(params.entries());
 if (!data.s) {
-    alert("slug is missing");
     location.href = "https://bbn.one/";
 }
 
@@ -25,7 +24,12 @@ const share = asRef(
     }> undefined,
 );
 
-share.setValue(await API.music.share(data.s).get().then(stupidErrorAlert));
+const reqShare = await API.music.share(data.s).get();
+if (reqShare.status === "rejected") {
+    location.href = "https://bbn.one/";
+}
+
+share.setValue(stupidErrorAlert(reqShare));
 
 sheetStack.setDefault(Vertical(
     Image({ type: "direct", source: () => API.music.share(data.s).artwork().then(stupidErrorAlert) }, "Background").addClass("bgImg"),
