@@ -98,8 +98,8 @@ export function displayError(data: unknown) {
 
 export const API = {
     getToken: () => localStorage["access-token"],
-    BASE_URL: <string> localStorage.OVERRIDE_BASE_URL || (location.hostname == "bbn.one" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/"),
-    WS_URL: <string> localStorage.OVERRIDE_WS_URL || (location.hostname == "bbn.one" ? "wss://bbn.one/ws" : "ws://localhost:8443/ws"),
+    BASE_URL: <string> localStorage.OVERRIDE_BASE_URL || (location.hostname !== "localhost" ? "https://bbn.one/api/@bbn/" : "http://localhost:8443/api/@bbn/"),
+    WS_URL: <string> localStorage.OVERRIDE_WS_URL || (location.hostname !== "localhost" ? "wss://bbn.one/ws" : "ws://localhost:8443/ws"),
     bugReport: (bugReport: BugReport) =>
         fetch(`${API.BASE_URL}bug-track/`, {
             method: "POST",
