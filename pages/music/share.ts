@@ -13,6 +13,10 @@ const params = new URLSearchParams(location.search);
 const data = Object.fromEntries(params.entries());
 if (!data.s) {
     location.href = "https://bbn.one/";
+    data.s = location.pathname;
+    if (!data.s) {
+        location.href = "https://bbn.one/";
+    }
 }
 
 const share = asRef(
