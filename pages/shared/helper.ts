@@ -183,11 +183,11 @@ export function getYearList(): string[] {
 
 export function saveBlob(blob: Blob, fileName: string) {
     const a = document.createElement("a");
-    const url = window.URL.createObjectURL(blob);
+    const url = globalThis.URL.createObjectURL(blob);
     a.href = url;
     a.download = fileName;
     a.click();
-    window.URL.revokeObjectURL(url);
+    globalThis.URL.revokeObjectURL(url);
 }
 
 export function showPreviewImage(x: Drop) {

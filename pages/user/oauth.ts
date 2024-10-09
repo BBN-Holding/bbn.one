@@ -110,7 +110,7 @@ async function authorize() {
     const url = new URL(params.redirectUri!);
     url.searchParams.set("code", API.getToken());
     url.searchParams.set("state", params.state!);
-    window.location.href = url.toString();
+    globalThis.location.href = url.toString();
 }
 
 API.oauth.validate(params.clientId, params.scope, params.redirectUri)
