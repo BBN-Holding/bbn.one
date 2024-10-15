@@ -56,7 +56,7 @@ export const artistref = zod.object({
     _id: zod.string(),
     type: zod.literal(ArtistTypes.Primary).or(zod.literal(ArtistTypes.Featuring)),
 }).or(zod.object({
-    name: zod.string(),
+    name: userString,
     type: zod.literal(ArtistTypes.Producer).or(zod.literal(ArtistTypes.Songwriter)),
 }));
 
