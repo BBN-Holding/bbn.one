@@ -95,6 +95,7 @@ function createTemplate(name: string, path: string) {
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="${title.get(path) ?? "BBN Holding"}">
     <meta name="google" content="notranslate"/>
+    <link rel="me" href="https://chaos.social/@bbn">
     <link rel="apple-touch-icon" href="/images/apple.png">
     <link rel="stylesheet" href="${name}.css">
     <script defer data-domain="bbn.one" src="https://pl.bbn.one/js/script.js"></script>
