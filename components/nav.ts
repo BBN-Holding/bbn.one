@@ -1,8 +1,8 @@
 import { delay } from "@std/async";
+import { activeUser, IsLoggedIn, permCheck, showProfilePicture } from "shared/helper.ts";
 import { API } from "shared/mod.ts";
 import { BasicLabel, Box, Button, ButtonStyle, Component, createElement, Custom, Empty, Grid, Horizontal, Image, Label, LinkButton, MIcon, Spacer, Vertical } from "webgen/mod.ts";
 import { Popover } from "webgen/src/components/Popover.ts";
-import { activeUser, IsLoggedIn, permCheck, showProfilePicture } from "../pages/shared/helper.ts";
 import "./nav.css";
 import { activeTitle, pages } from "./pages.ts";
 

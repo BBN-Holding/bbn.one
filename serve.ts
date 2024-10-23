@@ -77,8 +77,6 @@ serve({
         "./bug-reporter.ts",
         "https://cdn.jsdelivr.net/npm/native-file-system-adapter@3.0.1/mod.js",
         "https://unpkg.com/urlpattern-polyfill",
-        "https://raw.githubusercontent.com/ungap/with-resolvers/main/index.js",
-        "https://unpkg.com/@oddbird/popover-polyfill",
     ],
 });
 

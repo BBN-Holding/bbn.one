@@ -72,7 +72,7 @@ export const song = zod.object({
     user: zod.string().optional(),
     isrc: zod.string().optional(),
     title: userString,
-    artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+    artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }).refine((x) => x.some(({ type }) => type == "SONGWRITER"), { message: "At least one songwriter is required" }),
     primaryGenre: zod.string(),
     secondaryGenre: zod.string(),
     year: zod.number(),
@@ -94,7 +94,7 @@ export const pureDrop = zod.object({
             message: "UPC/EAN: Invalid",
         }).optional(),
     title: userString,
-    artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+    artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }).refine((x) => x.some(({ type }) => type == "SONGWRITER"), { message: "At least one songwriter is required" }),
     release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
     language: zod.string(),
     primaryGenre: zod.string(),
@@ -115,7 +115,7 @@ export const drop = pureDrop
 
 const pageOne = zod.object({
     title: userString,
-    artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }),
+    artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }).refine((x) => x.some(({ type }) => type == "SONGWRITER"), { message: "At least one songwriter is required" }),
     release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
     language: zod.string(),
     primaryGenre: zod.string(),
