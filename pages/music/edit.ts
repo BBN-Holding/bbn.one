@@ -79,7 +79,7 @@ sheetStack.setDefault(Vertical(
                             subtitle: "Submit your Drop for Approval",
                             clickHandler: async () => {
                                 const releaseDate = new Date(drop.release);
-                                if (releaseDate.getTime() - Date.now() < 14 * 24 * 60 * 60 * 1000) {
+                                if (releaseDate.getTime() - Date.now() < 14 * 24 * 60 * 60 * 1000 && releaseDate.getTime() - Date.now() > 0) {
                                     WarningDialog.open();
                                 } else {
                                     await API.music.id(drop._id).type.post(DropType.UnderReview);
