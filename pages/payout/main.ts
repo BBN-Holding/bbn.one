@@ -25,7 +25,6 @@ if (!data.id) {
 const state = asState({
     payout: <Payout | undefined> undefined,
     music: <Drop[] | undefined> undefined,
-    loaded: false,
 });
 
 Body(Vertical(
@@ -129,13 +128,11 @@ Body(Vertical(
 ));
 
 renewAccessTokenIfNeeded()
-    .then(() => refreshState())
-    .then(() => state.loaded = true);
+    .then(() => refreshState());
 
 async function refreshState() {
     state.payout = await API.payment.payouts.id(data.id).get().then(stupidErrorAlert);
-    state.music = await API.music.drops.list().then(stupidErrorAlert);
-    state.loaded = true;
+    state.music = await API.music.drops.list(true).then(stupidErrorAlert);
 }
 
 function generateStores(datalist: Payout["entries"][0]["data"]) {

@@ -489,8 +489,8 @@ export const API = {
                     .catch(reject),
         },
         drops: {
-            list: () =>
-                fetch(`${API.BASE_URL}music/drops`, {
+            list: (full = false) =>
+                fetch(`${API.BASE_URL}music/drops` + (full ? "?full=true" : ""), {
                     headers: headers(API.getToken()),
                 })
                     .then(json<Drop[]>())
