@@ -190,6 +190,12 @@ export enum PaymentType {
     Unrestrained = "UNRESTRAINED", // can be withdrawn
 }
 
+export enum AccountType { 
+    Default = "DEFAULT",
+    Subscribed = "SUBSCRIBED",
+    Vip = "VIP",
+}
+
 export const wallet = zod.object({
     _id: zod.string(),
     transactions: zod.object({
@@ -208,6 +214,7 @@ export const wallet = zod.object({
         unrestrained: zod.number(),
     }).optional(),
     stripeAccountId: zod.string().optional(),
+    accountType: zod.nativeEnum(AccountType).default(AccountType.Default),
 });
 
 export const limits = zod.object({
