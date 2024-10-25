@@ -78,8 +78,13 @@ sheetStack.setDefault(Vertical(
                             title: "Publish",
                             subtitle: "Submit your Drop for Approval",
                             clickHandler: async () => {
-                                await API.music.id(drop._id).type.post(DropType.UnderReview);
-                                location.reload();
+                                const releaseDate = new Date(drop.release);
+                                if (releaseDate.getTime() - Date.now() < 14 * 24 * 60 * 60 * 1000) {
+                                    WarningDialog.open();
+                                } else {
+                                    await API.music.id(drop._id).type.post(DropType.UnderReview);
+                                    location.reload();
+                                }
                             },
                         }
                         : Empty(),
@@ -177,6 +182,25 @@ const StreamingServiesDialog = SheetDialog(
             Object.values(services).every((x) => !x) ? Label("No Links available :(").setTextSize("2xl") : Empty(),
         ).setGap("0.5rem")
     ).asRefComponent(),
+);
+const WarningDialog = SheetDialog(
+    sheetStack,
+    "Warning",
+    Vertical(
+        Label("You are about to publish your Drop which is scheduled to be released in less than 14 days.").setTextSize("xl"),
+        Label("There is a high chance that your Drop will not be released on time by all Streaming Services.").setTextSize("xl"),
+        Label("Do you want to continue?").setTextSize("xl"),
+        Horizontal(
+            Button("Cancel").onClick(() => {
+                WarningDialog.close();
+            }),
+            Button("Publish Anyway").onPromiseClick(async () => {
+                await API.music.id(drop.getValue()!._id).type.post(DropType.UnderReview);
+                location.reload();
+                WarningDialog.close();
+            }),
+        ).setJustifyContent("end").setGap("1rem"),
+    ),
 );
 //const prefix = "bbn.music/";
 const prefix = "bbn.one/share?s=";
