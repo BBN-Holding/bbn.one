@@ -53,7 +53,11 @@
     --color-colored-lightness: 50%;
 }
 
-.docked .wlayer-inner {
+.shop-stack .wbutton .content {
+    overflow: unset
+}
+
+.docked {
     /* Custom styling allows to remove bottom border radius */
     border-radius: .8rem .8rem 0 0 !important;
 }

@@ -1,10 +1,10 @@
+import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "shared/helper.ts";
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
 import { Body, Vertical, WebGen } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import { DropType } from "../../spec/music.ts";
-import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../shared/helper.ts";
 import { menuState, musicMenu } from "./views/menu.ts";
 
 await RegisterAuthRefresh();

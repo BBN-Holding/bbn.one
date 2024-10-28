@@ -1,9 +1,8 @@
+import { activeUser } from "shared/helper.ts";
 import { API, Chart, count, HeavyList, LoadingSpinner, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, asState, Button, Component, Entry, Grid, Horizontal, Image, isMobile, LinkButton, ref } from "webgen/mod.ts";
-import { templateArtwork } from "../../../assets/imports.ts";
+import { asRef, asState, Button, Component, Entry, Grid, isMobile, ref } from "webgen/mod.ts";
 import { Artist, Drop, DropType, Payout } from "../../../spec/music.ts";
-import { activeUser } from "../../shared/helper.ts";
-import { musicList } from "./list.ts";
+import { ArtistEntry, DropEntry, musicList } from "./list.ts";
 import { createArtistSheet } from "./table.ts";
 
 export const menuState = asState({
@@ -33,12 +32,11 @@ export const musicMenu = Navigation({
         {
             id: "unpublished",
             title: ref`Unpublished ${count(menuState.$unpublished)}`,
-            // TODO: Use HeavyList
-            children: menuState.$unpublished.map((unpublished) =>
-                unpublished == "loading" ? [LoadingSpinner()] : [
-                    musicList(unpublished ?? [], DropType.Private),
-                ]
-            ),
+            children: [
+                HeavyList(menuState.$unpublished, (x) => DropEntry(x))
+                    .setPadding("var(--gap) 0 0 0")
+                    .setPlaceholder(placeholder("No Unpublished Drops", "Create a new Drop to release music")),
+            ],
         },
         {
             id: "drafts",
@@ -54,19 +52,8 @@ export const musicMenu = Navigation({
             id: "artists",
             title: ref`Artists ${count(menuState.$artists)}`,
             children: [
-                HeavyList(menuState.$artists, (x) =>
-                    Entry({
-                        title: x.name,
-                        // TODO: Add used on x songs, x drops, maybe even streams?
-                    })
-                        .addSuffix(
-                            Horizontal(
-                                LinkButton("Spotify", "fdgdf"),
-                                LinkButton("Apple Music", "fdgdf"),
-                            ).setGap(),
-                        )
-                        .addPrefix(Image(templateArtwork, "").addClass("image-square")))
-                    .addClass(isMobile.map((mobile) => mobile ? "small" : "normal"))
+                HeavyList(menuState.$artists, (x) => ArtistEntry(x))
+                    .setPadding("var(--gap) 0 0 0")
                     .setPlaceholder(placeholder("No Artists", "Create a new Artist to release music")),
             ],
         },
