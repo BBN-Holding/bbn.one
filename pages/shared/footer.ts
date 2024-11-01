@@ -70,6 +70,7 @@ export function Footer() {
                                 IconButton(BIcon(icon), aria)
                                     .addClass("icon")
                                     .asLinkButton(link)
+                                    .setAttribute("target", "_blank")
                             ),
                     ).addClass("icons"),
                     LinkButton("Join Now", "/signin")
