@@ -16,8 +16,8 @@ Body(Box(
         Box(Label(`Email: support@bbn.one`)),
         Horizontal(
             Label("See also:"),
-            LinkButton("Privacy Policy", "/p/privacy-policy").setStyle(ButtonStyle.Inline),
-            LinkButton("Terms of Use", "/p/terms-of-use").setStyle(ButtonStyle.Inline),
+            LinkButton("Privacy Policy", "/p/privacy-policy").addClass("link").setStyle(ButtonStyle.Inline),
+            LinkButton("Terms of Use", "/p/terms-of-use").addClass("link").setStyle(ButtonStyle.Inline),
             Spacer(),
         ).addClass("block").setAlignItems("center"),
         Label(`Contents`, "h3"),
