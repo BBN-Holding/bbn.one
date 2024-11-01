@@ -59,6 +59,7 @@ export function Footer() {
                     Grid(
                         ...[
                             ["youtube", "Youtube", "https://www.youtube.com/@bbn6775"],
+                            ["mastodon", "Mastodon", "https://chaos.social/@bbn"],
                             ["twitch", "Twitch", "https://twitch.tv/gd_bbn"],
                             ["twitter", "Twiter", "https://twitter.com/BBN_Holding"],
                             ["discord", "Discord", "https://discord.gg/dJevjw2fCe"],
