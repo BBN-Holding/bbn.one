@@ -39,7 +39,6 @@ export function Footer() {
                         ]] as const,
 
                         ["Resources", [
-                            ["Blog", "https://blog.bbn.one/"],
                             ["Status Page", "https://status.bbn.one/"],
                             ["Open Source", "https://github.com/bbn-holding/"],
                             ["Support", "mailto:support@bbn.one"],
@@ -62,7 +61,6 @@ export function Footer() {
                             ["youtube", "Youtube", "https://www.youtube.com/@bbn6775"],
                             ["twitch", "Twitch", "https://twitch.tv/gd_bbn"],
                             ["twitter", "Twiter", "https://twitter.com/BBN_Holding"],
-                            ["facebook", "Facebook", "https://www.facebook.com/bbn.holding/"],
                             ["discord", "Discord", "https://discord.gg/dJevjw2fCe"],
                             ["instagram", "Instagram", "https://www.instagram.com/bbn.music/"],
                             ["github", "GitHub", "https://github.com/bbn-holding/"],
