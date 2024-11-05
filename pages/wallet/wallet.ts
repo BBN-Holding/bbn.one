@@ -1,7 +1,7 @@
 import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
 import { asState, Body, Button, Color, Grid, isMobile, Label, LinkButton, SheetDialog, Table, TextInput, Vertical, WebGen } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { Wallet } from "../../spec/music.ts";
+import { AccountType, Wallet } from "../../spec/music.ts";
 import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../shared/helper.ts";
 import "./wallet.css";
 
@@ -104,14 +104,27 @@ sheetStack.setDefault(Vertical(
                             )
                                 .addClass("details-item"),
                             Grid(
-                                Label(`${wallet.cut}%`)
-                                    .setTextSize("4xl")
-                                    .setFontWeight("bold"),
-                                Label("Your Cut")
-                                    .setFontWeight("bold")
-                                    .addClass("gray-color"),
+                                Grid(
+                                    Label(wallet.accountType == AccountType.Default ? "Basic" : AccountType.Subscribed ? "Premium" : "VIP")
+                                        .setTextSize("4xl")
+                                        .setFontWeight("bold"),
+                                    Label("Your Subscription")
+                                        .setFontWeight("bold")
+                                        .addClass("gray-color"),
+                                )
+                                    .addClass("details-item"),
+                                Grid(
+                                    Label(`${wallet.cut}%`)
+                                        .setTextSize("4xl")
+                                        .setFontWeight("bold"),
+                                    Label("Your Cut")
+                                        .setFontWeight("bold")
+                                        .addClass("gray-color"),
+                                )
+                                    .addClass("details-item"),
                             )
-                                .addClass("details-item"),
+                                .setEvenColumns(2)
+                                .setGap(),
                         )
                             .setWidth("100%")
                             .setEvenColumns(mobile ? 1 : 2)
