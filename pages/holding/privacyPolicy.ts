@@ -12,7 +12,7 @@ Body(Box(
         Label("Privacy Policy", "h2"),
         Label(`Privacy Policy`, "h3"),
         Label(
-            `BBN Holding and its subsidiaries and affiliates (collectively, “BBN”) are responsible for this website, including its mobile versions, and we are committed to respecting the privacy of visitors to both. BBN has implemented technical, administrative and physical measures to safeguard any personal information that we may collect.`,
+            `BBN Music GmbH ("BBN") responsible for this website, including its mobile versions, and we are committed to respecting the privacy of visitors to both. BBN has implemented technical, administrative and physical measures to safeguard any personal information that we may collect.`,
         ),
         Label(`This Privacy Notice describes our practices related to personal information collected through BBN websites and mobile versions, unless there is a separate privacy notice for the website or mobile version.`),
         Label(`Does this Notice apply to all BBN Websites?`, "h3"),
@@ -82,7 +82,7 @@ Body(Box(
         Label(
             `This website may also use web beacons. A web beacon is usually a pixel on a website that can be used to track whether a user has visited a particular website to deliver targeted advertising. Web beacons are used in combination with cookies, which means that, if you turn off your browser’s cookies, the web beacons will not be able to track your activity. The web beacon will still account for a website visit, but your unique information will not be recorded.`,
         ),
-        Label(`BBN Holding may also use cookies and similar technology placed by one of our business partners to enable BBN to learn which advertisements bring users to our website. For more information about cookies and other tracking technologies, click https://www.allaboutcookies.org/.`),
+        Label(`BBN may also use cookies and similar technology placed by one of our business partners to enable BBN to learn which advertisements bring users to our website. For more information about cookies and other tracking technologies, click https://www.allaboutcookies.org/.`),
         Label(`What should you understand about the third-party links that may appear on this website?`, "h3"),
         Label(
             `In some instances, BBN may provide links to non-BBN controlled websites, which BBN will make reasonable efforts to identify as such. BBN does not control such third-party websites, however, and cannot be responsible for the content or the privacy practices employed by other websites.`,
@@ -126,7 +126,7 @@ Body(Box(
             `If you have any comments or questions, or if there are other things we can do to maximize the value of this website to you, please email support@bbn.one. If you wish to access, correct or update your personal information, or if you have questions about BBN’s privacy practices in general or a complaint, please email support@bbn.one.`,
         ).addClass("block"),
         Label(`In the event that you are located in a country that will be governed by the General Data Protection Regulation and would like to contact the local Data Protection Officer, please note that in your email, and your inquiry will be directed to the appropriate person.`).addClass("block"),
-        Label(`Last updated: March 17, 2021`),
+        Label(`Last updated: November 10, 2024`),
     ).addClass("flow-text"),
     Footer(),
 ));

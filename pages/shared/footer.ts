@@ -19,12 +19,10 @@ export function Footer() {
                 Box(
                     ...[
                         ["Company", [
-                            ["About Us", "/p/imprint"],
-                            ["FAQs", "https://bbn.one"],
-                            ["Terms of Use", "/p/terms-of-use"],
+                            ["About Us", "/"],
+                            ["Terms and Conditions", "/p/terms"],
                             ["Privacy Policy", "/p/privacy-policy"],
-                            ["Contact Us", "mailto:support@bbn.one"],
-                            ["Distribution Agreement", "/p/distribution-agreement"],
+                            ["Imprint", "/p/imprint"],
                         ]] as const,
 
                         ["Products", [
@@ -32,16 +30,16 @@ export function Footer() {
                             ["Hosting", "/hosting"],
                         ]] as const,
 
-                        ["Use Cases", [
-                            ["Newcomers", "/music"],
-                            ["Personal", "/hosting"],
-                            ["Small Business", "/hosting"],
-                        ]] as const,
+                        // ["Use Cases", [
+                        //     ["Newcomers", "/music"],
+                        //     ["Personal", "/hosting"],
+                        //     ["Small Business", "/hosting"],
+                        // ]] as const,
 
                         ["Resources", [
-                            ["Blog", "https://blog.bbn.one/"],
+                            // ["Blog", "https://blog.bbn.one/"],
                             ["Status Page", "https://status.bbn.one/"],
-                            ["Open Source", "https://github.com/bbn-holding/"],
+                            // ["Open Source", "https://github.com/bbn-holding/"],
                             ["Support", "mailto:support@bbn.one"],
                         ]] as const,
                     ].map(([text, items]) =>
@@ -59,13 +57,13 @@ export function Footer() {
                 Grid(
                     Grid(
                         ...[
-                            ["youtube", "Youtube", "https://www.youtube.com/@bbn6775"],
-                            ["twitch", "Twitch", "https://twitch.tv/gd_bbn"],
-                            ["twitter", "Twiter", "https://twitter.com/BBN_Holding"],
-                            ["facebook", "Facebook", "https://www.facebook.com/bbn.holding/"],
+                            // ["youtube", "Youtube", "https://www.youtube.com/@bbn6775"],
+                            // ["twitter", "Twiter", "https://twitter.com/BBN_Holding"],
+                            // ["facebook", "Facebook", "https://www.facebook.com/bbn.holding/"],
                             ["discord", "Discord", "https://discord.gg/dJevjw2fCe"],
                             ["instagram", "Instagram", "https://www.instagram.com/bbn.music/"],
-                            ["github", "GitHub", "https://github.com/bbn-holding/"],
+                            ["mastodon", "Mastodon", "https://chaos.social/@bbn"],
+                            // ["github", "GitHub", "https://github.com/bbn-holding/"],
                         ]
                             .map(([icon, aria, link]) =>
                                 IconButton(BIcon(icon), aria)

@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/x/esbuild_serve@1.5.0/mod.ts";
 // import { serve } from "../esbuild_serve/mod.ts";
 
 const title = new Map(Object.entries({
+    "index": "BBN Music",
     "admin": "BBN Admin",
     "admin/review": "BBN Music - Review Drop",
     "hosting": "BBN Hosting",
@@ -50,11 +51,11 @@ serve({
         "images/apple.png": "./static/images/apple.png",
     },
     pages: {
-        "index": "./pages/holding/index.ts",
+        // "index": "./pages/holding/index.ts",
+        "index": "./pages/music-landing/main.ts",
         "p/privacy-policy": "./pages/holding/privacyPolicy.ts",
-        "p/terms-of-use": "./pages/holding/termsOfUse.ts",
+        "p/terms": "./pages/holding/terms.ts",
         "p/imprint": "./pages/holding/imprint.ts",
-        "p/distribution-agreement": "./pages/holding/distributionAgreement.ts",
         "signin": "./pages/user/signin.ts",
         "callback": "./pages/misc/callback.ts",
         "oauth": "./pages/user/oauth.ts",
