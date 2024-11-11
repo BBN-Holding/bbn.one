@@ -1,19 +1,13 @@
 import { sortBy, sumOf } from "@std/collections";
 import { API, MenuNode, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, asState, Body, isMobile, Vertical, WebGen } from "webgen/mod.ts";
+import { appendBody, asRefRecord, Grid, isMobile } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Drop, Payout } from "../../spec/music.ts";
-import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../shared/helper.ts";
+import { RegisterAuthRefresh, renewAccessTokenIfNeeded } from "../shared/helper.ts";
 
 await RegisterAuthRefresh();
-
-WebGen({
-    events: {
-        themeChanged: changeThemeColor(),
-    },
-});
 
 const params = new URLSearchParams(location.search);
 const data = Object.fromEntries(params.entries());
@@ -22,12 +16,12 @@ if (!data.id) {
     location.href = "/c/music";
 }
 
-const state = asState({
+const state = asRefRecord({
     payout: <Payout | undefined> undefined,
     music: <Drop[] | undefined> undefined,
 });
 
-Body(Vertical(
+appendBody(Grid(
     DynaNavigation("Music"),
     Navigation({
         title: "View Payout",
@@ -35,10 +29,10 @@ Body(Vertical(
             {
                 id: "drop",
                 title: `Drop`,
-                children: state.$music.map((music) =>
+                children: state.music.map((music) =>
                     sortBy(
                         (music?.map((drop) => {
-                            const entries = state.payout?.entries.filter((entry) => drop.songs?.some((song) => song.isrc === entry.isrc)) ?? [];
+                            const entries = state.payout.value?.entries.filter((entry) => drop.songs?.some((song) => song.isrc === entry.isrc)) ?? [];
                             if (entries.length === 0) return undefined;
                             return {
                                 title: drop.title,
@@ -57,15 +51,15 @@ Body(Vertical(
                                     : generateStores(entries[0].data ?? []),
                             };
                         }) ?? []).filter(Boolean) as MenuNode[],
-                        (e) => Number(asRef(e.subtitle!).getValue().split(" ")[1]),
+                        (e) => Number(e.subtitle!.toString().split(" ")[1]),
                     ).reverse()
                 ),
             },
             {
                 id: "store",
                 title: `Store`,
-                children: state.$payout
-                    ? state.$payout.map((payout) =>
+                children: state.payout
+                    ? state.payout.map((payout) =>
                         payout
                             ? sortBy(
                                 Object.entries(
@@ -93,8 +87,8 @@ Body(Vertical(
             {
                 id: "country",
                 title: `Country`,
-                children: state.$payout
-                    ? state.$payout.map((payout) =>
+                children: state.payout
+                    ? state.payout.map((payout) =>
                         payout
                             ? sortBy(
                                 Object.entries(
@@ -131,8 +125,8 @@ renewAccessTokenIfNeeded()
     .then(() => refreshState());
 
 async function refreshState() {
-    state.payout = await API.payment.payouts.id(data.id).get().then(stupidErrorAlert);
-    state.music = await API.music.drops.list(true).then(stupidErrorAlert);
+    await API.payment.payouts.id(data.id).get().then(stupidErrorAlert).then((payout) => state.payout.setValue(payout));
+    await API.music.drops.list(true).then(stupidErrorAlert).then((drops) => state.music.setValue(drops));
 }
 
 function generateStores(datalist: Payout["entries"][0]["data"]) {

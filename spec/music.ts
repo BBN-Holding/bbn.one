@@ -1,8 +1,8 @@
 import { sumOf } from "@std/collections";
-import { zod } from "webgen/zod.ts";
+import { z } from "zod/mod.ts";
 
 export const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
-export const userString = zod.string().min(1).transform((x) => x.trim());
+export const userString = z.string().min(1).transform((x) => x.trim());
 
 export enum DropType {
     Published = "PUBLISHED", // Uploaded, Approved
@@ -43,49 +43,49 @@ export enum ReviewResponse {
     DeclineMaliciousActivity = "DECLINE_MALICIOUS_ACTIVITY",
 }
 
-export const artist = zod.object({
-    _id: zod.string(),
+export const artist = z.object({
+    _id: z.string(),
     name: userString,
-    users: zod.string().array(),
-    avatar: zod.string().optional(),
-    spotify: zod.string().optional(),
-    apple: zod.string().optional(),
+    users: z.string().array(),
+    avatar: z.string().optional(),
+    spotify: z.string().optional(),
+    apple: z.string().optional(),
 });
 
-export const artistref = zod.object({
-    _id: zod.string(),
-    type: zod.literal(ArtistTypes.Primary).or(zod.literal(ArtistTypes.Featuring)),
-}).or(zod.object({
+export const artistref = z.object({
+    _id: z.string(),
+    type: z.literal(ArtistTypes.Primary).or(z.literal(ArtistTypes.Featuring)),
+}).or(z.object({
     name: userString,
-    type: zod.literal(ArtistTypes.Producer).or(zod.literal(ArtistTypes.Songwriter)),
+    type: z.literal(ArtistTypes.Producer).or(z.literal(ArtistTypes.Songwriter)),
 }));
 
-export const share = zod.object({
-    _id: zod.string(),
-    drop: zod.string(),
-    slug: zod.string(),
-    services: zod.record(zod.string()),
+export const share = z.object({
+    _id: z.string(),
+    drop: z.string(),
+    slug: z.string(),
+    services: z.record(z.string()),
 });
 
-export const song = zod.object({
-    _id: zod.string(),
-    user: zod.string().optional(),
-    isrc: zod.string().optional(),
+export const song = z.object({
+    _id: z.string(),
+    user: z.string().optional(),
+    isrc: z.string().optional(),
     title: userString,
     artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }).refine((x) => x.some(({ type }) => type == "SONGWRITER"), { message: "At least one songwriter is required" }),
-    primaryGenre: zod.string(),
-    secondaryGenre: zod.string(),
-    year: zod.number(),
+    primaryGenre: z.string(),
+    secondaryGenre: z.string(),
+    year: z.number(),
     //add in frontend with additional info sheet
-    country: zod.string().optional(),
-    language: zod.string(),
-    explicit: zod.boolean(),
-    instrumental: zod.boolean(),
-    file: zod.string({ required_error: "a Song is missing its file." }),
+    country: z.string().optional(),
+    language: z.string(),
+    explicit: z.boolean(),
+    instrumental: z.boolean(),
+    file: z.string({ required_error: "a Song is missing its file." }),
 });
 
-export const pureDrop = zod.object({
-    gtin: zod.string()
+export const pureDrop = z.object({
+    gtin: z.string()
         .trim()
         .min(12, { message: "UPC/EAN: Invalid length" })
         .max(13, { message: "UPC/EAN: Invalid length" })
@@ -95,34 +95,34 @@ export const pureDrop = zod.object({
         }).optional(),
     title: userString,
     artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }).refine((x) => x.some(({ type }) => type == "SONGWRITER"), { message: "At least one songwriter is required" }),
-    release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
-    language: zod.string(),
-    primaryGenre: zod.string(),
-    secondaryGenre: zod.string(),
+    release: z.string().regex(DATE_PATTERN, { message: "Not a date" }),
+    language: z.string(),
+    primaryGenre: z.string(),
+    secondaryGenre: z.string(),
     compositionCopyright: userString,
     soundRecordingCopyright: userString,
-    artwork: zod.string(),
-    songs: zod.string().array().min(1),
+    artwork: z.string(),
+    songs: z.string().array().min(1),
     comments: userString.optional(),
 });
 
 export const drop = pureDrop
-    .merge(zod.object({
-        _id: zod.string(),
-        user: zod.string(),
-        type: zod.nativeEnum(DropType),
+    .merge(z.object({
+        _id: z.string(),
+        user: z.string(),
+        type: z.nativeEnum(DropType),
     }));
 
-const pageOne = zod.object({
+const pageOne = z.object({
     title: userString,
     artists: artistref.array().refine((x) => x.some(({ type }) => type == "PRIMARY"), { message: "At least one primary artist is required" }).refine((x) => x.some(({ type }) => type == "SONGWRITER"), { message: "At least one songwriter is required" }),
-    release: zod.string().regex(DATE_PATTERN, { message: "Not a date" }),
-    language: zod.string(),
-    primaryGenre: zod.string(),
-    secondaryGenre: zod.string(),
-    gtin: zod.preprocess(
+    release: z.string().regex(DATE_PATTERN, { message: "Not a date" }),
+    language: z.string(),
+    primaryGenre: z.string(),
+    secondaryGenre: z.string(),
+    gtin: z.preprocess(
         (x) => x === "" ? undefined : x,
-        zod.string().trim()
+        z.string().trim()
             .min(12, { message: "UPC/EAN: Invalid length" })
             .max(13, { message: "UPC/EAN: Invalid length" })
             .regex(/^\d+$/, { message: "UPC/EAN: Not a number" })
@@ -134,54 +134,54 @@ const pageOne = zod.object({
     soundRecordingCopyright: userString,
 });
 
-const pageTwo = zod.object({
-    artwork: zod.string(),
-    artworkClientData: zod.object({
-        type: zod.string().refine((x) => x !== "uploading", { message: "Artwork is still uploading" }),
+const pageTwo = z.object({
+    artwork: z.string(),
+    artworkClientData: z.object({
+        type: z.string().refine((x) => x !== "uploading", { message: "Artwork is still uploading" }),
     }).transform(() => undefined),
 });
 
-const pageThree = zod.object({
+const pageThree = z.object({
     songs: song.array().min(1, { message: "At least one song is required" }).refine((songs) => songs.every(({ instrumental, explicit }) => !(instrumental && explicit)), "Can't have an explicit instrumental song"),
-    uploadingSongs: zod.array(zod.string()).max(0, { message: "Some uploads are still in progress" }),
+    uploadingSongs: z.array(z.string()).max(0, { message: "Some uploads are still in progress" }),
 });
 
-export const pages = <zod.AnyZodObject[]> [pageOne, pageTwo, pageThree];
+export const pages = <any[]> [pageOne, pageTwo, pageThree];
 
-export const payout = zod.object({
-    _id: zod.string(),
-    file: zod.string(),
-    period: zod.string(),
-    entries: zod.object({
-        isrc: zod.string(),
-        data: zod.array(
-            zod.object({
-                store: zod.string(),
-                territory: zod.string(),
-                quantity: zod.number(),
-                revenue: zod.number(),
+export const payout = z.object({
+    _id: z.string(),
+    file: z.string(),
+    period: z.string(),
+    entries: z.object({
+        isrc: z.string(),
+        data: z.array(
+            z.object({
+                store: z.string(),
+                territory: z.string(),
+                quantity: z.number(),
+                revenue: z.number(),
             }),
         ),
     }).array(),
-    user: zod.string(),
+    user: z.string(),
 });
 
-export const oauthapp = zod.object({
-    _id: zod.string(),
+export const oauthapp = z.object({
+    _id: z.string(),
     name: userString,
-    redirect: zod.string().url().array(),
-    secret: zod.string(),
-    icon: zod.string(),
+    redirect: z.string().url().array(),
+    secret: z.string(),
+    icon: z.string(),
 });
 
-export const file = zod.object({
-    _id: zod.string(),
-    length: zod.number(),
-    chunkSize: zod.number(),
-    uploadDate: zod.string(),
-    filename: zod.string(),
-    metadata: zod.object({
-        type: zod.string(),
+export const file = z.object({
+    _id: z.string(),
+    length: z.number(),
+    chunkSize: z.number(),
+    uploadDate: z.string(),
+    filename: z.string(),
+    metadata: z.object({
+        type: z.string(),
     }),
 });
 
@@ -190,37 +190,37 @@ export enum PaymentType {
     Unrestrained = "UNRESTRAINED", // can be withdrawn
 }
 
-export enum AccountType { 
+export enum AccountType {
     Default = "DEFAULT",
     Subscribed = "SUBSCRIBED",
     Vip = "VIP",
 }
 
-export const wallet = zod.object({
-    _id: zod.string(),
-    transactions: zod.object({
-        amount: zod.number(), // positive for incoming, negative for outgoing
-        timestamp: zod.string(),
-        type: zod.nativeEnum(PaymentType),
-        description: zod.string(),
-        counterParty: zod.string(),
+export const wallet = z.object({
+    _id: z.string(),
+    transactions: z.object({
+        amount: z.number(), // positive for incoming, negative for outgoing
+        timestamp: z.string(),
+        type: z.nativeEnum(PaymentType),
+        description: z.string(),
+        counterParty: z.string(),
     }).array(),
-    cut: zod.number(),
-    user: zod.string(),
-    userName: zod.string().optional(),
-    email: zod.string().optional(),
-    balance: zod.object({
-        restrained: zod.number(),
-        unrestrained: zod.number(),
+    cut: z.number(),
+    user: z.string(),
+    userName: z.string().optional(),
+    email: z.string().optional(),
+    balance: z.object({
+        restrained: z.number(),
+        unrestrained: z.number(),
     }).optional(),
-    stripeAccountId: zod.string().optional(),
-    accountType: zod.nativeEnum(AccountType).default(AccountType.Default),
+    stripeAccountId: z.string().optional(),
+    accountType: z.nativeEnum(AccountType).default(AccountType.Default),
 });
 
-export const limits = zod.object({
-    memory: zod.number(),
-    disk: zod.number(),
-    cpu: zod.number(),
+export const limits = z.object({
+    memory: z.number(),
+    disk: z.number(),
+    cpu: z.number(),
 });
 
 export enum ServerTypes {
@@ -232,246 +232,246 @@ export enum ServerTypes {
     PocketMine = "/minecraft/pocketmine/",
 }
 
-export const serverPowerState = zod.enum(["starting", "installing", "stopping", "running", "offline"]);
-export const serverPowerActions = zod.enum(["start", "stop", "kill"]);
+export const serverPowerState = z.enum(["starting", "installing", "stopping", "running", "offline"]);
+export const serverPowerActions = z.enum(["start", "stop", "kill"]);
 
-export const location = zod.enum(["bbn-fsn", "bbn-hel", "bbn-mum", "bbn-sgp"]);
-export const serverLabels = zod.enum([
+export const location = z.enum(["bbn-fsn", "bbn-hel", "bbn-mum", "bbn-sgp"]);
+export const serverLabels = z.enum([
     "suspended",
     "contact-support",
     "maintenance",
     "disabled",
 ]);
 
-export const server = zod.object({
-    _id: zod.string(),
-    name: zod.string().max(30),
-    type: zod.nativeEnum(ServerTypes),
+export const server = z.object({
+    _id: z.string(),
+    name: z.string().max(30),
+    type: z.nativeEnum(ServerTypes),
     location,
     limits,
     state: serverPowerState,
-    address: zod.string().optional(),
-    ports: zod.number().array(),
-    user: zod.string(),
-    stateSince: zod.number().describe("unix timestamp"),
+    address: z.string().optional(),
+    ports: z.number().array(),
+    user: z.string(),
+    stateSince: z.number().describe("unix timestamp"),
     labels: serverLabels.array(),
-    version: zod.string(),
+    version: z.string(),
 });
 
-export const serverCreate = zod.object({
-    name: zod.string().min(3).max(20),
-    type: zod.nativeEnum(ServerTypes),
+export const serverCreate = z.object({
+    name: z.string().min(3).max(20),
+    type: z.nativeEnum(ServerTypes),
     location,
-    limits: zod.object({
+    limits: z.object({
         memory: limits.shape.memory.min(300, "Minimum memory is 300MB"),
         disk: limits.shape.disk.min(200, "Minimum disk is 200MB"),
         cpu: limits.shape.cpu.min(3, "Minimum cpu is 3% of a core"),
     }),
-    version: zod.string(),
+    version: z.string(),
 });
 
-export const changeRequest = zod.object({
+export const changeRequest = z.object({
     name: userString,
     location,
-    memory: zod.number(),
-    disk: zod.number(),
-    cpu: zod.number(),
-    version: zod.string(),
+    memory: z.number(),
+    disk: z.number(),
+    cpu: z.number(),
+    version: z.string(),
 }).partial();
 
 export const metaLimit = limits.extend({
-    slots: zod.number(),
+    slots: z.number(),
 });
 
-export const storeItems = zod.enum(["memory", "disk", "cpu", "slots"]);
+export const storeItems = z.enum(["memory", "disk", "cpu", "slots"]);
 
-export const meta = zod.object({
-    _id: zod.string(),
-    owner: zod.string(),
-    coins: zod.number(),
+export const meta = z.object({
+    _id: z.string(),
+    owner: z.string(),
+    coins: z.number(),
     limits: metaLimit,
     used: metaLimit,
-    pricing: zod.record(
+    pricing: z.record(
         storeItems,
-        zod.object({
-            price: zod.number(),
-            amount: zod.number(),
+        z.object({
+            price: z.number(),
+            amount: z.number(),
         }),
     ),
 });
 
-export const bugReport = zod.object({
-    type: zod.literal("web-frontend"),
-    error: zod.string(),
-    errorStack: zod.string(),
-    platform: zod.string().optional(),
-    platformVersion: zod.string().optional(),
-    browserVersion: zod.string().optional(),
-    browser: zod.string().optional(),
-    userId: zod.string().optional(),
-    location: zod.string(),
+export const bugReport = z.object({
+    type: z.literal("web-frontend"),
+    error: z.string(),
+    errorStack: z.string(),
+    platform: z.string().optional(),
+    platformVersion: z.string().optional(),
+    browserVersion: z.string().optional(),
+    browser: z.string().optional(),
+    userId: z.string().optional(),
+    location: z.string(),
 });
 
-export const transcript = zod.object({
-    messages: zod.object({
-        author: zod.string(),
-        authorid: zod.string(),
-        content: zod.string(),
-        timestamp: zod.string(),
-        avatar: zod.string(),
-        attachments: zod.array(zod.string()).optional(),
-        embeds: zod.array(zod.any()).optional(),
+export const transcript = z.object({
+    messages: z.object({
+        author: z.string(),
+        authorid: z.string(),
+        content: z.string(),
+        timestamp: z.string(),
+        avatar: z.string(),
+        attachments: z.array(z.string()).optional(),
+        embeds: z.array(z.any()).optional(),
     }).array(),
-    closed: zod.string(),
-    with: zod.string(),
-    _id: zod.string(),
+    closed: z.string(),
+    with: z.string(),
+    _id: z.string(),
 });
 
-export const installedAddon = zod.object({
-    projectId: zod.string(),
-    versionId: zod.string(),
+export const installedAddon = z.object({
+    projectId: z.string(),
+    versionId: z.string(),
 });
 
-export const sidecarRequest = zod.discriminatedUnion("type", [
-    zod.object({
-        type: zod.literal("list"),
-        path: zod.string(),
+export const sidecarRequest = z.discriminatedUnion("type", [
+    z.object({
+        type: z.literal("list"),
+        path: z.string(),
     }),
-    zod.object({
-        type: zod.literal("read"),
-        path: zod.string(),
+    z.object({
+        type: z.literal("read"),
+        path: z.string(),
     }),
-    zod.object({
-        type: zod.literal("next-chunk"),
-        path: zod.string(),
+    z.object({
+        type: z.literal("next-chunk"),
+        path: z.string(),
     }),
-    zod.object({
-        type: zod.literal("install-addons"),
+    z.object({
+        type: z.literal("install-addons"),
         addons: installedAddon.array(),
     }),
-    zod.object({
-        type: zod.literal("installed-addons"),
+    z.object({
+        type: z.literal("installed-addons"),
     }),
-    zod.object({
-        type: zod.literal("uninstall-addon"),
-        projectId: zod.string(),
+    z.object({
+        type: z.literal("uninstall-addon"),
+        projectId: z.string(),
     }),
-    zod.object({
-        type: zod.literal("write"),
-        path: zod.string(),
-        chunk: zod.string().optional(),
+    z.object({
+        type: z.literal("write"),
+        path: z.string(),
+        chunk: z.string().optional(),
     }),
-    zod.object({
-        type: zod.literal("command"),
-        command: zod.string(),
+    z.object({
+        type: z.literal("command"),
+        command: z.string(),
     }),
-    zod.object({
-        type: zod.literal("delete"),
-        path: zod.string(),
+    z.object({
+        type: z.literal("delete"),
+        path: z.string(),
     }),
-    zod.object({
-        type: zod.literal("state"),
+    z.object({
+        type: z.literal("state"),
         state: serverPowerActions,
     }),
-    zod.object({
-        type: zod.literal("tree"),
-        path: zod.string(),
+    z.object({
+        type: z.literal("tree"),
+        path: z.string(),
     }),
 ]);
 
-const addon = zod.object({
-    id: zod.string(),
-    name: zod.string(),
-    description: zod.string(),
-    downloads: zod.number(),
-    lastUpdated: zod.string(),
-    icon: zod.string(),
-    background: zod.string(),
+const addon = z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string(),
+    downloads: z.number(),
+    lastUpdated: z.string(),
+    icon: z.string(),
+    background: z.string(),
 });
 
-export const sidecarFile = zod.object({
-    name: zod.string(),
-    canWrite: zod.boolean(),
-    isFile: zod.boolean(),
-    fileMimeType: zod.string().optional(),
-    lastModified: zod.number().optional(),
-    size: zod.number().optional(),
+export const sidecarFile = z.object({
+    name: z.string(),
+    canWrite: z.boolean(),
+    isFile: z.boolean(),
+    fileMimeType: z.string().optional(),
+    lastModified: z.number().optional(),
+    size: z.number().optional(),
 });
 
-export const sidecarResponse = zod.discriminatedUnion("type", [
-    zod.object({
-        type: zod.literal("list"),
-        path: zod.string(),
-        canWrite: zod.boolean(),
+export const sidecarResponse = z.discriminatedUnion("type", [
+    z.object({
+        type: z.literal("list"),
+        path: z.string(),
+        canWrite: z.boolean(),
         list: sidecarFile.array(),
     }),
-    zod.object({
-        type: zod.literal("read"),
-        path: zod.string(),
-        chunk: zod.string().optional(),
-        finish: zod.boolean().optional(),
+    z.object({
+        type: z.literal("read"),
+        path: z.string(),
+        chunk: z.string().optional(),
+        finish: z.boolean().optional(),
     }),
-    zod.object({
-        type: zod.literal("log"),
-        chunk: zod.string(),
-        backlog: zod.boolean().optional(),
+    z.object({
+        type: z.literal("log"),
+        chunk: z.string(),
+        backlog: z.boolean().optional(),
     }),
-    zod.object({
-        type: zod.literal("error"),
-        error: zod.string(),
-        path: zod.string().optional(),
+    z.object({
+        type: z.literal("error"),
+        error: z.string(),
+        path: z.string().optional(),
     }),
-    zod.object({
-        type: zod.literal("next-chunk"),
-        path: zod.string(),
+    z.object({
+        type: z.literal("next-chunk"),
+        path: z.string(),
     }),
-    zod.object({
-        type: zod.literal("state"),
+    z.object({
+        type: z.literal("state"),
         state: serverPowerState,
     }),
-    zod.object({
-        type: zod.literal("stats"),
-        stats: zod.object({
-            cpu: zod.number(),
-            memory: zod.number(),
-            disk: zod.number(),
+    z.object({
+        type: z.literal("stats"),
+        stats: z.object({
+            cpu: z.number(),
+            memory: z.number(),
+            disk: z.number(),
         }),
     }),
-    zod.object({
-        type: zod.literal("install-addons"),
-        success: zod.boolean(),
+    z.object({
+        type: z.literal("install-addons"),
+        success: z.boolean(),
     }),
-    zod.object({
-        type: zod.literal("installed-addons"),
-        addons: zod.object({
+    z.object({
+        type: z.literal("installed-addons"),
+        addons: z.object({
             addon: installedAddon,
             dependencies: installedAddon.array(),
         }).array(),
     }),
-    zod.object({
-        type: zod.literal("uninstall-addon"),
-        success: zod.boolean(),
+    z.object({
+        type: z.literal("uninstall-addon"),
+        success: z.boolean(),
     }),
-    zod.object({
-        type: zod.literal("tree"),
-        path: zod.string(),
-        canWrite: zod.boolean(),
+    z.object({
+        type: z.literal("tree"),
+        path: z.string(),
+        canWrite: z.boolean(),
         files: sidecarFile.array(),
     }),
 ]);
 
-export const requestPayoutResponse = zod.discriminatedUnion("type", [
-    zod.object({
-        type: zod.literal("createAccount"),
-        url: zod.string(),
+export const requestPayoutResponse = z.discriminatedUnion("type", [
+    z.object({
+        type: z.literal("createAccount"),
+        url: z.string(),
     }),
-    zod.object({
-        type: zod.literal("needDetails"),
-        missingDetails: zod.array(zod.string()),
-        url: zod.string(),
+    z.object({
+        type: z.literal("needDetails"),
+        missingDetails: z.array(z.string()),
+        url: z.string(),
     }),
-    zod.object({
-        type: zod.literal("success"),
+    z.object({
+        type: z.literal("success"),
     }),
 ]);
 
@@ -499,119 +499,119 @@ export enum AuditTypes {
     OAuthSignUp = "oauth-sign-up",
 }
 
-export const audit = zod.discriminatedUnion("action", [
-    zod.object({
-        action: zod.literal(AuditTypes.StorePurchase),
-        user: zod.string(),
-        type: zod.enum(["memory", "disk", "cpu", "slots"]),
+export const audit = z.discriminatedUnion("action", [
+    z.object({
+        action: z.literal(AuditTypes.StorePurchase),
+        user: z.string(),
+        type: z.enum(["memory", "disk", "cpu", "slots"]),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.ServerCreate),
-        user: zod.string(),
-        serverId: zod.string(),
-        data: zod.any(),
+    z.object({
+        action: z.literal(AuditTypes.ServerCreate),
+        user: z.string(),
+        serverId: z.string(),
+        data: z.any(),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.ServerPowerChange),
-        user: zod.string(),
-        server: zod.string(),
+    z.object({
+        action: z.literal(AuditTypes.ServerPowerChange),
+        user: z.string(),
+        server: z.string(),
         power: serverPowerActions,
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.ServerModify),
-        user: zod.string(),
-        serverId: zod.string(),
-        changes: zod.object({
-            name: zod.string(),
-            location: zod.string(),
+    z.object({
+        action: z.literal(AuditTypes.ServerModify),
+        user: z.string(),
+        serverId: z.string(),
+        changes: z.object({
+            name: z.string(),
+            location: z.string(),
             limits,
             state: serverPowerState,
-            ports: zod.number().array(),
-            labels: zod.enum(["suspended", "contact-support"]).array(),
+            ports: z.number().array(),
+            labels: z.enum(["suspended", "contact-support"]).array(),
         }).partial(),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.ServerDelete),
-        user: zod.string(),
-        serverId: zod.string(),
+    z.object({
+        action: z.literal(AuditTypes.ServerDelete),
+        user: z.string(),
+        serverId: z.string(),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.FileUpload),
-        user: zod.string(),
-        file: zod.string(),
+    z.object({
+        action: z.literal(AuditTypes.FileUpload),
+        user: z.string(),
+        file: z.string(),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.FileDelete),
-        user: zod.string(),
-        file: zod.string(),
+    z.object({
+        action: z.literal(AuditTypes.FileDelete),
+        user: z.string(),
+        file: z.string(),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.FileRead),
-        user: zod.string(),
-        file: zod.string(),
+    z.object({
+        action: z.literal(AuditTypes.FileRead),
+        user: z.string(),
+        file: z.string(),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.CommandExecute),
-        user: zod.string(),
-        server: zod.string(),
-        command: zod.string(),
+    z.object({
+        action: z.literal(AuditTypes.CommandExecute),
+        user: z.string(),
+        server: z.string(),
+        command: z.string(),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.ResetPassword),
+    z.object({
+        action: z.literal(AuditTypes.ResetPassword),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.DropReview),
-        dropId: zod.string(),
+    z.object({
+        action: z.literal(AuditTypes.DropReview),
+        dropId: z.string(),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.DropTypeChange),
-        dropId: zod.string(),
-        type: zod.nativeEnum(DropType),
+    z.object({
+        action: z.literal(AuditTypes.DropTypeChange),
+        dropId: z.string(),
+        type: z.nativeEnum(DropType),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.DropCreate),
-        dropId: zod.string(),
+    z.object({
+        action: z.literal(AuditTypes.DropCreate),
+        dropId: z.string(),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.OAuthValidate),
-        appId: zod.string(),
-        scopes: zod.array(zod.string()),
+    z.object({
+        action: z.literal(AuditTypes.OAuthValidate),
+        appId: z.string(),
+        scopes: z.array(z.string()),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.OAuthAuthorize),
-        appId: zod.string(),
-        scopes: zod.array(zod.string()),
+    z.object({
+        action: z.literal(AuditTypes.OAuthAuthorize),
+        appId: z.string(),
+        scopes: z.array(z.string()),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.WebAuthNSignIn),
+    z.object({
+        action: z.literal(AuditTypes.WebAuthNSignIn),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.WebAuthNSignUp),
+    z.object({
+        action: z.literal(AuditTypes.WebAuthNSignUp),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.PasswordSignIn),
+    z.object({
+        action: z.literal(AuditTypes.PasswordSignIn),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.PasswordSignUp),
+    z.object({
+        action: z.literal(AuditTypes.PasswordSignUp),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.OAuthSignIn),
-        provider: zod.string(),
+    z.object({
+        action: z.literal(AuditTypes.OAuthSignIn),
+        provider: z.string(),
     }),
-    zod.object({
-        action: zod.literal(AuditTypes.OAuthSignUp),
-        provider: zod.string(),
+    z.object({
+        action: z.literal(AuditTypes.OAuthSignUp),
+        provider: z.string(),
     }),
 ]);
 
-export const serverAudit = zod.object({
-    id: zod.string(),
-    _id: zod.string().optional(), // Remove after some time
+export const serverAudit = z.object({
+    id: z.string(),
+    _id: z.string().optional(), // Remove after some time
     meta: audit,
-    user: zod.object({
-        profile: zod.object({
-            username: zod.string(),
-            avatar: zod.string(),
+    user: z.object({
+        profile: z.object({
+            username: z.string(),
+            avatar: z.string(),
         }),
     }),
 });
@@ -622,10 +622,10 @@ export enum OAuthScopes {
     Phone = "phone",
 }
 
-export const group = zod.object({
-    displayName: zod.string(),
-    _id: zod.string(), // Replace with id
-    permission: zod.string(),
+export const group = z.object({
+    displayName: z.string(),
+    _id: z.string(), // Replace with id
+    permission: z.string(),
 });
 
 export interface Deferred<T> {
@@ -635,30 +635,30 @@ export interface Deferred<T> {
     reject(reason?: any): void;
 }
 
-export type InstalledAddon = zod.infer<typeof installedAddon>;
-export type Group = zod.infer<typeof group>;
-export type Audit = zod.infer<typeof audit>;
-export type ServerAudit = zod.infer<typeof serverAudit>;
-export type RequestPayoutResponse = zod.infer<typeof requestPayoutResponse>;
-export type SidecarResponse = zod.infer<typeof sidecarResponse>;
-export type Addon = zod.infer<typeof addon>;
-export type SidecarRequest = zod.infer<typeof sidecarRequest>;
-export type ArtistRef = zod.infer<typeof artistref>;
-export type Artist = zod.infer<typeof artist>;
-export type BugReport = zod.infer<typeof bugReport>;
-export type Drop = zod.infer<typeof drop>;
-export type File = zod.infer<typeof file>;
-export type Location = zod.infer<typeof location>;
-export type Meta = zod.infer<typeof meta>;
-export type OAuthApp = zod.infer<typeof oauthapp>;
-export type Payout = zod.infer<typeof payout>;
-export type PowerState = zod.infer<typeof serverPowerState>;
-export type PowerAction = zod.infer<typeof serverPowerActions>;
-export type Server = zod.infer<typeof server>;
-export type ServerCreate = zod.infer<typeof serverCreate>;
-export type Song = zod.infer<typeof song>;
-export type StoreItems = zod.infer<typeof storeItems>;
-export type Transcript = zod.infer<typeof transcript>;
-export type Wallet = zod.infer<typeof wallet>;
-export type SidecarFile = zod.infer<typeof sidecarFile>;
-export type Share = zod.infer<typeof share>;
+export type InstalledAddon = z.infer<typeof installedAddon>;
+export type Group = z.infer<typeof group>;
+export type Audit = z.infer<typeof audit>;
+export type ServerAudit = z.infer<typeof serverAudit>;
+export type RequestPayoutResponse = z.infer<typeof requestPayoutResponse>;
+export type SidecarResponse = z.infer<typeof sidecarResponse>;
+export type Addon = z.infer<typeof addon>;
+export type SidecarRequest = z.infer<typeof sidecarRequest>;
+export type ArtistRef = z.infer<typeof artistref>;
+export type Artist = z.infer<typeof artist>;
+export type BugReport = z.infer<typeof bugReport>;
+export type Drop = z.infer<typeof drop>;
+export type File = z.infer<typeof file>;
+export type Location = z.infer<typeof location>;
+export type Meta = z.infer<typeof meta>;
+export type OAuthApp = z.infer<typeof oauthapp>;
+export type Payout = z.infer<typeof payout>;
+export type PowerState = z.infer<typeof serverPowerState>;
+export type PowerAction = z.infer<typeof serverPowerActions>;
+export type Server = z.infer<typeof server>;
+export type ServerCreate = z.infer<typeof serverCreate>;
+export type Song = z.infer<typeof song>;
+export type StoreItems = z.infer<typeof storeItems>;
+export type Transcript = z.infer<typeof transcript>;
+export type Wallet = z.infer<typeof wallet>;
+export type SidecarFile = z.infer<typeof sidecarFile>;
+export type Share = z.infer<typeof share>;

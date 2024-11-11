@@ -3,7 +3,7 @@ import { sumOf } from "@std/collections";
 import loader from "https://esm.sh/@monaco-editor/loader@1.4.0";
 import { activeUser, sheetStack, showProfilePicture } from "shared/helper.ts";
 import { API, HeavyList, loadMore, Navigation, placeholder } from "shared/mod.ts";
-import { asRef, asState, Box, Button, Color, Custom, Entry, Grid, Horizontal, isMobile, lazy, ref, SheetDialog, Spacer, Table, TextInput } from "webgen/mod.ts";
+import { asRef, Box, Color, Entry, Grid, isMobile, lazy, ref, Table, TextInput } from "webgen/mod.ts";
 import { DropType } from "../../../spec/music.ts";
 import { upload } from "../loading.ts";
 import { state } from "../state.ts";
@@ -14,7 +14,7 @@ import { entryFile, entryOAuth, entryWallet } from "./list.ts";
 const lazyMonaco = lazy(() => loader.init());
 
 export const adminMenu = Navigation({
-    title: ref`Hi ${activeUser.$username} 👋`,
+    title: ref`Hi ${activeUser.username} 👋`,
     categories: [
         {
             id: "overview",

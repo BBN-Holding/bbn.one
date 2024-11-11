@@ -15,7 +15,7 @@ export function ProgressTracker(percentage: Reference<number>, expectedSize: num
     return new TransformStream({
         transform(chunk, controller) {
             bytesUploaded += chunk.length;
-            percentage.setValue((bytesUploaded / expectedSize) * 100);
+            percentage.value = (bytesUploaded / expectedSize) * 100;
             controller.enqueue(chunk);
         },
     });

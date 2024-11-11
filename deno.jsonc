@@ -1,15 +1,16 @@
 {
     "imports": {
-        "@std/assert": "jsr:@std/assert@^1.0.3",
-        "@std/async": "jsr:@std/async@^1.0.4",
-        "@std/collections": "jsr:@std/collections@^1.0.5",
-        "@std/datetime": "jsr:@std/datetime@^0.225.1",
-        "@std/encoding": "jsr:@std/encoding@^1.0.3",
-        "@std/fmt": "jsr:@std/fmt@^1.0.1",
-        "@std/path": "jsr:@std/path@^1.0.3",
+        "@std/assert": "jsr:@std/assert@^1.0.7",
+        "@std/async": "jsr:@std/async@^1.0.8",
+        "@std/collections": "jsr:@std/collections@^1.0.9",
+        "@std/datetime": "jsr:@std/datetime@^0.225.2",
+        "@std/encoding": "jsr:@std/encoding@^1.0.5",
+        "@std/fmt": "jsr:@std/fmt@^1.0.3",
+        "@std/path": "jsr:@std/path@^1.0.8",
         "shared/": "./pages/shared/",
+        "zod/": "https://deno.land/x/zod@v3.23.8/",
         // "webgen/": "../WebGen/"
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/55033da/"
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/2d77f48/"
     },
     "lock": false,
     "compilerOptions": {

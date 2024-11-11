@@ -1,18 +1,20 @@
-import { BIcon, Box, ButtonStyle, Grid, IconButton, Image, Label, LinkButton } from "webgen/mod.ts";
-import { splash } from "../../assets/imports.ts";
+import { Box, Component, Grid, Label } from "webgen/core/mod.ts";
+// import { splash } from "../../assets/imports.ts";
+import { BootstrapIcon, PrimaryButton, SecondaryButton, TextButton } from "webgen/mod.ts";
 import "./footer.css";
 
 export function Footer() {
     return Box(
         Box(
-            Image(splash, "Splash Image").addClass("splash-image"),
+            // Image(splash, "Splash Image").addClass("splash-image"),
             Box(
                 Box(
                     Label("Looks Dope?\nJoin now!").addClass("title"),
                     Label("Delivering Excellence. Empowering Businesses and\nIndividuals with Premium Services")
                         .addClass("subtitle"),
                 ).addClass("text-section"),
-                LinkButton("Get started", "/signin")
+                PrimaryButton("Get started")
+                    .onClick(() => location.href = "/signin")
                     .addClass("round-button", "large-button"),
             ).addClass("area-fg"),
             Box(
@@ -30,16 +32,14 @@ export function Footer() {
                             ["Hosting", "/hosting"],
                         ]] as const,
 
-                        // ["Use Cases", [
-                        //     ["Newcomers", "/music"],
-                        //     ["Personal", "/hosting"],
-                        //     ["Small Business", "/hosting"],
-                        // ]] as const,
+                        ["Use Cases", [
+                            ["Newcomers", "/music"],
+                            ["Personal", "/hosting"],
+                            ["Small Business", "/hosting"],
+                        ]] as const,
 
                         ["Resources", [
-                            // ["Blog", "https://blog.bbn.one/"],
                             ["Status Page", "https://status.bbn.one/"],
-                            // ["Open Source", "https://github.com/bbn-holding/"],
                             ["Support", "mailto:support@bbn.one"],
                         ]] as const,
                     ].map(([text, items]) =>
@@ -47,12 +47,13 @@ export function Footer() {
                             Label(text)
                                 .addClass("title"),
                             ...items.map(([title, link]) =>
-                                LinkButton(title, link)
+                                TextButton(title)
+                                    .onClick(() => location.href = link)
                                     .addClass("link")
-                                    .setStyle(ButtonStyle.Inline)
+                                // .setStyle(ButtonStyle.Inline)
                             ),
                         ).addClass("column")
-                    ),
+                    ) as unknown as [Component],
                 ).addClass("grouped-links"),
                 Grid(
                     Grid(
@@ -66,15 +67,16 @@ export function Footer() {
                             // ["github", "GitHub", "https://github.com/bbn-holding/"],
                         ]
                             .map(([icon, aria, link]) =>
-                                IconButton(BIcon(icon), aria)
+                                TextButton("").addPrefix(BootstrapIcon(icon))
+                                    .onClick(() => location.href = link)
                                     .addClass("icon")
-                                    .asLinkButton(link)
-                            ),
+                            ) as unknown as [Component],
                     ).addClass("icons"),
-                    LinkButton("Join Now", "/signin")
-                        .setStyle(ButtonStyle.Secondary)
+                    SecondaryButton("Join Now")
+                        .onClick(() => location.href = "/signin")
                         .addClass("round-button"),
-                    LinkButton("Contact Us", "mailto:support@bbn.one")
+                    PrimaryButton("Contact Us")
+                        .onClick(() => location.href = "mailto:support@bbn.one")
                         .addClass("round-button"),
                 )
                     .addClass("icon-bar"),

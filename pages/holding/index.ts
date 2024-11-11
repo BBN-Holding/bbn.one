@@ -1,4 +1,4 @@
-import { Body, Box, Grid, Image, Label, LinkButton, Vertical, WebGen } from "webgen/mod.ts";
+import { appendBody, Box, Grid, Label } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import { RegisterAuthRefresh } from "../shared/helper.ts";
@@ -19,10 +19,10 @@ import bbnCard from "./resources/bbnCard.svg";
 import bbnGameStudios from "./resources/bbnGameStudios.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import bbnPublishing from "./resources/bbnPublishing.svg";
-WebGen();
+
 await RegisterAuthRefresh();
 
-Body(Box(
+appendBody(Box(
     DynaNavigation("Home"),
     Vertical(
         Box(

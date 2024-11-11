@@ -1,7 +1,7 @@
-import { Body, Vertical, WebGen } from "webgen/mod.ts";
+import { permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded } from "shared/helper.ts";
+import { appendBody, Grid } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
-import { changeThemeColor, permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../shared/helper.ts";
 import "./admin.css";
 import { refreshState } from "./loading.ts";
 import { adminMenu } from "./views/menu.ts";
@@ -17,15 +17,7 @@ if (
     location.href = "/";
 }
 
-WebGen({
-    events: {
-        themeChanged: changeThemeColor(),
-    },
-});
-
-sheetStack.setDefault(Vertical(DynaNavigation("Admin"), adminMenu));
-
-Body(sheetStack);
+appendBody(Grid(DynaNavigation("Admin"), adminMenu));
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState());

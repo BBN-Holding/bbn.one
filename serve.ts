@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/x/esbuild_serve@1.5.0/mod.ts";
 // import { serve } from "../esbuild_serve/mod.ts";
 
+CI FAIL
+
 const title = new Map(Object.entries({
     "index": "BBN Music",
     "admin": "BBN Admin",
@@ -53,24 +55,24 @@ serve({
     pages: {
         // "index": "./pages/holding/index.ts",
         "index": "./pages/music-landing/main.ts",
-        "p/privacy-policy": "./pages/holding/privacyPolicy.ts",
-        "p/terms": "./pages/holding/terms.ts",
-        "p/imprint": "./pages/holding/imprint.ts",
-        "signin": "./pages/user/signin.ts",
-        "callback": "./pages/misc/callback.ts",
-        "oauth": "./pages/user/oauth.ts",
-        "music": "./pages/music-landing/main.ts",
-        "c/music": "./pages/music/main.ts",
-        "c/music/new-drop": "./pages/music/newDrop.ts",
-        "c/music/edit": "./pages/music/edit.ts",
-        "c/music/payout": "./pages/payout/main.ts",
-        "hosting": "./pages/hosting/main.ts",
-        "hosting/create": "./pages/hosting/views/create.ts",
-        "settings": "./pages/user/settings.ts",
-        "admin": "./pages/admin/admin.ts",
-        "admin/review": "./pages/admin/review.ts",
-        "wallet": "./pages/wallet/wallet.ts",
-        "share": "./pages/music/share.ts",
+        // "p/privacy-policy": "./pages/holding/privacyPolicy.ts",
+        // "p/terms": "./pages/holding/terms.ts",
+        // "p/imprint": "./pages/holding/imprint.ts",
+        // "signin": "./pages/user/signin.ts",
+        // "callback": "./pages/misc/callback.ts",
+        // "oauth": "./pages/user/oauth.ts",
+        // "music": "./pages/music-landing/main.ts",
+        // "c/music": "./pages/music/main.ts",
+        // "c/music/new-drop": "./pages/music/newDrop.ts",
+        // "c/music/edit": "./pages/music/edit.ts",
+        // "c/music/payout": "./pages/payout/main.ts",
+        // "hosting": "./pages/hosting/main.ts",
+        // "hosting/create": "./pages/hosting/views/create.ts",
+        // "settings": "./pages/user/settings.ts",
+        // "admin": "./pages/admin/admin.ts",
+        // "admin/review": "./pages/admin/review.ts",
+        // "wallet": "./pages/wallet/wallet.ts",
+        // "share": "./pages/music/share.ts",
     },
     defaultTemplate: createTemplate,
     poylfills: [

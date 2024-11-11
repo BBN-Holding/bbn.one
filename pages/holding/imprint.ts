@@ -1,12 +1,12 @@
 import { Footer } from "shared/footer.ts";
 import { RegisterAuthRefresh } from "shared/helper.ts";
-import { Body, Box, Grid, Label, WebGen } from "webgen/mod.ts";
+import { appendBody, Box, Grid, Label } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import "./flowText.css";
-WebGen();
+
 await RegisterAuthRefresh();
 
-Body(Box(
+appendBody(Box(
     DynaNavigation("Home"),
     Box(
         Label("Imprint", "h2"),

@@ -1,6 +1,6 @@
 import { saveBlob, sheetStack } from "shared/helper.ts";
 import { API, External, fileCache, RenderItem, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, Box, Button, Cache, Color, Entry, Grid, IconButton, Image, MIcon, ref, SheetDialog, TextInput } from "webgen/mod.ts";
+import { ref, TextButton } from "webgen/mod.ts";
 import { templateArtwork } from "../../../assets/imports.ts";
 import { File, OAuthApp, Transcript, Wallet } from "../../../spec/music.ts";
 import { state } from "../state.ts";
@@ -60,7 +60,7 @@ export function entryOAuth(app: OAuthApp) {
             }),
         )
         .addSuffix(
-            Button("View").onClick(() => {
+            TextButton("View").onClick(() => {
                 oAuthViewDialog(app).open();
             }),
         )

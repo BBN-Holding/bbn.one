@@ -1,4 +1,4 @@
-import { asState, ButtonStyle, Color, createElement, Custom, Grid, InputForm, Label, Spacer, Vertical } from "webgen/mod.ts";
+import { asRef, Grid, Label } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 
 export const SliderInput = (label: string) =>
@@ -8,17 +8,17 @@ export const SliderInput = (label: string) =>
 
         constructor() {
             super();
-            const val = asState({ value: "" });
+            const val = asRef("");
             this.input.type = "range";
             this.input.classList.add("wslider");
             this.wrapper.append(
-                Vertical(
+                Grid(
                     Grid(
-                        Label(label).setTextSize("sm").setFontWeight("bold").removeWrap(),
-                        Spacer(),
-                        val.$value.map((val) => Label(val).setTextSize("sm").setFontWeight("bold")).asRefComponent().addClass("same-height"),
+                        Label(label).setTextSize("sm").setFontWeight("bold"),
+                        // .removeWrap(),
+                        val.map((val) => Label(val).setTextSize("sm").setFontWeight("bold")).value.addClass("same-height"),
                     )
-                        .setRawColumns("max-content auto max-content")
+                        .setTemplateColumns("max-content auto max-content")
                         .setPadding("0 0.2rem"),
                     Custom(this.input),
                 ).setMargin("0 -0.1rem").draw(),
@@ -32,10 +32,10 @@ export const SliderInput = (label: string) =>
                 this.input.value = (value ?? 0).toString();
             });
             this.input.oninput = () => {
-                val.value = this.valueRender(this.input.valueAsNumber);
+                val.setValue(this.valueRender(this.input.valueAsNumber));
             };
             this.input.onchange = () => {
-                val.value = this.valueRender(this.input.valueAsNumber);
+                val.setValue(this.valueRender(this.input.valueAsNumber));
                 this.setValue(this.input.valueAsNumber);
             };
             this.addEventListener("data", () => {

@@ -1,21 +1,15 @@
 import { API, createActionList, createBreadcrumb, createTagList, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, Body, Button, ButtonStyle, Color, Empty, Grid, Horizontal, isMobile, Label, LinkButton, SheetDialog, Vertical, WebGen } from "webgen/mod.ts";
+import { asRef, Body, Button, ButtonStyle, Color, Empty, Grid, Horizontal, isMobile, Label, LinkButton, SheetDialog, Vertical } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Drop, DropType, Share } from "../../spec/music.ts";
-import { changeThemeColor, permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded, saveBlob, sheetStack, showPreviewImage, streamingImages } from "../shared/helper.ts";
+import { permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded, saveBlob, showPreviewImage, streamingImages } from "../shared/helper.ts";
 import { ChangeDrop } from "./views/changeDrop.ts";
 import { ChangeSongs } from "./views/changeSongs.ts";
 import { DropTypeToText } from "./views/list.ts";
 
 await RegisterAuthRefresh();
-
-WebGen({
-    events: {
-        themeChanged: changeThemeColor(),
-    },
-});
 
 const params = new URLSearchParams(location.search);
 const data = Object.fromEntries(params.entries());

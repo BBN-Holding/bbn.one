@@ -1,6 +1,5 @@
-// import { randomInteger } from "@std/collections/_utils.ts";
-import { randomInteger } from "https://jsr.io/@std/collections/1.0.1/_utils.ts";
-import { asRef, Box, css, Label, Reference } from "webgen/mod.ts";
+import { randomInteger } from "shared/helper.ts";
+import { asRef, Box, css, Empty, Label, Reference } from "webgen/mod.ts";
 
 export function Counter(value: Reference<number>) {
     const id = randomInteger(1000, 100000);
@@ -20,7 +19,7 @@ export function Counter(value: Reference<number>) {
         }
     `);
 
-    const counter = asRef(Box());
+    const counter = asRef(Empty());
 
     function findDifferenceAndSplit(str1: string, str2: string) {
         const minLength = Math.min(str1.length, str2.length);
@@ -74,5 +73,5 @@ export function Counter(value: Reference<number>) {
         update();
     });
 
-    return counter.asRefComponent();
+    return counter.value;
 }

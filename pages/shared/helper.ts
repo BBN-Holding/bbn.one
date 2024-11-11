@@ -1,17 +1,12 @@
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, asState, Box, Button, Cache, CenterV, Component, Custom, DropDownInput, Horizontal, Image, ImageComponent, Label, Reference, SheetDialog, SheetsStack, Spacer, StateHandler, Style, SupportedThemes, Vertical } from "webgen/mod.ts";
-import { templateArtwork } from "../../assets/imports.ts";
+import { asRefRecord, Component, Empty } from "webgen/mod.ts";
 import { loginRequired } from "../../components/pages.ts";
-import { Drop, Song } from "../../spec/music.ts";
+import { Drop } from "../../spec/music.ts";
 
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-import spotify from "../music-landing/assets/spotify.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-import deezer from "../music-landing/assets/deezer.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-import tidal from "../music-landing/assets/tidal.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-import apple from "../music-landing/assets/apple.svg";
 
 export const allowedAudioFormats = ["audio/flac", "audio/wav", "audio/mp3"];
 export const allowedImageFormats = ["image/png", "image/jpeg"];
@@ -40,10 +35,6 @@ export function IsLoggedIn(): ProfileData | null {
     }
 }
 
-export function changeThemeColor(): ((data: SupportedThemes, options: Style) => void) | undefined {
-    return (_data) => {}; // document.head.querySelector("meta[name=theme-color]")?.setAttribute("content", data == SupportedThemes.autoLight ? "#e6e6e6" : "#0a0a0a");
-}
-
 export function getSecondary(secondary: Record<string, string[]>, primaryGenre?: string) {
     return primaryGenre ? secondary[primaryGenre] : null;
 }
@@ -56,7 +47,7 @@ function rawAccessToken() {
     return JSON.parse(b64DecodeUnicode(localStorage["access-token"].split(".")[1]));
 }
 
-export const activeUser = asState({
+export const activeUser = asRefRecord({
     email: <string | undefined> undefined,
     username: <string> "--",
     avatar: <string | undefined> undefined,
@@ -65,18 +56,18 @@ export const activeUser = asState({
 });
 
 export function permCheck(...per: Permission[]) {
-    return API.isPermited(per, activeUser.permission);
+    return API.isPermited(per, activeUser.permission.value);
 }
 
 export function updateActiveUserData() {
     try {
         const user = IsLoggedIn();
         if (!user) return;
-        activeUser.username = user.profile.username;
-        activeUser.email = user.profile.email;
-        activeUser.avatar = user.profile.avatar;
-        activeUser.id = user._id;
-        activeUser.permission = asState(user.permissions);
+        activeUser.username.setValue(user.profile.username);
+        activeUser.email.setValue(user.profile.email);
+        activeUser.avatar.setValue(user.profile.avatar);
+        activeUser.id.setValue(user._id);
+        activeUser.permission.setValue(user.permissions);
     } catch (_) {
         // Session should be invalid
         logOut();
@@ -119,7 +110,7 @@ export async function renewAccessTokenIfNeeded() {
     }
 }
 
-export const tokens = asState({
+export const tokens = asRefRecord({
     accessToken: localStorage["access-token"],
     refreshToken: localStorage["refresh-token"],
 });
@@ -128,7 +119,7 @@ export async function forceRefreshToken() {
     try {
         const access = await API.auth.refreshAccessToken.post(localStorage["refresh-token"]).then(stupidErrorAlert);
         localStorage["access-token"] = access.token;
-        tokens.accessToken = access.token;
+        tokens.accessToken.setValue(access.token);
     } catch (_) {
         // TODO: Make a better offline support
         location.href = "/";
@@ -160,20 +151,6 @@ function shouldLoginPage() {
     throw "aborting javascript here";
 }
 
-export function CenterAndRight(center: Component, right: Component): Component {
-    return Horizontal(
-        Spacer(),
-        Spacer(),
-        CenterV(center),
-        Spacer(),
-        right,
-    );
-}
-
-export const sheetStack = SheetsStack()
-    .setSheetWidth("auto")
-    .setSheetHeight("auto");
-
 export function getYearList(): string[] {
     return new Array(new Date().getFullYear() - 2000 + 1)
         .fill(1)
@@ -191,7 +168,8 @@ export function saveBlob(blob: Blob, fileName: string) {
 }
 
 export function showPreviewImage(x: Drop) {
-    return x.artwork ? Cache(`image-preview-${x.artwork}`, () => Promise.resolve(), (type) => type == "loaded" ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork") : Box()) : Image(templateArtwork, "A Placeholder Artwork.");
+    return Empty();
+    // return x.artwork ? Cache(`image-preview-${x.artwork}`, () => Promise.resolve(), (type) => type == "loaded" ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork") : Box()) : Image(templateArtwork, "A Placeholder Artwork.");
 }
 
 async function loadImage(x: Drop) {
@@ -220,7 +198,8 @@ export function stringToColor(str: string) {
 export function ProfilePicture(component: Component, name: string) {
     const ele = component.draw();
     ele.style.backgroundColor = stringToColor(name);
-    return Custom(ele).addClass("profile-picture");
+    return Empty();
+    // return Custom(ele).addClass("profile-picture");
 }
 
 export function getNameInital(name: string) {
@@ -237,50 +216,55 @@ export function getNameInital(name: string) {
 }
 
 export function showProfilePicture(x: ProfileData) {
-    return ProfilePicture(
-        x.profile.avatar
-            ? Image({
-                type: "direct",
-                source: async () => {
-                    const blob = new Blob();
+    return Empty();
+    // return ProfilePicture(
+    //     x.profile.avatar
+    //         ? Image({
+    //             type: "direct",
+    //             source: async () => {
+    //                 const blob = new Blob();
 
-                    const data = await API.user.picture(x._id);
+    //                 const data = await API.user.picture(x._id);
 
-                    if (data.status == "fulfilled") {
-                        return data.value;
-                    }
+    //                 if (data.status == "fulfilled") {
+    //                     return data.value;
+    //                 }
 
-                    return blob;
-                },
-            }, "Profile Picture")
-            : Label(getNameInital(x.profile.username)),
-        x.profile.username,
-    );
+    //                 return blob;
+    //             },
+    //         }, "Profile Picture")
+    //         : Label(getNameInital(x.profile.username)),
+    //     x.profile.username,
+    // );
 }
 
-export const streamingImages: Record<string, ImageComponent> = {
-    spotify: Image(spotify, "Spotify"),
-    deezer: Image(deezer, "Deezer"),
-    tidal: Image(tidal, "Tidal"),
-    apple: Image(apple, "Apple Music"),
-};
+// export const streamingImages: Record<string, ImageComponent> = {
+//     spotify: Image(spotify, "Spotify"),
+//     deezer: Image(deezer, "Deezer"),
+//     tidal: Image(tidal, "Tidal"),
+//     apple: Image(apple, "Apple Music"),
+// };
 
-export const ExistingSongDialog = (dropSongs: StateHandler<Song[]>, songs: Reference<Song[]>) => {
-    const selected = asRef(<undefined | Song> undefined);
-    const dialog = SheetDialog(
-        sheetStack,
-        "Add Existing Song",
-        Vertical(
-            DropDownInput("Select Song", songs).setRender((song) => `${song.title}`).ref(selected),
-            Button("Add").setMargin("1rem 0 0 0").onClick(() => {
-                const selectedSong = selected.getValue();
-                if (selectedSong) {
-                    dropSongs.push(selectedSong);
-                }
-                dialog.close();
-                selected.setValue(undefined);
-            }),
-        ),
-    );
-    return dialog;
-};
+// export const ExistingSongDialog = (dropSongs: StateHandler<Song[]>, songs: Reference<Song[]>) => {
+//     const selected = asRef(<undefined | Song> undefined);
+//     const dialog = SheetDialog(
+//         sheetStack,
+//         "Add Existing Song",
+//         Vertical(
+//             DropDownInput("Select Song", songs).setRender((song) => `${song.title}`).ref(selected),
+//             Button("Add").setMargin("1rem 0 0 0").onClick(() => {
+//                 const selectedSong = selected.getValue();
+//                 if (selectedSong) {
+//                     dropSongs.push(selectedSong);
+//                 }
+//                 dialog.close();
+//                 selected.setValue(undefined);
+//             }),
+//         ),
+//     );
+//     return dialog;
+// };
+
+export function randomInteger(lower: number, upper: number): number {
+    return lower + Math.floor(Math.random() * (upper - lower + 1));
+}

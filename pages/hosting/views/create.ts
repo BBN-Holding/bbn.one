@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Body, isMobile, Vertical, WebGen } from "webgen/mod.ts";
+import { appendBody, asRef, Grid, isMobile } from "webgen/mod.ts";
 import "../../../assets/css/hosting.css";
 import "../../../assets/css/main.css";
 import { DynaNavigation } from "../../../components/nav.ts";
@@ -10,11 +10,10 @@ import { creationState, state } from "./../data.ts";
 import { creationView } from "./wizard.ts";
 
 await RegisterAuthRefresh();
-WebGen();
 
 const clickHandler = async (serverType: string) => {
     creationState.type = serverType.replace("-", "") as ServerTypes;
-    creationState.versions = asState(await API.hosting.versions(creationState.type).then(stupidErrorAlert));
+    creationState.versions = asRef(await API.hosting.versions(creationState.type).then(stupidErrorAlert));
 };
 
 const navigation = state.$loaded.map((loaded) =>
@@ -106,7 +105,7 @@ const navigation = state.$loaded.map((loaded) =>
         : LoadingSpinner()
 );
 
-Body(Vertical(DynaNavigation("Hosting"), navigation.asRefComponent()));
+appendBody(Grid(DynaNavigation("Hosting"), navigation.asRefComponent()));
 
 renewAccessTokenIfNeeded()
     .then(() => refreshState())
