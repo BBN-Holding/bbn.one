@@ -1,9 +1,8 @@
 import { Footer } from "shared/footer.ts";
-import { activeUser, getNameInital, logOut, ProfilePicture, RegisterAuthRefresh } from "shared/helper.ts";
-import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Body, Box, Button, ButtonStyle, Color, Content, FullWidthSection, Grid, Horizontal, Image, isMobile, Label, MIcon, Spacer, Vertical, WebGen } from "webgen/mod.ts";
+import { activeUser, logOut, RegisterAuthRefresh } from "shared/helper.ts";
+import { API, stupidErrorAlert } from "shared/mod.ts";
+import { appendBody, asRefRecord, Content, Empty, FullWidthSection, Grid, isMobile, Label, MaterialIcon, PrimaryButton, Spinner, TextButton, WebGenTheme } from "webgen/mod.ts";
 import "../../assets/css/main.css";
-import { dots, templateArtwork } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { OAuthScopes } from "../../spec/music.ts";
 import "./oauth.css";
@@ -31,76 +30,76 @@ if (!params.clientId || !params.scope || !params.redirectUri) {
     throw new Error("Invalid OAuth Request");
 }
 
-WebGen();
-
-const state = asState({
+const state = asRefRecord({
     loaded: false,
     name: "",
     icon: "",
 });
 
-Body(
-    Content(
-        FullWidthSection(DynaNavigation("Home"), Box().addClass("background-image")),
-        state.$loaded.map((loaded) =>
-            loaded
-                ? Grid(
-                    isMobile.map((small) =>
-                        Label("Connect Now!")
-                            .setMargin("5rem 0 .8rem")
-                            .addClass(small ? "no-custom" : "line-header", "header")
-                            .setFontWeight("extrabold")
-                            .setTextSize(small ? "6xl" : "7xl")
-                    ).asRefComponent().removeFromLayout(),
-                    Label("CONNECTION")
-                        .addClass("label-small"),
-                    Grid(
-                        Grid(
-                            Image(state.icon || templateArtwork, "New Connection"),
-                            Label(state.name || "---")
-                                .setJustifySelf("center")
-                                .addClass("label-small"),
+appendBody(
+    WebGenTheme(
+        Content(
+            FullWidthSection(DynaNavigation("Home"), Empty().addClass("background-image")),
+            state.loaded.map((loaded) =>
+                loaded
+                    ? Grid(
+                        isMobile.map((small) =>
+                            Label("Connect Now!")
+                                .setMargin("5rem 0 .8rem")
+                                .addClass(small ? "no-custom" : "line-header", "header")
+                                .setFontWeight("extrabold")
+                                .setTextSize(small ? "6xl" : "7xl")
                         ),
-                        Image(dots, "dots"),
+                        // .removeFromLayout(),
+                        Label("CONNECTION")
+                            .addClass("label-small"),
                         Grid(
-                            ProfilePicture(
-                                activeUser.avatar ? Image(activeUser.avatar, "Profile Picture") : Label(getNameInital(activeUser.username)),
-                                activeUser.username,
-                            ),
-                            Label(activeUser.username)
-                                .setJustifySelf("center")
-                                .addClass("label-small"),
-                        ),
-                    ).addClass("linkage"),
-                    Label("PERMISSIONS")
-                        .addClass("label-small"),
-                    Vertical(
-                        params.scope!.split(",").map((e) =>
                             Grid(
-                                MIcon("check"),
-                                Label(oauthScopes[e as OAuthScopes]),
-                            ).addClass("permission")
+                                // Image(state.icon || templateArtwork, "New Connection"),
+                                Label(state.name || "---")
+                                    .setJustifySelf("center")
+                                    .addClass("label-small"),
+                            ),
+                            // Image(dots, "dots"),
+                            Grid(
+                                // ProfilePicture(
+                                //     activeUser.avatar ? Image(activeUser.avatar, "Profile Picture") : Label(getNameInital(activeUser.username)),
+                                //     activeUser.username,
+                                // ),
+                                Label(activeUser.username)
+                                    .setJustifySelf("center")
+                                    .addClass("label-small"),
+                            ),
+                        ).addClass("linkage"),
+                        Label("PERMISSIONS")
+                            .addClass("label-small"),
+                        Grid(
+                            params.scope!.split(",").map((e) =>
+                                Grid(
+                                    MaterialIcon("check"),
+                                    Label(oauthScopes[e as OAuthScopes]),
+                                ).addClass("permission")
+                            ),
                         ),
-                    ),
-                    Button("Connect")
-                        .setWidth("100%")
-                        .setJustifyContent("center")
-                        .setMargin("1rem 0 0")
-                        .onPromiseClick(async () => await authorize()),
-                    Horizontal(
-                        Label("Wrong account?"),
-                        Button("Switch it here")
-                            .setStyle(ButtonStyle.Inline)
-                            .setColor(Color.Colored)
-                            .onClick(() => logOut(location.pathname + location.search))
-                            .addClass("link"),
-                        Spacer(),
+                        PrimaryButton("Connect")
+                            .onPromiseClick(async () => await authorize())
+                            .setWidth("100%")
+                            .setJustifyContent("center")
+                            .setMargin("1rem 0 0"),
+                        Grid(
+                            Label("Wrong account?"),
+                            TextButton("Switch it here")
+                                // .setStyle(ButtonStyle.Inline)
+                                // .setColor(Color.Colored)
+                                .onClick(() => logOut(location.pathname + location.search))
+                                .addClass("link"),
+                        )
+                            .setMargin("1rem 0 0"),
                     )
-                        .setMargin("1rem 0 0"),
-                )
-                : LoadingSpinner()
-        ).asRefComponent().addClass("auth-area").setCssStyle("display", "grid"),
-        FullWidthSection(Footer()),
+                    : Spinner()
+            ).addClass("auth-area").setCssStyle("display", "grid"),
+            FullWidthSection(Footer()),
+        ),
     ),
 );
 

@@ -1,7 +1,7 @@
 import { assert } from "@std/assert";
 import { delay } from "@std/async";
+import { forceRefreshToken, gotoGoal } from "shared/helper.ts";
 import { API, displayError, stupidErrorAlert } from "shared/mod.ts";
-import { forceRefreshToken, gotoGoal } from "../shared/helper.ts";
 import { state } from "./state.ts";
 
 export async function loginUser() {

@@ -1,17 +1,11 @@
 import { API, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { asState, Body, Button, Color, Grid, isMobile, Label, LinkButton, SheetDialog, Table, TextInput, Vertical, WebGen } from "webgen/mod.ts";
+import { asState, Body, Button, Color, Grid, isMobile, Label, LinkButton, SheetDialog, Table, TextInput, Vertical } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { AccountType, Wallet } from "../../spec/music.ts";
-import { changeThemeColor, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../shared/helper.ts";
+import { RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../shared/helper.ts";
 import "./wallet.css";
 
 await RegisterAuthRefresh();
-
-WebGen({
-    events: {
-        themeChanged: changeThemeColor(),
-    },
-});
 
 const state = asState({
     wallet: <Wallet | undefined> undefined,

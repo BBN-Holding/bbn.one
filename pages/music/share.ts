@@ -1,13 +1,7 @@
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
-import { asRef, Body, Empty, Horizontal, Image, Label, LinkButton, Vertical, WebGen } from "webgen/mod.ts";
-import { changeThemeColor, sheetStack, streamingImages } from "../shared/helper.ts";
+import { asRef, Body, Empty, Horizontal, Image, Label, LinkButton, Vertical } from "webgen/mod.ts";
+import { sheetStack, streamingImages } from "../shared/helper.ts";
 import "./share.css";
-
-WebGen({
-    events: {
-        themeChanged: changeThemeColor(),
-    },
-});
 
 const params = new URLSearchParams(location.search);
 const data = Object.fromEntries(params.entries());

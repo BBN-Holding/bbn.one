@@ -1,5 +1,5 @@
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { asRefRecord, Component, Empty } from "webgen/mod.ts";
+import { asRefRecord, Component, Empty, Sheets } from "webgen/mod.ts";
 import { loginRequired } from "../../components/pages.ts";
 import { Drop } from "../../spec/music.ts";
 
@@ -150,6 +150,10 @@ function shouldLoginPage() {
     location.href = "/signin";
     throw "aborting javascript here";
 }
+
+export const sheetStack = Sheets()
+    .setMinWidth("auto")
+    .setWidth("auto");
 
 export function getYearList(): string[] {
     return new Array(new Date().getFullYear() - 2000 + 1)

@@ -2,7 +2,7 @@ import { assert } from "@std/assert";
 import { Footer } from "shared/footer.ts";
 import { RegisterAuthRefresh } from "shared/helper.ts";
 import { API, LoadingSpinner } from "shared/mod.ts";
-import { Body, Box, Button, ButtonStyle, Color, Component, createElement, Custom, Grid, Horizontal, Image, isMobile, Label, LinkButton, Spacer, TextInput, Vertical, WebGen } from "webgen/mod.ts";
+import { Body, Box, Button, ButtonStyle, Color, Component, createElement, Custom, Grid, Horizontal, Image, isMobile, Label, LinkButton, Spacer, TextInput, Vertical } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -11,8 +11,6 @@ import "./signin.css";
 import { state } from "./state.ts";
 
 await RegisterAuthRefresh();
-
-WebGen();
 
 export const Form = (ele: Component) => {
     const form = createElement("form");

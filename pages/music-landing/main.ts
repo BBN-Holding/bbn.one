@@ -1,4 +1,5 @@
 import { Footer } from "shared/footer.ts";
+import { RegisterAuthRefresh } from "shared/helper.ts";
 import { MaterialIcon, mediaQueryRef, PrimaryButton, SheetHeader, Sheets, WebGenTheme } from "webgen/components/mod.ts";
 import { Box, Content, Empty, FullWidthSection, Grid, Label } from "webgen/core/mod.ts";
 import { appendBody } from "webgen/mod.ts";
@@ -26,7 +27,7 @@ import "./main.css";
 
 //
 
-// await RegisterAuthRefresh();
+await RegisterAuthRefresh();
 
 // const images = () =>
 //     Array.from({ length: 4 }, () => [

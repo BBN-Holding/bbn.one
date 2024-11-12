@@ -106,6 +106,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                 : Empty(),
         )
             .setGap("0.4rem")
+            .setDirection("row")
             .setMargin("0.5rem auto"),
     );
 }

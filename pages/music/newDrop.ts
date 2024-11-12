@@ -1,5 +1,5 @@
 import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { AdvancedImage, asRef, asState, Body, Box, Button, ButtonStyle, Center, CenterV, Color, createFilePicker, Custom, DropAreaInput, DropDownInput, Empty, getErrorMessage, Grid, Horizontal, Image, Label, MediaQuery, Reference, SheetDialog, Spacer, SupportedThemes, TextInput, Validate, Vertical, WebGen } from "webgen/mod.ts";
+import { AdvancedImage, asRef, asState, Body, Box, Button, ButtonStyle, Center, CenterV, Color, createFilePicker, Custom, DropAreaInput, DropDownInput, Empty, getErrorMessage, Grid, Horizontal, Image, Label, MediaQuery, Reference, SheetDialog, Spacer, TextInput, Validate, Vertical } from "webgen/mod.ts";
 import { zod } from "webgen/zod.ts";
 import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -15,9 +15,6 @@ import "./newDrop.css";
 
 await RegisterAuthRefresh();
 
-WebGen({
-    theme: SupportedThemes.dark,
-});
 // Because this is a mix of light and dark mode we force dropdowns to be dark
 document.querySelector(".wpopover")?.setAttribute("data-theme", "dark");
 

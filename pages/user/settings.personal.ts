@@ -1,22 +1,22 @@
 import { delay } from "@std/async";
 import { activeUser, allowedImageFormats, forceRefreshToken, IsLoggedIn, showProfilePicture } from "shared/helper.ts";
 import { API, StreamingUploadHandler, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, asState, Box, Button, CenterV, createFilePicker, Empty, getErrorMessage, Grid, Horizontal, IconButton, Image, Label, MIcon, Spacer, TextInput, Validate, Vertical } from "webgen/mod.ts";
-import { zod } from "webgen/zod.ts";
+import { asRef, asRefRecord, Box, createFilePicker, Empty, Grid, Label, MaterialIcon, PrimaryButton, TextInput } from "webgen/mod.ts";
+import { z } from "zod/mod.ts";
 
 export function ChangePersonal() {
-    const state = asState({
+    const state = asRefRecord({
         email: activeUser.email,
         name: activeUser.username,
-        validationState: <zod.ZodError | undefined> undefined,
+        validationState: <z.ZodError | undefined> undefined,
     });
 
     const profilePicture = asRef(showProfilePicture(IsLoggedIn()!).setTextSize("8xl"));
 
-    return Vertical(
+    return Grid(
         Grid(
             profilePicture.map((pic) =>
-                Box(pic, IconButton(MIcon("edit"), "edit-icon")).addClass("upload-image").onClick(async () => {
+                Box(pic, IconButton(MaterialIcon("edit"), "edit-icon")).addClass("upload-image").onClick(async () => {
                     const file = await createFilePicker(allowedImageFormats.join(","));
                     const blobUrl = URL.createObjectURL(file);
                     profilePicture.setValue(Image({ type: "uploading", filename: file.name, blobUrl, percentage: 0 }, "Profile Picture"));
@@ -40,7 +40,7 @@ export function ChangePersonal() {
                         }, file);
                     });
                 })
-            ).asRefComponent(),
+            ),
             [
                 { width: 2 },
                 Vertical(
@@ -52,8 +52,7 @@ export function ChangePersonal() {
             .setDynamicColumns(1, "12rem")
             .setJustifyContent("center")
             .setGap("15px"),
-        Horizontal(
-            Spacer(),
+        Grid(
             Box(
                 state.$validationState.map((error) =>
                     error
@@ -65,7 +64,7 @@ export function ChangePersonal() {
                         : Empty()
                 ).asRefComponent(),
             ),
-            Button("Save").onClick(async () => {
+            PrimaryButton("Save").onClick(async () => {
                 const { error, validate } = Validate(
                     state,
                     zod.object({
