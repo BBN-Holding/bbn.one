@@ -1,6 +1,5 @@
 // import { assert } from "@std/assert";
-// import { asRef, Box, Component, Empty, Entry, Grid, isMobile, isRef, Label, MIcon, Refable, Reference, Taglist, Vertical } from "webgen/mod.ts";
-// import { HeavyList } from "./list.ts";
+// import { alwaysRef, asRef, Box, Component, Empty, Entry, Grid, isMobile, isRef, Label, Refable, Reference } from "webgen/mod.ts";
 // import "./navigation.css";
 
 // export interface ClickHandler {
@@ -36,7 +35,7 @@
 
 //     for (const segment of pathSegments) {
 //         if (currentNode?.children) {
-//             const childNode = asRef(currentNode.children).getValue().find(
+//             const childNode = alwaysRef(currentNode.children).getValue().find(
 //                 (child) => !(child instanceof Component) && child.id === segment,
 //             ) as MenuNode | undefined;
 
@@ -60,7 +59,7 @@
 
 //     for (const segment of pathSegments) {
 //         if (currentNode?.children) {
-//             const childNode = asRef(currentNode.children).getValue().find(
+//             const childNode = alwaysRef(currentNode.children).getValue().find(
 //                 (child) => !(child instanceof Component) && child.id === segment,
 //             ) as MenuNode | undefined;
 

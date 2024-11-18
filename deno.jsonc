@@ -10,7 +10,7 @@
         "shared/": "./pages/shared/",
         "zod/": "https://deno.land/x/zod@v3.23.8/",
         // "webgen/": "../WebGen/"
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/2d77f48/"
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/f53d3dd/"
     },
     "lock": false,
     "compilerOptions": {

@@ -151,7 +151,9 @@ function shouldLoginPage() {
     throw "aborting javascript here";
 }
 
-export const sheetStack = Sheets()
+export const sheetStack = Sheets();
+
+sheetStack
     .setMinWidth("auto")
     .setWidth("auto");
 

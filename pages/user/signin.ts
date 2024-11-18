@@ -1,8 +1,8 @@
 import { assert } from "@std/assert";
 import { Footer } from "shared/footer.ts";
 import { RegisterAuthRefresh } from "shared/helper.ts";
-import { API, LoadingSpinner } from "shared/mod.ts";
-import { Body, Box, Button, ButtonStyle, Color, Component, createElement, Custom, Grid, Horizontal, Image, isMobile, Label, LinkButton, Spacer, TextInput, Vertical } from "webgen/mod.ts";
+import { API } from "shared/mod.ts";
+import { appendBody, Box, Color, Component, Content, Empty, Grid, Image, isMobile, Label, TextInput, WebGenTheme } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -28,9 +28,9 @@ const ErrorMessage = () =>
         .asRefComponent()
         .removeFromLayout();
 
-Body(Vertical(
+appendBody(WebGenTheme(Content(Grid(
     DynaNavigation("Home"),
-    Box().addClass("background-image"),
+    Empty().addClass("background-image"),
     Box(
         Grid(
             isMobile.map((small) =>
@@ -207,6 +207,6 @@ Body(Vertical(
         ),
     ).addClass("auth-area"),
     Footer(),
-));
+))));
 
 await handleStateChange();

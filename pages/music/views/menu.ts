@@ -1,11 +1,11 @@
 import { activeUser } from "shared/helper.ts";
-import { API, Chart, count, HeavyList, LoadingSpinner, Navigation, placeholder, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, asState, Button, Component, Entry, Grid, isMobile, ref } from "webgen/mod.ts";
+import { API, Chart, count, placeholder, stupidErrorAlert } from "shared/mod.ts";
+import { asRef, asRefRecord, Component, Entry, Grid, isMobile, ref } from "webgen/mod.ts";
 import { Artist, Drop, DropType, Payout } from "../../../spec/music.ts";
 import { ArtistEntry, DropEntry, musicList } from "./list.ts";
 import { createArtistSheet } from "./table.ts";
 
-export const menuState = asState({
+export const menuState = asRefRecord({
     published: <Drop[] | "loading"> "loading",
     unpublished: <Drop[] | "loading"> "loading",
     drafts: <Drop[] | "loading"> "loading",
