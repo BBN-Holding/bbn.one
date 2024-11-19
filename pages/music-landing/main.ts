@@ -1,46 +1,47 @@
 import { Footer } from "shared/footer.ts";
 import { RegisterAuthRefresh } from "shared/helper.ts";
-import { MaterialIcon, mediaQueryRef, PrimaryButton, SheetHeader, Sheets, WebGenTheme } from "webgen/components/mod.ts";
+import { Image, MaterialIcon, mediaQueryRef, PrimaryButton, SheetHeader, Sheets, WebGenTheme } from "webgen/components/mod.ts";
 import { Box, Content, Empty, FullWidthSection, Grid, Label } from "webgen/core/mod.ts";
 import { appendBody } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import "./main.css";
 
-// // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-// import apple from "./assets/apple.svg";
-// // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-// import deezer from "./assets/deezer.svg";
-// // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-// import facebook from "./assets/facebook.svg";
-// // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-// import instagram from "./assets/instagram.svg";
-// // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-// import pandora from "./assets/pandora.svg";
-// // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-// import spotify from "./assets/spotify.svg";
-// // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-// import tidal from "./assets/tidal.svg";
-// // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-// import tiktok from "./assets/tiktok.svg";
-// // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-// import youtube from "./assets/youtube.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import apple from "./assets/apple.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import deezer from "./assets/deezer.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import facebook from "./assets/facebook.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import instagram from "./assets/instagram.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import pandora from "./assets/pandora.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import spotify from "./assets/spotify.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import tidal from "./assets/tidal.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import tiktok from "./assets/tiktok.svg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import youtube from "./assets/youtube.svg";
 
-//
+import criticz from "./assets/criticz.jpg";
+import redz from "./assets/redz.jpg";
 
 await RegisterAuthRefresh();
 
-// const images = () =>
-//     Array.from({ length: 4 }, () => [
-//         Image(apple, "Apple Music"),
-//         Image(deezer, "Deezer"),
-//         Image(facebook, "Facebook"),
-//         Image(instagram, "Instagram"),
-//         Image(pandora, "Pandora"),
-//         Image(spotify, "Spotify"),
-//         Image(tidal, "Tidal"),
-//         Image(tiktok, "TikTok"),
-//         Image(youtube, "Youtube"),
-//     ]).flat();
+const images = () =>
+    Array.from({ length: 4 }, () => [
+        Image(apple, "Apple Music"),
+        Image(deezer, "Deezer"),
+        Image(facebook, "Facebook"),
+        Image(instagram, "Instagram"),
+        Image(pandora, "Pandora"),
+        Image(spotify, "Spotify"),
+        Image(tidal, "Tidal"),
+        Image(tiktok, "TikTok"),
+        Image(youtube, "Youtube"),
+    ]).flat();
 
 export const isMobileKeyFeatures = mediaQueryRef("(max-width: 820px)");
 
@@ -213,15 +214,16 @@ appendBody(
                         .addClass("opacity-60"),
                 )
                     .setMargin("10px 0 40px"),
-                Grid(Empty() // Grid(...images())
-                    //     .addClass("icon-carousel")
-                    //     .setGap("38px")
-                    //     .setDirection("column"),
-                    // Grid(...images().reverse())
-                    //     .addClass("icon-carousel")
-                    //     .addClass("icon-carousel-reversed")
-                    //     .setGap("38px")
-                    //     .setDirection("column"),
+                Grid(
+                    Grid(images())
+                        .setGap("38px")
+                        .addClass("icon-carousel")
+                        .setDirection("column"),
+                    Grid(...images().reverse())
+                        .setGap("38px")
+                        .addClass("icon-carousel")
+                        .addClass("icon-carousel-reversed")
+                        .setDirection("column"),
                 )
                     .setGap("35px")
                     .addClass("icon-carousel-container"),
@@ -329,10 +331,10 @@ appendBody(
                         .addClass("italic-text")
                         .setFontWeight("bold"),
                     Grid(
-                        // Image(redz, "Avatar of Redz")
-                        //     .setBorderRadius("complete")
-                        //     .setAspectRatio("1/1")
-                        //     .resizeToBox(),
+                        Image(redz, "Avatar of Redz")
+                            // .setBorderRadius("complete")
+                            .setAspectRatio("1/1")
+                            .resizeToBox(),
                         Label("Redz")
                             .setFontWeight("bold")
                             .setTextSize("xl"),
@@ -350,10 +352,10 @@ appendBody(
                         .addClass("italic-text")
                         .setFontWeight("bold"),
                     Grid(
-                        // Image(criticz, "Avatar of Criticz")
-                        //     .setBorderRadius("complete")
-                        //     .setAspectRatio("1/1")
-                        //     .resizeToBox(),
+                        Image(criticz, "Avatar of Criticz")
+                            // .setBorderRadius("complete")
+                            .setAspectRatio("1/1")
+                            .resizeToBox(),
                         Label("Criticz")
                             .setFontWeight("bold")
                             .setTextSize("xl"),

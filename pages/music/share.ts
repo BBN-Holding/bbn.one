@@ -1,6 +1,6 @@
+import { streamingImages } from "shared/helper.ts";
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
-import { asRef, Body, Empty, Horizontal, Image, Label, LinkButton, Vertical } from "webgen/mod.ts";
-import { sheetStack, streamingImages } from "../shared/helper.ts";
+import { appendBody, asRef, Content, Empty, Image, Label, WebGenTheme } from "webgen/mod.ts";
 import "./share.css";
 
 const params = new URLSearchParams(location.search);
@@ -28,35 +28,39 @@ if (reqShare.status === "rejected") {
 
 share.setValue(stupidErrorAlert(reqShare));
 
-sheetStack.setDefault(Vertical(
-    Image({ type: "direct", source: () => API.music.share(data.s).artwork().then(stupidErrorAlert) }, "Background").addClass("bgImg"),
-    share.map((shareVal) =>
-        shareVal
-            ? Horizontal(
-                Vertical(
-                    Image({ type: "direct", source: () => API.music.share(data.s).artwork().then(stupidErrorAlert) }, "A Song Artwork")
-                        .setMinHeight("250px").setMinWidth("250px").setBorderRadius("mid"),
-                    Label(shareVal.title).setTextAlign("center").setTextSize("2xl").setMargin("0 10px 0 0"),
-                    Label(shareVal.artistNames.join(", ")).setTextAlign("center"),
-                    Vertical(
-                        ...Object.entries(shareVal.services).map(([key, val]) =>
-                            LinkButton(
-                                Horizontal(
-                                    streamingImages[key]
-                                        .setHeight("1.5rem")
-                                        .setWidth("1.5rem").setMargin("0 10px 0 0"),
-                                    Label(key[0].toUpperCase() + key.slice(1)).setTextSize("xl"),
-                                ),
-                                val,
-                                "_blank",
-                            )
-                        ),
-                    ).setGap("0.5rem").setMargin("10px 0 0 0"),
-                    Label("Powered by BBN Music").setTextAlign("center").setMargin("10px 0 0 0"),
-                ).addClass("share").setPadding("1rem").setBorderRadius("mid"),
-            )
-            : Empty()
-    ).asRefComponent(),
-));
-
-Body(sheetStack);
+appendBody(
+    WebGenTheme(
+        Content(
+            Grid(
+                Image({ type: "direct", source: () => API.music.share(data.s).artwork().then(stupidErrorAlert) }, "Background").addClass("bgImg"),
+                share.map((shareVal) =>
+                    shareVal
+                        ? Grid(
+                            Grid(
+                                Image({ type: "direct", source: () => API.music.share(data.s).artwork().then(stupidErrorAlert) }, "A Song Artwork")
+                                    .setMinHeight("250px").setMinWidth("250px").setBorderRadius("mid"),
+                                Label(shareVal.title).setTextAlign("center").setTextSize("2xl").setMargin("0 10px 0 0"),
+                                Label(shareVal.artistNames.join(", ")).setTextAlign("center"),
+                                Grid(
+                                    ...Object.entries(shareVal.services).map(([key, val]) =>
+                                        LinkButton(
+                                            Horizontal(
+                                                streamingImages[key]
+                                                    .setHeight("1.5rem")
+                                                    .setWidth("1.5rem").setMargin("0 10px 0 0"),
+                                                Label(key[0].toUpperCase() + key.slice(1)).setTextSize("xl"),
+                                            ),
+                                            val,
+                                            "_blank",
+                                        )
+                                    ),
+                                ).setGap("0.5rem").setMargin("10px 0 0 0"),
+                                Label("Powered by BBN Music").setTextAlign("center").setMargin("10px 0 0 0"),
+                            ).addClass("share").setPadding("1rem").setBorderRadius("mid"),
+                        )
+                        : Empty()
+                ),
+            ),
+        ),
+    ),
+);

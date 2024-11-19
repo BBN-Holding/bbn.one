@@ -1,7 +1,7 @@
-import { appendBody, Box, Grid, Label } from "webgen/mod.ts";
+import { RegisterAuthRefresh } from "shared/helper.ts";
+import { appendBody, Box, Empty, Grid, Image, Label } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
-import { RegisterAuthRefresh } from "../shared/helper.ts";
 import "./landing.css";
 import { data, streamingPool } from "./loading.ts";
 // Main
@@ -24,9 +24,9 @@ await RegisterAuthRefresh();
 
 appendBody(Box(
     DynaNavigation("Home"),
-    Vertical(
+    Grid(
         Box(
-            Box().addClass("background-image"),
+            Empty().addClass("background-image"),
             Label("Your Journey,  our Mission.")
                 .setFontWeight("bold"),
         )
@@ -35,7 +35,7 @@ appendBody(Box(
             Label("BBN One", "h2"),
             Label("Your all in one solution. Everything in “One” place.", "h3"),
         ).addClass("section"),
-        Box(Box()).addClass("glowbs", "orange"),
+        Box(Empty()).addClass("glowbs", "orange"),
         Grid(
             Box(
                 Image(bbnMusic, "An orange logo of BBN Music"),

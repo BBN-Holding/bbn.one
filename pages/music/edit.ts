@@ -1,5 +1,5 @@
-import { API, createActionList, createBreadcrumb, createTagList, LoadingSpinner, Navigation, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, Body, Button, ButtonStyle, Color, Empty, Grid, Horizontal, isMobile, Label, LinkButton, SheetDialog, Vertical } from "webgen/mod.ts";
+import { API, stupidErrorAlert } from "shared/mod.ts";
+import { appendBody, asRef, Color, Empty, Grid, isMobile, Label } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
@@ -22,7 +22,7 @@ const drop = asRef(<Drop | undefined> undefined);
 const services = asRef<Record<string, string> | undefined>(undefined);
 const share = asRef(<Share | undefined | { slug: undefined }> undefined);
 
-sheetStack.setDefault(Vertical(
+appendBody(Vertical(
     DynaNavigation("Music"),
     drop.map((drop) =>
         drop
@@ -142,8 +142,6 @@ sheetStack.setDefault(Vertical(
             : LoadingSpinner()
     ).asRefComponent(),
 ));
-
-Body(sheetStack);
 
 const Permissions = {
     canTakedown: (type: DropType) => type == "PUBLISHED",

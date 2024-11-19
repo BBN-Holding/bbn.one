@@ -1,6 +1,6 @@
 import { delay } from "@std/async";
 import { API, StreamingUploadHandler } from "shared/mod.ts";
-import { UploadFilesDialog } from "webgen/mod.ts";
+import { createFilePicker } from "webgen/mod.ts";
 import { DropType } from "../../spec/music.ts";
 import { state } from "./state.ts";
 
@@ -22,14 +22,14 @@ const urls = {
 export function upload(type: keyof typeof urls): Promise<string> {
     const [url, extension] = urls[type];
     return new Promise((resolve) => {
-        UploadFilesDialog((list) => {
+        createFilePicker(extension).then((file) => {
             StreamingUploadHandler(url, {
                 failure: () => alert("Your Upload has failed. Please try a different file or try again later"),
                 uploadDone: () => console.log("Upload done"),
                 credentials: () => API.getToken(),
                 backendResponse: (id) => resolve(id),
                 onUploadTick: async () => await delay(2),
-            }, list[0].file);
-        }, extension);
+            }, file);
+        });
     });
 }

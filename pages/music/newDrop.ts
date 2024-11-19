@@ -1,12 +1,11 @@
-import { API, LoadingSpinner, stupidErrorAlert } from "shared/mod.ts";
-import { AdvancedImage, asRef, asState, Body, Box, Button, ButtonStyle, Center, CenterV, Color, createFilePicker, Custom, DropAreaInput, DropDownInput, Empty, getErrorMessage, Grid, Horizontal, Image, Label, MediaQuery, Reference, SheetDialog, Spacer, TextInput, Validate, Vertical } from "webgen/mod.ts";
-import { zod } from "webgen/zod.ts";
+import { allowedAudioFormats, allowedImageFormats, CenterAndRight, ExistingSongDialog, getSecondary, RegisterAuthRefresh, sheetStack } from "shared/helper.ts";
+import { API, stupidErrorAlert } from "shared/mod.ts";
+import { appendBody, asRef, asRefRecord, Box, Content, createFilePicker, DialogContainer, DropDown, Empty, Grid, Image, Label, PrimaryButton, SecondaryButton, SheetHeader, Spinner, TextInput, WebGenTheme } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
 import language from "../../data/language.json" with { type: "json" };
 import { ArtistRef, ArtistTypes, DropType, pages, Song } from "../../spec/music.ts";
-import { allowedAudioFormats, allowedImageFormats, CenterAndRight, ExistingSongDialog, getSecondary, RegisterAuthRefresh, sheetStack } from "../shared/helper.ts";
 import { uploadArtwork, uploadSongToDrop } from "./data.ts";
 import { EditArtistsDialog, ManageSongs } from "./views/table.ts";
 
@@ -26,7 +25,7 @@ if (!params.has("id")) {
 }
 const dropId = params.get("id")!;
 
-export const creationState = asState({
+export const creationState = asRefRecord({
     loaded: false,
     _id: <string | undefined> undefined,
     gtin: <string | undefined> undefined,
@@ -54,41 +53,43 @@ API.music.id(dropId).get().then(stupidErrorAlert)
         creationState.title = drop.title;
         creationState.release = drop.release;
         creationState.language = drop.language;
-        creationState.artists = asState(drop.artists ?? [{ type: ArtistTypes.Primary, _id: null! }]);
+        creationState.artists = drop.artists ?? [{ type: ArtistTypes.Primary, _id: null! }];
         creationState.primaryGenre = drop.primaryGenre;
         creationState.secondaryGenre = drop.secondaryGenre;
         creationState.compositionCopyright = drop.compositionCopyright ?? "BBN Music (via bbn.one)";
         creationState.soundRecordingCopyright = drop.soundRecordingCopyright ?? "BBN Music (via bbn.one)";
         creationState.artwork = drop.artwork;
         creationState.artworkClientData = <AdvancedImage | undefined> (drop.artwork ? <AdvancedImage> { type: "direct", source: () => API.music.id(dropId).artwork().then(stupidErrorAlert) } : undefined);
-        creationState.songs = asState(drop.songs ?? []);
+        creationState.songs = drop.songs ?? [];
         creationState.comments = drop.comments;
     })
     .then(() => creationState.loaded = true);
 
-const additionalDropInformation = SheetDialog(
-    sheetStack,
-    "Additional Information",
-    Vertical(
+const additionalDropInformation = Grid(
+    SheetHeader("Additional Information", sheetStack),
+    Grid(
         Grid(
-            TextInput("text", "UPC/EAN").ref(creationState.$gtin),
-            TextInput("text", "Composition Copyright").ref(creationState.$compositionCopyright),
-            TextInput("text", "Sound Recording Copyright").ref(creationState.$soundRecordingCopyright),
+            TextInput(creationState.gtin, "UPC/EAN"),
+            TextInput(creationState.compositionCopyright, "Composition Copyright"),
+            TextInput(creationState.soundRecordingCopyright, "Sound Recording Copyright"),
         )
+            .setGap()
             .setEvenColumns(1)
-            .addClass("grid-area")
-            .setGap(),
-        Horizontal(Spacer(), Button("Save").onClick(() => additionalDropInformation.close())),
+            .addClass("grid-area"),
+        PrimaryButton("Save").onClick(() => sheetStack.removeOne()),
     ).setGap(),
 );
 
-sheetStack.setDefault(Vertical(
-    DynaNavigation("Music"),
-    creationState.$loaded.map((loaded) => loaded ? wizard : LoadingSpinner()).asRefComponent(),
-));
+appendBody(
+    WebGenTheme(
+        DialogContainer(sheetStack.visible(), sheetStack),
+        Content(
+            DynaNavigation("Music"),
+            Box(creationState.loaded.map((loaded) => loaded ? wizard : Spinner())),
+        ),
+    ).addClass("fullscreen"),
+);
 
-Body(sheetStack)
-    .addClass("fullscreen");
 Custom(document.body).setAttribute("data-theme", undefined);
 
 const validator = (page: number) => async () => {
@@ -102,11 +103,10 @@ const validator = (page: number) => async () => {
 };
 
 const footer = (page: number) =>
-    Horizontal(
-        page == 0 ? Button("Cancel").setJustifyContent("center").setStyle(ButtonStyle.Secondary).onClick(() => location.href = "/c/music") : Button("Back").setJustifyContent("center").setStyle(ButtonStyle.Secondary).onClick(() => creationState.page--),
-        Spacer(),
+    Grid(
+        page == 0 ? SecondaryButton("Cancel").setJustifyContent("center").onClick(() => location.href = "/c/music") : SecondaryButton("Back").setJustifyContent("center").onClick(() => creationState.page--),
         Box(
-            creationState.$validationState.map((error) =>
+            creationState.validationState.map((error) =>
                 error
                     ? CenterV(
                         Label(getErrorMessage(error))
@@ -114,131 +114,111 @@ const footer = (page: number) =>
                             .setMargin("0 0.5rem 0 0"),
                     )
                     : Empty()
-            ).asRefComponent(),
+            ),
         ),
-        Button("Next").setJustifyContent("center").onClick(validator(page)),
+        PrimaryButton("Next").setJustifyContent("center").onClick(validator(page)),
     ).addClass("footer");
 
-const wizard = creationState.$page.map((page) => {
+const wizard = creationState.page.map((page) => {
     if (page == 0) {
-        return Vertical(
-            Spacer(),
+        return Grid(
             MediaQuery("(max-width: 450px)", (small) =>
                 Grid(
-                    Center(Label("Enter your Album details.").addClass("title")),
-                    TextInput("text", "Title").ref(creationState.$title),
+                    Label("Enter your Album details.").addClass("title"),
+                    TextInput(creationState.title, "Title"),
                     Grid(
-                        TextInput("date", "Release Date").ref(creationState.$release),
-                        DropDownInput("Language", Object.keys(language))
-                            .setRender((key) => language[<keyof typeof language> key])
-                            .ref(creationState.$language),
+                        TextInput(creationState.release, "Release Date"),
+                        DropDown(Object.keys(language), creationState.language, "Language")
+                            .setValueRender((key) => language[<keyof typeof language> key]),
                     )
                         .setEvenColumns(small ? 1 : 2)
                         .setGap(),
-                    Button("Artists")
-                        .onClick(() => EditArtistsDialog(creationState.$artists as unknown as Reference<ArtistRef[]>).open()),
-                    Center(Label("Set your target Audience").addClass("title")),
+                    PrimaryButton("Artists")
+                        .onClick(() => EditArtistsDialog(creationState.artists).open()),
+                    Label("Set your target Audience").addClass("title"),
                     Grid(
-                        DropDownInput("Primary Genre", Object.keys(genres))
-                            .ref(creationState.$primaryGenre)
-                            .onChange(() => creationState.$secondaryGenre.setValue(undefined)),
-                        creationState.$primaryGenre.map((primaryGenre) =>
-                            DropDownInput("Secondary Genre", getSecondary(genres, primaryGenre) ?? [])
-                                .ref(creationState.$secondaryGenre)
+                        DropDown(Object.keys(genres), creationState.primaryGenre, "Primary Genre"),
+                        // .onChange(() => creationState.secondaryGenre.setValue(undefined)), //move to listen
+                        Box(creationState.primaryGenre.map((primaryGenre) =>
+                            DropDown(getSecondary(genres, primaryGenre) ?? [], creationState.secondaryGenre, "Secondary Genre")
                                 .setColor(getSecondary(genres, primaryGenre) ? Color.Grayscaled : Color.Disabled)
-                        ).asRefComponent(),
+                        )),
                     )
                         .setGap()
                         .setEvenColumns(small ? 1 : 2),
-                    Button("Additional Information")
-                        .onClick(() => additionalDropInformation.open()),
+                    PrimaryButton("Additional Information")
+                        .onClick(() => sheetStack.addSheet(additionalDropInformation)),
                 )
+                    .setGap()
                     .setEvenColumns(1)
-                    .addClass("grid-area")
-                    .setGap()),
-            Spacer(),
+                    .addClass("grid-area")),
             footer(page),
         ).addClass("wwizard");
     } else if (page == 1) {
-        return Vertical(
-            Spacer(),
-            Center(
-                creationState.$artworkClientData.map((data) =>
-                    Vertical(
-                        CenterAndRight(
-                            Label("Upload your Cover").addClass("title"),
-                            Button("Manual Upload")
-                                .onClick(() => createFilePicker(allowedImageFormats.join(",")).then((file) => uploadArtwork(dropId, file, creationState.$artworkClientData, creationState.$artwork))),
-                        ),
-                        DropAreaInput(
-                            CenterV(data ? Image(data, "A Music Album Artwork.") : Label("Drop your Artwork here.").setTextSize("xl").setFontWeight("semibold")),
-                            allowedImageFormats,
-                            ([{ file }]) => uploadArtwork(dropId, file, creationState.$artworkClientData, creationState.$artwork),
-                        ).addClass("drop-area"),
-                    ).setGap()
-                ).asRefComponent(),
+        return Grid(
+            creationState.artworkClientData.map((data) =>
+                Grid(
+                    CenterAndRight(
+                        Label("Upload your Cover").addClass("title"),
+                        PrimaryButton("Manual Upload")
+                            .onClick(() => createFilePicker(allowedImageFormats.join(",")).then((file) => uploadArtwork(dropId, file, creationState.artworkClientData, creationState.artwork))),
+                    ),
+                    DropAreaInput(
+                        CenterV(data ? Image(data, "A Music Album Artwork.") : Label("Drop your Artwork here.").setTextSize("xl").setFontWeight("semibold")),
+                        allowedImageFormats,
+                        ([{ file }]) => uploadArtwork(dropId, file, creationState.artworkClientData, creationState.artwork),
+                    ).addClass("drop-area"),
+                ).setGap()
             ),
-            Spacer(),
             footer(page),
         ).addClass("wwizard");
     } else if (page == 2) {
-        creationState.$songs.listen((songs, oldVal) => {
+        creationState.songs.listen((songs, oldVal) => {
             if (oldVal != undefined) {
-                creationState.$songs.setValue(songs);
+                creationState.songs.setValue(songs);
             }
         });
         const songs = asRef(<undefined | Song[]> undefined);
         const existingSongDialog = ExistingSongDialog(creationState.songs, songs);
-        return Vertical(
-            Spacer(),
-            Horizontal(
-                Spacer(),
-                Vertical(
+        return Grid(
+            Grid(
+                Grid(
                     CenterAndRight(
                         Label("Manage your Music").addClass("title"),
                         Box(
-                            Button("Manual Upload")
-                                .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(creationState.$songs, creationState.artists, creationState.language, creationState.primaryGenre, creationState.secondaryGenre, creationState.$uploadingSongs, file))).setMargin("0 1rem 0 0"),
-                            Button("Add an existing Song")
+                            PrimaryButton("Manual Upload")
+                                .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(creationState.songs, creationState.artists, creationState.language, creationState.primaryGenre, creationState.secondaryGenre, creationState.uploadingSongs, file))).setMargin("0 1rem 0 0"),
+                            PrimaryButton("Add an existing Song")
                                 .onPromiseClick(async () => {
-                                    songs.setValue((await API.music.songs.list().then(stupidErrorAlert)).filter((song) => creationState.songs.some((dropsong) => dropsong._id !== song._id)));
+                                    songs.setValue((await API.music.songs.list().then(stupidErrorAlert)).filter((song) => creationState.songs.value.some((dropsong) => dropsong._id !== song._id)));
                                     existingSongDialog.open();
                                 }),
                         ),
                     ),
-                    ManageSongs(creationState.$songs as unknown as Reference<Song[]>, creationState.$uploadingSongs, creationState.primaryGenre!),
+                    ManageSongs(creationState.songs, creationState.uploadingSongs, creationState.primaryGenre!),
                 ).setGap(),
-                Spacer(),
             ),
-            Spacer(),
             footer(page),
         ).addClass("wwizard");
     } else if (page == 3) {
-        return Vertical(
-            Spacer(),
-            Horizontal(
-                Spacer(),
+        return Grid(
+            Grid(
                 Label("Thanks! That's everything we need.").setBalanced().addClass("ending-title"),
-                Spacer(),
             ),
-            Horizontal(
-                Spacer(),
-                TextInput("text", "Comments for Review Team").ref(creationState.$comments),
-                Spacer(),
+            Grid(
+                TextInput(creationState.comments, "Comments for Review Team"),
             ),
-            Spacer(),
-            Horizontal(
-                Button("Back").setJustifyContent("center").setStyle(ButtonStyle.Secondary).onClick(() => creationState.page--),
-                Spacer(),
-                Button("Submit").setJustifyContent("center").onPromiseClick(async () => {
+            Grid(
+                SecondaryButton("Back").setJustifyContent("center").onClick(() => creationState.page--),
+                PrimaryButton("Submit").onPromiseClick(async () => {
                     creationState.loaded = false;
                     await API.music.id(dropId).update(creationState);
 
                     await API.music.id(dropId).type.post(DropType.UnderReview);
                     location.href = "/c/music";
-                }),
+                }).setJustifyContent("center"),
             ).addClass("footer"),
         ).addClass("wwizard");
     }
-    return LoadingSpinner();
-}).asRefComponent();
+    return Spinner();
+});

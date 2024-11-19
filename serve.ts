@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/x/esbuild_serve@1.5.0/mod.ts";
 // import { serve } from "../esbuild_serve/mod.ts";
 
-CI FAIL
+// CI FAIL
 
 const title = new Map(Object.entries({
     "index": "BBN Music",
