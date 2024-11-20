@@ -1,20 +1,20 @@
 import { delay } from "@std/async";
 import { activeUser, IsLoggedIn, permCheck, showProfilePicture } from "shared/helper.ts";
 import { API } from "shared/mod.ts";
-import { Box, Component, Empty, Grid, Label, MaterialIcon, Popover, PrimaryButton } from "webgen/mod.ts";
+import { Box, Component, Empty, Grid, Image, Label, MaterialIcon, Popover, PrimaryButton } from "webgen/mod.ts";
 import "./nav.css";
 import { activeTitle, pages } from "./pages.ts";
 
 const navMenuPopover = Popover(
     Box(
+        Label("sdf"),
         activeUser.permission.map((perm) =>
             Grid(
                 Label("SWITCH TO").addClass("title"),
                 ...pages.map(([logo, permission, route, login]) =>
                     permCheck(...permission) && (!login || (login == 1 && IsLoggedIn()) || (login == 2 && !IsLoggedIn()))
                         ? Grid(
-                            // Image(logo, "Logo"),
-                            // Spacer(),
+                            Image(logo, "Logo"),
                             MaterialIcon("arrow_forward_ios"),
                         )
                             .addClass("small-entry")
@@ -24,7 +24,6 @@ const navMenuPopover = Popover(
                 perm.length
                     ? Grid(
                         Label("Go to Settings"),
-                        // Spacer(),
                         MaterialIcon("arrow_forward_ios"),
                     ).addClass("small-entry", "settings")
                         .onClick(() => location.href = "/settings")
@@ -64,7 +63,7 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     ),
                 )
                     .setGap(".5rem")
-                    .setDirection("row")
+                    .setTemplateColumns("max-content max-content")
                     .setAlignItems("center")
                     .setJustifyContent("center")
                     .addClass("clickable")
@@ -72,7 +71,6 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                     .onClick(() => {
                         navMenuPopover.showPopover();
                     }),
-                // Spacer(),
                 (activeUser.email.map((email) =>
                     email
                         ? Grid(
@@ -92,7 +90,8 @@ export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" |
                                 .addClass("login-button")
                             : Empty())
                 ).value) ?? null,
-            ),
+            )
+                .setTemplateColumns("1fr max-content"),
             IsLoggedIn() && IsLoggedIn()!.profile.verified?.email != true
                 ? Grid(
                     Label("Your Email is not verified. Please check your Inbox/Spam folder.").addClass("label"),

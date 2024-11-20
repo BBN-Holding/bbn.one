@@ -1,12 +1,16 @@
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { asRefRecord, Component, Empty, Sheets } from "webgen/mod.ts";
+import { asRefRecord, Component, Empty, Image, ImageComponent, Sheets } from "webgen/mod.ts";
 import { loginRequired } from "../../components/pages.ts";
 import { Drop } from "../../spec/music.ts";
 
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import spotify from "../music-landing/assets/spotify.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import deezer from "../music-landing/assets/deezer.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import tidal from "../music-landing/assets/tidal.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
+import apple from "../music-landing/assets/apple.svg";
 
 export const allowedAudioFormats = ["audio/flac", "audio/wav", "audio/mp3"];
 export const allowedImageFormats = ["image/png", "image/jpeg"];
@@ -244,12 +248,12 @@ export function showProfilePicture(x: ProfileData) {
     // );
 }
 
-// export const streamingImages: Record<string, ImageComponent> = {
-//     spotify: Image(spotify, "Spotify"),
-//     deezer: Image(deezer, "Deezer"),
-//     tidal: Image(tidal, "Tidal"),
-//     apple: Image(apple, "Apple Music"),
-// };
+export const streamingImages: Record<string, ImageComponent> = {
+    spotify: Image(spotify, "Spotify").draw(),
+    deezer: Image(deezer, "Deezer").draw(),
+    tidal: Image(tidal, "Tidal").draw(),
+    apple: Image(apple, "Apple Music").draw(),
+};
 
 // export const ExistingSongDialog = (dropSongs: StateHandler<Song[]>, songs: Reference<Song[]>) => {
 //     const selected = asRef(<undefined | Song> undefined);

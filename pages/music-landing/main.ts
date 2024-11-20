@@ -214,19 +214,19 @@ appendBody(
                         .addClass("opacity-60"),
                 )
                     .setMargin("10px 0 40px"),
-                Grid(
-                    Grid(images())
-                        .setGap("38px")
-                        .addClass("icon-carousel")
-                        .setDirection("column"),
-                    Grid(...images().reverse())
-                        .setGap("38px")
-                        .addClass("icon-carousel")
-                        .addClass("icon-carousel-reversed")
-                        .setDirection("column"),
-                )
-                    .setGap("35px")
-                    .addClass("icon-carousel-container"),
+                // Grid(
+                //     Grid(images())
+                //         .setGap("38px")
+                //         .addClass("icon-carousel")
+                //         .setDirection("column"),
+                //     Grid(...images().reverse())
+                //         .setGap("38px")
+                //         .addClass("icon-carousel")
+                //         .addClass("icon-carousel-reversed")
+                //         .setDirection("column"),
+                // )
+                //     .setGap("35px")
+                //     .addClass("icon-carousel-container"),
             )
                 .setAlignContent("center")
                 .setHeight("380px")
@@ -331,10 +331,10 @@ appendBody(
                         .addClass("italic-text")
                         .setFontWeight("bold"),
                     Grid(
-                        Image(redz, "Avatar of Redz")
-                            // .setBorderRadius("complete")
-                            .setAspectRatio("1/1")
-                            .resizeToBox(),
+                        Image(redz, "Avatar of Redz"),
+                        // .setBorderRadius("complete")
+                        // .setAspectRatio("1/1")
+                        // .resizeToBox(),
                         Label("Redz")
                             .setFontWeight("bold")
                             .setTextSize("xl"),
@@ -352,10 +352,10 @@ appendBody(
                         .addClass("italic-text")
                         .setFontWeight("bold"),
                     Grid(
-                        Image(criticz, "Avatar of Criticz")
-                            // .setBorderRadius("complete")
-                            .setAspectRatio("1/1")
-                            .resizeToBox(),
+                        Image(criticz, "Avatar of Criticz"),
+                        // .setBorderRadius("complete")
+                        // .setAspectRatio("1/1")
+                        // .resizeToBox(),
                         Label("Criticz")
                             .setFontWeight("bold")
                             .setTextSize("xl"),
@@ -371,6 +371,7 @@ appendBody(
                     .setPadding("95px 0 95px 0"),
             ).setMaxWidth("680px"),
             FullWidthSection(Footer()),
-        ).setMaxWidth("1230px"),
+        )
+            .setMaxWidth("1230px"),
     ),
 );
