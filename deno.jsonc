@@ -9,8 +9,8 @@
         "@std/path": "jsr:@std/path@^1.0.8",
         "shared/": "./pages/shared/",
         "zod/": "https://deno.land/x/zod@v3.23.8/",
-        // "webgen/": "../WebGen/"
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/3616d3b/"
+        "webgen/": "../WebGen/"
+        // "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/3616d3b/"
     },
     "lock": false,
     "compilerOptions": {

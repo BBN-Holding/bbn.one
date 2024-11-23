@@ -11,6 +11,8 @@ import bbnWalletLogo from "../assets/img/bbnWallet.svg";
 
 import { Permission } from "shared/mod.ts";
 
+export type NavigationType = "Home" | "Music-Landing" | "Music" | "Settings" | "Hosting" | "Admin" | "Wallet";
+
 // 0: no login required, 1: show only when logged in, 2: show only when logged out
 export const pages: [logo: string, perm: Array<Permission>, route: string, login: 0 | 1 | 2][] = [
     [bbnHolding, [], "/", 0],
@@ -30,8 +32,8 @@ export const loginRequired = [
     "/wallet",
 ];
 
-export function activeLogo(type: string) {
-    if (type == "Music") {
+export function activeLogo(type: NavigationType) {
+    if (type == "Music" || type === "Music-Landing") {
         return bbnMusicLogo;
     }
     if (type == "Hosting") {
@@ -46,8 +48,8 @@ export function activeLogo(type: string) {
     return bbnHolding;
 }
 
-export function activeTitle(type: string) {
-    if (type == "Music") {
+export function activeTitle(type: NavigationType) {
+    if (type == "Music" || type === "Music-Landing") {
         return "BBN Music";
     }
     if (type == "Hosting") {

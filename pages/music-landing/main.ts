@@ -1,10 +1,9 @@
 import { Footer } from "shared/footer.ts";
 import { RegisterAuthRefresh } from "shared/helper.ts";
-import { Image, MaterialIcon, mediaQueryRef, PrimaryButton, SheetHeader, Sheets, WebGenTheme } from "webgen/components/mod.ts";
+import { Image, MaterialIcon, mediaQueryRef, PrimaryButton, WebGenTheme } from "webgen/components/mod.ts";
 import { Box, Content, Empty, FullWidthSection, Grid, Label } from "webgen/core/mod.ts";
-import { appendBody } from "webgen/mod.ts";
+import { appendBody, Color, css } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import "./main.css";
 
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import apple from "./assets/apple.svg";
@@ -45,15 +44,62 @@ const images = () =>
 
 export const isMobileKeyFeatures = mediaQueryRef("(max-width: 820px)");
 
-const sheets = Sheets();
+document.adoptedStyleSheets.push(css`
+    body {
+        --box-shadow-cta: 0 .824px 1.752px #db572124, 0 2.085px 4.43px #db572133, 0 4.253px 9.038px #db57213d, 0 8.76px 18.616px #db57214d, 0 24px 51px #db572170;
+        --box-shadow-cta-hover: 0 1.237px .69px #db572145, 0 3.127px 5.113px #db572157, 0 6.38px 15.547px #db57215c, 0 13.141px 37.63px #db572163, 0 36px 100px #db572182;;
+        --background-cta: linear-gradient(139deg, #e39123 6.59%, #db5721 101.73%);
 
-sheets.addSheet(Grid(SheetHeader("dsf", sheets), Label("sadfds")));
+        --background-free-tier: linear-gradient(139deg, #e3912333 6.59%, #db572133 101.73%), #0a0a0a;
+        --badge-free-tier: linear-gradient(139deg,#d9881c73 6.59%,#c6451073 101.73%);
+        --background-paid-tier: linear-gradient(139deg, #d9881c 6.59%, #c64510 101.73%);
+        --badge-paid-tier: #00000040;
+    }
+`);
+
+const grayText = Color.white.mix(Color.black, 40).toString();
+
+export function CTAButton(label: string) {
+    return PrimaryButton(label)
+        .addStyle(css`
+            button {
+                padding: 13px 25px;
+                height: 60px;
+                border-radius: 0.8rem;
+                font-size: 1.01rem;
+                font-weight: bold;
+                color: white;
+                box-shadow: var(--box-shadow-cta);
+                background: var(--background-cta);
+            }
+            button:not(:disabled):hover {
+                outline: none;
+                box-shadow: var(--box-shadow-cta-hover);
+            }
+        `);
+}
+
+export function CTAButtonSmall() {
+    return PrimaryButton("Drop your Music")
+        .onClick(() => location.href = "/c/music")
+        .addStyle(css`
+            :host {
+                --wg-button-border-radius: var(--wg-radius-complete);
+            }
+            button {
+                background: var(--background-cta);
+                padding: 0 15px;
+                color: white;
+                height: 40px;
+            }
+        `);
+}
 
 appendBody(
     WebGenTheme(
         Content(
             FullWidthSection(
-                DynaNavigation("Music"),
+                DynaNavigation("Music-Landing"),
             ),
             FullWidthSection(Empty().addClass("background-image")),
             Content(
@@ -66,33 +112,30 @@ appendBody(
                             .setCssStyle("textWrap", "balance")
                             .setFontWeight("black"),
                     )
-                        .addClass("max-width-30rem")
+                        .setMaxWidth("32rem")
                         .setWidth("100%")
                         .setMargin("10rem 0 0 0"),
                     Box(
                         Label("BBN Music, your gateway to unlimited music distribution at a low cost. Maximize your reach without limits. Join us and let the world hear your music.")
                             .setTextSize("xl")
                             .setCssStyle("textWrap", "balance")
-                            .addClass("line-height-1-2")
+                            .setCssStyle("lineHeight", "1.2")
                             .setFontWeight("medium"),
                     )
-                        .addClass("max-width-30rem"),
-                    PrimaryButton("Drop your Music")
-                        .onClick(() => location.href = "/c/music")
-                        .setPadding("12px 30px")
-                        .setFontWeight("bold")
-                        .setTextSize("lg")
-                        .addClass("orange-bg", "orange-box-shadow")
-                        .setCssStyle("borderRadius", "0.8rem"),
+                        .setMaxWidth("32rem"),
+                    CTAButton("Drop your Music")
+                        .onClick(() => location.href = "/c/music"),
                 )
                     .setGap("25px")
                     .setJustifyItems("start"),
             )
-                .setMaxWidth("900px"),
+                .setContentMaxWidth("900px"),
             Content(
                 Grid(
                     Label("Our pricing plan to disrupt the Market:")
                         .setFontWeight("bold")
+                        .setTextSize("sm")
+                        .setCssStyle("color", grayText)
                         .setMargin("135px 0 40px 0")
                         .setCssStyle("textAlign", "center")
                         .addClass("opacity-60"),
@@ -104,19 +147,19 @@ appendBody(
                             .setWidth("max-content")
                             .setPadding("0 5px")
                             .setCssStyle("borderRadius", "0.3rem")
-                            .addClass("badge-free-tier-bg"),
+                            .setCssStyle("background", "var(--badge-free-tier)"),
                         Grid(
                             Label("Your Revenue")
                                 .setTextSize("lg")
                                 .setFontWeight("bold"),
                             Label("97%")
-                                .addClass("line-height-0-8", "xl7-5")
+                                .setTextSize("7xl")
                                 .setFontWeight("black"),
                         ),
                         Label("No Extra Cost")
                             .setTextSize("3xl")
                             .setFontWeight("bold")
-                            .addClass("opacity-60"),
+                            .setCssStyle("opacity", "60%"),
                         Grid(
                             MaterialIcon("check_circle"),
                             Label("Unlimited Drops"),
@@ -129,23 +172,21 @@ appendBody(
                             MaterialIcon("check_circle"),
                             Label("No Payment Needed"),
                         )
-                            .setGap("20px")
+                            .setGap("15px")
                             .setTemplateColumns("max-content auto")
-                            .addClass("feature-list"),
-                        PrimaryButton("Drop Now!")
-                            .onClick(() => location.href = "/c/music")
-                            .setPadding("12px 30px")
+                            .setTextSize("2xl")
                             .setFontWeight("bold")
-                            .setTextSize("lg")
-                            .setCssStyle("borderRadius", "0.8rem")
-                            .addClass("orange-bg", "orange-box-shadow")
+                            .setAlignItems("center"),
+                        CTAButton("Drop Now!")
+                            .onClick(() => location.href = "/c/music")
                             .setJustifyContent("center"),
                     )
                         .setGap("30px")
                         .setPadding("45px 40px")
-                        .addClass("extra-large-br")
-                        .addClass("free-tier-bg")
-                        .setAlignContent("start"),
+                        .setAlignContent("start")
+                        .setRadius("extra")
+                        .setCssStyle("overflow", "hidden")
+                        .setCssStyle("background", "var(--background-free-tier)"),
                     Grid(
                         Label("Paid Plan")
                             .setFontWeight("black")
@@ -158,13 +199,13 @@ appendBody(
                                 .setTextSize("lg")
                                 .setFontWeight("bold"),
                             Label("100%")
-                                .addClass("line-height-0-8", "xl7-5")
+                                .setTextSize("7xl")
                                 .setFontWeight("black"),
                         ),
                         Label("1€ per Year")
                             .setTextSize("3xl")
                             .setFontWeight("bold")
-                            .addClass("opacity-60"),
+                            .setCssStyle("opacity", "60%"),
                         Grid(
                             MaterialIcon("check_circle"),
                             Label("Unlimited Drops"),
@@ -183,35 +224,41 @@ appendBody(
                             MaterialIcon("check_circle"),
                             Label("Priority Support"),
                         )
-                            .setGap("20px")
+                            .setGap("15px")
                             .setTemplateColumns("max-content auto")
-                            .setAlignItems("center")
-                            .addClass("feature-list"),
+                            .setTextSize("2xl")
+                            .setFontWeight("bold")
+                            .setAlignItems("center"),
                         PrimaryButton("Coming Soon")
                             .setDisabled(true)
-                            .setPadding("25px 30px")
-                            .setCssStyle("borderRadius", "0.8rem")
-                            .setJustifyContent("center"),
+                            .addStyle(css`
+                                button {
+                                    padding: 13px 25px;
+                                    height: 50px;
+                                    border-radius: 0.8rem;
+                                }
+                            `),
                     )
                         .setGap("30px")
                         .setPadding("45px 40px")
-                        .addClass("extra-large-br")
-                        .addClass("paid-tier-bg")
-                        .setAlignContent("start"),
+                        .setRadius("extra")
+                        .setCssStyle("overflow", "hidden")
+                        .setCssStyle("background", "var(--background-paid-tier)"),
                 )
                     .setGap("35px")
                     .setDynamicColumns(15)
                     .setAlignItems("start"),
             )
-                .setMaxWidth("900px"),
+                .setContentMaxWidth("900px")
+                .setCssStyle("color", "#ffffff"),
             Content(
                 Grid(
                     Label("Let your fans enjoy your Drops where they feel home.")
-                        .setTextSize("xl")
+                        .setTextSize("lg")
                         .setFontWeight("bold")
                         .setMargin("20px 10px")
                         .setCssStyle("textAlign", "center")
-                        .addClass("opacity-60"),
+                        .setCssStyle("color", grayText),
                 )
                     .setMargin("10px 0 40px"),
                 // Grid(
@@ -228,9 +275,9 @@ appendBody(
                 //     .setGap("35px")
                 //     .addClass("icon-carousel-container"),
             )
+                .setContentMaxWidth("850px")
                 .setAlignContent("center")
-                .setHeight("380px")
-                .setMaxWidth("850px"),
+                .setHeight("380px"),
             Grid(
                 Label("Make it. Drop it.")
                     .setFontWeight("bold")
@@ -239,6 +286,7 @@ appendBody(
                 Label("Distributing music should be accessible without any credit card.")
                     .setCssStyle("textAlign", "center")
                     .setFontWeight("bold")
+                    .setCssStyle("color", grayText)
                     .setTextSize("xl")
                     .addClass("opacity-60"),
             )
@@ -250,13 +298,7 @@ appendBody(
                             Label("Why BBN\xa0Music?")
                                 .setTextSize("3xl")
                                 .setFontWeight("bold"),
-                            isMobileKeyFeatures.map((mobile) =>
-                                mobile ? Empty() : PrimaryButton("Drop your Music")
-                                    .onClick(() => location.href = "/c/music")
-                                    .setCssStyle("borderRadius", "100rem")
-                                    .setPadding("2px 25px")
-                                    .addClass("orange-bg")
-                            ).value,
+                            Box(isMobileKeyFeatures.map((mobile) => mobile ? [] : CTAButtonSmall())),
                         )
                             .setGap()
                             .addClass("title")
@@ -264,7 +306,15 @@ appendBody(
                             .setJustifyItems("start"),
                         Grid(
                             MaterialIcon("percent")
-                                .addClass("key-icon", "red"),
+                                .addClass("key-icon", "red")
+                                .addStyle(css`
+                                    :host {
+                                        border-radius: var(--wg-radius-large);
+                                        background-color: #EF5C52;
+                                        aspect-ratio: 1 / 1;
+                                        padding: 10px;
+                                    }
+                                `),
                             Label("Lowest Cut")
                                 .setFontWeight("bold"),
                             Label("With our free plan, we only take a 3% cut of your revenue."),
@@ -274,7 +324,15 @@ appendBody(
                             .setAlignContent("start"),
                         Grid(
                             MaterialIcon("public")
-                                .addClass("key-icon", "green"),
+                                .addStyle(css`
+                                    :host {
+                                        border-radius: var(--wg-radius-large);
+                                        color: #1B1B1B;
+                                        background-color: #97EF52;
+                                        aspect-ratio: 1 / 1;
+                                        padding: 10px;
+                                    }
+                                `),
                             Label("Global")
                                 .setFontWeight("bold"),
                             Label("We support all major and many smaller stores, without any extra cost for you."),
@@ -284,7 +342,14 @@ appendBody(
                             .setAlignContent("start"),
                         Grid(
                             MaterialIcon("all_inclusive")
-                                .addClass("key-icon", "blue"),
+                                .addStyle(css`
+                                    :host {
+                                        border-radius: var(--wg-radius-large);
+                                        background-color: #5552EF;
+                                        aspect-ratio: 1 / 1;
+                                        padding: 10px;
+                                    }
+                                `),
                             Label("Unlimited")
                                 .setFontWeight("bold"),
                             Label("No hard limits. You can manage as many Drops and Artists as you want."),
@@ -292,25 +357,27 @@ appendBody(
                             .setGap("13px")
                             .setJustifyItems("start")
                             .setAlignContent("start"),
-                        isMobileKeyFeatures.map((mobile) =>
+                        Box(isMobileKeyFeatures.map((mobile) =>
                             mobile
-                                ? Box(
-                                    PrimaryButton("Drop your Music")
-                                        .setCssStyle("borderRadius", "100rem")
-                                        .onClick(() => location.href = "/c/music")
-                                        .setPadding("2px 25px")
-                                        .addClass("orange-bg"),
-                                ).addClass("call-to-action")
-                                : Empty()
-                        ).value,
+                                ? CTAButtonSmall()
+                                    .addStyle(css`
+                                        :host {
+                                            margin-top: 2rem;
+                                            grid-column: 1 / -1;
+                                            justify-self: center;
+                                        }
+                                    `)
+                                : []
+                        )).setCssStyle("display", "contents"),
                     )
-                        .setGap()
+                        .setGap("1rem")
                         .setDynamicColumns(10)
                         .setPadding("50px 40px")
                         .setCssStyle("borderRadius", "0.8rem")
-                        .addClass("free-tier-bg", "key-features"),
+                        .setCssStyle("background", "var(--background-free-tier)")
+                        .setCssStyle("color", "#ffffff"),
                 )
-                    .setMaxWidth("900px"),
+                    .setContentMaxWidth("900px"),
             ),
             Grid(
                 Label("Loved by Artists")
@@ -321,6 +388,7 @@ appendBody(
                     .setCssStyle("textAlign", "center")
                     .setFontWeight("bold")
                     .setTextSize("xl")
+                    .setCssStyle("color", grayText)
                     .addClass("opacity-60"),
             )
                 .setMargin("100px 0"),
@@ -328,13 +396,12 @@ appendBody(
                 Grid(
                     Label("The thing I love the most is the flexibility and the contactability of the entire BBN Music team. It is also just great to develop concepts and plans with motivated and very friendly people.")
                         .setCssStyle("textAlign", "start")
-                        .addClass("italic-text")
+                        .setCssStyle("fontStyle", "italic")
                         .setFontWeight("bold"),
                     Grid(
-                        Image(redz, "Avatar of Redz"),
-                        // .setBorderRadius("complete")
-                        // .setAspectRatio("1/1")
-                        // .resizeToBox(),
+                        Image(redz, "Avatar of Redz")
+                            .setCssStyle("aspectRatio", "1/1")
+                            .setRadius("complete"),
                         Label("Redz")
                             .setFontWeight("bold")
                             .setTextSize("xl"),
@@ -349,13 +416,12 @@ appendBody(
                 Grid(
                     Label("There is pretty much no other digital distributor that offers more and at the same time, works so closely with artists and who artists are so valued by and feel so understood by.")
                         .setCssStyle("textAlign", "end")
-                        .addClass("italic-text")
+                        .setCssStyle("fontStyle", "italic")
                         .setFontWeight("bold"),
                     Grid(
-                        Image(criticz, "Avatar of Criticz"),
-                        // .setBorderRadius("complete")
-                        // .setAspectRatio("1/1")
-                        // .resizeToBox(),
+                        Image(criticz, "Avatar of Criticz")
+                            .setCssStyle("aspectRatio", "1/1")
+                            .setRadius("complete"),
                         Label("Criticz")
                             .setFontWeight("bold")
                             .setTextSize("xl"),
@@ -369,9 +435,13 @@ appendBody(
                     .addClass("max-width-30rem")
                     .setMargin("0 0 0 auto")
                     .setPadding("95px 0 95px 0"),
-            ).setMaxWidth("680px"),
+            )
+                .setContentMaxWidth("680px"),
             FullWidthSection(Footer()),
         )
-            .setMaxWidth("1230px"),
-    ),
+            .setContentMaxWidth("1230px"),
+    )
+        .setPrimaryColor(new Color("#eb8c2d")),
 );
+
+document.body.style.backgroundColor = Color.reverseNeutral.mix(new Color("black"), 70);

@@ -52,6 +52,7 @@ function rawAccessToken() {
 }
 
 export const activeUser = asRefRecord({
+    emailVerified: <boolean | undefined> undefined,
     email: <string | undefined> undefined,
     username: <string> "--",
     avatar: <string | undefined> undefined,
@@ -67,6 +68,7 @@ export function updateActiveUserData() {
     try {
         const user = IsLoggedIn();
         if (!user) return;
+        activeUser.emailVerified.setValue(user.profile.verified?.email);
         activeUser.username.setValue(user.profile.username);
         activeUser.email.setValue(user.profile.email);
         activeUser.avatar.setValue(user.profile.avatar);

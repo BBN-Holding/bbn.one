@@ -1,9 +1,9 @@
 import { delay } from "@std/async";
 import { activeUser, IsLoggedIn, permCheck, showProfilePicture } from "shared/helper.ts";
 import { API } from "shared/mod.ts";
-import { Box, Component, Empty, Grid, Image, Label, MaterialIcon, Popover, PrimaryButton } from "webgen/mod.ts";
-import "./nav.css";
-import { activeTitle, pages } from "./pages.ts";
+import "webgen/assets/font/font.css";
+import { Box, Color, Component, Content, css, Empty, Grid, Image, Label, MaterialIcon, Popover, PrimaryButton } from "webgen/mod.ts";
+import { activeTitle, NavigationType, pages } from "./pages.ts";
 
 const navMenuPopover = Popover(
     Box(
@@ -42,70 +42,124 @@ const navMenuPopover = Popover(
 //     style.height = "min-content";
 // });
 
-export function DynaNavigation(type: "Home" | "Music" | "Settings" | "Hosting" | "Admin" | "Wallet") {
+function NavigationBar(type: NavigationType) {
+    return Grid(
+        Grid(
+            MaterialIcon("apps"),
+            Grid(
+                Label(activeTitle(type))
+                    .setFontWeight("bold")
+                    .setTextSize("2xl")
+                    .setMargin("0 2px 0 0"),
+            ),
+        )
+            .setGap(".5rem")
+            .setTemplateColumns("max-content max-content")
+            .setAlignItems("center")
+            .setJustifyContent("center")
+            .addClass("clickable")
+            .setAnchorName("--nav-menu-popover")
+            .onClick(() => {
+                navMenuPopover.showPopover();
+            }),
+        Box(
+            activeUser.email.map((isLoggedIn) => {
+                if (!isLoggedIn) {
+                    if ((type === "Home" || type === "Music" || type === "Music-Landing") && !location.pathname.startsWith("/signin")) {
+                        return PrimaryButton("Sign in")
+                            .onClick(() => location.href = "/signin")
+                            .addStyle(css`
+                                :host {
+                                    --wg-button-border-radius: var(--wg-radius-large);
+                                    --wg-button-height: 30px;
+                                    --wg-button-padding: 0 10px;
+                                }
+                            `);
+                    }
+
+                    return [];
+                }
+
+                return Grid(
+                    showProfilePicture(IsLoggedIn()!).setWidth("29px").setHeight("29px"),
+                    Label(activeUser.username.value)
+                        .setFontWeight("bold"),
+                    Empty(),
+                )
+                    .setGap(".7rem")
+                    .setTemplateColumns("max-content max-content")
+                    .setAlignItems("center")
+                    .onClick(() => location.href = "/settings")
+                    .addClass("profile-button");
+            }),
+        ),
+    )
+        .setTemplateColumns("max-content max-content")
+        .setJustifyContent("space-between")
+        .setMargin("5px 0");
+}
+
+export function EmailVerificationBanner() {
+    return Grid(
+        Label("Your Email is not verified. Please check your Inbox/Spam folder.")
+            .setTextSize("sm")
+            .setFontWeight("bold"),
+        PrimaryButton("Resend Verify Email")
+            .onPromiseClick(async () => {
+                await API.user.mail.resendVerifyEmail.post();
+                await delay(1000);
+            })
+            .setRadius("large")
+            .addStyle(css`
+                :host {
+                    --wg-button-height: 22px;
+                    --wg-button-padding: 0 2px;
+                }
+            `),
+    )
+        .setTemplateColumns("auto max-content")
+        .setAlignItems("center")
+        .setPadding("var(--wg-gap)")
+        .setRadius("large")
+        .addStyle(css`
+            :host {
+                background-color: ${new Color("red").mix(new Color("black"), 80)};
+                color: red;
+            }
+        `);
+}
+
+export function DynaNavigation(type: NavigationType) {
     const Nav = (component: Component) => {
         const nav = document.createElement("nav");
         nav.append(component.draw());
-        nav.classList.add("nav", type.toLowerCase());
         return { draw: () => nav };
     };
 
-    return Nav(
-        Grid(
-            Grid(
+    return Box(
+        Nav(
+            Content(
                 Grid(
-                    MaterialIcon("apps"),
-                    Grid(
-                        Label(activeTitle(type))
-                            .setFontWeight("bold")
-                            .setTextSize("2xl")
-                            .setMargin("2px 0 0"),
-                    ),
+                    NavigationBar(type),
+                    Box(activeUser.emailVerified.map((verified) => verified === false ? EmailVerificationBanner() : [])),
                 )
-                    .setGap(".5rem")
-                    .setTemplateColumns("max-content max-content")
-                    .setAlignItems("center")
-                    .setJustifyContent("center")
-                    .addClass("clickable")
-                    .setAnchorName("--nav-menu-popover")
-                    .onClick(() => {
-                        navMenuPopover.showPopover();
-                    }),
-                (activeUser.email.map((email) =>
-                    email
-                        ? Grid(
-                            showProfilePicture(IsLoggedIn()!).setWidth("29px").setHeight("29px"),
-                            Label(activeUser.username.value)
-                                .setFontWeight("bold"),
-                            Empty(),
-                        )
-                            .setGap(".7rem")
-                            .setTemplateColumns("max-content max-content")
-                            .setAlignItems("center")
-                            .onClick(() => location.href = "/settings")
-                            .addClass("profile-button")
-                        : ((type === "Home" || type === "Music") && !location.pathname.startsWith("/signin")
-                            ? PrimaryButton("Sign in")
-                                .onClick(() => location.href = "/signin")
-                                .addClass("login-button")
-                            : Empty())
-                ).value) ?? null,
+                    .setGap("0.4rem")
+                    .setDirection("row")
+                    .setMargin("0.5rem auto")
+                    .setWidth("100%"),
             )
-                .setTemplateColumns("1fr max-content"),
-            IsLoggedIn() && IsLoggedIn()!.profile.verified?.email != true
-                ? Grid(
-                    Label("Your Email is not verified. Please check your Inbox/Spam folder.").addClass("label"),
-                    PrimaryButton("Resend Verify Email")
-                        .onPromiseClick(async () => {
-                            await API.user.mail.resendVerifyEmail.post();
-                            await delay(1000);
-                        })
-                        .addClass("link"),
-                ).addClass("email-banner", type.toLowerCase())
-                : Empty(),
-        )
-            .setGap("0.4rem")
-            .setDirection("row")
-            .setMargin("0.5rem auto"),
-    );
+                .setContentMaxWidth("1230px"),
+        ),
+    )
+        .setAttribute("type", type)
+        .addStyle(css`
+            :host {
+                top: 0;
+                position: sticky;
+                z-index: 100;
+            }
+            :host([type="Music-Landing"]) {
+                backdrop-filter: blur(10px);
+            }
+        `);
 }
