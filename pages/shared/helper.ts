@@ -1,5 +1,7 @@
+import { fail } from "@std/assert/fail";
+import { LruCache, memoize } from "@std/cache";
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { asRefRecord, Component, Empty, Image, ImageComponent, Sheets } from "webgen/mod.ts";
+import { asRefRecord, Async, Component, Empty, Grid, Image, ImageComponent, Sheets, Spinner } from "webgen/mod.ts";
 import { loginRequired } from "../../components/pages.ts";
 import { Drop } from "../../spec/music.ts";
 
@@ -210,8 +212,11 @@ export function stringToColor(str: string) {
 export function ProfilePicture(component: Component, name: string) {
     const ele = component.draw();
     ele.style.backgroundColor = stringToColor(name);
-    return Empty();
-    // return Custom(ele).addClass("profile-picture");
+    return Grid({
+        draw: () => ele,
+    })
+        .setCssStyle("overflow", "hidden")
+        .setRadius("mid");
 }
 
 export function getNameInital(name: string) {
@@ -227,27 +232,27 @@ export function getNameInital(name: string) {
     return name.at(0)!.toUpperCase();
 }
 
+const cache = new LruCache<unknown, Promise<Blob>>(10);
+
+const getPicture = memoize(async (id: string) => {
+    const image = await API.user.picture(id);
+    if (image.status == "fulfilled") {
+        return image.value;
+    }
+    fail("Failed to load image");
+}, { cache });
+
 export function showProfilePicture(x: ProfileData) {
-    return Empty();
-    // return ProfilePicture(
-    //     x.profile.avatar
-    //         ? Image({
-    //             type: "direct",
-    //             source: async () => {
-    //                 const blob = new Blob();
-
-    //                 const data = await API.user.picture(x._id);
-
-    //                 if (data.status == "fulfilled") {
-    //                     return data.value;
-    //                 }
-
-    //                 return blob;
-    //             },
-    //         }, "Profile Picture")
-    //         : Label(getNameInital(x.profile.username)),
-    //     x.profile.username,
-    // );
+    return ProfilePicture(
+        Async(
+            (async () => {
+                const image = await getPicture(x._id);
+                return Image(URL.createObjectURL(image), "Profile picture");
+            })(),
+            Spinner(),
+        ),
+        x.profile.username,
+    );
 }
 
 export const streamingImages: Record<string, ImageComponent> = {

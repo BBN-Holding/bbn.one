@@ -102,6 +102,7 @@ function NavigationBar(type: NavigationType) {
                     .setGap(".7rem")
                     .setTemplateColumns("max-content max-content")
                     .setAlignItems("center")
+                    .setCssStyle("cursor", "pointer")
                     .onClick(() => location.href = "/settings")
                     .addClass("profile-button");
             }),
@@ -156,7 +157,6 @@ export function DynaNavigation(type: NavigationType) {
                     NavigationBar(type),
                     Box(activeUser.emailVerified.map((verified) => verified === false ? EmailVerificationBanner() : [])),
                 )
-                    .setGap("0.4rem")
                     .setDirection("row")
                     .setMargin("0.5rem auto")
                     .setWidth("100%"),
