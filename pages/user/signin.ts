@@ -4,13 +4,13 @@ import { RegisterAuthRefresh } from "shared/helper.ts";
 import { API } from "shared/mod.ts";
 import { appendBody, Box, Color, Content, css, EmailInput, Empty, FullWidthSection, Grid, Image, isMobile, Label, mediaQueryRef, PasswordInput, PrimaryButton, Spinner, TextButton, TextInput, WebGenTheme, WriteSignal } from "webgen/mod.ts";
 import "../../assets/css/main.css";
-import { googleLogo } from "../../assets/imports.ts";
+import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { handleStateChange, loginUser } from "./actions.ts";
 import { state } from "./state.ts";
 
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
-import backgroundImage from "../holding./resources/background.jpg";
+import backgroundImage from "../holding/resources/background.jpg";
 
 await RegisterAuthRefresh();
 document.adoptedStyleSheets.push(css`
@@ -132,21 +132,21 @@ appendBody(
                         if (type == "login") {
                             return Grid(
                                 PrimaryButton("Sign in with Google")
-                                    .onClick(() => {
-                                        location.href = API.auth.oauthRedirect("google");
-                                    })
                                     .addPrefix(
                                         Image(googleLogo, "Google Logo")
-                                            .setCssStyle("position", "absolute"),
-                                    ),
+                                            .setCssStyle("scale", ".9"),
+                                    )
+                                    .onClick(() => {
+                                        location.href = API.auth.oauthRedirect("google");
+                                    }),
                                 PrimaryButton("Sign in with Discord")
+                                    .addPrefix(
+                                        Image(discordLogo, "Discord Logo")
+                                            .setWidth("20px"),
+                                    )
                                     .onClick(() => {
                                         location.href = API.auth.oauthRedirect("discord");
                                     })
-                                    // .addPrefix(
-                                    //     Image(discordLogo, "Discord Logo")
-                                    //         .setCssStyle("position", "absolute"),
-                                    // )
                                     // LinkButton("Sign in with Microsoft", API.auth.oauthRedirect("microsoft"))
                                     //     .setJustifyContent("center")
                                     //     .addPrefix(
