@@ -11,7 +11,7 @@
         "shared/": "./pages/shared/",
         "zod/": "https://deno.land/x/zod@v3.23.8/",
         // "webgen/": "../WebGen/"
-        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/8e634b6/"
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/feb5f33/"
     },
     "lock": false,
     "compilerOptions": {
