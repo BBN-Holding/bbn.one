@@ -24,7 +24,9 @@ const navMenuPopover = Popover(
                         )
                             .setTemplateColumns("12rem max-content")
                             .addClass("small-entry")
-                            .onClick(() => location.pathname = route)
+                            .onClick(() => {
+                                location.href = route;
+                            })
                         : Empty()
                 ),
                 perm.length
@@ -101,7 +103,6 @@ function NavigationBar(type: NavigationType) {
                     showProfilePicture(IsLoggedIn()!).setWidth("29px").setHeight("29px"),
                     Label(activeUser.username.value)
                         .setFontWeight("bold"),
-                    Empty(),
                 )
                     .setGap(".7rem")
                     .setTemplateColumns("max-content max-content")
@@ -110,7 +111,8 @@ function NavigationBar(type: NavigationType) {
                     .onClick(() => location.href = "/settings")
                     .addClass("profile-button");
             }),
-        ),
+        )
+            .setCssStyle("display", "contents"),
     )
         .setTemplateColumns("max-content max-content")
         .setJustifyContent("space-between")
@@ -178,7 +180,6 @@ export function DynaNavigation(type: NavigationType) {
                         top: anchor(bottom);
                         left: anchor(left);
                         border: none;
-                        background: ${Color.reverseNeutral.toString()};
                         overflow: hidden;
                         padding: 5px 10px;
                         border-radius: var(--wg-radius-large);
@@ -196,6 +197,9 @@ export function DynaNavigation(type: NavigationType) {
             }
             :host([type="Music-Landing"]) {
                 backdrop-filter: blur(10px);
+            }
+            :host([type="Music"]) {
+                background: linear-gradient(166deg, #F19D2D 6.59%, #DB5721 101.73%);
             }
         `);
 }

@@ -62,7 +62,7 @@ serve({
         // "callback": "./pages/misc/callback.ts",
         // "oauth": "./pages/user/oauth.ts",
         // "music": "./pages/music-landing/main.ts",
-        // "c/music": "./pages/music/main.ts",
+        "c/music": "./pages/music/main.ts",
         // "c/music/new-drop": "./pages/music/newDrop.ts",
         // "c/music/edit": "./pages/music/edit.ts",
         // "c/music/payout": "./pages/payout/main.ts",
@@ -80,6 +80,7 @@ serve({
         "./bug-reporter.ts",
         "https://cdn.jsdelivr.net/npm/native-file-system-adapter@3.0.1/mod.js",
         "https://unpkg.com/urlpattern-polyfill",
+        "https://esm.sh/@virtualstate/navigation@1.0.1-alpha.206/polyfill",
     ],
 });
 

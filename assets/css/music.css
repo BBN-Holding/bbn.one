@@ -1,41 +1,15 @@
-.entry-subtitle {
-    color: rgb(255 255 255 / 80%);
-}
-
-.under-review {
-    background-color: #BCBCBC;
-    color: rgba(0, 0, 0, 0.8);
-    border-radius: 10rem;
-    font-weight: 700;
-    font-size: 15px;
-    padding: 0.2rem 0.8rem;
-    margin: 0 2rem;
-}
-
-.small-preview.image-preview .wimage {
-    height: 2.2rem;
-    border-radius: 3px;
-    margin: 0 0.4rem 0 0;
-}
-
 @media (prefers-color-scheme: dark) {
     body {
+        background-color: black !important;
         background-image: linear-gradient(360deg, #00000000, #f19d2d2b);
         background-size: 100vw 100vh;
         background-repeat: no-repeat;
     }
 }
 
-nav.music {
-    background: linear-gradient(166deg, #F19D2D 6.59%, #DB5721 101.73%);
-}
 
-@media (max-width: 800px) {
-    nav.music {
-        background: linear-gradient(166deg, #F19D2D 6.59%, #db7621 101.73%);
+@media (prefers-color-scheme: dark) {
+    body {
+        --wg-reverse-neutral: rgba(255, 255, 255, 2%);
     }
-}
-
-div.navigation>div.vertical-stack {
-    gap: unset !important;
 }
