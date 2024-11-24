@@ -1,7 +1,4 @@
 import { serve } from "https://deno.land/x/esbuild_serve@1.5.0/mod.ts";
-// import { serve } from "../esbuild_serve/mod.ts";
-
-// CI FAIL
 
 const title = new Map(Object.entries({
     "index": "BBN Music",
@@ -58,7 +55,7 @@ serve({
         // "p/privacy-policy": "./pages/holding/privacyPolicy.ts",
         // "p/terms": "./pages/holding/terms.ts",
         // "p/imprint": "./pages/holding/imprint.ts",
-        // "signin": "./pages/user/signin.ts",
+        "signin": "./pages/user/signin.ts",
         // "callback": "./pages/misc/callback.ts",
         // "oauth": "./pages/user/oauth.ts",
         // "music": "./pages/music-landing/main.ts",

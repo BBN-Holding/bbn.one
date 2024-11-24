@@ -26,21 +26,21 @@
     background-size: cover;
 }
 
-.auth-area {
+/* .auth-area {
     min-height: 100vh;
     display: grid;
     place-items: center;
-}
+} */
 
-.line-header {
+/* .line-header {
     line-height: 94px;
-}
+} */
 
-.prefix-logo {
+/* .prefix-logo {
     position: absolute;
     left: .7rem;
     width: 1.2rem;
-}
+} */
 
 .loader.loading {
     width: 100%;
@@ -51,10 +51,10 @@
     align-items: end;
     margin-top: -1rem;
 }
-
+/*
 .header {
     max-width: 21rem;
-}
+} */
 
 @media (prefers-color-scheme: light) {
     body {

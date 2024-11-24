@@ -10,8 +10,8 @@
         "@std/cache": "jsr:@std/cache@^0.1.3",
         "shared/": "./pages/shared/",
         "zod/": "https://deno.land/x/zod@v3.23.8/",
-        "webgen/": "../WebGen/"
-        // "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/3616d3b/"
+        // "webgen/": "../WebGen/"
+        "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/8e634b6/"
     },
     "lock": false,
     "compilerOptions": {

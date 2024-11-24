@@ -1,7 +1,6 @@
 import { Box, Component, Grid, Label } from "webgen/core/mod.ts";
 import { asRef, BootstrapIcon, Content, css, Image, mediaQueryRef, PrimaryButton, SecondaryButton, TextButton } from "webgen/mod.ts";
 import { splash } from "../../assets/imports.ts";
-import "./footer.css";
 
 export function Footer() {
     return Content(

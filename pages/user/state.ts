@@ -1,11 +1,11 @@
-import { asState } from "webgen/mod.ts";
+import { asRefRecord } from "webgen/mod.ts";
 
 type ViewType = "loading" | "request-reset-password" | "reset-password-from-email" | "login" | "register";
 
-export const state = asState({
+export const state = asRefRecord({
     type: <ViewType> "loading",
-    name: <string | undefined> undefined,
-    email: <string | undefined> undefined,
-    password: <string | undefined> undefined,
+    name: "",
+    email: "",
+    password: "",
     error: <string | undefined> undefined,
 });

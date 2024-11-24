@@ -8,8 +8,8 @@ export async function loginUser() {
     try {
         assert(state.email && state.password, "Missing Email or Password");
         const rsp = await API.auth.email.post({
-            email: state.email,
-            password: state.password,
+            email: state.email.value,
+            password: state.password.value,
         });
         if (rsp.status == "rejected") {
             throw rsp.reason;
@@ -18,16 +18,16 @@ export async function loginUser() {
         await logIn(rsp.value);
         gotoGoal();
     } catch (error) {
-        state.error = displayError(error);
+        state.error.setValue(displayError(error));
     }
 }
 
 export async function registerUser() {
     try {
         const { name, email, password } = {
-            email: state.email ?? "",
-            password: state.password ?? "",
-            name: state.name ?? "",
+            email: state.email.value ?? "",
+            password: state.password.value ?? "",
+            name: state.name.value ?? "",
         };
         assert(name && email && password, "Missing fields");
         const rsp = await API.auth.register.post({
@@ -42,7 +42,7 @@ export async function registerUser() {
         await logIn(rsp.value);
         gotoGoal();
     } catch (error) {
-        state.error = displayError(error);
+        state.error.setValue(displayError(error));
     }
 }
 
@@ -63,7 +63,7 @@ export async function handleStateChange() {
     if (params.type && ["google", "discord", "microsoft"].includes(params.type) && params.code) {
         const rsp = await API.auth.oauth.post(params.type, params.code);
         if (rsp.status === "rejected") {
-            return state.error = displayError(rsp.reason);
+            return state.error.setValue(displayError(rsp.reason));
         }
         await logIn(rsp.value);
         gotoGoal();
@@ -72,7 +72,7 @@ export async function handleStateChange() {
     if (params.type == "reset-password" && params.token) {
         const rsp = await API.auth.fromUserInteraction.get(params.token);
         if (rsp.status === "rejected") {
-            return state.error = displayError(rsp.reason);
+            return state.error.setValue(displayError(rsp.reason));
         }
         await logIn(rsp.value);
         gotoGoal();
@@ -81,12 +81,12 @@ export async function handleStateChange() {
     if (params.type == "verify-email" && params.token) {
         const rsp = await API.user.mail.validate.post(params.token);
         if (rsp.status === "rejected") {
-            return state.error = displayError(rsp.reason);
+            return state.error.setValue(displayError(rsp.reason));
         }
         await forceRefreshToken();
         await delay(1000);
         gotoGoal();
         return;
     }
-    state.type = "login";
+    state.type.setValue("login");
 }

@@ -23,9 +23,11 @@ import tidal from "./assets/tidal.svg";
 import tiktok from "./assets/tiktok.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import youtube from "./assets/youtube.svg";
-
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import backgroundImage from "./assets/background.png";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import criticz from "./assets/criticz.jpg";
+// @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import redz from "./assets/redz.jpg";
 
 await RegisterAuthRefresh();
