@@ -24,6 +24,7 @@ import tiktok from "./assets/tiktok.svg";
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import youtube from "./assets/youtube.svg";
 
+import backgroundImage from "./assets/background.png";
 import criticz from "./assets/criticz.jpg";
 import redz from "./assets/redz.jpg";
 
@@ -54,6 +55,8 @@ document.adoptedStyleSheets.push(css`
         --badge-free-tier: linear-gradient(139deg,#d9881c73 6.59%,#c6451073 101.73%);
         --background-paid-tier: linear-gradient(139deg, #d9881c 6.59%, #c64510 101.73%);
         --badge-paid-tier: #00000040;
+        --bg-color: ${Color.reverseNeutral.mix(new Color("black"), 50)};
+        background-color: var(--bg-color);
     }
 `);
 
@@ -95,13 +98,38 @@ export function CTAButtonSmall() {
         `);
 }
 
+const isLightMode = mediaQueryRef("(prefers-color-scheme: light)");
+
 appendBody(
     WebGenTheme(
         Content(
             FullWidthSection(
                 DynaNavigation("Music-Landing"),
             ),
-            FullWidthSection(Empty().addClass("background-image")),
+            FullWidthSection(
+                Empty()
+                    .setAttribute("theme", isLightMode.map((x) => x ? "light" : "dark"))
+                    .addStyle(css`
+                        :host {
+                            position: absolute;
+                            display: block;
+                            inset: -0.5rem;
+                            --image: url('${backgroundImage}');
+                            background:
+                                linear-gradient(180deg, rgba(0, 0, 0, 0.61) 0%, var(--bg-color) 77.08%, var(--bg-color) 100%),
+                                var(--image) no-repeat center center;
+                            background-size: cover;
+                            filter: blur(4.5px);
+                            z-index: -1;
+                        }
+                        :host([theme=light]) {
+                            background:
+                                linear-gradient(180deg, rgba(255, 255, 255, 0.61) 0%, #f3f5fa 77.08%, #f3f5fa 100%),
+                                var(--image) no-repeat center center;
+                            background-size: cover;
+                        }
+                    `),
+            ),
             Content(
                 Grid(
                     Box(
@@ -277,11 +305,15 @@ appendBody(
             )
                 .setContentMaxWidth("850px")
                 .setAlignContent("center")
+                .setAttribute("theme", isLightMode.map((x) => x ? "light" : "dark"))
                 .addStyle(css`
                     .icon-carousel wg-image {
                         width: var(--carousel-size);
                             height: var(--carousel-size);
                             filter: brightness(0) invert(1);
+                    }
+                    :host([theme="light"]) .icon-carousel wg-image {
+                        filter: brightness(0) invert(0);
                     }
                     @keyframes carousel {
                         0% {
@@ -473,5 +505,3 @@ appendBody(
     )
         .setPrimaryColor(new Color("#eb8c2d")),
 );
-
-document.body.style.backgroundColor = Color.reverseNeutral.mix(new Color("black"), 50);
