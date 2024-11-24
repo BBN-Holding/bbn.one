@@ -29,9 +29,13 @@ const navMenuPopover = Popover(
                 ),
                 perm.length
                     ? Grid(
-                        Label("Go to Settings"),
-                        MaterialIcon("arrow_forward_ios"),
+                        Label("Go to Settings")
+                            .setTextSize("sm"),
+                        MaterialIcon("arrow_forward_ios")
+                            .setCssStyle("scale", ".7"),
                     )
+                        .setTemplateColumns("auto max-content")
+                        .setMargin("5px 0 0")
                         .addClass("small-entry", "settings")
                         .onClick(() => location.href = "/settings")
                     : Empty(),
