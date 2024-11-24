@@ -9,6 +9,7 @@ const source = data.map((data) => data === "loading" ? [] : data);
 export const draftsDropsPage = createPage(
     {
         label: "Drafts",
+        weight: 0,
         route: createRoute({
             path: "/c/music?list=drafts",
             events: {

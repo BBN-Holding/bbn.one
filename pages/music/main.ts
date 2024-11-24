@@ -6,13 +6,15 @@ import "./pages/unpublishedDrops.ts";
 
 /// <reference types="npm:@types/dom-navigation/index.d.ts" />
 
-import { activeUser, RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "shared/helper.ts";
+import { RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "shared/helper.ts";
+import { Navigation } from "shared/navigation.ts";
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
-import { activeRoute, appendBody, Box, Content, createRoute, css, DialogContainer, FullWidthSection, Grid, Label, menuList, PageRouter, PrimaryButton, ref, SecondaryButton, StartRouting, WebGenTheme } from "webgen/mod.ts";
+import { activeRoute, appendBody, Box, Content, createRoute, css, DialogContainer, FullWidthSection, PrimaryButton, StartRouting, WebGenTheme } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import { DropType } from "../../spec/music.ts";
+import { artistsPage } from "./pages/artists.ts";
 import { draftsDropsPage } from "./pages/draftDrops.ts";
 import { publishedDrops } from "./pages/publishedDrops.ts";
 
@@ -34,44 +36,6 @@ createRoute({
     },
 });
 
-export function Navigation() {
-    return Box(
-        Content(
-            Grid(
-                Label(ref`Hi ${activeUser.username} 👋`)
-                    .setFontWeight("bold")
-                    .setTextSize("4xl"),
-                Grid(
-                    menuList
-                        .map((item) =>
-                            item
-                                .filter((item) => item.route.entry.patternUrl.startsWith("/c/music?list="))
-                                .map((item) =>
-                                    Box(activeRoute.map((activeRoute) =>
-                                        (activeRoute == item.route.entry ? PrimaryButton(item.label) : SecondaryButton(item.label))
-                                            .onPromiseClick(async () => {
-                                                await window.navigation.navigate(item.route.entry.patternUrl).finished;
-                                            })
-                                    ))
-                                )
-                        ),
-                )
-                    .setGap(".8rem")
-                    .setAutoFlow("column")
-                    .setAutoColumn("max-content"),
-            )
-                .setGap("1rem")
-                .setMargin("4rem 0 1rem"),
-        )
-            .addStyle(css`
-                :host {
-                    --wg-button-border-radius: var(--wg-radius-large);
-                }
-            `),
-        PageRouter,
-    );
-}
-
 appendBody(
     WebGenTheme(
         DialogContainer(sheetStack.visible(), sheetStack),
@@ -80,7 +44,23 @@ appendBody(
                 DynaNavigation("Music"),
             ),
         ),
-        Navigation(),
+        Navigation(
+            Box(
+                activeRoute.map((route) => route === artistsPage.route.entry)
+                    .map((isArtistsRoute) =>
+                        isArtistsRoute
+                            ? PrimaryButton("Create new Artist")
+                                .onClick(() => {
+                                    // createArtistSheet().then(async () => menuState.artists = await API.music.artists.list().then(stupidErrorAlert))
+                                })
+                            : PrimaryButton("Create new Drop")
+                                .onPromiseClick(async () => {
+                                    const { id } = await API.music.drops.create().then(stupidErrorAlert);
+                                    location.href = `/c/music/new-drop?id=${id}`;
+                                })
+                    ),
+            ),
+        ),
     )
         .addStyle(css`
             :host {
