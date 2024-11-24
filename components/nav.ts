@@ -2,21 +2,27 @@ import { delay } from "@std/async";
 import { activeUser, IsLoggedIn, permCheck, showProfilePicture } from "shared/helper.ts";
 import { API } from "shared/mod.ts";
 import "webgen/assets/font/font.css";
-import { Box, Color, Component, Content, css, Empty, Grid, Image, Label, MaterialIcon, Popover, PrimaryButton } from "webgen/mod.ts";
+import { Box, Color, Component, Content, css, Empty, Grid, Image, Label, MaterialIcon, mediaQueryRef, Popover, PrimaryButton } from "webgen/mod.ts";
 import { activeTitle, NavigationType, pages } from "./pages.ts";
+
+const isLightMode = mediaQueryRef("(prefers-color-scheme: light)");
 
 const navMenuPopover = Popover(
     Box(
-        Label("sdf"),
         activeUser.permission.map((perm) =>
             Grid(
-                Label("SWITCH TO").addClass("title"),
+                Label("SWITCH TO")
+                    .setFontWeight("bold")
+                    .setTextSize("xs")
+                    .setMargin("2px 0"),
                 ...pages.map(([logo, permission, route, login]) =>
                     permCheck(...permission) && (!login || (login == 1 && IsLoggedIn()) || (login == 2 && !IsLoggedIn()))
                         ? Grid(
-                            Image(logo, "Logo"),
-                            MaterialIcon("arrow_forward_ios"),
+                            Image(logo, "Logo").addClass("icon"),
+                            MaterialIcon("arrow_forward_ios")
+                                .setCssStyle("scale", ".8"),
                         )
+                            .setTemplateColumns("12rem max-content")
                             .addClass("small-entry")
                             .onClick(() => location.pathname = route)
                         : Empty()
@@ -25,22 +31,27 @@ const navMenuPopover = Popover(
                     ? Grid(
                         Label("Go to Settings"),
                         MaterialIcon("arrow_forward_ios"),
-                    ).addClass("small-entry", "settings")
+                    )
+                        .addClass("small-entry", "settings")
                         .onClick(() => location.href = "/settings")
                     : Empty(),
             )
-        )
-            .value,
+        ),
     )
         .addClass("drop-over"),
 );
-// .pullingAnchorPositioning("--nav-menu-popover", (rect, style) => {
-//     style.top = `max(-5px, ${rect.bottom}px)`;
-//     style.left = `${rect.left}px`;
-//     style.minWidth = `${rect.width}px`;
-//     style.bottom = "var(--gap)";
-//     style.height = "min-content";
-// });
+
+navMenuPopover
+    .setAttribute("theme", isLightMode.map((light) => light ? "light" : "dark"))
+    .addStyle(css`
+        :host([theme="light"]) .icon {
+            filter: invert(.8);
+        }
+        .small-entry:hover {
+            opacity: 0.7;
+            cursor: pointer;
+        }
+    `);
 
 function NavigationBar(type: NavigationType) {
     return Grid(
@@ -57,11 +68,13 @@ function NavigationBar(type: NavigationType) {
             .setTemplateColumns("max-content max-content")
             .setAlignItems("center")
             .setJustifyContent("center")
-            .addClass("clickable")
-            .setAnchorName("--nav-menu-popover")
+            .addClass("nav-menu")
             .onClick(() => {
-                navMenuPopover.showPopover();
+                if (!navMenuPopover.isOpen()) {
+                    navMenuPopover.showPopover();
+                }
             }),
+        navMenuPopover.addClass("nav-menu-popover"),
         Box(
             activeUser.email.map((isLoggedIn) => {
                 if (!isLoggedIn) {
@@ -148,7 +161,26 @@ export function DynaNavigation(type: NavigationType) {
                     .setMargin("0.5rem auto")
                     .setWidth("100%"),
             )
-                .setContentMaxWidth("1230px"),
+                .setContentMaxWidth("1230px")
+                .addStyle(css`
+                    .nav-menu {
+                        anchor-name: --nav-menu-popover;
+                        cursor: pointer;
+                        user-select: none;
+                    }
+                    .nav-menu-popover {
+                        position-anchor: --nav-menu-popover;
+                        margin: unset;
+                        top: anchor(bottom);
+                        left: anchor(left);
+                        border: none;
+                        background: ${Color.reverseNeutral.toString()};
+                        overflow: hidden;
+                        padding: 5px 10px;
+                        border-radius: var(--wg-radius-large);
+                        box-shadow: var(--wg-shadow-5);
+                    }
+                `),
         ),
     )
         .setAttribute("type", type)
