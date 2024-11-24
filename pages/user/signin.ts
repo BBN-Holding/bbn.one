@@ -6,7 +6,7 @@ import { appendBody, Box, Color, Content, css, EmailInput, Empty, FullWidthSecti
 import "../../assets/css/main.css";
 import { discordLogo, googleLogo } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
-import { handleStateChange, loginUser } from "./actions.ts";
+import { handleStateChange, loginUser, registerUser } from "./actions.ts";
 import { state } from "./state.ts";
 
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
@@ -15,14 +15,6 @@ import backgroundImage from "../holding/resources/background.jpg";
 await RegisterAuthRefresh();
 document.adoptedStyleSheets.push(css`
     body {
-        --box-shadow-cta: 0 .824px 1.752px #db572124, 0 2.085px 4.43px #db572133, 0 4.253px 9.038px #db57213d, 0 8.76px 18.616px #db57214d, 0 24px 51px #db572170;
-        --box-shadow-cta-hover: 0 1.237px .69px #db572145, 0 3.127px 5.113px #db572157, 0 6.38px 15.547px #db57215c, 0 13.141px 37.63px #db572163, 0 36px 100px #db572182;;
-        --background-cta: linear-gradient(139deg, #e39123 6.59%, #db5721 101.73%);
-
-        --background-free-tier: linear-gradient(139deg, #e3912333 6.59%, #db572133 101.73%), #0a0a0a;
-        --badge-free-tier: linear-gradient(139deg,#d9881c73 6.59%,#c6451073 101.73%);
-        --background-paid-tier: linear-gradient(139deg, #d9881c 6.59%, #c64510 101.73%);
-        --badge-paid-tier: #00000040;
         --bg-color: ${Color.reverseNeutral.mix(new Color("black"), 50)};
         background-color: var(--bg-color);
     }
@@ -94,40 +86,33 @@ appendBody(
                                 ErrorMessage(state.error),
                             ));
                         }
-                        // if (type == "request-reset-password") {
-                        //     return Form(Grid(
-                        //         TextInput("email", "Email")
-                        //             .ref(state.$email)
-                        //             .onChange(() => state.error = undefined)
-                        //             .setAutofill("email")
-                        //             .required()
-                        //             .setMargin("0 0 .6rem"),
-                        //         Button("Reset")
-                        //             .onPromiseClick(async () => {
-                        //                 try {
-                        //                     assert(state.email, "Email is missing");
 
-                        //                     await API.auth.forgotPassword.post(state.email);
+                        if (type == "request-reset-password") {
+                            return Grid(
+                                EmailInput(state.email, "Email")
+                                    .setMargin("0 0 .6rem"),
+                                PrimaryButton("Reset")
+                                    .onPromiseClick(async () => {
+                                        try {
+                                            assert(state.email, "Email is missing");
 
-                        //                     alert("Email sent! Please check your Inbox/Spam folder.");
-                        //                 } catch (_) {
-                        //                     state.error = _.message;
-                        //                 }
-                        //             })
-                        //             .setJustifyContent("center"),
-                        //         ErrorMessage(),
-                        //         Horizontal(
-                        //             Label("Already have an account?"),
-                        //             Button("Sign in")
-                        //                 .setStyle(ButtonStyle.Inline)
-                        //                 .onClick(() => state.type = "login")
-                        //                 .setColor(Color.Colored)
-                        //                 .addClass("link"),
-                        //             Spacer(),
-                        //         )
-                        //             .setMargin("1rem 0 0"),
-                        //     ));
-                        // }
+                                            await API.auth.forgotPassword.post(state.email.value);
+
+                                            alert("Email sent! Please check your Inbox/Spam folder.");
+                                        } catch (err) {
+                                            state.error.setValue(err.message);
+                                        }
+                                    })
+                                    .setJustifyContent("center"),
+                                ErrorMessage(state.error),
+                                Grid(
+                                    Label("Already have an account?"),
+                                    TextButton("Sign in")
+                                        .onClick(() => state.type.setValue("login")),
+                                )
+                                    .setTemplateColumns("auto auto"),
+                            ).setGap();
+                        }
 
                         if (type == "login") {
                             return Grid(
@@ -155,13 +140,7 @@ appendBody(
                                     //     )
                                     .setMargin("0 0 1.3rem"),
                                 EmailInput(state.email, "Email"),
-                                // .onChange(() => state.error = undefined)
-                                // .setAutofill("email")
-                                // .required()
                                 PasswordInput(state.password, "Password"),
-                                // .onChange(() => state.error = undefined)
-                                // .setAutofill("current-password")
-                                // .required()
                                 PrimaryButton("Login")
                                     .onPromiseClick(async () => await loginUser())
                                     .setId("login-button")
@@ -180,55 +159,34 @@ appendBody(
                             ).setGap();
                         }
 
-                        // if (type == "register") {
-                        //     return Form(Grid(
-                        //         TextInput("text", "Name")
-                        //             .required()
-                        //             .setAutofill("name")
-                        //             .onChange(() => state.error = undefined)
-                        //             .ref(state.$name)
-                        //             .setMargin("0 0 .6rem"),
-                        //         TextInput("email", "Email")
-                        //             .setAutofill("email")
-                        //             .required()
-                        //             .onChange(() => state.error = undefined)
-                        //             .ref(state.$email)
-                        //             .setMargin("0 0 .6rem"),
-                        //         TextInput("password", "Password")
-                        //             .required()
-                        //             .setAutofill("new-password")
-                        //             .onChange(() => state.error = undefined)
-                        //             .ref(state.$password)
-                        //             .setMargin("0 0 .6rem"),
-                        //         Button("Register")
-                        //             .setId("register-button")
-                        //             .onPromiseClick(registerUser)
-                        //             .setJustifyContent("center"),
-                        //         ErrorMessage(),
-                        //         Horizontal(
-                        //             Label("Already have an account?"),
-                        //             Button("Sign in")
-                        //                 .setStyle(ButtonStyle.Inline)
-                        //                 .onClick(() => state.type = "login")
-                        //                 .setColor(Color.Colored)
-                        //                 .addClass("link"),
-                        //             Spacer(),
-                        //         )
-                        //             .setMargin("1rem 0 0"),
-                        //     ));
-                        // }
+                        if (type == "register") {
+                            return Grid(
+                                TextInput(state.name, "Name"),
+                                EmailInput(state.email, "Email"),
+                                PasswordInput(state.password, "Password"),
+                                PrimaryButton("Register")
+                                    .onPromiseClick(registerUser)
+                                    .setJustifyContent("center"),
+                                ErrorMessage(state.error),
+                                Grid(
+                                    Label("Already have an account?"),
+                                    TextButton("Sign in")
+                                        .onClick(() => state.type.setValue("login"))
+                                        .addClass("link"),
+                                ).setTemplateColumns("auto auto"),
+                            ).setGap();
+                        }
 
-                        return Box(
+                        return Grid(
                             Spinner(),
                             Label("Loading..."),
                             ErrorMessage(state.error),
-                        ).addClass("loading", "loader");
+                        ).setGap().addClass("loading", "loader");
                     })),
                 ),
             )
                 .setMinHeight("100vh")
-                .setCssStyle("placeItems", "center")
-                .addClass("auth-area"),
+                .setCssStyle("placeItems", "center"),
             FullWidthSection(
                 Footer(),
             ),

@@ -6,7 +6,7 @@ import "./pages/unpublishedDrops.ts";
 
 /// <reference types="npm:@types/dom-navigation/index.d.ts" />
 
-import { RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "shared/helper.ts";
+import { RegisterAuthRefresh, sheetStack } from "shared/helper.ts";
 import { Navigation } from "shared/navigation.ts";
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
 import { activeRoute, appendBody, Box, Content, createRoute, css, DialogContainer, FullWidthSection, PrimaryButton, StartRouting, WebGenTheme } from "webgen/mod.ts";
@@ -17,6 +17,7 @@ import { DropType } from "../../spec/music.ts";
 import { artistsPage } from "./pages/artists.ts";
 import { draftsDropsPage } from "./pages/draftDrops.ts";
 import { publishedDrops } from "./pages/publishedDrops.ts";
+import { createArtistSheet } from "./views/table.ts";
 
 await RegisterAuthRefresh();
 
@@ -51,7 +52,8 @@ appendBody(
                         isArtistsRoute
                             ? PrimaryButton("Create new Artist")
                                 .onClick(() => {
-                                    // createArtistSheet().then(async () => menuState.artists = await API.music.artists.list().then(stupidErrorAlert))
+                                    sheetStack.addSheet(createArtistSheet());
+                                    // createArtistSheet().then(async () => menuState.artists = await API.music.artists.list().then(stupidErrorAlert));
                                 })
                             : PrimaryButton("Create new Drop")
                                 .onPromiseClick(async () => {
@@ -71,4 +73,3 @@ appendBody(
 );
 
 StartRouting();
-renewAccessTokenIfNeeded();

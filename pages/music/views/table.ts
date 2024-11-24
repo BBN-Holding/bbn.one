@@ -1,97 +1,89 @@
-import { getSecondary, getYearList, ProfilePicture, sheetStack } from "shared/helper.ts";
-import { API, Progress, stupidErrorAlert, Table2 } from "shared/mod.ts";
-import { asRef, asState, Box, Button, Checkbox, Color, DropDownInput, Grid, Horizontal, IconButton, InlineTextInput, Label, MIcon, Reference, SheetDialog, Spacer, TextInput } from "webgen/mod.ts";
-import genres from "../../../data/genres.json" with { type: "json" };
-import language from "../../../data/language.json" with { type: "json" };
-import { Artist, ArtistRef, ArtistTypes, Song } from "../../../spec/music.ts";
+import { sheetStack } from "shared/helper.ts";
+import { API, stupidErrorAlert } from "shared/mod.ts";
+import { asRef, asRefRecord, Grid, PrimaryButton, Reference, SheetHeader, TextInput } from "webgen/mod.ts";
+import { Artist, ArtistRef, ArtistTypes } from "../../../spec/music.ts";
 import "./table.css";
 
-export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<{ [uploadId: string]: number }[]>, primaryGenre: string, artistList?: Artist[]) {
-    return new Table2(songs)
-        .setColumnTemplate("auto max-content max-content max-content max-content max-content max-content min-content")
-        .addColumn("Title", (song) =>
-            uploadingSongs.map((x) => {
-                if (x.filter((y) => y[song._id] !== undefined).length > 0) {
-                    return Progress(x.find((y) => y[song._id] !== undefined)[song._id]);
-                }
-                const title = asRef(song.title);
-                title.listen((newVal, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, title: newVal }));
-                return InlineTextInput("text", "blur").addClass("low-level").ref(title);
-            }).asRefComponent())
-        .addColumn("Artists", (song) =>
-            Box(...song.artists.map((artist) => "name" in artist ? ProfilePicture(Label(""), artist.name) : ProfilePicture(Label(""), artist._id)), IconButton(MIcon("add"), "add"))
-                .addClass("artists-list")
-                .onClick(() => {
-                    const artists = asRef(song.artists);
-                    artists.listen((newVal, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, artists: newVal }));
-                    EditArtistsDialog(artists, artistList).open();
-                }))
-        .addColumn("Year", (song) => {
-            const data = asRef(song.year.toString());
-            data.listen((x, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, year: parseInt(x) }));
-            return DropDownInput("Year", getYearList())
-                .ref(data)
-                .addClass("low-level");
-        })
-        .addColumn("Language", (song) => {
-            const data = asRef(song.language);
-            data.listen((x, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, language: x }));
-            return DropDownInput("Language", Object.keys(language))
-                .setRender((key) => language[<keyof typeof language> key])
-                .ref(data)
-                .addClass("low-level");
-        })
-        .addColumn("Secondary Genre", (song) => {
-            const data = asRef(song.secondaryGenre);
-            data.listen((x, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, secondaryGenre: x }));
-            return DropDownInput("Secondary Genre", getSecondary(genres, primaryGenre) ?? [])
-                .ref(data)
-                .addClass("low-level");
-        })
-        .addColumn("Instrumental", (song) =>
-            Checkbox(song.instrumental ?? false)
-                .setColor(song.explicit ? Color.Disabled : Color.Grayscaled)
-                .onClick((_, value) => songs.updateItem(song, { ...song, instrumental: value }))
-                .addClass("low-level"))
-        .addColumn("Explicit", (song) =>
-            Checkbox(song.explicit ?? false)
-                .setColor(song.instrumental ? Color.Disabled : Color.Grayscaled)
-                .onClick((_, value) => songs.updateItem(song, { ...song, explicit: value }))
-                .addClass("low-level"))
-        .addColumn("", (song) => IconButton(MIcon("delete"), "Delete").onClick(() => songs.setValue(songs.getValue().filter((x) => x._id != song._id))))
-        .addClass("inverted-class");
-}
+// export function ManageSongs(songs: Reference<Song[]>, uploadingSongs: Reference<{ [uploadId: string]: number }[]>, primaryGenre: string, artistList?: Artist[]) {
+//     return new Table2(songs)
+//         .setColumnTemplate("auto max-content max-content max-content max-content max-content max-content min-content")
+//         .addColumn("Title", (song) =>
+//             uploadingSongs.map((x) => {
+//                 if (x.filter((y) => y[song._id] !== undefined).length > 0) {
+//                     return Progress(x.find((y) => y[song._id] !== undefined)[song._id]);
+//                 }
+//                 const title = asRef(song.title);
+//                 title.listen((newVal, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, title: newVal }));
+//                 return InlineTextInput("text", "blur").addClass("low-level").ref(title);
+//             }).asRefComponent())
+//         .addColumn("Artists", (song) =>
+//             Box(...song.artists.map((artist) => "name" in artist ? ProfilePicture(Label(""), artist.name) : ProfilePicture(Label(""), artist._id)), IconButton(MIcon("add"), "add"))
+//                 .addClass("artists-list")
+//                 .onClick(() => {
+//                     const artists = asRef(song.artists);
+//                     artists.listen((newVal, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, artists: newVal }));
+//                     EditArtistsDialog(artists, artistList).open();
+//                 }))
+//         .addColumn("Year", (song) => {
+//             const data = asRef(song.year.toString());
+//             data.listen((x, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, year: parseInt(x) }));
+//             return DropDownInput("Year", getYearList())
+//                 .ref(data)
+//                 .addClass("low-level");
+//         })
+//         .addColumn("Language", (song) => {
+//             const data = asRef(song.language);
+//             data.listen((x, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, language: x }));
+//             return DropDownInput("Language", Object.keys(language))
+//                 .setRender((key) => language[<keyof typeof language> key])
+//                 .ref(data)
+//                 .addClass("low-level");
+//         })
+//         .addColumn("Secondary Genre", (song) => {
+//             const data = asRef(song.secondaryGenre);
+//             data.listen((x, oldVal) => (oldVal != undefined) && songs.updateItem(song, { ...song, secondaryGenre: x }));
+//             return DropDownInput("Secondary Genre", getSecondary(genres, primaryGenre) ?? [])
+//                 .ref(data)
+//                 .addClass("low-level");
+//         })
+//         .addColumn("Instrumental", (song) =>
+//             Checkbox(song.instrumental ?? false)
+//                 .setColor(song.explicit ? Color.Disabled : Color.Grayscaled)
+//                 .onClick((_, value) => songs.updateItem(song, { ...song, instrumental: value }))
+//                 .addClass("low-level"))
+//         .addColumn("Explicit", (song) =>
+//             Checkbox(song.explicit ?? false)
+//                 .setColor(song.instrumental ? Color.Disabled : Color.Grayscaled)
+//                 .onClick((_, value) => songs.updateItem(song, { ...song, explicit: value }))
+//                 .addClass("low-level"))
+//         .addColumn("", (song) => IconButton(MIcon("delete"), "Delete").onClick(() => songs.setValue(songs.getValue().filter((x) => x._id != song._id))))
+//         .addClass("inverted-class");
+// }
 
 export const createArtistSheet = (name?: string) => {
-    const state = asState({
+    const state = asRefRecord({
         name,
         spotify: <string | undefined> undefined,
         apple: <string | undefined> undefined,
     });
-    const { promise, resolve } = Promise.withResolvers<void>();
-    const dialog = SheetDialog(
-        sheetStack,
-        "Create Artist",
+    return Grid(
+        SheetHeader("Create Artist", sheetStack),
         Grid(
-            TextInput("text", "Artist Name").required().ref(state.$name),
-            TextInput("text", "Spotify URL").ref(state.$spotify),
-            TextInput("text", "Apple Music URL").ref(state.$apple),
-            Button("Create")
-                .setJustifySelf("start")
+            TextInput(state.name, "Artist Name"),
+            TextInput(state.spotify, "Spotify URL"),
+            TextInput(state.apple, "Apple Music URL"),
+            PrimaryButton("Create")
                 .onPromiseClick(async () => {
-                    await API.music.artists.create(state);
-                    dialog.close();
-                    resolve();
+                    await API.music.artists.create(Object.fromEntries(Object.entries(state).map(([key, state]) => [key, state.value])) as any);
                 })
-                .setColor(state.$name.map((x) => x ? Color.Grayscaled : Color.Disabled)),
+                .setJustifySelf("start"),
+            // .setColor(state.$name.map((x) => x ? Color.Grayscaled : Color.Disabled)),
         )
+            .setGap()
             .setAlignContent("start")
             .setWidth("400px")
-            .setHeight("420px")
-            .setGap(),
+            .setHeight("420px"),
     );
-    dialog.open();
-    return promise;
 };
 
 export const EditArtistsDialog = (artists: Reference<ArtistRef[]>, provided?: Artist[]) => {
@@ -134,6 +126,7 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>, provided?: Ar
                             })
                             .ref(data)
                             .addAction(MIcon("add"), "Create Artist", () => {
+                                sheetStack.addSheet(createArtistSheet());
                                 createArtistSheet().then(() => {
                                     API.music.artists.list().then(stupidErrorAlert)
                                         .then((x) => {

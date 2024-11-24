@@ -1,6 +1,6 @@
 import { delay } from "@std/async";
 import { API, StreamingUploadHandler, stupidErrorAlert } from "shared/mod.ts";
-import { AdvancedImage, Reference } from "webgen/mod.ts";
+import { Reference } from "webgen/mod.ts";
 import { ArtistRef, Song } from "../../spec/music.ts";
 
 export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[], language: string, primaryGenre: string, secondaryGenre: string, uploadingSongs: Reference<{ [key: string]: number }[]>, file: File) {
