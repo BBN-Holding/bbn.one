@@ -152,7 +152,8 @@ export function Footer() {
                     `),
             ),
         )
-            .setGap("5rem"),
+            .setGap("5rem")
+            .setMargin("7rem 0 0"),
     )
         .setContentPadding("2.4rem")
         .setContentMaxWidth("1230px");

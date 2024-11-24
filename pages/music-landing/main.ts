@@ -2,7 +2,7 @@ import { Footer } from "shared/footer.ts";
 import { RegisterAuthRefresh } from "shared/helper.ts";
 import { Image, MaterialIcon, mediaQueryRef, PrimaryButton, WebGenTheme } from "webgen/components/mod.ts";
 import { Box, Content, Empty, FullWidthSection, Grid, Label } from "webgen/core/mod.ts";
-import { appendBody, Color, css } from "webgen/mod.ts";
+import { appendBody, asRef, Color, Component, css } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
@@ -30,7 +30,7 @@ import redz from "./assets/redz.jpg";
 await RegisterAuthRefresh();
 
 const images = () =>
-    Array.from({ length: 4 }, () => [
+    Array.from({ length: 4 }, (): Component[] => [
         Image(apple, "Apple Music"),
         Image(deezer, "Deezer"),
         Image(facebook, "Facebook"),
@@ -193,7 +193,7 @@ appendBody(
                             .setWidth("max-content")
                             .setPadding("0 5px")
                             .setCssStyle("borderRadius", "0.3rem")
-                            .addClass("badge-paid-tier-bg"),
+                            .setCssStyle("background", "var(--badge-paid-tier)"),
                         Grid(
                             Label("Your Revenue")
                                 .setTextSize("lg")
@@ -261,22 +261,52 @@ appendBody(
                         .setCssStyle("color", grayText),
                 )
                     .setMargin("10px 0 40px"),
-                // Grid(
-                //     Grid(images())
-                //         .setGap("38px")
-                //         .addClass("icon-carousel")
-                //         .setDirection("column"),
-                //     Grid(...images().reverse())
-                //         .setGap("38px")
-                //         .addClass("icon-carousel")
-                //         .addClass("icon-carousel-reversed")
-                //         .setDirection("column"),
-                // )
-                //     .setGap("35px")
-                //     .addClass("icon-carousel-container"),
+                Grid(
+                    Grid(asRef(images()))
+                        .setAutoFlow("column")
+                        .setGap("38px")
+                        .addClass("icon-carousel"),
+                    Grid(asRef(images().reverse()))
+                        .setAutoFlow("column")
+                        .setGap("38px")
+                        .addClass("icon-carousel")
+                        .addClass("icon-carousel-reversed"),
+                )
+                    .setGap("35px")
+                    .addClass("icon-carousel-container"),
             )
                 .setContentMaxWidth("850px")
                 .setAlignContent("center")
+                .addStyle(css`
+                    .icon-carousel wg-image {
+                        width: var(--carousel-size);
+                            height: var(--carousel-size);
+                            filter: brightness(0) invert(1);
+                    }
+                    @keyframes carousel {
+                        0% {
+                            /* calc (width + gap) * number of icons * -1 */
+                            transform: translateX(calc((var(--carousel-size) + 38px) * -8));
+                        }
+
+                        100% {
+                            /* calc (width + gap) * (number of icons-0.5) * 2 * -1 */
+                            transform: translateX(calc(((var(--carousel-size) + 38px) * -8.5*2)));
+                        }
+                    }
+                    .icon-carousel {
+                        --carousel-size: 72px;
+                        animation: 30s infinite linear carousel;
+                    }
+                    .icon-carousel-reversed {
+                        animation-direction: reverse;
+                    }
+
+                    .icon-carousel-container {
+                        mask-image: linear-gradient(90deg, rgba(255, 255, 255, 0.00) 0%, #FFF 50%, rgba(255, 255, 255, 0.00) 100%);
+                        overflow: hidden;
+                    }
+                `)
                 .setHeight("380px"),
             Grid(
                 Label("Make it. Drop it.")
@@ -411,7 +441,7 @@ appendBody(
                         .setAlignItems("center"),
                 )
                     .setGap("21px")
-                    .addClass("max-width-30rem")
+                    .setMaxWidth("30rem")
                     .setPadding("95px 0 95px 0"),
                 Grid(
                     Label("There is pretty much no other digital distributor that offers more and at the same time, works so closely with artists and who artists are so valued by and feel so understood by.")
@@ -432,7 +462,7 @@ appendBody(
                 )
                     .setGap("21px")
                     .setJustifyItems("end")
-                    .addClass("max-width-30rem")
+                    .setMaxWidth("30rem")
                     .setMargin("0 0 0 auto")
                     .setPadding("95px 0 95px 0"),
             )
@@ -444,4 +474,4 @@ appendBody(
         .setPrimaryColor(new Color("#eb8c2d")),
 );
 
-document.body.style.backgroundColor = Color.reverseNeutral.mix(new Color("black"), 70);
+document.body.style.backgroundColor = Color.reverseNeutral.mix(new Color("black"), 50);
