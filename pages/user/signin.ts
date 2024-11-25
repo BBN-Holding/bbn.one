@@ -82,7 +82,7 @@ appendBody(
                                     })
                                     .setId("submit-button")
                                     .setJustifyContent("center"),
-                                Label(API.getToken() ? "" : "Error: Link is invalid").addClass("error-message"),
+                                Label(API.getToken() ? "" : "Error: Link is invalid"),
                                 ErrorMessage(state.error),
                             ));
                         }
@@ -136,7 +136,6 @@ appendBody(
                                     //     .setJustifyContent("center")
                                     //     .addPrefix(
                                     //         Image(discordLogo, "logo")
-                                    //             .addClass("prefix-logo")
                                     //     )
                                     .setMargin("0 0 1.3rem"),
                                 EmailInput(state.email, "Email"),
@@ -171,8 +170,7 @@ appendBody(
                                 Grid(
                                     Label("Already have an account?"),
                                     TextButton("Sign in")
-                                        .onClick(() => state.type.setValue("login"))
-                                        .addClass("link"),
+                                        .onClick(() => state.type.setValue("login")),
                                 ).setTemplateColumns("auto auto"),
                             ).setGap();
                         }
@@ -181,7 +179,7 @@ appendBody(
                             Spinner(),
                             Label("Loading..."),
                             ErrorMessage(state.error),
-                        ).setGap().addClass("loading", "loader");
+                        ).setGap();
                     })),
                 ),
             )

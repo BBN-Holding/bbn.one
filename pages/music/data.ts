@@ -1,6 +1,6 @@
 import { delay } from "@std/async";
 import { API, StreamingUploadHandler, stupidErrorAlert } from "shared/mod.ts";
-import { Reference } from "webgen/mod.ts";
+import { Reference, WriteSignal } from "webgen/mod.ts";
 import { ArtistRef, Song } from "../../spec/music.ts";
 
 export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[], language: string, primaryGenre: string, secondaryGenre: string, uploadingSongs: Reference<{ [key: string]: number }[]>, file: File) {
@@ -63,7 +63,7 @@ export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[],
     }, file);
 }
 
-export function uploadArtwork(id: string, file: File, artworkClientData: Reference<AdvancedImage | undefined>, artwork: Reference<string | undefined>) {
+export function uploadArtwork(id: string, file: File, artworkClientData: WriteSignal<string | undefined>, artwork: WriteSignal<string | undefined>) {
     const blobUrl = URL.createObjectURL(file);
     artworkClientData.setValue({ type: "uploading", filename: file.name, blobUrl, percentage: 0 });
 

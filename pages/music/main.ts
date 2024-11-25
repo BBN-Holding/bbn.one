@@ -4,8 +4,6 @@ import "./pages/payouts.ts";
 import "./pages/publishedDrops.ts";
 import "./pages/unpublishedDrops.ts";
 
-/// <reference types="npm:@types/dom-navigation/index.d.ts" />
-
 import { RegisterAuthRefresh, sheetStack } from "shared/helper.ts";
 import { Navigation } from "shared/navigation.ts";
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
@@ -51,10 +49,7 @@ appendBody(
                     .map((isArtistsRoute) =>
                         isArtistsRoute
                             ? PrimaryButton("Create new Artist")
-                                .onClick(() => {
-                                    sheetStack.addSheet(createArtistSheet());
-                                    // createArtistSheet().then(async () => menuState.artists = await API.music.artists.list().then(stupidErrorAlert));
-                                })
+                                .onClick(() => sheetStack.addSheet(createArtistSheet()))
                             : PrimaryButton("Create new Drop")
                                 .onPromiseClick(async () => {
                                     const { id } = await API.music.drops.create().then(stupidErrorAlert);

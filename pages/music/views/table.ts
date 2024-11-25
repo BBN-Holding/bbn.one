@@ -1,6 +1,6 @@
 import { sheetStack } from "shared/helper.ts";
 import { API, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, asRefRecord, Grid, PrimaryButton, Reference, SheetHeader, TextInput } from "webgen/mod.ts";
+import { asRef, asRefRecord, Box, DropDown, Grid, PrimaryButton, SheetHeader, Table, TextInput, WriteSignal } from "webgen/mod.ts";
 import { Artist, ArtistRef, ArtistTypes } from "../../../spec/music.ts";
 import "./table.css";
 
@@ -68,25 +68,23 @@ export const createArtistSheet = (name?: string) => {
     });
     return Grid(
         SheetHeader("Create Artist", sheetStack),
-        Grid(
-            TextInput(state.name, "Artist Name"),
-            TextInput(state.spotify, "Spotify URL"),
-            TextInput(state.apple, "Apple Music URL"),
-            PrimaryButton("Create")
-                .onPromiseClick(async () => {
-                    await API.music.artists.create(Object.fromEntries(Object.entries(state).map(([key, state]) => [key, state.value])) as any);
-                })
-                .setJustifySelf("start"),
-            // .setColor(state.$name.map((x) => x ? Color.Grayscaled : Color.Disabled)),
-        )
-            .setGap()
-            .setAlignContent("start")
-            .setWidth("400px")
-            .setHeight("420px"),
-    );
+        TextInput(state.name, "Artist Name"),
+        TextInput(state.spotify, "Spotify URL"),
+        TextInput(state.apple, "Apple Music URL"),
+        PrimaryButton("Create")
+            .onPromiseClick(async () => {
+                await API.music.artists.create(Object.fromEntries(Object.entries(state).map(([key, state]) => [key, state.value])) as any).then(stupidErrorAlert);
+                sheetStack.removeOne();
+                location.reload();
+            })
+            .setDisabled(state.name.map((x) => !x))
+            .setJustifySelf("start"),
+    )
+        .setGap()
+        .setWidth("25rem");
 };
 
-export const EditArtistsDialog = (artists: Reference<ArtistRef[]>, provided?: Artist[]) => {
+export const EditArtistsDialog = (artists: WriteSignal<ArtistRef[]>, provided?: Artist[]) => {
     const artistList = provided ? asRef(provided) : asRef(<Artist[]> []);
 
     if (!provided) {
@@ -94,65 +92,82 @@ export const EditArtistsDialog = (artists: Reference<ArtistRef[]>, provided?: Ar
             .then((x) => artistList.setValue(x));
     }
 
-    const dialog = SheetDialog(
-        sheetStack,
-        "Manage your Artists",
-        artistList.map((list) =>
-            new Table2(artists)
-                .addClass("artist-table")
-                .setColumnTemplate("10rem 12rem min-content")
-                .addColumn("Type", (artist) => {
-                    const data = asRef(artist.type);
-                    data.listen((type, oldVal) => {
-                        if (oldVal != undefined) {
-                            if (type == ArtistTypes.Primary || type == ArtistTypes.Featuring) {
-                                artists.updateItem(artist, { type, _id: null! } as ArtistRef);
-                            } else {
-                                artists.updateItem(artist, { type, name: "" } as ArtistRef);
-                            }
-                        }
-                    });
-                    return DropDownInput("Type", Object.values(ArtistTypes))
-                        .ref(data);
-                })
-                .addColumn("Name", (artist) => {
-                    if ([ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type)) {
-                        const data = asRef(artist._id as string);
-                        data.listen((_id, oldVal) => (oldVal !== undefined) && artists.updateItem(artist, { ...artist, _id }));
-                        return DropDownInput("Select Artist", list.map((y) => y._id))
-                            .setRender((data) => {
-                                const artist = list.find((y) => y._id === data);
-                                return artist ? artist.name : "";
-                            })
-                            .ref(data)
-                            .addAction(MIcon("add"), "Create Artist", () => {
-                                sheetStack.addSheet(createArtistSheet());
-                                createArtistSheet().then(() => {
-                                    API.music.artists.list().then(stupidErrorAlert)
-                                        .then((x) => {
-                                            artistList.setValue(x);
-                                        });
-                                });
+    return Grid(
+        SheetHeader("Edit Artists", sheetStack),
+        Box(artistList.map((list) =>
+            Table(
+                artists,
+                asRef({
+                    type: {
+                        cellRenderer: (x) => {
+                            const data = asRef(x);
+                            data.listen((type, oldVal) => {
+                                if (oldVal != undefined) {
+                                    if (type == ArtistTypes.Primary || type == ArtistTypes.Featuring) {
+                                        artists.updateItem(x, { type, _id: null! } as ArtistRef);
+                                    } else {
+                                        artists.updateItem(x, { type, name: "" } as ArtistRef);
+                                    }
+                                }
                             });
-                    }
-                    const data = asRef(artist.name as string);
-                    data.listen((name, oldVal) => (oldVal != undefined) && artists.updateItem(artist, { ...artist, name } as ArtistRef));
-                    return TextInput("text", "Name", "blur")
-                        .ref(data);
-                })
-                .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.getValue().filter((_, i) => i != artists.getValue().indexOf(data)))))
-        ).asRefComponent(),
-        Horizontal(
-            Spacer(),
-            Button("Add Artist")
+                            return DropDown(Object.values(ArtistTypes), data);
+                        },
+                    },
+                }),
+            ) //
+            // new Table2(artists)
+            //     .addClass("artist-table")
+            //     .setColumnTemplate("10rem 12rem min-content")
+            //     .addColumn("Type", (artist) => {
+            //         const data = asRef(artist.type);
+            //         data.listen((type, oldVal) => {
+            //             if (oldVal != undefined) {
+            //                 if (type == ArtistTypes.Primary || type == ArtistTypes.Featuring) {
+            //                     artists.updateItem(artist, { type, _id: null! } as ArtistRef);
+            //                 } else {
+            //                     artists.updateItem(artist, { type, name: "" } as ArtistRef);
+            //                 }
+            //             }
+            //         });
+            //         return DropDownInput("Type", Object.values(ArtistTypes))
+            //             .ref(data);
+            //     })
+            //     .addColumn("Name", (artist) => {
+            //         if ([ArtistTypes.Primary, ArtistTypes.Featuring].includes(artist.type)) {
+            //             const data = asRef(artist._id as string);
+            //             data.listen((_id, oldVal) => (oldVal !== undefined) && artists.updateItem(artist, { ...artist, _id }));
+            //             return DropDownInput("Select Artist", list.map((y) => y._id))
+            //                 .setRender((data) => {
+            //                     const artist = list.find((y) => y._id === data);
+            //                     return artist ? artist.name : "";
+            //                 })
+            //                 .ref(data)
+            //                 .addAction(MIcon("add"), "Create Artist", () => {
+            //                     sheetStack.addSheet(createArtistSheet());
+            //                     createArtistSheet().then(() => {
+            //                         API.music.artists.list().then(stupidErrorAlert)
+            //                             .then((x) => {
+            //                                 artistList.setValue(x);
+            //                             });
+            //                     });
+            //                 });
+            //         }
+            //         const data = asRef(artist.name as string);
+            //         data.listen((name, oldVal) => (oldVal != undefined) && artists.updateItem(artist, { ...artist, name } as ArtistRef));
+            //         return TextInput("text", "Name", "blur")
+            //             .ref(data);
+            //     })
+            //     .addColumn("", (data) => IconButton(MIcon("delete"), "Delete").onClick(() => artists.setValue(artists.getValue().filter((_, i) => i != artists.getValue().indexOf(data)))))
+        )),
+        Grid(
+            // Spacer(),
+            PrimaryButton("Add Artist")
                 .onClick(() => artists.addItem({ type: ArtistTypes.Primary, _id: null! } as ArtistRef)),
         ).setPadding("0 0 3rem 0"),
-        Horizontal(
-            Spacer(),
-            Button("Save")
-                .onClick(() => dialog.close()),
+        Grid(
+            // Spacer(),
+            PrimaryButton("Save")
+                .onClick(() => sheetStack.removeOne()),
         ),
     );
-
-    return dialog;
 };
