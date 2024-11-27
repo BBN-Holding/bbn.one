@@ -2,7 +2,7 @@ import { sumOf } from "@std/collections";
 import { z } from "zod/mod.ts";
 
 export const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
-export const userString = z.string().min(1).transform((x) => x.trim());
+export const userString = z.string().min(1).pipe(z.string().transform((x) => x.trim()));
 
 export enum DropType {
     Published = "PUBLISHED", // Uploaded, Approved
