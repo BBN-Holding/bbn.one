@@ -1,6 +1,7 @@
 import { delay } from "@std/async";
 import { API, StreamingUploadHandler, stupidErrorAlert } from "shared/mod.ts";
 import { Reference, WriteSignal } from "webgen/mod.ts";
+import { templateArtwork } from "../../assets/imports.ts";
 import { ArtistRef, Song } from "../../spec/music.ts";
 
 export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[], language: string, primaryGenre: string, secondaryGenre: string, uploadingSongs: Reference<{ [key: string]: number }[]>, file: File) {
@@ -63,9 +64,9 @@ export function uploadSongToDrop(songs: Reference<Song[]>, artists: ArtistRef[],
     }, file);
 }
 
-export function uploadArtwork(id: string, file: File, artworkClientData: WriteSignal<string | undefined>, artwork: WriteSignal<string | undefined>) {
+export function uploadArtwork(id: string, file: File, artworkClientData: WriteSignal<Blob | undefined>, artwork: WriteSignal<string | undefined>) {
     const blobUrl = URL.createObjectURL(file);
-    artworkClientData.setValue({ type: "uploading", filename: file.name, blobUrl, percentage: 0 });
+    artworkClientData.setValue(templateArtwork);
 
     setTimeout(() => {
         StreamingUploadHandler(`music/drops/${id}/upload`, {
@@ -74,15 +75,15 @@ export function uploadArtwork(id: string, file: File, artworkClientData: WriteSi
                 alert("Your Upload has failed. Please try a different file or try again later");
             },
             uploadDone: () => {
-                artworkClientData.setValue({ type: "waiting-upload", filename: file.name, blobUrl });
+                artworkClientData.setValue(templateArtwork);
             },
             credentials: () => API.getToken(),
             backendResponse: (id) => {
-                artworkClientData.setValue({ type: "direct", source: async () => await file });
+                artworkClientData.setValue(file);
                 artwork.setValue(id);
             },
             onUploadTick: async (percentage) => {
-                artworkClientData.setValue({ type: "uploading", filename: file.name, blobUrl, percentage });
+                artworkClientData.setValue(templateArtwork);
                 await delay(2);
             },
         }, file);

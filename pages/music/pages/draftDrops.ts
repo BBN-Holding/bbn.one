@@ -29,7 +29,7 @@ export const draftsDropsPage = createPage(
                         Label(item.title ?? "(Untitled)")
                             .setMargin("35px 0"),
                     )
-                        .onClick(() => {})
+                        .onClick(() => location.href = `/c/music/new-drop?id=${item._id}`)
                 )
             ),
         ),

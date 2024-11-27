@@ -1,22 +1,18 @@
-import { allowedImageFormats, getSecondary, RegisterAuthRefresh, sheetStack } from "shared/helper.ts";
+import { allowedAudioFormats, allowedImageFormats, getSecondary, RegisterAuthRefresh, sheetStack } from "shared/helper.ts";
 import { API, stupidErrorAlert } from "shared/mod.ts";
-import { appendBody, asRefRecord, Box, Color, Content, createFilePicker, DateInput, DialogContainer, DropDown, Empty, FullWidthSection, Grid, Image, Label, PrimaryButton, SecondaryButton, SheetHeader, Spinner, TextInput, WebGenTheme } from "webgen/mod.ts";
+import { appendBody, asRef, asRefRecord, Box, Color, Content, createFilePicker, DateInput, DialogContainer, DropDown, Empty, FullWidthSection, Grid, Image, Label, PrimaryButton, SecondaryButton, SheetHeader, Spinner, TextAreaInput, TextInput, WebGenTheme } from "webgen/mod.ts";
 import { ZodError } from "zod/mod.ts";
 import "../../assets/css/main.css";
+import { templateArtwork } from "../../assets/imports.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import genres from "../../data/genres.json" with { type: "json" };
 import language from "../../data/language.json" with { type: "json" };
-import { ArtistRef, ArtistTypes, Song } from "../../spec/music.ts";
-
-// Do no move this import
-import { uploadArtwork } from "./data.ts";
+import { ArtistRef, ArtistTypes, DropType, Song } from "../../spec/music.ts";
+import { uploadArtwork, uploadSongToDrop } from "./data.ts";
 import "./newDrop.css";
-import { EditArtistsDialog } from "./views/table.ts";
+import { EditArtistsDialog, ManageSongs } from "./views/table.ts";
 
 await RegisterAuthRefresh();
-
-// Because this is a mix of light and dark mode we force dropdowns to be dark
-document.querySelector(".wpopover")?.setAttribute("data-theme", "dark");
 
 const params = new URLSearchParams(location.search);
 
@@ -27,7 +23,6 @@ if (!params.has("id")) {
 const dropId = params.get("id")!;
 
 export const creationState = asRefRecord({
-    // loaded: false,
     _id: <string> dropId,
     gtin: <string | undefined> undefined,
     title: <string | undefined> undefined,
@@ -39,7 +34,7 @@ export const creationState = asRefRecord({
     compositionCopyright: <string | undefined> undefined,
     soundRecordingCopyright: <string | undefined> undefined,
     artwork: <string | undefined> undefined,
-    artworkClientData: <string | undefined> undefined,
+    artworkClientData: <Blob | undefined> undefined,
     uploadingSongs: <Record<string, number>[]> [],
     songs: <Song[]> [],
     comments: <string | undefined> undefined,
@@ -48,7 +43,7 @@ export const creationState = asRefRecord({
 });
 
 API.music.id(dropId).get().then(stupidErrorAlert)
-    .then((drop) => {
+    .then(async (drop) => {
         creationState.gtin.setValue(drop.gtin);
         creationState.title.setValue(drop.title);
         creationState.release.setValue(drop.release);
@@ -59,7 +54,7 @@ API.music.id(dropId).get().then(stupidErrorAlert)
         creationState.compositionCopyright.setValue(drop.compositionCopyright ?? "BBN Music (via bbn.one)");
         creationState.soundRecordingCopyright.setValue(drop.soundRecordingCopyright ?? "BBN Music (via bbn.one)");
         creationState.artwork.setValue(drop.artwork);
-        creationState.artworkClientData.setValue(<string | undefined> (drop.artwork ? <any> { type: "direct", source: () => API.music.id(dropId).artwork().then(stupidErrorAlert) } : undefined));
+        creationState.artworkClientData.setValue(<Blob | undefined> (drop.artwork ? await API.music.id(dropId).artwork().then(stupidErrorAlert) : undefined));
         creationState.songs.setValue(drop.songs ?? []);
         creationState.comments.setValue(drop.comments);
     })
@@ -91,7 +86,6 @@ const footer = (page: number) =>
                 error
                     ? CenterV(
                         Label(getErrorMessage(error))
-                            .addClass("error-message")
                             .setMargin("0 0.5rem 0 0"),
                     )
                     : Empty()
@@ -133,8 +127,7 @@ const wizard = creationState.page.map((page) => {
                     .onClick(() => sheetStack.addSheet(additionalDropInformation)),
             )
                 .setGap()
-                .setEvenColumns(1)
-                .addClass("grid-area"),
+                .setEvenColumns(1),
             footer(page),
         ).setGap();
     } else if (page == 2) {
@@ -145,65 +138,59 @@ const wizard = creationState.page.map((page) => {
                         Label("Upload your Cover").setFontWeight("bold").setTextSize("xl").setJustifySelf("center"),
                         PrimaryButton("Manual Upload")
                             .onClick(() => createFilePicker(allowedImageFormats.join(",")).then((file) => uploadArtwork(dropId, file, creationState.artworkClientData, creationState.artwork))),
-                    ),
-                    Grid(
-                        Grid(data ? Image(data, "A Music Album Artwork.") : Label("Drop your Artwork here.").setTextSize("xl").setFontWeight("semibold")),
-                        // allowedImageFormats,
-                        // ([{ file }]) => uploadArtwork(dropId, file, creationState.artworkClientData, creationState.artwork),
-                    ).addClass("drop-area"),
+                    ).setTemplateColumns("1fr auto"),
+                    Image(data ? URL.createObjectURL(data) : templateArtwork, "A Music Album Artwork.").setMaxHeight("60%").setCssStyle("aspectRatio", "1 / 1"),
                 ).setGap()
             ),
             footer(page),
         ).setGap();
-    }
-    // else if (page == 2) {
-    //     creationState.songs.listen((songs, oldVal) => {
-    //         if (oldVal != undefined) {
-    //             creationState.songs.setValue(songs);
-    //         }
-    //     });
-    //     const songs = asRef(<undefined | Song[]> undefined);
-    //     const existingSongDialog = ExistingSongDialog(creationState.songs, songs);
-    //     return Grid(
-    //         Grid(
-    //             Grid(
-    //                 CenterAndRight(
-    //                     Label("Manage your Music").addClass("title"),
-    //                     Box(
-    //                         PrimaryButton("Manual Upload")
-    //                             .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(creationState.songs, creationState.artists, creationState.language, creationState.primaryGenre, creationState.secondaryGenre, creationState.uploadingSongs, file))).setMargin("0 1rem 0 0"),
-    //                         PrimaryButton("Add an existing Song")
-    //                             .onPromiseClick(async () => {
-    //                                 songs.setValue((await API.music.songs.list().then(stupidErrorAlert)).filter((song) => creationState.songs.value.some((dropsong) => dropsong._id !== song._id)));
-    //                                 existingSongDialog.open();
-    //                             }),
-    //                     ),
-    //                 ),
-    //                 ManageSongs(creationState.songs, creationState.uploadingSongs, creationState.primaryGenre!),
-    //             ).setGap(),
-    //         ),
-    //         footer(page),
-    //     ).addClass("wwizard");
-    // } else if (page == 3) {
-    //     return Grid(
-    //         Grid(
-    //             Label("Thanks! That's everything we need.").setBalanced().addClass("ending-title"),
-    //         ),
-    //         Grid(
-    //             TextInput(creationState.comments, "Comments for Review Team"),
-    //         ),
-    //         Grid(
-    //             SecondaryButton("Back").setJustifyContent("center").onClick(() => creationState.page--),
-    //             PrimaryButton("Submit").onPromiseClick(async () => {
-    //                 creationState.loaded = false;
-    //                 await API.music.id(dropId).update(creationState);
+    } else if (page == 3) {
+        creationState.songs.listen((songs, oldVal) => {
+            if (oldVal != undefined) {
+                creationState.songs.setValue(songs);
+            }
+        });
+        const songs = asRef(<undefined | Song[]> undefined);
+        // const existingSongDialog = ExistingSongDialog(creationState.songs, songs);
+        return Grid(
+            Grid(
+                Grid(
+                    Label("Manage your Music"),
+                    Box(
+                        PrimaryButton("Manual Upload")
+                            .onClick(() => createFilePicker(allowedAudioFormats.join(",")).then((file) => uploadSongToDrop(creationState.songs, creationState.artists, creationState.language, creationState.primaryGenre, creationState.secondaryGenre, creationState.uploadingSongs, file))).setMargin("0 1rem 0 0"),
+                        PrimaryButton("Add an existing Song")
+                            .onPromiseClick(async () => {
+                                songs.setValue((await API.music.songs.list().then(stupidErrorAlert)).filter((song) => creationState.songs.value.some((dropsong) => dropsong._id !== song._id)));
+                                // existingSongDialog.open();
+                            }),
+                    ),
+                    ManageSongs(creationState.songs, creationState.uploadingSongs, creationState.primaryGenre!),
+                ).setGap(),
+            ),
+            footer(page),
+        );
+    } else if (page == 4) {
+        return Grid(
+            Grid(
+                Label("Thanks! That's everything we need."),
+            ),
+            Grid(
+                TextAreaInput(creationState.comments, "Comments for Review Team"),
+            ),
+            Grid(
+                SecondaryButton("Back").setJustifyContent("center").onClick(() => creationState.page.setValue(3)),
+                PrimaryButton("Submit").onPromiseClick(async () => {
+                    creationState.page.setValue(0);
+                    await API.music.id(dropId).update(creationState);
 
-    //                 await API.music.id(dropId).type.post(DropType.UnderReview);
-    //                 location.href = "/c/music";
-    //             }).setJustifyContent("center"),
-    //         ).addClass("footer"),
-    //     ).addClass("wwizard");
-    // }
+                    await API.music.id(dropId).type.post(DropType.UnderReview);
+                    location.href = "/c/music";
+                }).setJustifyContent("center"),
+            ).setGap()
+                .setTemplateColumns("1fr 1fr"),
+        ).setGap();
+    }
     return Empty();
 });
 

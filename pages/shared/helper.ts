@@ -1,9 +1,9 @@
 import { fail } from "@std/assert/fail";
 import { LruCache, memoize } from "@std/cache";
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { asRefRecord, Async, Component, Empty, Grid, Image, ImageComponent, Sheets, Spinner } from "webgen/mod.ts";
+import { asRef, asRefRecord, Async, Component, DropDown, Empty, Grid, Image, ImageComponent, PrimaryButton, SheetHeader, Sheets, Spinner, WriteSignal } from "webgen/mod.ts";
 import { loginRequired } from "../../components/pages.ts";
-import { Drop } from "../../spec/music.ts";
+import { Drop, Song } from "../../spec/music.ts";
 
 // @deno-types="https://raw.githubusercontent.com/lucsoft-DevTeam/lucsoft.de/master/custom.d.ts"
 import spotify from "../music-landing/assets/spotify.svg";
@@ -262,25 +262,21 @@ export const streamingImages: Record<string, ImageComponent> = {
     apple: Image(apple, "Apple Music").draw(),
 };
 
-// export const ExistingSongDialog = (dropSongs: StateHandler<Song[]>, songs: Reference<Song[]>) => {
-//     const selected = asRef(<undefined | Song> undefined);
-//     const dialog = SheetDialog(
-//         sheetStack,
-//         "Add Existing Song",
-//         Vertical(
-//             DropDownInput("Select Song", songs).setRender((song) => `${song.title}`).ref(selected),
-//             Button("Add").setMargin("1rem 0 0 0").onClick(() => {
-//                 const selectedSong = selected.getValue();
-//                 if (selectedSong) {
-//                     dropSongs.push(selectedSong);
-//                 }
-//                 dialog.close();
-//                 selected.setValue(undefined);
-//             }),
-//         ),
-//     );
-//     return dialog;
-// };
+export const ExistingSongDialog = (dropSongs: WriteSignal<Song[]>, songs: Song[]) => {
+    const selected = asRef(undefined);
+    return Grid(
+        SheetHeader("Add Existing Song", sheetStack),
+        DropDown(songs.map((x) => x._id), selected, "Select Song").setValueRender((x) => songs.find((y) => y._id == x)?.title ?? "Unknown"),
+        PrimaryButton("Add").setMargin("1rem 0 0 0").onClick(() => {
+            const selectedSong = selected.getValue();
+            if (selectedSong) {
+                dropSongs.push(selectedSong);
+            }
+            sheetStack.removeOne();
+            selected.setValue(undefined);
+        }),
+    );
+};
 
 export function randomInteger(lower: number, upper: number): number {
     return lower + Math.floor(Math.random() * (upper - lower + 1));

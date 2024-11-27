@@ -86,13 +86,11 @@ export function Footer() {
                             ...items.map(([title, link]) =>
                                 TextButton(title)
                                     .onClick(() => location.href = link)
-                                    .addClass("link")
                                     .addStyle(css`
                                         :host {
                                             margin: 0 0 0 -15px;
                                         }
                                     `)
-                                // .setStyle(ButtonStyle.Inline)
                             ),
                         )
                             .setJustifyItems("start")
@@ -105,15 +103,15 @@ export function Footer() {
                 Grid(
                     Grid(
                         ...[
-                            // ["youtube", "Youtube", "https://www.youtube.com/@bbn6775"],
-                            // ["twitter", "Twiter", "https://twitter.com/BBN_Holding"],
-                            // ["facebook", "Facebook", "https://www.facebook.com/bbn.holding/"],
-                            ["discord", "Discord", "https://discord.gg/dJevjw2fCe"],
-                            ["instagram", "Instagram", "https://www.instagram.com/bbn.music/"],
-                            ["mastodon", "Mastodon", "https://chaos.social/@bbn"],
+                            // ["youtube","https://www.youtube.com/@bbn6775"],
+                            // ["twitter",  "https://twitter.com/BBN_Holding"],
+                            // ["facebook",  "https://www.facebook.com/bbn.holding/"],
+                            ["discord", "https://discord.gg/dJevjw2fCe"],
+                            ["instagram", "https://www.instagram.com/bbn.music/"],
+                            ["mastodon", "https://chaos.social/@bbn"],
                             // ["github", "GitHub", "https://github.com/bbn-holding/"],
                         ]
-                            .map(([icon, aria, link]) =>
+                            .map(([icon, link]) =>
                                 TextButton("").addPrefix(BootstrapIcon(icon).setCssStyle("scale", "1.3"))
                                     .onClick(() => location.href = link)
                                     .addStyle(css`
@@ -131,14 +129,11 @@ export function Footer() {
                     )
                         .setGap()
                         .setAutoFlow("column")
-                        .setAutoColumn("max-content")
-                        .addClass("icons"),
+                        .setAutoColumn("max-content"),
                     SecondaryButton("Join Now")
-                        .onClick(() => location.href = "/signin")
-                        .addClass("round-button"),
+                        .onClick(() => location.href = "/signin"),
                     PrimaryButton("Contact Us")
-                        .onClick(() => location.href = "mailto:support@bbn.one")
-                        .addClass("round-button"),
+                        .onClick(() => location.href = "mailto:support@bbn.one"),
                 )
                     .setGap()
                     .setTemplateColumns(mediaQueryRef("(max-width: 630px)").map((small) => small ? "max-content" : "auto max-content max-content"))
