@@ -1,142 +1,95 @@
 import { API, stupidErrorAlert } from "shared/mod.ts";
-import { appendBody, asRef, Color, Content, DialogContainer, Grid, isMobile, Label, Spinner, Table, TextInput, WebGenTheme } from "webgen/mod.ts";
+import { appendBody, asRef, Box, Color, Content, DialogContainer, FullWidthSection, Grid, Label, PrimaryButton, Spinner, Table, WebGenTheme } from "webgen/mod.ts";
 import { DynaNavigation } from "../../components/nav.ts";
 import { AccountType, Wallet } from "../../spec/music.ts";
 import { RegisterAuthRefresh, renewAccessTokenIfNeeded, sheetStack } from "../shared/helper.ts";
-import "./wallet.css";
 
 await RegisterAuthRefresh();
 
-const wallet = asRef(<Wallet | undefined> undefined);
-
-async function handlePayoutResponse(amount: number) {
-    const response = await API.wallet.requestPayout(amount).then(stupidErrorAlert);
-    if (response.type === "createAccount") {
-        SheetDialog(
-            sheetStack,
-            "Missing Account",
-            Grid(
-                Label("To process your payout, you need to create a Stripe account."),
-                Label("Please click the button below to create your account."),
-                LinkButton("Create Account", response.url),
-            )
-                .setGap()
-                .setMargin("10px"),
-        ).open();
-    } else if (response.type === "needDetails") {
-        SheetDialog(
-            sheetStack,
-            "Missing Information",
-            Grid(
-                Label("To process your payout, you need to fill out missing information."),
-                Label("Please click the button below to provide the missing information."),
-                LinkButton("Provide Information", response.url),
-            )
-                .setGap()
-                .setMargin("10px"),
-        ).open();
-    } else {
-        SheetDialog(
-            sheetStack,
-            "Success!",
-            Grid(
-                Label("Your payout request has been sent for processing."),
-                Label("You will receive an email once the payout has been processed."),
-            )
-                .setGap()
-                .setMargin("10px"),
-        );
-    }
-}
+const wallet = asRef<Wallet | undefined>(undefined);
 
 appendBody(
     WebGenTheme(
         DialogContainer(sheetStack.visible(), sheetStack),
         Content(
-            DynaNavigation("Wallet"),
-            wallet.map((wallet) =>
+            FullWidthSection(
+                DynaNavigation("Wallet"),
+            ),
+            Box(wallet.map((wallet) =>
                 wallet
                     ? Grid(
-                        Navigation({
-                            title: "Your Wallet",
-                            actions: [
-                                Button("Request Payout")
-                                    .setColor(wallet.balance?.unrestrained! + wallet.balance?.restrained! > 10 ? Color.Grayscaled : Color.Disabled)
-                                    .onClick(() => {
-                                        const amount = asState({ value: "0" });
-                                        const dialog = SheetDialog(
-                                            sheetStack,
-                                            "Request Payout",
-                                            Grid(
-                                                Label("How much would you like to withdraw?"),
-                                                TextInput("text", "Amount").ref(amount.$value),
-                                                Button("Request")
-                                                    .onClick(() => {
-                                                        handlePayoutResponse(Number(amount.value));
-                                                        dialog.close();
-                                                    }),
-                                            )
-                                                .setGap()
-                                                .setMargin("10px"),
-                                        );
-                                        dialog.open();
-                                    }),
-                            ],
-                        }).addClass(
-                            isMobile.map((mobile) => mobile ? "mobile-navigation" : "navigation"),
-                            "limited-width",
-                        ),
-                        isMobile.map((mobile) =>
+                        Grid(
+                            Label("Your Wallet").setFontWeight("bold").setTextSize("3xl"),
+                            PrimaryButton("Request Payout").onClick(() => {
+                                alert("Please email support@bbn.one and include your PayPal Address");
+                            }),
+                        ).setGap().setTemplateColumns("1fr auto"),
+                        Grid(
                             Grid(
-                                Grid(
-                                    Grid(
-                                        Label(`${Number(wallet.balance?.unrestrained! + wallet.balance?.restrained!).toFixed(2)} £`)
-                                            .setTextSize("4xl")
-                                            .setFontWeight("bold"),
-                                        Label("Balance")
-                                            .setFontWeight("bold")
-                                            .addClass("gray-color"),
-                                    )
-                                        .addClass("details-item"),
-                                    Grid(
-                                        Grid(
-                                            Label(wallet.accountType == AccountType.Default ? "Basic" : AccountType.Subscribed ? "Premium" : "VIP")
-                                                .setTextSize("4xl")
-                                                .setFontWeight("bold"),
-                                            Label("Your Subscription")
-                                                .setFontWeight("bold")
-                                                .addClass("gray-color"),
-                                        )
-                                            .addClass("details-item"),
-                                        Grid(
-                                            Label(`${wallet.cut}%`)
-                                                .setTextSize("4xl")
-                                                .setFontWeight("bold"),
-                                            Label("Your Cut")
-                                                .setFontWeight("bold")
-                                                .addClass("gray-color"),
-                                        )
-                                            .addClass("details-item"),
-                                    )
-                                        .setEvenColumns(2)
-                                        .setGap(),
-                                )
-                                    .setWidth("100%")
-                                    .setEvenColumns(mobile ? 1 : 2)
-                                    .setGap(),
-                                Table([
-                                    ["Amount", "auto", ({ amount }) => Label(`${amount.toFixed(2)} £`)],
-                                    ["Description", "auto", ({ description }) => Label(description)],
-                                    ["Counterparty", "auto", ({ counterParty }) => Label(counterParty)],
-                                    ["Date", "auto", ({ timestamp }) => Label(new Date(Number(timestamp)).toDateString())],
-                                ], wallet.transactions),
-                            ).setGap()
+                                Label(`${Number(wallet.balance?.unrestrained! + wallet.balance?.restrained!).toFixed(2)} £`)
+                                    .setTextSize("4xl")
+                                    .setFontWeight("bold"),
+                                Label("Balance")
+                                    .setFontWeight("bold")
+                                    .addClass("gray-color"),
+                            )
+                                .setCssStyle("background", "#181010")
+                                .setPadding("1rem")
+                                .setCssStyle("borderRadius", "var(--wg-radius-mid)"),
+                            Grid(
+                                Label(wallet.accountType == AccountType.Default ? "Basic" : AccountType.Subscribed ? "Premium" : "VIP")
+                                    .setTextSize("4xl")
+                                    .setFontWeight("bold"),
+                                Label("Your Subscription")
+                                    .setFontWeight("bold")
+                                    .addClass("gray-color"),
+                            )
+                                .setCssStyle("background", "#181010")
+                                .setPadding("1rem")
+                                .setCssStyle("borderRadius", "var(--wg-radius-mid)"),
+                            Grid(
+                                Label(`${wallet.cut}%`)
+                                    .setTextSize("4xl")
+                                    .setFontWeight("bold"),
+                                Label("Your Cut")
+                                    .setFontWeight("bold")
+                                    .addClass("gray-color"),
+                            )
+                                .setCssStyle("background", "#181010")
+                                .setPadding("1rem")
+                                .setCssStyle("borderRadius", "var(--wg-radius-mid)"),
+                        ).setTemplateColumns("50% 25% 25%").setGap(),
+                        Table(
+                            asRef(wallet.transactions.map((x) => {
+                                const { amount, description, counterParty, timestamp } = x;
+                                return ({ amount, description, counterParty, timestamp });
+                            })),
+                            asRef({
+                                amount: {
+                                    titleRenderer: () => Label("Amount"),
+                                    cellRenderer: (amount) => Label(`${Number(amount).toFixed(2)} £`),
+                                    columnWidth: "auto",
+                                },
+                                description: {
+                                    titleRenderer: () => Label("Description"),
+                                    columnWidth: "auto",
+                                },
+                                timestamp: {
+                                    titleRenderer: () => Label("Date"),
+                                    cellRenderer: (timestamp) => Label(new Date(Number(timestamp)).toDateString()),
+                                    columnWidth: "auto",
+                                },
+                                counterParty: {
+                                    titleRenderer: () => Label("Counterparty"),
+                                    columnWidth: "auto",
+                                },
+                            }),
                         ),
-                    ).addClass("limited-width")
+                    ).setGap().setMargin("5rem 0 2rem")
                     : Spinner()
-            ),
+            )),
         ),
-    ),
+    ).setPrimaryColor(new Color("#eb8c2d")),
 );
 
 renewAccessTokenIfNeeded()
