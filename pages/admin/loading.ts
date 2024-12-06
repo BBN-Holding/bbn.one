@@ -24,7 +24,7 @@ export function upload(type: keyof typeof urls): Promise<string> {
     return new Promise((resolve) => {
         createFilePicker(extension).then((file) => {
             StreamingUploadHandler(url, {
-                failure: () => alert("Your Upload has failed. Please try a different file or try again later"),
+                failure: (message) => alert("Your Upload has failed. Please try a different file or try again later. " + message),
                 uploadDone: () => console.log("Upload done"),
                 credentials: () => API.getToken(),
                 backendResponse: (id) => resolve(id),
