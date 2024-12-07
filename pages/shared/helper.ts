@@ -1,7 +1,8 @@
 import { fail } from "@std/assert/fail";
 import { LruCache, memoize } from "@std/cache";
 import { API, fileCache, Permission, stupidErrorAlert } from "shared/mod.ts";
-import { asRef, asRefRecord, Async, Component, DropDown, Empty, Grid, Image, ImageComponent, PrimaryButton, SheetHeader, Sheets, Spinner, WriteSignal } from "webgen/mod.ts";
+import { asRef, asRefRecord, Async, Component, DropDown, Grid, Image, ImageComponent, PrimaryButton, SheetHeader, Sheets, Spinner, WriteSignal } from "webgen/mod.ts";
+import { templateArtwork } from "../../assets/imports.ts";
 import { loginRequired } from "../../components/pages.ts";
 import { Drop, Song } from "../../spec/music.ts";
 
@@ -182,8 +183,15 @@ export function saveBlob(blob: Blob, fileName: string) {
 }
 
 export function showPreviewImage(x: Drop) {
-    return Empty();
-    // return x.artwork ? Cache(`image-preview-${x.artwork}`, () => Promise.resolve(), (type) => type == "loaded" ? Image({ type: "direct", source: () => loadImage(x) }, "A Song Artwork") : Box()) : Image(templateArtwork, "A Placeholder Artwork.");
+    return x.artwork
+        ? Async(
+            (async () => {
+                const image = await API.music.id(x._id).artwork().then(stupidErrorAlert);
+                return Image(URL.createObjectURL(image), "");
+            })(),
+            Spinner(),
+        )
+        : Image(templateArtwork, "A Placeholder Artwork.");
 }
 
 async function loadImage(x: Drop) {

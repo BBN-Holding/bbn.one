@@ -1,6 +1,7 @@
 import { API, stupidErrorAlert } from "shared/restSpec.ts";
-import { asRef, Box, Content, createPage, createRoute, Entry, Grid, Label, Spinner } from "webgen/mod.ts";
+import { asRef, Box, Content, createPage, createRoute, Grid, Spinner } from "webgen/mod.ts";
 import { Drop, DropType } from "../../../spec/music.ts";
+import { musicList } from "../views/list.ts";
 
 const data = asRef<"loading" | Drop[]>("loading");
 
@@ -23,15 +24,7 @@ export const draftsDropsPage = createPage(
     Content(
         Box(data.map((data) => data === "loading" ? Spinner() : [])),
         Grid(
-            source.map((items) =>
-                items.map((item) =>
-                    Entry(
-                        Label(item.title ?? "(Untitled)")
-                            .setMargin("35px 0"),
-                    )
-                        .onClick(() => location.href = `/c/music/new-drop?id=${item._id}`)
-                )
-            ),
+            source.map((items) => musicList(items, DropType.Unsubmitted)),
         ),
     ),
 );

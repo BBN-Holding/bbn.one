@@ -1,10 +1,10 @@
+import { permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded, saveBlob, showPreviewImage, streamingImages } from "shared/helper.ts";
 import { API, stupidErrorAlert } from "shared/mod.ts";
 import { appendBody, asRef, Color, Empty, Grid, isMobile, Label } from "webgen/mod.ts";
 import "../../assets/css/main.css";
 import "../../assets/css/music.css";
 import { DynaNavigation } from "../../components/nav.ts";
 import { Drop, DropType, Share } from "../../spec/music.ts";
-import { permCheck, RegisterAuthRefresh, renewAccessTokenIfNeeded, saveBlob, showPreviewImage, streamingImages } from "../shared/helper.ts";
 import { ChangeDrop } from "./views/changeDrop.ts";
 import { ChangeSongs } from "./views/changeSongs.ts";
 import { DropTypeToText } from "./views/list.ts";
