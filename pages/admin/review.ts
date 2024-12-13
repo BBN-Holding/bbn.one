@@ -50,7 +50,9 @@ appendBody(
                     reviewState.$drops.map((drops) =>
                         drops
                             ? Grid(
-                                drops.map((drop) => Entry({ title: drop.title, subtitle: drop.type }).addClass("small")),
+                                drops.map((drop) => Entry({ title: drop.title, subtitle: drop.type }).addClass("small").onClick(() => {
+                                    location.href = `/admin/review?id=${drop._id}`;
+                                })),
                             ).setGap()
                             : Spinner()
                     ).asRefComponent(),
