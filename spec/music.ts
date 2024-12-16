@@ -2,8 +2,7 @@ import { sumOf } from "@std/collections";
 import { z } from "zod/mod.ts";
 
 export const DATE_PATTERN = /\d\d\d\d-\d\d-\d\d/;
-export const userString = z.string().min(1).transform((x) => x.trim());
-// .openapi({ type: "string" });
+export const userString = z.string().min(1).transform((x) => x.trim()).openapi({ type: "string" });
 
 export enum DropType {
     Published = "PUBLISHED", // Uploaded, Approved
@@ -568,6 +567,9 @@ export const audit = z.discriminatedUnion("action", [
         action: z.literal(AuditTypes.DropTypeChange),
         dropId: z.string(),
         type: z.nativeEnum(DropType),
+        data: drop.omit({ _id: true, user: true }).extend({
+            songs: song.omit({ user: true, file: true }).array()
+        })
     }),
     z.object({
         action: z.literal(AuditTypes.DropCreate),

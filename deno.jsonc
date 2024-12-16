@@ -9,8 +9,8 @@
         "@std/path": "jsr:@std/path@^1.0.8",
         "@std/cache": "jsr:@std/cache@^0.1.3",
         "shared/": "./pages/shared/",
-        // "zod/": "https://s.hmsys.de/hmsys@0.10.0-b32150b/",
-        "zod/": "https://deno.land/x/zod@v3.23.8/",
+        "zod/": "https://s.hmsys.de/hmsys@0.10.0-b32150b/",
+        // "zod/": "https://deno.land/x/zod@v3.23.8/",
         // "webgen/": "../WebGen/"
         "webgen/": "https://raw.githubusercontent.com/lucsoft/WebGen/feb5f33/"
     },
