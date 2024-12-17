@@ -568,8 +568,8 @@ export const audit = z.discriminatedUnion("action", [
         dropId: z.string(),
         type: z.nativeEnum(DropType),
         data: drop.omit({ _id: true, user: true }).extend({
-            songs: song.omit({ user: true, file: true }).array()
-        })
+            songs: song.omit({ user: true, file: true }).array(),
+        }).partial(), // Partial because frontend type must match the backend type
     }),
     z.object({
         action: z.literal(AuditTypes.DropCreate),
